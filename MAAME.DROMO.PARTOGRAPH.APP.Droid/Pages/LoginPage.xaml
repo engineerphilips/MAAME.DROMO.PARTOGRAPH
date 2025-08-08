@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.LoginPage"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:controls="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls"
+             Title="Login">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Hospital Theme Colors -->
+            <Color x:Key="PrimaryBlue">#0078D4</Color>
+            <Color x:Key="PrimaryLightBlue">#40E0FF</Color>
+            <Color x:Key="SecondaryGreen">#107C10</Color>
+            <Color x:Key="AccentTeal">#008575</Color>
+            <Color x:Key="SurfaceWhite">#FFFFFF</Color>
+            <Color x:Key="BackgroundGray">#F8F9FA</Color>
+            <Color x:Key="TextPrimary">#323130</Color>
+            <Color x:Key="TextSecondary">#605E5C</Color>
+            <Color x:Key="BorderLight">#E1DFDD</Color>
+            <Color x:Key="ErrorRed">#D13438</Color>
+            <Color x:Key="SuccessGreen">#107C10</Color>
+
+            <!-- Gradients -->
+            <LinearGradientBrush x:Key="HeaderGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#0078D4" Offset="0.0" />
+                <GradientStop Color="#40E0FF" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="BackgroundGradient" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#F8F9FA" Offset="0.0" />
+                <GradientStop Color="#E1DFDD" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- Card Styles -->
+            <Style x:Key="MainLoginCard" TargetType="Border">
+                <!--<Setter Property="BackgroundColor" Value="{StaticResource SurfaceWhite}" />-->
+                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource LightSecondaryBackground},Dark={StaticResource DarkSecondaryBackground}}"/>
+                <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+                <!--<Setter Property="Shadow" Value="True" />-->
+            </Style>
+
+            <Style x:Key="HeaderCard" TargetType="Border">
+                <!--<Setter Property="Background" Value="{StaticResource HeaderGradient}" />-->
+                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource SurfaceWhite},Dark={StaticResource DarkSecondaryBackground}}"/>
+                <Setter Property="StrokeShape" Value="RoundRectangle, 12,12,0,0" />
+                <Setter Property="Shadow" Value="False" />
+            </Style>
+
+            <!-- Button Styles --><!--
+            <Style x:Key="PrimaryButton" TargetType="buttons:SfButton">
+                <Setter Property="Background" Value="{StaticResource PrimaryBlue}" />
+                <Setter Property="TextColor" Value="{StaticResource SurfaceWhite}" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HeightRequest" Value="48" />
+            </Style>
+
+            <Style x:Key="SecondaryButton" TargetType="buttons:SfButton">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="TextColor" Value="{StaticResource PrimaryBlue}" />
+                <Setter Property="Stroke" Value="{StaticResource PrimaryBlue}" />
+                <Setter Property="StrokeThickness" Value="2" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HeightRequest" Value="48" />
+            </Style>
+
+            <Style x:Key="TextButton" TargetType="buttons:SfButton">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="TextColor" Value="{StaticResource PrimaryBlue}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
+            --><!-- Input Styles --><!--
+            <Style x:Key="HospitalInput" TargetType="core:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Outlined" />
+                <Setter Property="OutlineCornerRadius" Value="4" />
+                --><!--<Setter Property="Stroke" Value="{StaticResource BorderLight}" />-->
+                <!--<Setter Property="FocusedStroke" Value="{StaticResource PrimaryBlue}" />--><!--
+                <Setter Property="ContainerBackground" Value="{StaticResource SurfaceWhite}" />
+            </Style>-->
+
+            <Style x:Key="TextButton" TargetType="Button">
+                <!--<Setter Property="Background" Value="Transparent" />-->
+                <!--<Setter Property="TextColor" Value="{StaticResource PrimaryBlue}" />-->
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
+            <!-- Typography Styles -->
+            <Style x:Key="HospitalTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="28" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <!--<Setter Property="TextColor" Value="{StaticResource SurfaceWhite}" />-->
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="HospitalSubtitle" TargetType="Label">
+                <Setter Property="FontSize" Value="16" />
+                <!--<Setter Property="TextColor" Value="#E6FFFFFF" />-->
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="SectionTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="ErrorText" TargetType="Label">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="TextColor" Value="{StaticResource ErrorRed}" />
+                <Setter Property="HorizontalTextAlignment" Value="Start" />
+            </Style>
+
+            <Style x:Key="LinkText" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="{StaticResource PrimaryBlue}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+
+        </ResourceDictionary>
+        <!--<syncfusionConverters:BoolToOpacityConverter x:Key="boolToOpacityConverter"/>-->
+    </ContentPage.Resources>
+
+    <Grid Background="{StaticResource BackgroundGradient}">
+        <ScrollView>
+            <Grid RowDefinitions="Auto,*,Auto"
+              MinimumHeightRequest="700"
+              Padding="20">
+
+                <!-- Hospital Header Section -->
+                <Border Grid.Row="0" 
+                              Style="{StaticResource HeaderCard}"
+                              Margin="0,20,0,0">
+                    <Border.Content>
+                        <StackLayout Padding="32,30,32,32" Spacing="16">
+
+                            <!-- Medical Cross Icon -->
+                            <Border BackgroundColor="{StaticResource SurfaceWhite}"
+                                StrokeShape="RoundRectangle 20"
+                                HeightRequest="60"
+                                WidthRequest="60"
+                                StrokeThickness="0"
+                                HorizontalOptions="Center">
+                                <Label Text="⚕️"
+                                   FontSize="30"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                            </Border>
+
+                            <!-- Hospital Title -->
+                            <StackLayout Spacing="8">
+                                <Label Text="Maame.Dromo"
+                                   Style="{StaticResource HospitalTitle}" />
+                                <Label Text="Enhancing child birth in Ghana"
+                                   Style="{StaticResource HospitalSubtitle}" />
+                            </StackLayout>
+
+                        </StackLayout>
+                    </Border.Content>
+                </Border>
+
+                <!-- Login Form Card -->
+                <Border Grid.Row="1"
+                              Style="{StaticResource MainLoginCard}"
+                              Margin="0,-20,0,0">
+                    <Border.Content>
+                        <StackLayout Padding="32,20" Spacing="16">
+
+                            <!-- Login Title -->
+                            <StackLayout Spacing="8">
+                                <Label Text="Sign in"
+                                   Style="{StaticResource SectionTitle}" />
+                                <Label Text="Sign in to access your dashboard"
+                                   FontSize="14"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   HorizontalTextAlignment="Center" />
+                            </StackLayout>
+
+                            <!-- Email Input -->
+                            <sf:SfTextInputLayout Hint="Email Address"
+                                                Style="{StaticResource HospitalInput}"
+                                                HelperText="Enter your registered email">
+                                <Entry x:Name="EmailEntry"
+                                   Text="{Binding Email}"
+                                   Keyboard="Email"
+                                   ReturnType="Next"
+                                   ClearButtonVisibility="WhileEditing" />
+                            </sf:SfTextInputLayout>
+
+                            <!-- Password Input -->
+                            <sf:SfTextInputLayout Hint="Password"
+                                                Style="{StaticResource HospitalInput}"
+                                                HelperText="Enter your secure password"
+                                                EnablePasswordVisibilityToggle="True">
+                                <Entry x:Name="PasswordEntry"
+                                   Text="{Binding Password}"
+                                   IsPassword="True"
+                                   ReturnType="Done"
+                                   ClearButtonVisibility="WhileEditing" />
+                            </sf:SfTextInputLayout>
+
+                            <!-- Error Message -->
+                            <Label Text="{Binding ErrorMessage}"
+                               Style="{StaticResource ErrorText}"
+                               IsVisible="{Binding HasError}"
+                               Margin="0,-8,0,0" />
+
+                            <!-- Remember Me & Forgot Password -->
+                            <Grid ColumnDefinitions="*,*">
+                                <Label Grid.Column="0" Text="Remember Me" TextColor="{StaticResource Primary}" HorizontalOptions="Start">
+                                    <!--<Label.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnForgotPasswordClicked" />
+                                    </Label.GestureRecognizers>-->
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal">
+                                                <VisualState.Setters>
+                                                    <Setter Property="TextDecorations" Value="None" />
+                                                    <Setter Property="Opacity" Value="1" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Property="TextDecorations" Value="Underline" />
+                                                    <Setter Property="Opacity" Value="0.6" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Label>
+                                <Label Grid.Column="1" Text="Forgot Password?" TextColor="{StaticResource Primary}" HorizontalOptions="End" >
+                                    <!--<Label.GestureRecognizers>
+        <TapGestureRecognizer Tapped="OnForgotPasswordClicked" />
+    </Label.GestureRecognizers>-->
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal">
+                                                <VisualState.Setters>
+                                                    <Setter Property="TextDecorations" Value="None" />
+                                                    <Setter Property="Opacity" Value="1" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Property="TextDecorations" Value="Underline" />
+                                                    <Setter Property="Opacity" Value="0.6" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Label>
+
+                                <!--<Button Grid.Column="0"
+                                             Text="Remember Me"
+                                             Style="{StaticResource TextButton}"
+                                             FontSize="12"
+                                             HorizontalOptions="Start"
+                                             Command="{Binding ToggleRememberMeCommand}" />-->
+
+                                <!--<Button Grid.Column="1"
+                                             Text="Forgot Password?"
+                                             Style="{StaticResource TextButton}"
+                                             FontSize="12"
+                                             HorizontalOptions="End"
+                                             Command="{Binding ForgotPasswordCommand}" />-->
+                            </Grid>
+
+                            <!-- Login Button -->
+                            <Grid Margin="0,10,0,0">
+                                <Button HeightRequest="{OnIdiom 44, Desktop=60}" Text="Sign In Securely" 
+                                              Style="{StaticResource PrimaryButton}"
+                                              Command="{Binding LoginCommand}" 
+                                              IsVisible="{Binding IsNotBusy}">
+                                    <Button.ImageSource>
+                                        <FontImageSource FontFamily="MaterialAssets"
+                                                   Glyph="&#xe8d4;"
+                                                   Size="20"
+                                                   Color="{StaticResource SurfaceWhite}" />
+                                    </Button.ImageSource>
+                                </Button>
+
+                                 <!--Loading State-->
+                                <Button HeightRequest="{OnIdiom 44, Desktop=60}" Text="Authenticating..."
+                                             Style="{StaticResource PrimaryButton}"
+                                             IsEnabled="False"
+                                             IsVisible="{Binding IsBusy}">
+                                    <Button.ImageSource>
+                                        <FontImageSource FontFamily="MaterialAssets"
+                                                   Glyph="&#xe627;"
+                                                   Size="20"
+                                                   Color="{StaticResource SurfaceWhite}" />
+                                    </Button.ImageSource>
+                                </Button>
+                            </Grid>
+
+                            <!-- Biometric Login -->
+                            <!--<buttons:SfButton Style="{StaticResource SecondaryButton}"
+                                         Text="Use Biometric Authentication"
+                                         Command="{Binding BiometricLoginCommand}"
+                                         IsVisible="{Binding IsBiometricAvailable}"
+                                         Margin="0,8,0,0">
+                                <buttons:SfButton.ImageSource>
+                                    <FontImageSource FontFamily="MaterialAssets"
+                                               Glyph="&#xe90f;"
+                                               Size="18"
+                                               Color="{StaticResource PrimaryBlue}" />
+                                </buttons:SfButton.ImageSource>
+                            </buttons:SfButton>-->
+
+                        </StackLayout>
+                    </Border.Content>
+                </Border>
+
+                <!-- Footer Section -->
+                <StackLayout Grid.Row="2"
+                        Spacing="16"
+                        Margin="0,24,0,16">
+
+                     <!--Create Account--> 
+                    <StackLayout Orientation="Horizontal"
+                            HorizontalOptions="Center"
+                            Spacing="8">
+                        <Label Text="Need access?"
+                           FontSize="14"
+                           TextColor="{StaticResource TextSecondary}"
+                           VerticalOptions="Center" />
+                        <!--<effects:SfEffectsView TouchDownEffects="Scale"
+                                          TouchUpEffects="Scale"
+                                          ScaleFactor="0.95">
+                            <effects:SfEffectsView.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CreateAccountCommand}" />
+                            </effects:SfEffectsView.GestureRecognizers>
+                            <Label Text="Contact Admin"
+                               Style="{StaticResource LinkText}"
+                               VerticalOptions="Center" />
+                        </effects:SfEffectsView>-->
+                    </StackLayout>
+
+                     <!--Security Notice--> 
+                    <StackLayout Orientation="Horizontal"
+                            HorizontalOptions="Center"
+                            Spacing="8">
+                        <Label Text="🔒"
+                           FontSize="14"
+                           VerticalOptions="Center" />
+                        <Label Text="Your data is protected with enterprise-grade security"
+                           FontSize="12"
+                           TextColor="{StaticResource TextSecondary}"
+                           HorizontalTextAlignment="Center"
+                           VerticalOptions="Center" />
+                    </StackLayout>
+
+                     <!--App Version--> 
+                    <Label Text="{Binding AppVersion}"
+                       FontSize="12"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalTextAlignment="Center" />
+
+                     <!--Connection Status--> 
+                    <!--<core:SfBadgeView BadgeText="{Binding ConnectionStatus}"                                      
+                                  IsVisible="{Binding ShowConnectionStatus}"
+                                  HorizontalOptions="Center">
+                        <core:SfBadgeView.BadgeSettings>
+                            <core:BadgeSettings Background="{Binding ConnectionStatusColor}"
+                                            TextColor="{StaticResource SurfaceWhite}"
+                                           FontSize="10"
+                                           FontAttributes="Bold"
+                                           CornerRadius="12"
+                                            Type="None"
+                                            Position="Top" />
+                        </core:SfBadgeView.BadgeSettings>
+                        <core:SfBadgeView.Content>
+                            <Label Text="Network Status"
+                               FontSize="12"
+                               TextColor="{StaticResource TextSecondary}" />
+                        </core:SfBadgeView.Content>
+                    </core:SfBadgeView>-->
+
+                </StackLayout>
+
+            </Grid>
+        </ScrollView>
+
+        <!-- Loading Overlay --><!--
+        <Grid IsVisible="{Binding IsBusy}"
+          BackgroundColor="#80000000">
+            <cards:SfCardView BackgroundColor="{StaticResource SurfaceWhite}"
+                      CornerRadius="20"
+                      Padding="40,32"
+                      WidthRequest="220"
+                      HeightRequest="140"
+                      HorizontalOptions="Center"
+                      VerticalOptions="Center">
+                <cards:SfCardView.Content>
+                    <StackLayout Spacing="20"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                        <progressbar:SfCircularProgressBar Progress="{Binding LoadingProgress}"
+                                                     HeightRequest="48"
+                                                     WidthRequest="48"
+                                                     TrackFill="{StaticResource BorderLight}"
+                                                     ProgressFill="{StaticResource PrimaryBlue}"
+                                                     TrackThickness="4"
+                                                     ProgressThickness="4"
+                                                     IsIndeterminate="True" />
+                        <Label Text="{Binding LoadingMessage}"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"
+                           HorizontalTextAlignment="Center" />
+                    </StackLayout>
+                </cards:SfCardView.Content>
+            </cards:SfCardView>
+        </Grid>-->
+
+    </Grid>
+
+</ContentPage>
