@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.EnhancedPartographPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Models"
+             xmlns:fonts="clr-namespace:Fonts"
+             Title="Advanced Partograph">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Assessment" 
+                     Command="{Binding OpenAssessmentCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.clipboard_task_16_regular}" />
+        <ToolbarItem Text="Chart View" 
+                     Command="{Binding ViewChartCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.chart_multiple_16_regular}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Patient Header -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Border Grid.Column="0"
+                            WidthRequest="60"
+                            HeightRequest="60"
+                            BackgroundColor="White">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="30" />
+                        </Border.StrokeShape>
+                        <Label Text="{Binding PatientName, Converter={StaticResource InitialsConverter}}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#2196F3" />
+                    </Border>
+
+                    <VerticalStackLayout Grid.Column="1" Margin="15,0" VerticalOptions="Center">
+                        <Label Text="{Binding PatientName}" FontSize="18" FontAttributes="Bold" />
+                        <Label Text="{Binding PatientInfo}" FontSize="14" Opacity="0.8" />
+                        <Label Text="{Binding LaborDuration, StringFormat='Labor duration: {0}'}" FontSize="12" Opacity="0.7" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
+                        <Label Text="{Binding CurrentTime, StringFormat='{0:HH:mm}'}" 
+                               FontSize="16" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding CurrentDate, StringFormat='{0:dd/MM}'}" 
+                               FontSize="12"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Alert Panel -->
+            <Border StrokeThickness="2"
+                    Stroke="#EF5350"
+                    BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#3E2723}"
+                    Padding="15"
+                    IsVisible="{Binding HasAlerts}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="⚠" FontSize="20" TextColor="#EF5350" />
+                        <Label Text="Urgent Attention Required" 
+                               FontSize="16" 
+                               FontAttributes="Bold"
+                               TextColor="#EF5350" />
+                    </HorizontalStackLayout>
+
+                    <CollectionView ItemsSource="{Binding Alerts}" HeightRequest="100">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Label Text="{Binding .}" 
+                                       FontSize="12"
+                                       TextColor="#EF5350"
+                                       Margin="20,2" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Due Measurements Alert -->
+            <Border StrokeThickness="2"
+                    Stroke="#FF9800"
+                    BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#E65100}"
+                    Padding="15"
+                    IsVisible="{Binding HasDueMeasurements}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="&#xE916;" 
+                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                               FontSize="20" 
+                               TextColor="#FF9800" />
+                        <Label Text="Measurements Due" 
+                               FontSize="16" 
+                               FontAttributes="Bold"
+                               TextColor="#FF9800" />
+                    </HorizontalStackLayout>
+
+                    <Label Text="{Binding DueMeasurementsText}" 
+                           FontSize="12"
+                           TextColor="#FF9800" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Quick Actions Grid -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                <!-- Fetal Monitoring (Every 30 min) -->
+                <Border Grid.Row="0" Grid.Column="0" 
+                        StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#4CAF50, Dark=#2E7D32}"
+                        BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
+                        Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenBaselineFHRCommand}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="&#xE95E;" 
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="24" 
+                                   TextColor="#4CAF50" />
+                            <Label Text="📱" FontSize="12" TextColor="{Binding BaselineFHRDueColor}" />
+                        </HorizontalStackLayout>
+                        <Label Text="Baseline FHR" FontSize="14" FontAttributes="Bold" />
+                        <Label Text="Every 30 minutes" FontSize="10" Opacity="0.7" />
+                        <Label Text="{Binding LastBaselineFHRTime, StringFormat='Last: {0:HH:mm}'}" FontSize="10" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="0" Grid.Column="1" 
+                        StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#2196F3, Dark=#1565C0}"
+                        BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#0D47A1}"
+                        Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenFHRDecelerationCommand}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="&#xE95D;" 
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="24" 
+                                   TextColor="#2196F3" />
+                            <Label Text="📱" FontSize="12" TextColor="{Binding FHRDecelerationDueColor}" />
+                        </HorizontalStackLayout>
+                        <Label Text="FHR Deceleration" FontSize="14" FontAttributes="Bold" />
+                        <Label Text="Every 30 minutes" FontSize="10" Opacity="0.7" />
+                        <Label Text="{Binding LastFHRDecelerationTime, StringFormat='Last: {0:HH:mm}'}" FontSize="10" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Contractions (Every 30 min) -->
+                <Border Grid.Row="1" Grid.Column="0" 
+                        StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#9C27B0, Dark=#6A1B9A}"
+                        BackgroundColor="{AppThemeBinding Light=#F3E5F5, Dark=#4A148C}"
+                        Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenContractionsCommand}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="&#xE945;" 
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="24" 
+                                   TextColor="#9C27B0" />
+                            <Label Text="📱" FontSize="12" TextColor="{Binding ContractionsDueColor}" />
+                        </HorizontalStackLayout>
+                        <Label Text="Contractions" FontSize="14" FontAttributes="Bold" />
+                        <Label Text="Every 30 minutes" FontSize="10" Opacity="0.7" />
+                        <Label Text="{Binding LastContractionsTime, StringFormat='Last: {0:HH:mm}'}" FontSize="10" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Vital Signs (Every hour) -->
+                <Border Grid.Row="1" Grid.Column="1" 
+                        StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#FF5722, Dark=#D84315}"
+                        BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#BF360C}"
+                        Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenVitalSignsCommand}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="&#xE95E;" 
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="24" 
+                                   TextColor="#FF5722" />
+                            <Label Text="⏰" FontSize="12" TextColor="{Binding VitalSignsDueColor}" />
+                        </HorizontalStackLayout>
+                        <Label Text="Vital Signs" FontSize="14" FontAttributes="Bold" />
+                        <Label Text="Every hour" FontSize="10" Opacity="0.7" />
+                        <Label Text="{Binding LastVitalSignsTime, StringFormat='Last: {0:HH:mm}'}" FontSize="10" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Pain Relief -->
+                <Border Grid.Row="2" Grid.Column="0" 
+                        StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#795548, Dark=#5D4037}"
+                        BackgroundColor="{AppThemeBinding Light=#EFEBE9, Dark=#3E2723}"
+                        Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenPainReliefCommand}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="&#xE95E;" 
+                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                               FontSize="24" 
+                               TextColor="#795548" />
+                        <Label Text="Pain Relief" FontSize="14" FontAttributes="Bold" />
+                        <Label Text="As needed" FontSize="10" Opacity="0.7" />
+                        <Label Text="{Binding CurrentPainLevel, StringFormat='Current: {0}/10'}" FontSize="10" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Assessment -->
+                <Border Grid.Row="2" Grid.Column="1" 
+                        StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#607D8B, Dark=#455A64}"
+                        BackgroundColor="{AppThemeBinding Light=#ECEFF1, Dark=#263238}"
+                        Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenAssessmentCommand}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="&#xE8F4;" 
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="24" 
+                                   TextColor="#607D8B" />
+                            <Label Text="⏰" FontSize="12" TextColor="{Binding AssessmentDueColor}" />
+                        </HorizontalStackLayout>
+                        <Label Text="Assessment" FontSize="14" FontAttributes="Bold" />
+                        <Label Text="Every 4 hours" FontSize="10" Opacity="0.7" />
+                        <Label Text="{Binding LastAssessmentTime, StringFormat='Last: {0:HH:mm}'}" FontSize="10" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Additional Measurements Section -->
+            <VerticalStackLayout Spacing="15">
+                <Label Text="Additional Measurements" FontSize="18" FontAttributes="Bold" />
+
+                <!-- First Row -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Companion"
+                            Command="{Binding OpenCompanionCommand}"
+                            BackgroundColor="#E8F5E9"
+                            TextColor="#2E7D32"
+                            FontSize="12"
+                            Padding="8" />
+
+                    <Button Grid.Column="1"
+                            Text="Oral Fluid"
+                            Command="{Binding OpenOralFluidCommand}"
+                            BackgroundColor="#E3F2FD"
+                            TextColor="#1565C0"
+                            FontSize="12"
+                            Padding="8" />
+
+                    <Button Grid.Column="2"
+                            Text="Posture"
+                            Command="{Binding OpenPostureCommand}"
+                            BackgroundColor="#FFF3E0"
+                            TextColor="#E65100"
+                            FontSize="12"
+                            Padding="8" />
+                </Grid>
+
+                <!-- Second Row -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Amniotic Fluid"
+                            Command="{Binding OpenAmnioticFluidCommand}"
+                            BackgroundColor="#F3E5F5"
+                            TextColor="#6A1B9A"
+                            FontSize="12"
+                            Padding="8" />
+
+                    <Button Grid.Column="1"
+                            Text="Fetal Position"
+                            Command="{Binding OpenFetalPositionCommand}"
+                            BackgroundColor="#FFEBEE"
+                            TextColor="#C62828"
+                            FontSize="12"
+                            Padding="8" />
+
+                    <Button Grid.Column="2"
+                            Text="Caput"
+                            Command="{Binding OpenCaputCommand}"
+                            BackgroundColor="#E8F5E9"
+                            TextColor="#2E7D32"
+                            FontSize="12"
+                            Padding="8" />
+                </Grid>
+
+                <!-- Third Row -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Moulding"
+                            Command="{Binding OpenMouldingCommand}"
+                            BackgroundColor="#E3F2FD"
+                            TextColor="#1565C0"
+                            FontSize="12"
+                            Padding="8" />
+
+                    <Button Grid.Column="1"
+                            Text="Cervix"
+                            Command="{Binding OpenCervixCommand}"
+                            BackgroundColor="#FFF3E0"
+                            TextColor="#E65100"
+                            FontSize="12"
+                            Padding="8" />
+
+                    <Button Grid.Column="2"
+                            Text="Head Descent"
+                            Command="{Binding OpenHeadDescentCommand}"
+                            BackgroundColor="#F3E5F5"
+                            TextColor="#6A1B9A"
+                            FontSize="12"
+                            Padding="8" />
+                </Grid>
+
+                <!-- Fourth Row -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Oxytocin"
+                            Command="{Binding OpenOxytocinCommand}"
+                            BackgroundColor="#FFEBEE"
+                            TextColor="#C62828"
+                            FontSize="12"
+                            Padding="8" />
+
+                    <Button Grid.Column="1"
+                            Text="Medicine"
+                            Command="{Binding OpenMedicineCommand}"
+                            BackgroundColor="#E8F5E9"
+                            TextColor="#2E7D32"
+                            FontSize="12"
+                            Padding="8" />
+
+                    <Button Grid.Column="2"
+                            Text="IV Fluid"
+                            Command="{Binding OpenIVFluidCommand}"
+                            BackgroundColor="#E3F2FD"
+                            TextColor="#1565C0"
+                            FontSize="12"
+                            Padding="8" />
+                </Grid>
+
+                <!-- Fifth Row -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Urine Output"
+                            Command="{Binding OpenUrineCommand}"
+                            BackgroundColor="#FFF3E0"
+                            TextColor="#E65100"
+                            FontSize="12"
+                            Padding="8" />
+
+                    <Button Grid.Column="1"
+                            Text="Temperature"
+                            Command="{Binding OpenTemperatureCommand}"
+                            BackgroundColor="#F3E5F5"
+                            TextColor="#6A1B9A"
+                            FontSize="12"
+                            Padding="8" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <!-- Recent Entries Summary -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Recent Measurements Summary" FontSize="16" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto" RowSpacing="5" ColumnSpacing="10">
+                        <Label Grid.Row="0" Grid.Column="0" Text="Cervical" FontSize="10" HorizontalOptions="Center" />
+                        <Label Grid.Row="1" Grid.Column="0" Text="{Binding LatestCervicalDilation, StringFormat='{0} cm'}" 
+                               FontSize="16" FontAttributes="Bold" TextColor="#2196F3" HorizontalOptions="Center" />
+
+                        <Label Grid.Row="0" Grid.Column="1" Text="FHR" FontSize="10" HorizontalOptions="Center" />
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding LatestFHR, StringFormat='{0} bpm'}" 
+                               FontSize="16" FontAttributes="Bold" TextColor="#4CAF50" HorizontalOptions="Center" />
+
+                        <Label Grid.Row="0" Grid.Column="2" Text="Contractions" FontSize="10" HorizontalOptions="Center" />
+                        <Label Grid.Row="1" Grid.Column="2" Text="{Binding LatestContractions, StringFormat='{0}/10min'}" 
+                               FontSize="16" FontAttributes="Bold" TextColor="#9C27B0" HorizontalOptions="Center" />
+
+                        <Label Grid.Row="0" Grid.Column="3" Text="BP" FontSize="10" HorizontalOptions="Center" />
+                        <Label Grid.Row="1" Grid.Column="3" Text="{Binding LatestBP}" 
+                               FontSize="16" FontAttributes="Bold" TextColor="#FF5722" HorizontalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

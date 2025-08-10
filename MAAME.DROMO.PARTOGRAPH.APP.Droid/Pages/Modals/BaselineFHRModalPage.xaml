@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.BaselineFHRModalPage"
+             xmlns:fonts="clr-namespace:Fonts"
+             Title="Baseline FHR Assessment">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Header -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#2E7D32}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout Spacing="15">
+                    <Label Text="&#xE95E;" 
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="32"
+                           TextColor="{AppThemeBinding Light=#2E7D32, Dark=White}"
+                           VerticalOptions="Center" />
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label Text="Baseline FHR Assessment" FontSize="20" FontAttributes="Bold" />
+                        <Label Text="{Binding PatientName}" FontSize="16" Opacity="0.8" />
+                        <Label Text="Every 30 minutes during active labor" FontSize="12" Opacity="0.7" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Recording Time -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Recording Time" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        <TimePicker Time="{Binding RecordingTime}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Duration (minutes)" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        <Entry Text="{Binding MonitoringDuration}" 
+                               Keyboard="Numeric"
+                               Placeholder="10" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Baseline FHR -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Baseline Heart Rate (bpm)" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,80">
+                        <Slider Grid.Column="0"
+                                Minimum="80" 
+                                Maximum="200"
+                                Value="{Binding BaselineRate}"
+                                ThumbColor="{Binding BaselineRateColor}"
+                                MinimumTrackColor="{Binding BaselineRateColor}"
+                                MaximumTrackColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" />
+                        <Border Grid.Column="1" 
+                                BackgroundColor="{Binding BaselineRateColor}"
+                                Padding="10"
+                                HorizontalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Label Text="{Binding BaselineRate}" 
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="Center" />
+                        </Border>
+                    </Grid>
+
+                    <!-- Normal Range Indicator -->
+                    <Grid ColumnDefinitions="*,*,*">
+                        <Label Grid.Column="0" Text="80-109: Low" FontSize="12" TextColor="#FF5722" HorizontalOptions="Center" />
+                        <Label Grid.Column="1" Text="110-160: Normal" FontSize="12" TextColor="#4CAF50" HorizontalOptions="Center" />
+                        <Label Grid.Column="2" Text="161-200: High" FontSize="12" TextColor="#FF5722" HorizontalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Variability Assessment -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Heart Rate Variability" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                        <RadioButton Grid.Row="0" Grid.Column="0" 
+                                     Content="Absent (0 bpm)"
+                                     GroupName="variability"
+                                     IsChecked="{Binding VariabilityAbsent}" />
+                        <RadioButton Grid.Row="0" Grid.Column="1" 
+                                     Content="Minimal (1-5 bpm)"
+                                     GroupName="variability"
+                                     IsChecked="{Binding VariabilityMinimal}" />
+                        <RadioButton Grid.Row="1" Grid.Column="0" 
+                                     Content="Moderate (6-25 bpm)"
+                                     GroupName="variability"
+                                     IsChecked="{Binding VariabilityModerate}" />
+                        <RadioButton Grid.Row="1" Grid.Column="1" 
+                                     Content="Marked (>25 bpm)"
+                                     GroupName="variability"
+                                     IsChecked="{Binding VariabilityMarked}" />
+                    </Grid>
+
+                    <Label Text="Normal variability (6-25 bpm) indicates good fetal oxygenation" 
+                           FontSize="12" 
+                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                           Opacity="0.8" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Accelerations -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Accelerations" FontSize="18" FontAttributes="Bold" />
+
+                    <CheckBox x:Name="AccelerationsCheckBox"
+                              IsChecked="{Binding Accelerations}"
+                              Color="#4CAF50" />
+                    <Label Text="Accelerations present (reassuring sign)"
+                           VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAccelerationsLabelTapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                    <VerticalStackLayout IsVisible="{Binding Accelerations}" Spacing="10">
+                        <Label Text="Number of accelerations in 10 minutes:" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        <Stepper Value="{Binding AccelerationCount}"
+                                 Minimum="0"
+                                 Maximum="10"
+                                 Increment="1" />
+                        <Label Text="{Binding AccelerationCount}" 
+                               HorizontalOptions="Center"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Monitoring Method -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Monitoring Method" FontSize="18" FontAttributes="Bold" />
+
+                    <Picker SelectedItem="{Binding MonitoringMethod}"
+                            Title="Select monitoring method">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Intermittent auscultation</x:String>
+                                <x:String>Doppler ultrasound</x:String>
+                                <x:String>Continuous CTG (external)</x:String>
+                                <x:String>Continuous CTG (internal)</x:String>
+                                <x:String>Fetal scalp electrode</x:String>
+                                <x:String>Handheld Doppler</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+
+                    <!-- Quality of Signal -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Signal Quality" FontSize="14" FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                            <RadioButton Grid.Column="0" 
+                                         Content="Poor"
+                                         GroupName="signalquality"
+                                         IsChecked="{Binding SignalQualityPoor}" />
+                            <RadioButton Grid.Column="1" 
+                                         Content="Adequate"
+                                         GroupName="signalquality"
+                                         IsChecked="{Binding SignalQualityAdequate}" />
+                            <RadioButton Grid.Column="2" 
+                                         Content="Excellent"
+                                         GroupName="signalquality"
+                                         IsChecked="{Binding SignalQualityExcellent}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Overall Pattern Assessment -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Overall Pattern Assessment" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <Border Grid.Column="0" 
+                                BackgroundColor="{Binding PatternReassuring, Converter={StaticResource BoolToColorConverter}}"
+                                Padding="10"
+                                StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <RadioButton Content="Reassuring"
+                                             GroupName="pattern"
+                                             IsChecked="{Binding PatternReassuring}"
+                                             TextColor="White" />
+                                <Label Text="Normal baseline, moderate variability, accelerations present" 
+                                       FontSize="10" 
+                                       TextColor="White" 
+                                       IsVisible="{Binding PatternReassuring}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Column="1" 
+                                BackgroundColor="{Binding PatternNonReassuring, Converter={StaticResource BoolToOrangeConverter}}"
+                                Padding="10"
+                                StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <RadioButton Content="Non-reassuring"
+                                             GroupName="pattern"
+                                             IsChecked="{Binding PatternNonReassuring}"
+                                             TextColor="White" />
+                                <Label Text="Requires increased monitoring" 
+                                       FontSize="10" 
+                                       TextColor="White" 
+                                       IsVisible="{Binding PatternNonReassuring}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Column="2" 
+                                BackgroundColor="{Binding PatternAbnormal, Converter={StaticResource BoolToRedConverter}}"
+                                Padding="10"
+                                StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <RadioButton Content="Abnormal"
+                                             GroupName="pattern"
+                                             IsChecked="{Binding PatternAbnormal}"
+                                             TextColor="White" />
+                                <Label Text="Immediate intervention may be required" 
+                                       FontSize="10" 
+                                       TextColor="White" 
+                                       IsVisible="{Binding PatternAbnormal}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Clinical Notes -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Clinical Notes" FontSize="18" FontAttributes="Bold" />
+                    <Editor Text="{Binding Notes}"
+                            Placeholder="Additional observations, maternal position, fetal movements..."
+                            MinimumHeightRequest="100"
+                            AutoSize="TextChanges" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Recorded By -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Recorded By" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                    <Entry Text="{Binding RecordedBy}" 
+                           Placeholder="Staff name" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,40">
+                <Button Grid.Column="0"
+                        Text="Cancel"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+
+                <Button Grid.Column="1"
+                        Text="Save Assessment"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

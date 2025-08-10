@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.AssessmentPlanModalPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:fonts="clr-namespace:Fonts"
+             Title="Assessment &amp; Plan">
+
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="{AppThemeBinding Light=#2196F3, Dark=#1565C0}" />
+    </ContentPage.Behaviors>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Header -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Label Grid.Column="0"
+                           Text="&#xE8F4;" 
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="32"
+                           TextColor="{AppThemeBinding Light=#1976D2, Dark=White}"
+                           VerticalOptions="Center" />
+
+                    <VerticalStackLayout Grid.Column="1" Margin="15,0" VerticalOptions="Center">
+                        <Label Text="Assessment &amp; Plan" FontSize="20" FontAttributes="Bold" />
+                        <Label Text="{Binding PatientName}" FontSize="16" Opacity="0.8" />
+                        <Label Text="{Binding LaborDuration, StringFormat='Labor duration: {0}'}" FontSize="14" Opacity="0.7" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
+                        <Label Text="{Binding CurrentTime, StringFormat='{0:HH:mm}'}" 
+                               FontSize="16" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding CurrentDate, StringFormat='{0:dd/MM/yyyy}'}" 
+                               FontSize="12"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Quick Assessment Indicators -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Quick Assessment Overview" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <!-- Labor Progress -->
+                        <Border Grid.Column="0" 
+                                BackgroundColor="{Binding LaborProgressColor}"
+                                Padding="10"
+                                StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout HorizontalOptions="Center">
+                                <Label Text="&#xE916;" 
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                       FontSize="24"
+                                       TextColor="White"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Labor" FontSize="12" TextColor="White" HorizontalOptions="Center" />
+                                <Label Text="{Binding LaborProgressStatus}" FontSize="10" TextColor="White" HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Fetal Wellbeing -->
+                        <Border Grid.Column="1" 
+                                BackgroundColor="{Binding FetalWellbeingColor}"
+                                Padding="10"
+                                StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout HorizontalOptions="Center">
+                                <Label Text="&#xE95E;" 
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                       FontSize="24"
+                                       TextColor="White"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Fetal" FontSize="12" TextColor="White" HorizontalOptions="Center" />
+                                <Label Text="{Binding FetalWellbeingStatus}" FontSize="10" TextColor="White" HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Maternal Condition -->
+                        <Border Grid.Column="2" 
+                                BackgroundColor="{Binding MaternalConditionColor}"
+                                Padding="10"
+                                StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout HorizontalOptions="Center">
+                                <Label Text="&#xE77B;" 
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                       FontSize="24"
+                                       TextColor="White"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Maternal" FontSize="12" TextColor="White" HorizontalOptions="Center" />
+                                <Label Text="{Binding MaternalConditionStatus}" FontSize="10" TextColor="White" HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Detailed Assessment -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="20">
+                    <Label Text="Detailed Assessment" FontSize="18" FontAttributes="Bold" />
+
+                    <!-- Labor Progress -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Labor Progress" FontSize="16" FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                            <RadioButton Grid.Column="0" 
+                                         Content="Normal"
+                                         GroupName="laborprogress"
+                                         IsChecked="{Binding LaborProgressNormal}" />
+                            <RadioButton Grid.Column="1" 
+                                         Content="Delayed"
+                                         GroupName="laborprogress"
+                                         IsChecked="{Binding LaborProgressDelayed}" />
+                            <RadioButton Grid.Column="2" 
+                                         Content="Rapid"
+                                         GroupName="laborprogress"
+                                         IsChecked="{Binding LaborProgressRapid}" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Fetal Wellbeing -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Fetal Wellbeing" FontSize="16" FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                            <RadioButton Grid.Column="0" 
+                                         Content="Satisfactory"
+                                         GroupName="fetalwellbeing"
+                                         IsChecked="{Binding FetalWellbeingSatisfactory}" />
+                            <RadioButton Grid.Column="1" 
+                                         Content="Concerning"
+                                         GroupName="fetalwellbeing"
+                                         IsChecked="{Binding FetalWellbeingConcerning}" />
+                            <RadioButton Grid.Column="2" 
+                                         Content="Compromised"
+                                         GroupName="fetalwellbeing"
+                                         IsChecked="{Binding FetalWellbeingCompromised}" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Maternal Condition -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Maternal Condition" FontSize="16" FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                            <RadioButton Grid.Column="0" 
+                                         Content="Stable"
+                                         GroupName="maternalcondition"
+                                         IsChecked="{Binding MaternalConditionStable}" />
+                            <RadioButton Grid.Column="1" 
+                                         Content="Concerned"
+                                         GroupName="maternalcondition"
+                                         IsChecked="{Binding MaternalConditionConcerned}" />
+                            <RadioButton Grid.Column="2" 
+                                         Content="Critical"
+                                         GroupName="maternalcondition"
+                                         IsChecked="{Binding MaternalConditionCritical}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Risk Factors -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Current Risk Factors" FontSize="18" FontAttributes="Bold" />
+                    <Editor Text="{Binding RiskFactors}"
+                            Placeholder="Document any risk factors observed during this assessment..."
+                            MinimumHeightRequest="80"
+                            AutoSize="TextChanges" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Complications -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Complications Identified" FontSize="18" FontAttributes="Bold" />
+                    <Editor Text="{Binding Complications}"
+                            Placeholder="Document any complications that have arisen..."
+                            MinimumHeightRequest="80"
+                            AutoSize="TextChanges" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Management Plan -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Management Plan" FontSize="18" FontAttributes="Bold" />
+
+                    <!-- Expected Delivery -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Expected Mode of Delivery" FontSize="14" FontAttributes="Bold" />
+                        <Picker SelectedItem="{Binding ExpectedDelivery}"
+                                Title="Select expected delivery mode">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>Normal vaginal delivery</x:String>
+                                    <x:String>Assisted vaginal delivery (forceps)</x:String>
+                                    <x:String>Assisted vaginal delivery (ventouse)</x:String>
+                                    <x:String>Elective cesarean section</x:String>
+                                    <x:String>Emergency cesarean section</x:String>
+                                    <x:String>To be determined</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                    </VerticalStackLayout>
+
+                    <!-- Management Plan Details -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Detailed Plan" FontSize="14" FontAttributes="Bold" />
+                        <Editor Text="{Binding Plan}"
+                                Placeholder="Outline the management plan including monitoring frequency, interventions, and next steps..."
+                                MinimumHeightRequest="120"
+                                AutoSize="TextChanges" />
+                    </VerticalStackLayout>
+
+                    <!-- Intervention Required -->
+                    <VerticalStackLayout Spacing="10">
+                        <CheckBox x:Name="InterventionCheckBox"
+                                  IsChecked="{Binding RequiresIntervention}"
+                                  Color="#EF5350" />
+                        <Label Text="Immediate intervention required"
+                               VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnInterventionLabelTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+
+                        <VerticalStackLayout IsVisible="{Binding RequiresIntervention}" Spacing="10">
+                            <Label Text="Intervention Details:" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Editor Text="{Binding InterventionRequired}"
+                                    Placeholder="Describe the immediate intervention required..."
+                                    MinimumHeightRequest="80"
+                                    AutoSize="TextChanges" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Next Assessment -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Next Assessment Schedule" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Next Assessment Date" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <DatePicker Date="{Binding NextAssessmentDate}" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Next Assessment Time" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <TimePicker Time="{Binding NextAssessmentTime}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Assessed By -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Assessed By" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                    <Entry Text="{Binding AssessedBy}" 
+                           Placeholder="Clinician name and designation" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,40">
+                <Button Grid.Column="0"
+                        Text="Cancel"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+
+                <Button Grid.Column="1"
+                        Text="Save Assessment"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
