@@ -1,4 +1,6 @@
-﻿namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
+﻿using System.Runtime.Versioning;
+
+namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 {
     public partial class App : Application
     {
@@ -7,64 +9,55 @@
             InitializeComponent();
         }
 
+        [SupportedOSPlatform("android21.0")]
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            var isAuthenticated = false;
-            // Here you can check if the user is authenticated
-            // For example, you might check a token or session state
+            var isAuthenticated = Preferences.Get("IsAuthenticated", false);
+
             if (isAuthenticated)
             {
-                // If authenticated, navigate to the main page
+                // If authenticated, navigate to the main shell
                 return new Window(new AppShell());
             }
-            // If not authenticated, navigate to the login page
-            // You can also use a splash screen or initial loading page here
-            // For simplicity, we will just return the AppShell
-            // In a real application, you might want to show a splash screen or loading page first
-            //return new Window(new SplashPage());
-            // For now, we will just return the AppShell directly
-            // This will be the main entry point of your application
-            // You can replace this with your actual login page or splash screen
-            return new Window(new LoginPage());   
 
-            //return new Window(new AppShell());
+            // If not authenticated, show login page
+            return new Window(new LoginPage());
         }
 
         protected override async void OnStart()
         {
             base.OnStart();
 
-            // Check authentication and navigate
-            //await CheckAuthenticationAndNavigateAsync();
+            // Initialize database if needed
+            await InitializeDatabase();
         }
 
-        private async Task CheckAuthenticationAndNavigateAsync()
+        private async Task InitializeDatabase()
         {
             try
             {
-                // Show startup page briefly
-                //await Shell.Current.GoToAsync("//startup");
+                // Check if this is first run
+                var isFirstRun = !Preferences.ContainsKey("DatabaseInitialized");
 
-                // Check authentication
-                var isAuthenticated = false;// await _authService.IsAuthenticatedAsync();
-
-                // Small delay for better UX
-                await Task.Delay(1500);
-
-                if (isAuthenticated)
+                if (isFirstRun)
                 {
-                    await Shell.Current.GoToAsync("//main");
-                }
-                else
-                {
-                    await Shell.Current.GoToAsync("//login");
+                    // Initialize with sample data if needed
+                    var serviceProvider = Handler?.MauiContext?.Services;
+                    if (serviceProvider != null)
+                    {
+                        var seedService = serviceProvider.GetService<SeedDataService>();
+                        if (seedService != null)
+                        {
+                            await seedService.LoadSamplePartographData();
+                        }
+                    }
+
+                    Preferences.Set("DatabaseInitialized", true);
                 }
             }
             catch (Exception ex)
             {
-                // Log error and navigate to login
-                System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
-                await Shell.Current.GoToAsync("//login");
+                System.Diagnostics.Debug.WriteLine($"Database initialization error: {ex.Message}");
             }
         }
 

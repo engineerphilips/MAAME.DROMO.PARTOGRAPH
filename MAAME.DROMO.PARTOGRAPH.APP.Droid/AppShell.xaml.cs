@@ -17,23 +17,30 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 
         private static void RegisterRoutes()
         {
-            //Routing.RegisterRoute("splash", typeof(SplashPage));
+            // Authentication routes
             Routing.RegisterRoute("login", typeof(LoginPage));
-            Routing.RegisterRoute("main", typeof(MainPage));
+
+            // Main routes
+            Routing.RegisterRoute("home", typeof(HomePage));
+            Routing.RegisterRoute("pendingpatients", typeof(PendingPatientsPage));
+            Routing.RegisterRoute("activepatients", typeof(ActivePatientsPage));
+            Routing.RegisterRoute("completedpatients", typeof(CompletedPatientsPage));
+
+            // Patient management routes
+            Routing.RegisterRoute("patient", typeof(PatientDetailPage));
+            Routing.RegisterRoute("newpatient", typeof(PatientDetailPage));
+
+            // Partograph routes
+            Routing.RegisterRoute("partograph", typeof(PartographPage));
+            Routing.RegisterRoute("partographentry", typeof(PartographEntryPage));
+            Routing.RegisterRoute("vitalsigns", typeof(VitalSignsPage));
+            //Routing.RegisterRoute("medicalnote", typeof(MedicalNotePage));
+
+            // Settings and profile routes
+            Routing.RegisterRoute("settings", typeof(SettingsPage));
+            //Routing.RegisterRoute("profile", typeof(ProfilePage));
             //Routing.RegisterRoute("about", typeof(AboutPage));
-            //Routing.RegisterRoute("signup", typeof(SignUpPage));
-            //Routing.RegisterRoute("forgotpassword", typeof(ForgotPasswordPage));
-            //Routing.RegisterRoute("patient", typeof(PatientPage));
-            //Routing.RegisterRoute("patientmonitoring", typeof(PatientMonitoringPage));
-
-            //Routing.RegisterRoute("PatientDetails", typeof(PatientDetailsPage));
-            //Routing.RegisterRoute("AddPatient", typeof(AddPatientPage));
-            //Routing.RegisterRoute("EditProfile", typeof(EditProfilePage));
-            //Routing.RegisterRoute("Settings", typeof(SettingsPage));
-            //Routing.RegisterRoute("PartographForm", typeof(PartographFormPage));
-            //Routing.RegisterRoute("MedicalHistory", typeof(MedicalHistoryPage));
         }
-
 
         public static async Task DisplaySnackbarAsync(string message)
         {
@@ -41,11 +48,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 
             var snackbarOptions = new SnackbarOptions
             {
-                BackgroundColor = Color.FromArgb("#FF3300"),
+                BackgroundColor = Color.FromArgb("#2196F3"),
                 TextColor = Colors.White,
                 ActionButtonTextColor = Colors.Yellow,
-                CornerRadius = new CornerRadius(0),
-                Font = Microsoft.Maui.Font.SystemFontOfSize(18),
+                CornerRadius = new CornerRadius(8),
+                Font = Microsoft.Maui.Font.SystemFontOfSize(16),
                 ActionButtonFont = Microsoft.Maui.Font.SystemFontOfSize(14)
             };
 
@@ -60,9 +67,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             if (OperatingSystem.IsWindows())
                 return;
 
-            var toast = Toast.Make(message, textSize: 18);
+            var toast = Toast.Make(message, textSize: 16);
 
-            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
             await toast.Show(cts.Token);
         }
 

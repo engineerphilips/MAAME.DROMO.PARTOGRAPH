@@ -50,4 +50,20 @@
     <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
     <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
     <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
+
+
+    <!-- Labor Status Colors -->
+    <Color x:Key="PendingColor">#FFA726</Color>
+    <Color x:Key="ActiveColor">#66BB6A</Color>
+    <Color x:Key="CompletedColor">#42A5F5</Color>
+    <Color x:Key="EmergencyColor">#EF5350</Color>
+
+    <!-- Medical Indicators -->
+    <Color x:Key="NormalFHR">#66BB6A</Color>
+    <Color x:Key="BorderlineFHR">#FFA726</Color>
+    <Color x:Key="AbnormalFHR">#EF5350</Color>
+
+    <!-- Alert Colors -->
+    <Color x:Key="AlertLine">#FFA726</Color>
+    <Color x:Key="ActionLine">#EF5350</Color>
 </ResourceDictionary>

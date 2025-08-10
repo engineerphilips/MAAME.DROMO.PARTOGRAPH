@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PartographEntryPage"             
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="New Partograph Entry">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Patient Info Header -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="{Binding PatientName}" FontSize="20" FontAttributes="Bold" />
+                    <Label Text="{Binding PatientInfo}" FontSize="14" Opacity="0.8" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Time Recording -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Date" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        <DatePicker Date="{Binding RecordedDate}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Time" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        <TimePicker Time="{Binding RecordedTime}" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Cervical Progress -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Cervical Progress" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="15" ColumnSpacing="15">
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                            <Label Text="Cervical Dilation (cm)" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Slider Minimum="0" Maximum="10" 
+                                    Value="{Binding CervicalDilation}"
+                                    ThumbColor="#2196F3"
+                                    MinimumTrackColor="#2196F3"
+                                    MaximumTrackColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" />
+                            <Label Text="{Binding CervicalDilation, StringFormat='{0:F1} cm'}" 
+                                   HorizontalOptions="Center"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="#2196F3" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                            <Label Text="Descent of Head" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Picker SelectedItem="{Binding DescentOfHead}">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>-3</x:String>
+                                        <x:String>-2</x:String>
+                                        <x:String>-1</x:String>
+                                        <x:String>0</x:String>
+                                        <x:String>+1</x:String>
+                                        <x:String>+2</x:String>
+                                        <x:String>+3</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                            <Label Text="Moulding" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Picker SelectedItem="{Binding Moulding}">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>None</x:String>
+                                        <x:String>+</x:String>
+                                        <x:String>++</x:String>
+                                        <x:String>+++</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                            <Label Text="Caput" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Picker SelectedItem="{Binding Caput}">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>None</x:String>
+                                        <x:String>+</x:String>
+                                        <x:String>++</x:String>
+                                        <x:String>+++</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Fetal Monitoring -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Fetal Monitoring" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Fetal Heart Rate (bpm)" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Entry Text="{Binding FetalHeartRate}" 
+                                   Keyboard="Numeric"
+                                   Placeholder="120-160 normal">
+                                <Entry.Behaviors>
+                                    <toolkit:NumericValidationBehavior MinimumValue="60" MaximumValue="200" />
+                                </Entry.Behaviors>
+                            </Entry>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Liquor Status" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Picker SelectedItem="{Binding LiquorStatus}">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>Clear</x:String>
+                                        <x:String>Meconium Grade I</x:String>
+                                        <x:String>Meconium Grade II</x:String>
+                                        <x:String>Meconium Grade III</x:String>
+                                        <x:String>Blood Stained</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Contractions -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Contractions" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="15">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Per 10 minutes" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Stepper Value="{Binding ContractionsPerTenMinutes}"
+                                     Minimum="0"
+                                     Maximum="5"
+                                     Increment="1" />
+                            <Label Text="{Binding ContractionsPerTenMinutes}" 
+                                   HorizontalOptions="Center"
+                                   FontSize="18"
+                                   FontAttributes="Bold" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Duration (seconds)" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Entry Text="{Binding ContractionDuration}" 
+                                   Keyboard="Numeric"
+                                   Placeholder="20-60">
+                                <Entry.Behaviors>
+                                    <toolkit:NumericValidationBehavior MinimumValue="0" MaximumValue="120" />
+                                </Entry.Behaviors>
+                            </Entry>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="2">
+                            <Label Text="Strength" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Picker SelectedItem="{Binding ContractionStrength}">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>Mild</x:String>
+                                        <x:String>Moderate</x:String>
+                                        <x:String>Strong</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Medical Interventions -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Medical Interventions" FontSize="18" FontAttributes="Bold" />
+
+                    <VerticalStackLayout>
+                        <Label Text="Medications Given" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        <Entry Text="{Binding MedicationsGiven}" 
+                               Placeholder="e.g., Epidural, Pethidine" />
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Oxytocin Units" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Entry Text="{Binding OxytocinUnits}" 
+                                   Placeholder="mU/min" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="IV Fluids" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Entry Text="{Binding IVFluids}" 
+                                   Placeholder="Type and rate" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Clinical Notes -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Clinical Notes" FontSize="18" FontAttributes="Bold" />
+
+                    <Editor Text="{Binding Notes}"
+                            Placeholder="Additional observations or concerns..."
+                            MinimumHeightRequest="100"
+                            AutoSize="TextChanges" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Recorded By -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Recorded By" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                    <Entry Text="{Binding RecordedBy}" 
+                           Placeholder="Staff name" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,40">
+                <Button Grid.Column="0"
+                        Text="Cancel"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+
+                <Button Grid.Column="1"
+                        Text="Save Entry"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

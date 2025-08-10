@@ -3,48 +3,170 @@
     x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns:pages="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:sfSegment="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:fonts="clr-namespace:Fonts"
     Shell.FlyoutBehavior="Flyout"
-    Title="MAAME.DROMO.PARTOGRAPH.APP.Droid">
+    Title="Partograph Monitor">
 
-    <ShellContent
-        Title="Dashboard"
-        Icon="{StaticResource IconDashboard}"
-        ContentTemplate="{DataTemplate pages:MainPage}"
-        Route="main" />
+    <Shell.Resources>
+        <ResourceDictionary>
+            <Style x:Key="BaseStyle" TargetType="Element">
+                <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light=#2196F3, Dark=#1565C0}" />
+                <Setter Property="Shell.ForegroundColor" Value="White" />
+                <Setter Property="Shell.TitleColor" Value="White" />
+                <Setter Property="Shell.DisabledColor" Value="#B4FFFFFF" />
+                <Setter Property="Shell.UnselectedColor" Value="#95FFFFFF" />
+                <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E1E1E}" />
+                <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}" />
+                <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light=#666666, Dark=#999999}" />
+                <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}" />
+            </Style>
 
-    <ShellContent
-        Title="Login"
-        Icon="{StaticResource IconDashboard}"
-        ContentTemplate="{DataTemplate pages:LoginPage}"
-        Route="login" />
+            <Style TargetType="TabBar" BasedOn="{StaticResource BaseStyle}" />
+            <Style TargetType="FlyoutItem" BasedOn="{StaticResource BaseStyle}" />
+        </ResourceDictionary>
+    </Shell.Resources>
 
-    <ShellContent
-        Title="Projects"
-        Icon="{StaticResource IconProjects}"
-        ContentTemplate="{DataTemplate pages:ProjectListPage}"
-        Route="projects" />
+    <!-- Flyout Header -->
+    <Shell.FlyoutHeader>
+        <Grid HeightRequest="200" BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1565C0}">
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="{AppThemeBinding Light=#42A5F5, Dark=#1976D2}" Offset="0.0" />
+                    <GradientStop Color="{AppThemeBinding Light=#1E88E5, Dark=#1565C0}" Offset="1.0" />
+                </LinearGradientBrush>
+            </Grid.Background>
 
-    <ShellContent
-        Title="Manage Meta"
-        Icon="{StaticResource IconMeta}"
-        ContentTemplate="{DataTemplate pages:ManageMetaPage}"
-        Route="manage" />
+            <VerticalStackLayout VerticalOptions="Center" Padding="20">
+                <Border WidthRequest="80" 
+                        HeightRequest="80" 
+                        BackgroundColor="White"
+                        HorizontalOptions="Center">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="40" />
+                    </Border.StrokeShape>
+                    <Label Text="&#xE95E;" 
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="40"
+                           TextColor="#2196F3"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
 
+                <Label Text="Maame.Dromo" 
+                       TextColor="White" 
+                       FontSize="20" 
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       Margin="0,10,0,0" />
+
+                <Label Text="Partograph Management System" 
+                       TextColor="White" 
+                       FontSize="14"
+                       Opacity="0.9"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <!-- Main Navigation -->
+    <FlyoutItem Title="Dashboard" Icon="{x:Static fonts:FluentUI.home_16_regular}">
+        <ShellContent Title="Home" 
+                      ContentTemplate="{DataTemplate pages:HomePage}"
+                      Route="home" />
+    </FlyoutItem>
+    <!--FontImagefonts:FluentUI.FontFamily, Glyph=&#xE77B;, Color=White-->
+    <FlyoutItem Title="Patients" Icon="{x:Static fonts:FluentUI.patient_20_regular}">
+        <Tab Title="Pre-Labor" >
+            <ShellContent Title="Pre-Labor"
+                          ContentTemplate="{DataTemplate pages:PendingPatientsPage}"
+                          Route="pendingpatients" />
+            <!--Icon="{FontImagefonts:FluentUI.FontFamily, Glyph=&#xE73E;, Color={AppThemeBinding Light=#FFA726, Dark=#FFB74D}}"-->
+        </Tab>
+
+        <Tab Title="Active" >
+            <ShellContent Title="Active Labor"
+                          ContentTemplate="{DataTemplate pages:ActivePatientsPage}"
+                          Route="activepatients" />
+            <!--Icon="{FontImagefonts:FluentUI.FontFamily, Glyph=&#xE8E7;, Color={AppThemeBinding Light=#66BB6A, Dark=#81C784}}"-->
+        </Tab>
+
+        <Tab Title="Delivered">
+            <ShellContent Title="Delivered"
+                          ContentTemplate="{DataTemplate pages:CompletedPatientsPage}"
+                          Route="completedpatients" />
+            <!--Icon="{FontImagefonts:FluentUI.FontFamily, Glyph=&#xE73A;, Color={AppThemeBinding Light=#42A5F5, Dark=#64B5F6}}"-->
+        </Tab>
+    </FlyoutItem>
+    <!--FontImagefonts:FluentUI.FontFamily, Glyph=&#xE9F9;, Color=White-->
+    <FlyoutItem Title="Reports" Icon="{x:Static fonts:FluentUI.list_16_regular}">
+        <ShellContent Title="Reports"
+                      ContentTemplate="{DataTemplate pages:ReportsPage}"
+                      Route="reports" />
+    </FlyoutItem>
+    <!--FontImagefonts:FluentUI.FontFamily, Glyph=&#xE713;, Color=White-->
+    <FlyoutItem Title="Settings" Icon="{x:Static fonts:FluentUI.settings_16_regular}">
+        <ShellContent Title="Settings"
+                      ContentTemplate="{DataTemplate pages:SettingsPage}"
+                      Route="settings" />
+    </FlyoutItem>
+
+    <!-- Flyout Footer with Theme Switcher -->
     <Shell.FlyoutFooter>
-        <Grid Padding="15">
-            <sf:SfSegmentedControl x:Name="ThemeSegmentedControl" 
-                VerticalOptions="Center" HorizontalOptions="Center" SelectionChanged="SfSegmentedControl_SelectionChanged"
-                SegmentWidth="40" SegmentHeight="40">
-                <sf:SfSegmentedControl.ItemsSource>
-                    <x:Array Type="{x:Type sf:SfSegmentItem}">
-                        <sf:SfSegmentItem ImageSource="{StaticResource IconLight}"/>
-                        <sf:SfSegmentItem ImageSource="{StaticResource IconDark}"/>
-                    </x:Array>
-                </sf:SfSegmentedControl.ItemsSource>
-            </sf:SfSegmentedControl>
+        <Grid Padding="20" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Theme Switcher -->
+            <VerticalStackLayout Grid.Row="0" Spacing="10">
+                <Label Text="Theme" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                <sfSegment:SfSegmentedControl x:Name="ThemeSegmentedControl"
+                                             SelectionChanged="SfSegmentedControl_SelectionChanged"
+                                             CornerRadius="10"
+                                             HeightRequest="40">
+
+                    <!--ItemsSource="{Binding ThemeOptions}"-->
+                    <sfSegment:SfSegmentedControl.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Light</x:String>
+                            <x:String>Dark</x:String>
+                        </x:Array>
+                    </sfSegment:SfSegmentedControl.ItemsSource>
+                </sfSegment:SfSegmentedControl>
+            </VerticalStackLayout>
+
+            <!-- Divider -->
+            <BoxView Grid.Row="1" 
+                     HeightRequest="1" 
+                     Color="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                     Margin="0,15" />
+
+            <!-- User Info & Logout -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Dr. Phil" 
+                           FontAttributes="Bold" 
+                           FontSize="14" />
+                    <Label Text="Labor Ward Supervisor" 
+                           FontSize="12" 
+                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                </VerticalStackLayout>
+
+                <Button Grid.Column="1"
+                        Text="&#xE7E8;"
+                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                        Command="{Binding LogoutCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="#EF5350"
+                        WidthRequest="40"
+                        HeightRequest="40"
+                        ToolTipProperties.Text="Logout" />
+            </Grid>
         </Grid>
     </Shell.FlyoutFooter>
-
 </Shell>
