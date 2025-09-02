@@ -6,4 +6,9 @@ public partial class BaselineFHRModalPage : ContentPage
 	{
 		InitializeComponent();
 	}
+
+    private void OnAccelerationsLabelTapped(object sender, TappedEventArgs e)
+    {
+
+    }
 }

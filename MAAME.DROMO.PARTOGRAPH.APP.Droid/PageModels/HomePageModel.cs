@@ -45,7 +45,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _currentShift = GetCurrentShift();
 
         [ObservableProperty]
-        private string _staffName = "Dr. Sarah Johnson"; // From authentication
+        private string _staffName = "Dr. Phil"; // From authentication
 
         public HomePageModel(PatientRepository patientRepository, ModalErrorHandler errorHandler)
         {
@@ -80,7 +80,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 // Prepare chart data
                 var chartData = new List<CategoryChartData>
                 {
-                    new("Pre-Labor", DashboardStats.PendingLabor),
+                    new("Pre-Laboor", DashboardStats.PendingLabor),
                     new("Active Labor", DashboardStats.ActiveLabor),
                     new("Delivered Today", DashboardStats.CompletedToday),
                     new("Emergency", DashboardStats.EmergencyCases)

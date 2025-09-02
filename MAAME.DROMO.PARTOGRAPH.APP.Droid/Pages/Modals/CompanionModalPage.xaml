@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.CompanionModalPage"
+             Title="Birth Companion"
+             BackgroundColor="#F5F5F5">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Header -->
+            <Border BackgroundColor="#E91E63" Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Label Text="Birth Companion Information" 
+                       TextColor="White" 
+                       FontSize="18" 
+                       FontAttributes="Bold"
+                       HorizontalTextAlignment="Center"/>
+            </Border>
+
+            <!-- Recording Time -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Recording Time" FontAttributes="Bold"/>
+                    <DatePicker Date="{Binding RecordingDate}" />
+                    <TimePicker Time="{Binding RecordingTime}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Companion Name -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Companion Name" FontAttributes="Bold"/>
+                    <Entry Text="{Binding CompanionName}" 
+                           Placeholder="Enter companion's name"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Relationship -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Relationship to Patient" FontAttributes="Bold"/>
+                    <Picker ItemsSource="{Binding RelationshipOptions}"
+                            SelectedItem="{Binding SelectedRelationship}"/>
+                    <Entry Text="{Binding OtherRelationship}" 
+                           Placeholder="Specify if other..."
+                           IsVisible="{Binding ShowOtherRelationship}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Support Type -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Type of Support Provided" FontAttributes="Bold"/>
+                    <CheckBox IsChecked="{Binding EmotionalSupport}"/>
+                    <Label Text="Emotional Support" Margin="30,0,0,0"/>
+                    <CheckBox IsChecked="{Binding PhysicalSupport}"/>
+                    <Label Text="Physical Support" Margin="30,0,0,0"/>
+                    <CheckBox IsChecked="{Binding Advocacy}"/>
+                    <Label Text="Advocacy" Margin="30,0,0,0"/>
+                    <CheckBox IsChecked="{Binding InformationSharing}"/>
+                    <Label Text="Information Sharing" Margin="30,0,0,0"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Presence -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Presence During" FontAttributes="Bold"/>
+                    <HorizontalStackLayout>
+                        <CheckBox IsChecked="{Binding PresentDuringLabor}" />
+                        <Label Text="Labor" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout>
+                        <CheckBox IsChecked="{Binding PresentDuringDelivery}" />
+                        <Label Text="Delivery" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Contact Number -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Contact Number" FontAttributes="Bold"/>
+                    <Entry Text="{Binding ContactNumber}" 
+                           Placeholder="Enter phone number"
+                           Keyboard="Telephone"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Role -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Specific Role/Instructions" FontAttributes="Bold"/>
+                    <Editor Text="{Binding Role}" 
+                            Placeholder="Describe companion's role..."
+                            HeightRequest="80"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Notes -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Additional Notes" FontAttributes="Bold"/>
+                    <Editor Text="{Binding Notes}" 
+                            Placeholder="Any other observations..."
+                            HeightRequest="80"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Text="Cancel" 
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="#9E9E9E"
+                        TextColor="White"
+                        Grid.Column="0"/>
+                <Button Text="Save" 
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        Grid.Column="1"/>
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

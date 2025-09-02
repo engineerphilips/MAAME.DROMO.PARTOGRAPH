@@ -3,9 +3,11 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
@@ -68,12 +70,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             if (count == 0)
             {
                 var insertCmd = connection.CreateCommand();
+                //insertCmd.CommandText = @"
+                //INSERT INTO Staff (Name, StaffID, Email, Role, Department, Password, IsActive) VALUES (@Name, @StaffID, @Email, @Role, @Department, @Password, @IsActive);";
+
                 insertCmd.CommandText = @"
-                INSERT INTO Staff (Name, StaffID, Email, Role, Department, Password, IsActive)
-                VALUES 
-                ('Dr. Sarah Johnson', 'DOC001', 'sarah.johnson@hospital.com', 'Doctor', 'Labor Ward', 'password123', 1),
-                ('Midwife Emma Brown', 'MW001', 'emma.brown@hospital.com', 'Midwife', 'Labor Ward', 'password123', 1),
-                ('Nurse David Wilson', 'NUR001', 'david.wilson@hospital.com', 'Nurse', 'Labor Ward', 'password123', 1);";
+                INSERT INTO Staff (Name, StaffID, Email, Role, Department, Password, IsActive) VALUES ('Super Administrator', 'SUPER', 'super@emperorsoftware.co', 'SUPER-ADMIN', 'Labor Ward', 'system.password', 1),
+                ('Midwife', 'MIDWIFE', 'midwife@emperorsoftware.co', 'MIDWIFE', 'Labor Ward', 'system.password', 1),
+                ('Administrator', 'ADMINISTRATOR', 'administrator@emperorsoftware.c', 'ADMIN', 'Labor Ward', 'system.password', 1);";
                 await insertCmd.ExecuteNonQueryAsync();
             }
         }

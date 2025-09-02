@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.CervixDilatationModalPage"
+             Title="Cervix Dilatation"
+             BackgroundColor="#F5F5F5">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Header -->
+            <Border BackgroundColor="#00BCD4" Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <Label Text="Cervical Dilatation Assessment" 
+                       TextColor="White" 
+                       FontSize="18" 
+                       FontAttributes="Bold"
+                       HorizontalTextAlignment="Center"/>
+            </Border>
+
+            <!-- Recording Time -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Recording Time" FontAttributes="Bold"/>
+                    <DatePicker Date="{Binding RecordingDate}" />
+                    <TimePicker Time="{Binding RecordingTime}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Dilatation -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Dilatation (cm)" FontAttributes="Bold"/>
+                    <Slider Value="{Binding Dilatation}" 
+                            Minimum="0" Maximum="10"
+                            ValueChanged="OnDilatationChanged"/>
+                    <Label Text="{Binding DilatationDisplay}" 
+                           HorizontalTextAlignment="Center"
+                           FontSize="36"
+                           FontAttributes="Bold"
+                           TextColor="{Binding DilatationColor}"/>
+                    <Label Text="{Binding StageDescription}" 
+                           HorizontalTextAlignment="Center"
+                           FontAttributes="Bold"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Fully Dilated -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout>
+                    <CheckBox IsChecked="{Binding FullyDilated}" />
+                    <Label Text="Fully Dilated (10cm)" VerticalOptions="Center" FontAttributes="Bold"/>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Effacement -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Effacement (%)" FontAttributes="Bold"/>
+                    <Slider Value="{Binding Effacement}" 
+                            Minimum="0" Maximum="100"/>
+                    <Label Text="{Binding EffacementDisplay}" 
+                           HorizontalTextAlignment="Center"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Consistency -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Cervical Consistency" FontAttributes="Bold"/>
+                    <RadioButton Content="Firm" GroupName="Consistency" IsChecked="{Binding IsFirm}"/>
+                    <RadioButton Content="Medium" GroupName="Consistency" IsChecked="{Binding IsMedium}"/>
+                    <RadioButton Content="Soft" GroupName="Consistency" IsChecked="{Binding IsSoft}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Position -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Cervical Position" FontAttributes="Bold"/>
+                    <RadioButton Content="Posterior" GroupName="Position" IsChecked="{Binding IsPosterior}"/>
+                    <RadioButton Content="Mid-position" GroupName="Position" IsChecked="{Binding IsMid}"/>
+                    <RadioButton Content="Anterior" GroupName="Position" IsChecked="{Binding IsAnterior}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Application -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Application to Presenting Part" FontAttributes="Bold"/>
+                    <RadioButton Content="Well Applied" GroupName="Application" IsChecked="{Binding IsWellApplied}"/>
+                    <RadioButton Content="Loosely Applied" GroupName="Application" IsChecked="{Binding IsLooselyApplied}"/>
+                    <RadioButton Content="Not Applied" GroupName="Application" IsChecked="{Binding IsNotApplied}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Progress Assessment -->
+            <Border BackgroundColor="{Binding ProgressColor}" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <Label Text="{Binding ProgressMessage}" 
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       HorizontalTextAlignment="Center"/>
+            </Border>
+
+            <!-- Notes -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Additional Notes" FontAttributes="Bold"/>
+                    <Editor Text="{Binding Notes}" 
+                            Placeholder="Any other observations..."
+                            HeightRequest="80"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Text="Cancel" 
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="#9E9E9E"
+                        TextColor="White"
+                        Grid.Column="0"/>
+                <Button Text="Save" 
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        Grid.Column="1"/>
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

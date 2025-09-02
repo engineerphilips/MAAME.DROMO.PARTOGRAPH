@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Maui;
+using FluentIcons.Maui;
+using MauiIcons.Fluent;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 using System.Runtime.Versioning;
 
@@ -10,12 +13,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
     {
         public static MauiApp CreateMauiApp()
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mzk1NjY2MEAzMzMwMmUzMDJlMzAzYjMzMzAzYklHdmdHUCs1WTJOR05kNGp2Y1NLTnZFa3BBZTVFMnZDMW1TTDl2cGQrTlE9");
+
             var builder = MauiApp.CreateBuilder();
 
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
                 .ConfigureSyncfusionToolkit()
+                .ConfigureSyncfusionCore()
+                .UseFluentMauiIcons()
                 .ConfigureMauiHandlers(handlers =>
                 {
 #if IOS || MACCATALYST
@@ -28,6 +35,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
                     fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
+                    fonts.AddFont("MauiMaterialAssets.ttf", "MaterialAssets");
                 });
 
 #if DEBUG
@@ -35,7 +43,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
-            // Register Repositories
+            // Register Repositories                        
+            builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
             builder.Services.AddSingleton<PatientRepository>();
             builder.Services.AddSingleton<PartographEntryRepository>();
             builder.Services.AddSingleton<VitalSignRepository>();
@@ -51,9 +60,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             // Register Services
             builder.Services.AddSingleton<SeedDataService>();
             builder.Services.AddSingleton<ModalErrorHandler>();
-            builder.Services.AddSingleton<AuthenticationService>();
+            //builder.Services.AddSingleton<AuthenticationService>();
 
             // Register PageModels
+            builder.Services.AddSingleton<AppShellModel>();
             builder.Services.AddSingleton<LoginPageModel>();
             builder.Services.AddSingleton<HomePageModel>();
             builder.Services.AddSingleton<PendingPatientsPageModel>();

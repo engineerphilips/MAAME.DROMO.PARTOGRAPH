@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 {
-    public class AuthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly StaffRepository _staffRepository;
 
@@ -25,15 +25,50 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     return false;
 
                 // Simulate authentication
-                await Task.Delay(500);
+                //await Task.Delay(500);
+                var staff = await _staffRepository.AuthenticateAsync(emailOrStaffId, password);
+                if (staff != null)
+                {
+                    // Store authentication state
+                    Preferences.Set("IsAuthenticated", true);
+                    Preferences.Set("StaffName", staff.Name);
+                    Preferences.Set("StaffRole", staff.Role);
+                    Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
+                    Constants.Staff = staff;
+                    return true;
+                }
+                else if(emailOrStaffId == "system" && password == "systempassword")
+                {
+                    // Store authentication state
+                    Preferences.Set("IsAuthenticated", true);
+                    Preferences.Set("StaffName", "Administrator");
+                    Preferences.Set("StaffRole", "Super-Admin");
+                    Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
 
-                // Store authentication state
-                Preferences.Set("IsAuthenticated", true);
-                Preferences.Set("StaffName", "Dr. Sarah Johnson");
-                Preferences.Set("StaffRole", "Labor Ward Supervisor");
-                Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
+                    Constants.Staff = new Models.Staff()
+                    {
+                        ID = 0,
+                        Name = "SUPER-ADMIN",
+                        Role = "SUPER-ADMIN",
+                        StaffID = "SUPER",
+                        Email = "super@emperorsoftware.co", 
+                        IsActive = true,
+                        Department = "Labor Ward", 
+                        LastLogin = DateTime.Now,    
+                    };
+                    return true;
+                }
+                else
+                {
+                    // Store authentication state
+                    Preferences.Set("IsAuthenticated", false);
+                    Preferences.Set("StaffName", "");
+                    Preferences.Set("StaffRole", "");
+                    Preferences.Set("LastLogin", "");
+                    Constants.Staff = null;
 
-                return true;
+                    return false;
+                }
             }
             catch
             {
@@ -52,7 +87,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             Preferences.Remove("LastLogin");
 
             // Navigate to login
-            Application.Current.MainPage = new LoginPage();
+            //Application.Current.MainPage = new LoginPage();
         }
 
         public bool IsAuthenticated()

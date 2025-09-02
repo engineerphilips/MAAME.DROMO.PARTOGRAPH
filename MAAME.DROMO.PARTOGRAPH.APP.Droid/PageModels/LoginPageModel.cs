@@ -11,7 +11,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public class LoginPageModel : INotifyPropertyChanged
     {
-        //private readonly IAuthenticationService _authService;
+        private readonly IAuthenticationService _authService;
         private string _email = string.Empty;
         private string _password = string.Empty;
         private bool _isBusy = false;
@@ -19,10 +19,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private bool _isPasswordVisible = false;
         private bool _hasError = false;
 
-        //IAuthenticationService authService
-        public LoginPageModel()
+        //
+        public LoginPageModel(IAuthenticationService authService)
         {
-            //_authService = authService;
+            _authService = authService;
 
             // Initialize commands
             LoginCommand = new Command(async () => await LoginAsync(), () => CanLogin());
@@ -142,7 +142,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 }
 
                 // Attempt login
-                var loginResult = true; // await _authService.LoginAsync(Email.Trim(), Password);
+                var loginResult = await _authService.LoginAsync(Email.Trim(), Password);
+                //true; // 
 
                 if (loginResult)
                 {
@@ -161,6 +162,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     Password = string.Empty;
 
                     // Navigation will be handled by AuthenticationStateChanged event
+
+                    //var serviceProvider = IPlatformApplication.Current.Services;
+                    ////await Shell.Current.GoToAsync("//main");
+                    //var appshell = serviceProvider.GetService<AppShell>();
+                    //Application.Current.MainPage = appshell;
 
                     //await Shell.Current.GoToAsync("//main");
                     Application.Current.MainPage = new AppShell();

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.ContractionsModalPage"
+             Title="Contractions"
+             BackgroundColor="#F5F5F5">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Header -->
+            <Border BackgroundColor="#9C27B0" Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Label Text="Record Contractions (Every 30 Minutes)" 
+                       TextColor="White" 
+                       FontSize="18" 
+                       FontAttributes="Bold"
+                       HorizontalTextAlignment="Center"/>
+            </Border>
+
+            <!-- Recording Time -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Recording Time" FontAttributes="Bold"/>
+                    <DatePicker Date="{Binding RecordingDate}" />
+                    <TimePicker Time="{Binding RecordingTime}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Frequency -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Frequency (per 10 minutes)" FontAttributes="Bold"/>
+                    <Stepper Value="{Binding FrequencyPer10Min}" 
+                             Minimum="0" Maximum="10" Increment="1"/>
+                    <Label Text="{Binding FrequencyDisplay}" 
+                           HorizontalTextAlignment="Center"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Duration -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Duration (seconds)" FontAttributes="Bold"/>
+                    <Entry Text="{Binding DurationSeconds}" 
+                           Placeholder="20-60 seconds typical"
+                           Keyboard="Numeric"/>
+                    <Slider Value="{Binding DurationSeconds}" 
+                            Minimum="0" Maximum="120"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Strength -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Strength" FontAttributes="Bold"/>
+                    <RadioButton Content="Mild" GroupName="Strength" IsChecked="{Binding IsMild}"/>
+                    <RadioButton Content="Moderate" GroupName="Strength" IsChecked="{Binding IsModerate}"/>
+                    <RadioButton Content="Strong" GroupName="Strength" IsChecked="{Binding IsStrong}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Regularity -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Regularity" FontAttributes="Bold"/>
+                    <RadioButton Content="Regular" GroupName="Regularity" IsChecked="{Binding IsRegular}"/>
+                    <RadioButton Content="Irregular" GroupName="Regularity" IsChecked="{Binding IsIrregular}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Palpable at Rest -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout>
+                    <CheckBox IsChecked="{Binding PalpableAtRest}" />
+                    <Label Text="Palpable at Rest (Hypertonic)" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Effect on Cervix -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Effect on Cervix" FontAttributes="Bold"/>
+                    <Picker ItemsSource="{Binding CervixEffectOptions}"
+                            SelectedItem="{Binding SelectedCervixEffect}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Coordinated -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout>
+                    <CheckBox IsChecked="{Binding Coordinated}" />
+                    <Label Text="Coordinated Contractions" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Notes -->
+            <Border BackgroundColor="White" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Additional Notes" FontAttributes="Bold"/>
+                    <Editor Text="{Binding Notes}" 
+                            Placeholder="Enter any additional observations..."
+                            HeightRequest="100"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Progress Indicator -->
+            <Border BackgroundColor="{Binding ProgressColor}" Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <Label Text="{Binding ProgressMessage}" 
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       HorizontalTextAlignment="Center"/>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Text="Cancel" 
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="#9E9E9E"
+                        TextColor="White"
+                        Grid.Column="0"/>
+                <Button Text="Save" 
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        Grid.Column="1"/>
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

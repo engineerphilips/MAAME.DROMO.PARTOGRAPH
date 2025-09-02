@@ -3,10 +3,15 @@ using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels;
 
 public partial class LoginPage : ContentPage
 {
-    public LoginPage()
+    private readonly LoginPageModel _viewModel;
+
+    public LoginPage(LoginPageModel viewModel)
     {
         InitializeComponent();
-        BindingContext = new LoginPageModel();
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
+
+        //BindingContext = new LoginPageModel();
     }
 
     protected override void OnAppearing()

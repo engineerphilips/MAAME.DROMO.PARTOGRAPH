@@ -13,15 +13,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
         protected override Window CreateWindow(IActivationState? activationState)
         {
             var isAuthenticated = Preferences.Get("IsAuthenticated", false);
+            var serviceProvider = IPlatformApplication.Current.Services;
 
             if (isAuthenticated)
             {
                 // If authenticated, navigate to the main shell
+
+                Constants.Staff = new Models.Staff()
+                {
+                    Name = Preferences.Get("StaffName", "Name"),
+                    Role = Preferences.Get("StaffRole", "Role"),
+                    StaffID = "",
+                    Email = "",
+                    IsActive = true,
+                    Department = "",
+                    LastLogin = DateTime.Now,
+                };
+
+                Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
+                //var appshell = serviceProvider.GetService<AppShell>();
                 return new Window(new AppShell());
             }
 
             // If not authenticated, show login page
-            return new Window(new LoginPage());
+            var loginPage = serviceProvider.GetService<LoginPage>();
+            return new Window(loginPage);
         }
 
         protected override async void OnStart()

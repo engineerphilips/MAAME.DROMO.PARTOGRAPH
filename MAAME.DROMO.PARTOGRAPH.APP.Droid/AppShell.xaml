@@ -5,160 +5,407 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:sfSegment="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:sfSegment="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit" 
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:fonts="clr-namespace:Fonts"
     Shell.FlyoutBehavior="Flyout"
+    Shell.FlyoutWidth="320"
+    Shell.FlyoutBackgroundColor="{AppThemeBinding Light=White, Dark=#1A1A1A}"
     Title="Partograph Monitor">
 
     <Shell.Resources>
         <ResourceDictionary>
+            <!-- Modern Base Style for Shell -->
             <Style x:Key="BaseStyle" TargetType="Element">
-                <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light=#2196F3, Dark=#1565C0}" />
-                <Setter Property="Shell.ForegroundColor" Value="White" />
-                <Setter Property="Shell.TitleColor" Value="White" />
-                <Setter Property="Shell.DisabledColor" Value="#B4FFFFFF" />
-                <Setter Property="Shell.UnselectedColor" Value="#95FFFFFF" />
+                <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1A1A1A}" />
+                <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                <Setter Property="Shell.DisabledColor" Value="{AppThemeBinding Light=#B0BEC5, Dark=#546E7A}" />
+                <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light=#78909C, Dark=#90A4AE}" />
                 <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E1E1E}" />
                 <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}" />
-                <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light=#666666, Dark=#999999}" />
+                <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light=#9E9E9E, Dark=#757575}" />
                 <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}" />
             </Style>
 
+            <!-- Modern Flyout Item Style -->
+            <Style x:Key="ModernFlyoutItemStyle" TargetType="FlyoutItem" BasedOn="{StaticResource BaseStyle}">
+                <Setter Property="Shell.ItemTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="Auto,*,Auto" 
+                                  Padding="24,16" 
+                                  BackgroundColor="Transparent">
+
+                                <!-- Icon Container -->
+                                <Border Grid.Column="0"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#2A2A2A}"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12" />
+                                    </Border.StrokeShape>
+
+                                    <Image Source="{Binding FlyoutIcon}"
+                                           WidthRequest="20"
+                                           HeightRequest="20"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+
+                                <!-- Title -->
+                                <Label Grid.Column="1"
+                                       Text="{Binding Title}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
+                                       VerticalOptions="Center"
+                                       Margin="16,0,0,0" />
+
+                                <!-- Active Indicator -->
+                                <Border Grid.Column="2"
+                                        WidthRequest="8"
+                                        HeightRequest="8"
+                                        BackgroundColor="#2196F3"
+                                        IsVisible="{Binding IsSelected}"
+                                        VerticalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="4" />
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <Style TargetType="TabBar" BasedOn="{StaticResource BaseStyle}" />
-            <Style TargetType="FlyoutItem" BasedOn="{StaticResource BaseStyle}" />
+            <Style TargetType="FlyoutItem" BasedOn="{StaticResource ModernFlyoutItemStyle}" />
         </ResourceDictionary>
     </Shell.Resources>
 
-    <!-- Flyout Header -->
+    <!-- Modern Flyout Header -->
     <Shell.FlyoutHeader>
-        <Grid HeightRequest="200" BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1565C0}">
+        <Grid HeightRequest="240" BackgroundColor="{AppThemeBinding Light=White, Dark=#1A1A1A}">
             <Grid.Background>
                 <LinearGradientBrush EndPoint="0,1">
                     <GradientStop Color="{AppThemeBinding Light=#42A5F5, Dark=#1976D2}" Offset="0.0" />
                     <GradientStop Color="{AppThemeBinding Light=#1E88E5, Dark=#1565C0}" Offset="1.0" />
                 </LinearGradientBrush>
             </Grid.Background>
+            <!-- Background Design -->
+            <!--<Border BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1565C0}"
+                    Margin="24,24,24,60">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="2" />
+                </Border.StrokeShape>
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="{AppThemeBinding Light=#42A5F5, Dark=#1976D2}" Offset="0.0" />
+                        <GradientStop Color="{AppThemeBinding Light=#1E88E5, Dark=#1565C0}" Offset="0.7" />
+                        <GradientStop Color="{AppThemeBinding Light=#1976D2, Dark=#0D47A1}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.Shadow>
+                    <Shadow Brush="#402196F3"
+                            Offset="0,8"
+                            Radius="24"
+                            Opacity="0.3" />
+                </Border.Shadow>
+            </Border>-->
 
-            <VerticalStackLayout VerticalOptions="Center" Padding="20">
-                <Border WidthRequest="80" 
-                        HeightRequest="80" 
+            <!-- Content Container -->
+            <Grid VerticalOptions="Center" Margin="24,40,24,24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- App Icon -->
+                <Border Grid.Row="0"
+                        WidthRequest="64" 
+                        HeightRequest="64" 
                         BackgroundColor="White"
                         HorizontalOptions="Center">
                     <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="40" />
+                        <RoundRectangle CornerRadius="20" />
                     </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="#20000000"
+                                Offset="0,4"
+                                Radius="12"
+                                Opacity="0.15" />
+                    </Border.Shadow>
+
                     <Label Text="&#xE95E;" 
                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                           FontSize="40"
+                           FontSize="32"
                            TextColor="#2196F3"
                            HorizontalOptions="Center"
                            VerticalOptions="Center" />
                 </Border>
 
-                <Label Text="Maame.Dromo" 
+                <!-- App Title -->
+                <Label Grid.Row="1"
+                       Text="Maame.Dromo" 
                        TextColor="White" 
-                       FontSize="20" 
+                       FontSize="24" 
                        FontAttributes="Bold"
                        HorizontalOptions="Center"
-                       Margin="0,10,0,0" />
+                       Margin="0,16,0,0" />
 
-                <Label Text="Partograph Management System" 
+                <!-- App Subtitle -->
+                <!--<Label Grid.Row="2"
+                       Text="Partograph Management System" 
                        TextColor="White" 
                        FontSize="14"
                        Opacity="0.9"
-                       HorizontalOptions="Center" />
-            </VerticalStackLayout>
+                       HorizontalOptions="Center"
+                       Margin="0,4,0,0" />-->
+
+                <!-- Version/Status Badge -->
+
+                <Border Grid.Row="3"
+                        BackgroundColor="#FFFFFF20"
+                        Padding="12,6"
+                        HorizontalOptions="Center"
+                        Margin="0,12,0,0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+
+                    <HorizontalStackLayout Spacing="6">
+
+                        <!--Label Text="&#xE735;"
+                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                               FontSize="12"
+                               TextColor="White" -->
+
+                            
+                            <Label Text="Version: v2.1" 
+                               TextColor="White" 
+                               FontSize="12"
+                               FontAttributes="Bold" />
+                    </HorizontalStackLayout>
+                </Border>
+            </Grid>
         </Grid>
     </Shell.FlyoutHeader>
 
-    <!-- Main Navigation -->
-    <FlyoutItem Title="Dashboard" Icon="{x:Static fonts:FluentUI.home_16_regular}">
+    <!-- Enhanced Navigation Items -->
+    <FlyoutItem Title="Dashboard">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
+                             Glyph="&#xE8D8;" 
+                             Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                             Size="20" />
+        </FlyoutItem.Icon>
+
         <ShellContent Title="Home" 
                       ContentTemplate="{DataTemplate pages:HomePage}"
                       Route="home" />
     </FlyoutItem>
-    <!--FontImagefonts:FluentUI.FontFamily, Glyph=&#xE77B;, Color=White-->
-    <FlyoutItem Title="Patients" Icon="{x:Static fonts:FluentUI.patient_20_regular}">
-        <Tab Title="Pre-Labor" >
+
+    <FlyoutItem Title="Patients">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
+                             Glyph="&#xE77B;" 
+                             Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                             Size="20" />
+        </FlyoutItem.Icon>
+
+        <Tab Title="Pre-Labor">
+            <Tab.Icon>
+                <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
+                                 Glyph="&#xE73E;" 
+                                 Color="{AppThemeBinding Light=#FFA726, Dark=#FFB74D}"
+                                 Size="18" />
+            </Tab.Icon>
             <ShellContent Title="Pre-Labor"
                           ContentTemplate="{DataTemplate pages:PendingPatientsPage}"
                           Route="pendingpatients" />
-            <!--Icon="{FontImagefonts:FluentUI.FontFamily, Glyph=&#xE73E;, Color={AppThemeBinding Light=#FFA726, Dark=#FFB74D}}"-->
         </Tab>
 
-        <Tab Title="Active" >
+        <Tab Title="Active">
+            <Tab.Icon>
+                <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
+                                 Glyph="&#xE8E7;" 
+                                 Color="{AppThemeBinding Light=#66BB6A, Dark=#81C784}"
+                                 Size="18" />
+            </Tab.Icon>
             <ShellContent Title="Active Labor"
                           ContentTemplate="{DataTemplate pages:ActivePatientsPage}"
                           Route="activepatients" />
-            <!--Icon="{FontImagefonts:FluentUI.FontFamily, Glyph=&#xE8E7;, Color={AppThemeBinding Light=#66BB6A, Dark=#81C784}}"-->
         </Tab>
 
         <Tab Title="Delivered">
+            <Tab.Icon>
+                <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
+                                 Glyph="&#xE73A;" 
+                                 Color="{AppThemeBinding Light=#42A5F5, Dark=#64B5F6}"
+                                 Size="18" />
+            </Tab.Icon>
             <ShellContent Title="Delivered"
                           ContentTemplate="{DataTemplate pages:CompletedPatientsPage}"
                           Route="completedpatients" />
-            <!--Icon="{FontImagefonts:FluentUI.FontFamily, Glyph=&#xE73A;, Color={AppThemeBinding Light=#42A5F5, Dark=#64B5F6}}"-->
         </Tab>
     </FlyoutItem>
-    <!--FontImagefonts:FluentUI.FontFamily, Glyph=&#xE9F9;, Color=White-->
-    <FlyoutItem Title="Reports" Icon="{x:Static fonts:FluentUI.list_16_regular}">
+
+    <FlyoutItem Title="Analytics">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
+                             Glyph="&#xE9D2;" 
+                             Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                             Size="20" />
+        </FlyoutItem.Icon>
+        <ShellContent Title="Analytics"
+                      ContentTemplate="{DataTemplate pages:AnalyticsPage}"
+                      Route="analytics" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Reports">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="MaterialAssets" 
+                             Glyph="&#xe775;" 
+                             Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                             Size="20" />
+        </FlyoutItem.Icon>
         <ShellContent Title="Reports"
                       ContentTemplate="{DataTemplate pages:ReportsPage}"
                       Route="reports" />
     </FlyoutItem>
-    <!--FontImagefonts:FluentUI.FontFamily, Glyph=&#xE713;, Color=White-->
-    <FlyoutItem Title="Settings" Icon="{x:Static fonts:FluentUI.settings_16_regular}">
+
+    <!-- Divider -->
+    <MenuFlyoutSeparator />
+
+    <FlyoutItem Title="Settings">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
+                             Glyph="&#xE713;" 
+                             Color="{AppThemeBinding Light=#757575, Dark=#BDBDBD}"
+                             Size="20" />
+        </FlyoutItem.Icon>
         <ShellContent Title="Settings"
                       ContentTemplate="{DataTemplate pages:SettingsPage}"
                       Route="settings" />
     </FlyoutItem>
 
-    <!-- Flyout Footer with Theme Switcher -->
+    <!-- Modern Flyout Footer -->
     <Shell.FlyoutFooter>
-        <Grid Padding="20" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}"
+                Padding="24,20"
+                Margin="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="0" />
+            </Border.StrokeShape>
 
-            <!-- Theme Switcher -->
-            <VerticalStackLayout Grid.Row="0" Spacing="10">
-                <Label Text="Theme" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                <sfSegment:SfSegmentedControl x:Name="ThemeSegmentedControl"
-                                             SelectionChanged="SfSegmentedControl_SelectionChanged"
-                                             CornerRadius="10"
-                                             HeightRequest="40">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="16">
 
-                    <!--ItemsSource="{Binding ThemeOptions}"-->
-                    <sfSegment:SfSegmentedControl.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>Light</x:String>
-                            <x:String>Dark</x:String>
-                        </x:Array>
-                    </sfSegment:SfSegmentedControl.ItemsSource>
-                </sfSegment:SfSegmentedControl>
-            </VerticalStackLayout>
+                <!-- Theme Switcher Section -->
+                <VerticalStackLayout Grid.Row="0" Spacing="12">
+                    <!--<HorizontalStackLayout Spacing="8">
+                        <Label Text="&#xE7F4;"
+                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                               FontSize="16"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                               VerticalOptions="Center" />
+                        <Label Text="Appearance" 
+                               FontSize="14" 
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                    </HorizontalStackLayout>-->
 
-            <!-- Divider -->
-            <BoxView Grid.Row="1" 
-                     HeightRequest="1" 
-                     Color="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                     Margin="0,15" />
+                    <sfSegment:SfSegmentedControl x:Name="ThemeSegmentedControl"
+                                                 SelectionChanged="SfSegmentedControl_SelectionChanged"
+                                                 CornerRadius="12"
+                                                 HeightRequest="44"
+                                                 BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#2A2A2A}">
 
-            <!-- User Info & Logout -->
-            <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
-                <VerticalStackLayout Grid.Column="0">
-                    <Label Text="Dr. Phil" 
-                           FontAttributes="Bold" 
-                           FontSize="14" />
-                    <Label Text="Labor Ward Supervisor" 
-                           FontSize="12" 
-                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        <!--SelectedSegmentBackgroundColor="#2196F3"
+                                                 SelectedSegmentTextColor="White"
+                                                 SegmentTextColor="{AppThemeBinding Light=#666, Dark=#AAA}"-->
+                        <sfSegment:SfSegmentedControl.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>☀️ Light</x:String>
+                                <x:String>🌙 Dark</x:String>
+                            </x:Array>
+                        </sfSegment:SfSegmentedControl.ItemsSource>
+                    </sfSegment:SfSegmentedControl>
                 </VerticalStackLayout>
 
-                <Button Grid.Column="1"
-                        Text="&#xE7E8;"
+                <!-- Divider -->
+                <!--<BoxView Grid.Row="1" 
+                         HeightRequest="1" 
+                         Color="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" />-->
+
+                <!-- User Profile Section -->
+                <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <!-- Profile Picture -->
+                    <!--<Border Grid.Column="0"
+                            WidthRequest="48"
+                            HeightRequest="48"
+                            BackgroundColor="#2196F3">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="24" />
+                        </Border.StrokeShape>
+                        <Label Text="DP"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>-->
+
+                    <!-- User Info -->
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="{Binding Name}" 
+                               FontAttributes="Bold" 
+                               FontSize="16"
+                               TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                        <Label Text="Labor Ward Supervisor" 
+                               FontSize="13" 
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+
+                        <!-- Status Badge -->
+                        <Border BackgroundColor="#E8F5E9"
+                                Padding="6,2"
+                                Margin="0,4,0,0"
+                                HorizontalOptions="Start">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <HorizontalStackLayout Spacing="4">
+                                <Label Text="●"
+                                       FontSize="8"
+                                       TextColor="#4CAF50"
+                                       VerticalOptions="Center" />
+                                <Label Text="On Duty" 
+                                       FontSize="10"
+                                       FontAttributes="Bold"
+                                       TextColor="#2E7D32" />
+                            </HorizontalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Action Menu -->
+                    <!--<Button Grid.Column="2" 
+                            Text="&#xE712;"
+                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                            Command="{Binding ShowUserMenuCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            CornerRadius="20"
+                            FontSize="16"
+                            ToolTipProperties.Text="User Menu" />-->
+                    
+                    <Button Grid.Column="2" 
+                        Text="&#xE8BB;"
                         FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                         Command="{Binding LogoutCommand}"
                         BackgroundColor="Transparent"
@@ -166,7 +413,161 @@
                         WidthRequest="40"
                         HeightRequest="40"
                         ToolTipProperties.Text="Logout" />
+                </Grid>
+
+                <!-- Quick Actions -->
+                <!--<Grid Grid.Row="3" ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <Button Grid.Column="0"
+                            Text="🔒"
+                            Command="{Binding LockScreenCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}"
+                            TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                            CornerRadius="12"
+                            HeightRequest="36"
+                            FontSize="12"
+                            ToolTipProperties.Text="Lock Screen" />
+
+                    <Button Grid.Column="1"
+                            Text="📊"
+                            Command="{Binding QuickStatsCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}"
+                            TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                            CornerRadius="12"
+                            HeightRequest="36"
+                            FontSize="12"
+                            ToolTipProperties.Text="Quick Stats" />
+
+                    <Button Grid.Column="2"
+                            Text="🚪"
+                            Command="{Binding LogoutCommand}"
+                            BackgroundColor="#FFEBEE"
+                            TextColor="#D32F2F"
+                            CornerRadius="12"
+                            HeightRequest="36"
+                            FontSize="12"
+                            ToolTipProperties.Text="Logout" />
+                </Grid>-->
+            </Grid>
+        </Border>
+    </Shell.FlyoutFooter>
+
+    <!-- Custom Title View for Modern Navigation Bar -->
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="*,Auto,Auto" 
+              Padding="16,8"
+              BackgroundColor="{AppThemeBinding Light=White, Dark=#1A1A1A}">
+
+            <!-- Hamburger Menu Button (Custom) -->
+            
+            <!--<Button Grid.Column="0"
+                    Text="&#xE700;"
+                    FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                    Command="{Binding Source={x:Reference Name=AppShell}, Path=FlyoutIsPresented, Mode=TwoWay}"
+                    BackgroundColor="Transparent"
+                    TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                    WidthRequest="44"
+                    HeightRequest="44"
+                    CornerRadius="22"
+                    FontSize="18"
+                    ToolTipProperties.Text="Menu">
+                <Button.Triggers>
+                    <Trigger TargetType="Button" Property="IsPressed" Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#F0F8FF, Dark=#1E3A5F}" />
+                    </Trigger>
+                </Button.Triggers>
+            </Button>-->
+
+            <!-- Page Title with Breadcrumb -->
+            <VerticalStackLayout Grid.Column="0" 
+                                 VerticalOptions="Center" 
+                                 Margin="16,0,0,0">
+                <Label Text="{Binding Source={x:Reference AppShell}, Path=CurrentPage.Title}"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                <Label Text="{Binding CurrentBreadcrumb}"
+                       FontSize="16"
+                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+            </VerticalStackLayout>
+
+            <!-- Search Button -->
+            <!--Text="&#xe715;"
+FontFamily="MaterialAssets"-->
+
+            <Button Grid.Column="1"
+                    Command="{Binding OpenSearchCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    CornerRadius="22"
+                    FontSize="24" 
+                    ImageSource="search_alt_1_svgrepo_com.png"
+                    ToolTipProperties.Text="Search">
+                <Button.Triggers>
+                    <Trigger TargetType="Button" Property="IsPressed" Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}" />
+                    </Trigger>
+                </Button.Triggers>
+            </Button>
+
+            <!-- Notifications Button -->
+            <!--Text="&#xe790;"
+        FontFamily="MaterialAssets"-->
+            <Grid Grid.Column="2">
+                <Button 
+        Command="{Binding ShowNotificationsCommand}"
+        BackgroundColor="Transparent"
+        TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+        WidthRequest="50"
+        HeightRequest="50"
+        CornerRadius="22"
+        FontSize="24"
+                    ImageSource="bell_svgrepo.png"
+        ToolTipProperties.Text="Notifications">
+                    <Button.Triggers>
+                        <Trigger TargetType="Button" Property="IsPressed" Value="True">
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}" />
+                        </Trigger>
+                    </Button.Triggers>
+                </Button>
+                
+                <!--<Button Text="&#xE7E7;"
+                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                        Command="{Binding ShowNotificationsCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                        WidthRequest="44"
+                        HeightRequest="44"
+                        CornerRadius="22"
+                        FontSize="16"
+                        ToolTipProperties.Text="Notifications">
+                    <Button.Triggers>
+                        <Trigger TargetType="Button" Property="IsPressed" Value="True">
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}" />
+                        </Trigger>
+                    </Button.Triggers>
+                </Button>-->
+
+                <!-- Notification Badge -->
+                <!--<Border WidthRequest="18"
+                        HeightRequest="18"
+                        BackgroundColor="#D32F2F"
+                        HorizontalOptions="End"
+                        VerticalOptions="Start"
+                        Margin="0,6,6,0"
+                        IsVisible="{Binding HasNotifications}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="9" />
+                    </Border.StrokeShape>
+                    <Label Text="{Binding NotificationCount}"
+                           FontSize="10"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>-->
             </Grid>
         </Grid>
-    </Shell.FlyoutFooter>
+    </Shell.TitleView>
 </Shell>

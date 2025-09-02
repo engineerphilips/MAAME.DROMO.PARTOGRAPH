@@ -2,392 +2,449 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PatientDetailPage"
+             xmlns:cards="clr-namespace:Syncfusion.Maui.Cards;assembly=Syncfusion.Maui.Cards"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:effects="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:picker="clr-namespace:Syncfusion.Maui.Picker;assembly=Syncfusion.Maui.Picker"
+             xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Models"
              xmlns:fonts="clr-namespace:Fonts"
-             Title="{Binding Name, StringFormat='Patient: {0}'}">
-
-    <ContentPage.ToolbarItems>
+             Title="Patient Registration"
+             BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}">
+    <!--<ContentPage.ToolbarItems>
         <ToolbarItem Text="Edit" 
-                     Command="{Binding ToggleEditModeCommand}"
-                     IconImageSource="{x:Static fonts:FluentUI.edit_16_regular}" />
-        <!--IconImageSource="{FontImagefonts:FluentUI.FontFamily, Glyph=&#xE70F;, Color=White}"-->
+                     Command="{Binding ToggleEditModeCommand}"/>
+        --><!--IconImageSource="{FontImageSource FontFamily={x:Static fonts:FluentUI.FontFamily}, Glyph=&#xE70F;, Color=White}"--><!--
         <ToolbarItem Text="Delete" 
-                     Command="{Binding DeleteCommand}"
-                     IconImageSource="{x:Static fonts:FluentUI.delete_16_regular}" />
-        <!--IconImageSource="{FontImagefonts:FluentUI.FontFamily, Glyph=&#xE74D;, Color=White}"-->
-    </ContentPage.ToolbarItems>
+                     Command="{Binding DeleteCommand}" />
+        --><!--IconImageSource="{FontImageSource FontFamily={x:Static fonts:FluentUI.FontFamily}, Glyph=&#xE74D;, Color=White}"--><!--
+    </ContentPage.ToolbarItems>-->
+
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Hospital Theme Colors -->
+            <Color x:Key="PrimaryBlue">#0078D4</Color>
+            <Color x:Key="PrimaryLightBlue">#40E0FF</Color>
+            <Color x:Key="SecondaryGreen">#107C10</Color>
+            <Color x:Key="AccentTeal">#008575</Color>
+            <Color x:Key="SurfaceWhite">#FFFFFF</Color>
+            <Color x:Key="BackgroundGray">#F8F9FA</Color>
+            <Color x:Key="TextPrimary">#323130</Color>
+            <Color x:Key="TextSecondary">#605E5C</Color>
+            <Color x:Key="BorderLight">#E1DFDD</Color>
+            <Color x:Key="ErrorRed">#D13438</Color>
+            <Color x:Key="SuccessGreen">#107C10</Color>
+            <Color x:Key="WarningOrange">#FF8C00</Color>
+
+            <!-- Gradients -->
+            <LinearGradientBrush x:Key="HeaderGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#0078D4" Offset="0.0" />
+                <GradientStop Color="#40E0FF" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- Card Styles -->
+            <Style x:Key="SectionCard" TargetType="cards:SfCardView">
+                <Setter Property="BackgroundColor" Value="{StaticResource SurfaceWhite}" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Shadow" Value="True" />
+                <Setter Property="Margin" Value="16,8" />
+            </Style>
+
+            <Style x:Key="HeaderCard" TargetType="cards:SfCardView">
+                <Setter Property="Background" Value="{StaticResource HeaderGradient}" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="Shadow" Value="True" />
+                <Setter Property="Margin" Value="16,16,16,8" />
+            </Style>
+
+            <!-- Button Styles -->
+            <Style x:Key="PrimaryButton" TargetType="buttons:SfButton">
+                <Setter Property="Background" Value="{StaticResource PrimaryBlue}" />
+                <Setter Property="TextColor" Value="{StaticResource SurfaceWhite}" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HeightRequest" Value="50" />
+            </Style>
+
+            <Style x:Key="SecondaryButton" TargetType="buttons:SfButton">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="TextColor" Value="{StaticResource PrimaryBlue}" />
+                <Setter Property="Stroke" Value="{StaticResource PrimaryBlue}" />
+                <Setter Property="StrokeThickness" Value="2" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HeightRequest" Value="48" />
+            </Style>
+
+            <!-- Input Styles -->
+            <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Outlined" />
+                <Setter Property="OutlineCornerRadius" Value="8" />
+                <!--<Setter Property="Stroke" Value="{StaticResource BorderLight}" />-->
+                <!--<Setter Property="FocusedStroke" Value="{StaticResource PrimaryBlue}" />-->
+                <!--<Setter Property="ContainerBackground" Value="{StaticResource SurfaceWhite}" />-->
+                <!--<Setter Property="Margin" Value="0,4" />-->
+            </Style>
+
+            <!-- Typography Styles -->
+            <Style x:Key="SectionTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Margin" Value="0,0,0,8" />
+            </Style>
+
+            <Style x:Key="HeaderTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{StaticResource SurfaceWhite}" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="HeaderSubtitle" TargetType="Label">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="TextColor" Value="#E6FFFFFF" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="ErrorText" TargetType="Label">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="TextColor" Value="{StaticResource ErrorRed}" />
+                <Setter Property="HorizontalTextAlignment" Value="Start" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ScrollView>
-        <Grid RowDefinitions="Auto,*" Padding="20">
+        <StackLayout Spacing="0" Padding="0,0,0,10">
 
-            <!-- Patient Header Card -->
-            <Border Grid.Row="0" 
-                    StrokeThickness="0"
-                    BackgroundColor="{Binding Status, Converter={StaticResource StatusColorConverter}}"
-                    Margin="0,0,0,20"
-                    Padding="20">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="15" />
-                </Border.StrokeShape>
+            <!-- Header Card -->
+            <!--<Label Text="Patient Registration" FontSize="20" Margin="10,0" />-->
+            <Label Text="👤 Demographics" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
-                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="20">
-                    <!-- Patient Avatar -->
-                    <Border Grid.Column="0"
-                            WidthRequest="80"
-                            HeightRequest="80"
-                            BackgroundColor="White">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="40" />
-                        </Border.StrokeShape>
-                        <Label Text="{Binding Name, Converter={StaticResource InitialsConverter}}"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               FontSize="28"
-                               FontAttributes="Bold"
-                               TextColor="{Binding Status, Converter={StaticResource StatusColorConverter}}" />
-                    </Border>
+            <!-- Patient Demographics Section -->
 
-                    <!-- Basic Info -->
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                        <Label Text="{Binding Name}" 
-                               FontSize="24" 
-                               FontAttributes="Bold"
-                               TextColor="White" />
-                        <Label Text="{Binding HospitalNumber}" 
-                               FontSize="16"
-                               TextColor="White"
-                               Opacity="0.9" />
-                        <Label Text="{Binding DisplayInfo}" 
-                               FontSize="14"
-                               TextColor="White"
-                               Opacity="0.8" />
-                    </VerticalStackLayout>
+            <StackLayout Padding="20" Spacing="0">
 
-                    <!-- Status Badge -->
-                    <Border Grid.Column="2"
-                            BackgroundColor="White"
-                            Padding="15,8"
-                            VerticalOptions="Center">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="20" />
-                        </Border.StrokeShape>
-                        <Label Text="{Binding StatusDisplay}"
-                               FontAttributes="Bold"
-                               TextColor="{Binding Status, Converter={StaticResource StatusColorConverter}}" />
-                    </Border>
-                </Grid>
-            </Border>
+                <!-- Patient ID -->
+                <core:SfTextInputLayout Hint="Patient ID"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Auto-generated or manual entry">
+                    <Entry Text="{Binding PatientId}"
+                               IsReadOnly="{Binding IsPatientIdReadOnly}"
+                               ReturnType="Next" />
+                </core:SfTextInputLayout>
 
-            <!-- Patient Details Form -->
-            <VerticalStackLayout Grid.Row="1" Spacing="20">
+                <!-- Name Fields -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="First Name"
+                                                Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding FirstName}"
+                                   ReturnType="Next" />
+                    </core:SfTextInputLayout>
 
-                <!-- Quick Actions -->
-                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
-                    <Button Grid.Column="0"
-                            Text="&#xE8A5;"
-                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                            Command="{Binding NavigateToPartographCommand}"
-                            BackgroundColor="#2196F3"
-                            TextColor="White"
-                            HeightRequest="50"
-                            CornerRadius="10">
-                        <Button.Triggers>
-                            <DataTrigger TargetType="Button" 
-                                        Binding="{Binding Status}" 
-                                        Value="Pending">
-                                <Setter Property="IsEnabled" Value="False" />
-                                <Setter Property="Opacity" Value="0.5" />
-                            </DataTrigger>
-                        </Button.Triggers>
-                    </Button>
-
-                    <Button Grid.Column="1"
-                            Text="&#xE710;"
-                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                            Command="{Binding AddPartographEntryCommand}"
-                            BackgroundColor="#4CAF50"
-                            TextColor="White"
-                            HeightRequest="50"
-                            CornerRadius="10">
-                        <Button.Triggers>
-                            <DataTrigger TargetType="Button" 
-                                         Binding="{Binding Status}" 
-                                         Value="Pending">
-                                <Setter Property="IsEnabled" Value="False" />
-                                <Setter Property="Opacity" Value="0.5" />
-                            </DataTrigger>
-                        </Button.Triggers>
-                    </Button>
-
-                    <Button Grid.Column="2"
-                            Text="&#xE95E;"
-                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                            Command="{Binding AddVitalSignsCommand}"
-                            BackgroundColor="#FF9800"
-                            TextColor="White"
-                            HeightRequest="50"
-                            CornerRadius="10" />
-
-                    <Button Grid.Column="3"
-                            Text="&#xE8F2;"
-                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                            Command="{Binding StartActiveLaborCommand}"
-                            BackgroundColor="#9C27B0"
-                            TextColor="White"
-                            HeightRequest="50"
-                            CornerRadius="10"
-                            IsVisible="{Binding Status, Converter={StaticResource StatusToBoolConverter}, ConverterParameter=Pending}" />
-
-                    <Button Grid.Column="3"
-                            Text="&#xE73E;"
-                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                            Command="{Binding CompleteDeliveryCommand}"
-                            BackgroundColor="#4CAF50"
-                            TextColor="White"
-                            HeightRequest="50"
-                            CornerRadius="10"
-                            IsVisible="{Binding Status, Converter={StaticResource StatusToBoolConverter}, ConverterParameter=Active}" />
+                    <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Last Name"
+                                                Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding LastName}"
+                                   ReturnType="Next" />
+                    </core:SfTextInputLayout>
                 </Grid>
 
-                <!-- Obstetric Information -->
-                <Border StrokeThickness="1" 
-                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                        Padding="15">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10" />
-                    </Border.StrokeShape>
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="Obstetric Information" FontSize="18" FontAttributes="Bold" />
+                <!-- Date of Birth / Age -->
+                <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Date of Birth"
+                                                Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding DateOfBirth}"
+                                       Format="dd/MM/yyyy" />
+                    </core:SfTextInputLayout>
 
-                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="15" ColumnSpacing="15">
-                            <VerticalStackLayout Grid.Row="0" Grid.Column="0">
-                                <Label Text="Age" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                <Entry Text="{Binding Age}" 
-                                       IsReadOnly="{Binding IsEditMode, Converter={toolkit:InvertedBoolConverter}}"
-                                       Keyboard="Numeric" />
-                            </VerticalStackLayout>
-
-                            <VerticalStackLayout Grid.Row="0" Grid.Column="1">
-                                <Label Text="Blood Group" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                <Entry Text="{Binding BloodGroup}" 
-                                       IsReadOnly="{Binding IsEditMode, Converter={toolkit:InvertedBoolConverter}}" />
-                            </VerticalStackLayout>
-
-                            <VerticalStackLayout Grid.Row="1" Grid.Column="0">
-                                <Label Text="Gravidity" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                <Entry Text="{Binding Gravidity}" 
-                                       IsReadOnly="{Binding IsEditMode, Converter={toolkit:InvertedBoolConverter}}"
-                                       Keyboard="Numeric" />
-                            </VerticalStackLayout>
-
-                            <VerticalStackLayout Grid.Row="1" Grid.Column="1">
-                                <Label Text="Parity" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                <Entry Text="{Binding Parity}" 
-                                       IsReadOnly="{Binding IsEditMode, Converter={toolkit:InvertedBoolConverter}}"
-                                       Keyboard="Numeric" />
-                            </VerticalStackLayout>
-
-                            <VerticalStackLayout Grid.Row="2" Grid.Column="0">
-                                <Label Text="Admission Date" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                <DatePicker Date="{Binding AdmissionDate}" 
-                                           IsEnabled="{Binding IsEditMode}" />
-                            </VerticalStackLayout>
-
-                            <VerticalStackLayout Grid.Row="2" Grid.Column="1">
-                                <Label Text="Expected Delivery Date" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                <DatePicker Date="{Binding ExpectedDeliveryDate}" 
-                                           IsEnabled="{Binding IsEditMode}" />
-                            </VerticalStackLayout>
-
-                            <VerticalStackLayout Grid.Row="3" Grid.Column="0">
-                                <Label Text="Cervical Dilation on Admission (cm)" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                <Entry Text="{Binding CervicalDilationOnAdmission}" 
-                                       IsReadOnly="{Binding IsEditMode, Converter={toolkit:InvertedBoolConverter}}"
-                                       Keyboard="Numeric" />
-                            </VerticalStackLayout>
-
-                            <VerticalStackLayout Grid.Row="3" Grid.Column="1">
-                                <Label Text="Membrane Status" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                <Picker SelectedItem="{Binding MembraneStatus}"
-                                        IsEnabled="{Binding IsEditMode}">
-                                    <Picker.ItemsSource>
-                                        <x:Array Type="{x:Type x:String}">
-                                            <x:String>Intact</x:String>
-                                            <x:String>Ruptured</x:String>
-                                            <x:String>Artificial Rupture</x:String>
-                                        </x:Array>
-                                    </Picker.ItemsSource>
-                                </Picker>
-                            </VerticalStackLayout>
-                        </Grid>
-                    </VerticalStackLayout>
-                </Border>
+                    <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Age"
+                                                Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding Age}"
+                                   Keyboard="Numeric"
+                                   IsReadOnly="True"
+                                   ReturnType="Next" />
+                    </core:SfTextInputLayout>
+                </Grid>
 
                 <!-- Contact Information -->
-                <Border StrokeThickness="1" 
-                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                        Padding="15">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10" />
-                    </Border.StrokeShape>
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="Contact Information" FontSize="18" FontAttributes="Bold" />
+                <core:SfTextInputLayout Hint="Phone Number"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Primary contact number">
+                    <Entry Text="{Binding PhoneNumber}"
+                               Keyboard="Telephone"
+                               ReturnType="Next" />
+                </core:SfTextInputLayout>
 
-                        <VerticalStackLayout>
-                            <Label Text="Phone Number" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                            <Entry Text="{Binding PhoneNumber}" 
-                                   IsReadOnly="{Binding IsEditMode, Converter={toolkit:InvertedBoolConverter}}"
-                                   Keyboard="Telephone" />
-                        </VerticalStackLayout>
+                <!-- Address -->
+                <core:SfTextInputLayout Hint="Address"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Complete residential address">
+                    <Entry Text="{Binding Address}"
+                               ReturnType="Next" />
+                </core:SfTextInputLayout>
 
-                        <VerticalStackLayout>
-                            <Label Text="Emergency Contact" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                            <Entry Text="{Binding EmergencyContact}" 
-                                   IsReadOnly="{Binding IsEditMode, Converter={toolkit:InvertedBoolConverter}}"
-                                   Keyboard="Telephone" />
-                        </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </Border>
+            </StackLayout>
+
+            <Label Text="🚨 Emergency Contact" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+
+            <!-- Emergency Contact Section -->
+
+            <StackLayout Padding="20" Spacing="0">
+                <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Emergency Contact Name"
+                                                Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding EmergencyContactName}"
+                                   ReturnType="Next" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Relationship"
+                                                Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding EmergencyContactRelationship}"
+                                   ReturnType="Next" />
+                    </core:SfTextInputLayout>
+                </Grid>
+
+                <core:SfTextInputLayout Hint="Emergency Contact Phone"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Available 24/7">
+                    <Entry Text="{Binding EmergencyContactPhone}"
+                               Keyboard="Telephone"
+                               ReturnType="Next" />
+                </core:SfTextInputLayout>
+            </StackLayout>
+
+            <!-- Obstetric History Section -->
+            <Label Text="🤱 Obstetric History" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+
+
+            <StackLayout Padding="20" Spacing="0">
+
+                <!-- Gravida and Para -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Gravida (G)"
+                                                Style="{StaticResource PatientInput}"
+                                                HelperText="Total pregnancies">
+                        <Entry Text="{Binding Gravida}"
+                                   Keyboard="Numeric"
+                                   ReturnType="Next" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Para (P)"
+                                                Style="{StaticResource PatientInput}"
+                                                HelperText="Previous births">
+                        <Entry Text="{Binding Para}"
+                                   Keyboard="Numeric"
+                                   ReturnType="Next" />
+                    </core:SfTextInputLayout>
+                </Grid>
+
+                <!-- Gestational Age -->
+                <Label Text="Gestational Age" 
+                           FontSize="14" 
+                           FontAttributes="Bold" 
+                           TextColor="{StaticResource TextPrimary}"
+                           Margin="0,8,0,4" />
+
+                <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Weeks"
+                                                Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding GestationalWeeks}"
+                                   Keyboard="Numeric"
+                                   ReturnType="Next" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Days"
+                                                Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding GestationalDays}"
+                                   Keyboard="Numeric"
+                                   ReturnType="Next" />
+                    </core:SfTextInputLayout>
+                </Grid>
+
+                <Label Text="{Binding FormattedGestationalAge}"
+                           FontSize="12"
+                           TextColor="{StaticResource AccentTeal}"
+                           FontAttributes="Bold"
+                           Margin="0,4,0,0" />
+
+            </StackLayout>
+
+            <!-- Medical Information Section -->
+            <Label Text="🏥 Medical Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+
+            <StackLayout Padding="20" Spacing="0">
+
+                <!-- Insurance -->
+                <core:SfTextInputLayout Hint="Insurance Provider"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Health insurance details">
+                    <Entry Text="{Binding Insurance}"
+                               ReturnType="Next" />
+                </core:SfTextInputLayout>
 
                 <!-- Risk Factors -->
-                <Border StrokeThickness="1" 
-                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                        Padding="15">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10" />
-                    </Border.StrokeShape>
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="Clinical Notes" FontSize="18" FontAttributes="Bold" />
+                <core:SfTextInputLayout Hint="Risk Factors"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="High-risk conditions or complications">
+                    <Entry Text="{Binding RiskFactors}"
+                               ReturnType="Next" />
+                </core:SfTextInputLayout>
 
-                        <VerticalStackLayout>
-                            <Label Text="Risk Factors" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                            <Editor Text="{Binding RiskFactors}" 
-                                    IsReadOnly="{Binding IsEditMode, Converter={toolkit:InvertedBoolConverter}}"
-                                    MinimumHeightRequest="80"
-                                    AutoSize="TextChanges" />
-                        </VerticalStackLayout>
+                <!-- Allergies -->
+                <core:SfTextInputLayout Hint="Allergies"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Drug allergies and reactions">
+                    <Entry Text="{Binding Allergies}"
+                               ReturnType="Next" />
+                </core:SfTextInputLayout>
 
-                        <VerticalStackLayout>
-                            <Label Text="Complications" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                            <Editor Text="{Binding Complications}" 
-                                    IsReadOnly="{Binding IsEditMode, Converter={toolkit:InvertedBoolConverter}}"
-                                    MinimumHeightRequest="80"
-                                    AutoSize="TextChanges" />
-                        </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </Border>
+            </StackLayout>
 
-                <!-- Recent Partograph Entries -->
-                <Border StrokeThickness="1" 
-                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                        Padding="15"
-                        IsVisible="{Binding PartographEntries.Count, Converter={toolkit:IntToBoolConverter}}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10" />
-                    </Border.StrokeShape>
-                    <VerticalStackLayout Spacing="10">
-                        <HorizontalStackLayout>
-                            <Label Text="Recent Partograph Entries" FontSize="18" FontAttributes="Bold" HorizontalOptions="StartAndExpand" />
-                            <Button Text="View All"
-                                    Command="{Binding NavigateToPartographCommand}"
-                                    BackgroundColor="Transparent"
-                                    TextColor="#2196F3" />
-                        </HorizontalStackLayout>
+            <!-- Labour Information Section -->
+            <Label Text="⏱️ Labour Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
-                        <CollectionView ItemsSource="{Binding PartographEntries}"
-                                        HeightRequest="200">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:PartographEntry">
-                                    <Border StrokeThickness="1"
-                                            Stroke="{AppThemeBinding Light=#F0F0F0, Dark=#333}"
-                                            BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2A2A2A}"
-                                            Margin="0,5"
-                                            Padding="10">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="5" />
-                                        </Border.StrokeShape>
-                                        <Grid ColumnDefinitions="Auto,*,Auto">
-                                            <Label Grid.Column="0"
-                                                   Text="{Binding RecordedTime, StringFormat='{0:HH:mm}'}"
-                                                   FontAttributes="Bold"
-                                                   VerticalOptions="Center" />
-                                            <HorizontalStackLayout Grid.Column="1" Spacing="15" Margin="15,0">
-                                                <Label Text="{Binding CervicalDilation, StringFormat='Cx: {0}cm'}" />
-                                                <Label Text="{Binding FetalHeartRate, StringFormat='FHR: {0}'}" />
-                                                <Label Text="{Binding ContractionsPerTenMinutes, StringFormat='Ctx: {0}/10min'}" />
-                                            </HorizontalStackLayout>
-                                            <Label Grid.Column="2"
-                                                   Text="{Binding RecordedBy}"
-                                                   FontSize="12"
-                                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
-                                                   VerticalOptions="Center" />
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Border>
+            <StackLayout Padding="20" Spacing="0">
 
-                <!-- Recent Vital Signs -->
-                <Border StrokeThickness="1" 
-                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                        Padding="15"
-                        IsVisible="{Binding VitalSigns.Count, Converter={toolkit:IntToBoolConverter}}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10" />
-                    </Border.StrokeShape>
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Recent Vital Signs" FontSize="18" FontAttributes="Bold" />
+                <!-- Labour Onset -->
+                <Label Text="Labour Onset Date &amp; Time" 
+                           FontSize="14" 
+                           FontAttributes="Bold" 
+                           TextColor="{StaticResource TextPrimary}"
+                           Margin="0,0,0,4" />
 
-                        <CollectionView ItemsSource="{Binding VitalSigns}"
-                                        HeightRequest="150">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:VitalSign">
-                                    <Border StrokeThickness="1"
-                                            Stroke="{Binding IsAbnormal, Converter={StaticResource AbnormalColorConverter}}"
-                                            BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2A2A2A}"
-                                            Margin="0,5"
-                                            Padding="10">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="5" />
-                                        </Border.StrokeShape>
-                                        <Grid ColumnDefinitions="Auto,*">
-                                            <Label Grid.Column="0"
-                                                   Text="{Binding RecordedTime, StringFormat='{0:HH:mm}'}"
-                                                   FontAttributes="Bold"
-                                                   VerticalOptions="Center"
-                                                   Margin="0,0,15,0" />
-                                            <HorizontalStackLayout Grid.Column="1" Spacing="15">
-                                                <Label Text="{Binding BPDisplay, StringFormat='BP: {0}'}" />
-                                                <Label Text="{Binding Temperature, StringFormat='Temp: {0}°C'}" />
-                                                <Label Text="{Binding PulseRate, StringFormat='Pulse: {0}'}" />
-                                            </HorizontalStackLayout>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Border>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Date"
+                                                Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding LabourOnsetDate}"
+                                       Format="dd/MM/yyyy" />
+                    </core:SfTextInputLayout>
 
-                <!-- Save Button (visible in edit mode) -->
-                <Button Text="Save Changes"
-                        Command="{Binding SaveCommand}"
-                        BackgroundColor="#4CAF50"
-                        TextColor="White"
-                        HeightRequest="50"
-                        CornerRadius="10"
-                        IsVisible="{Binding IsEditMode}"
-                        Margin="0,20,0,0" />
+                    <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Time"
+                                                Style="{StaticResource PatientInput}">
+                        <TimePicker Time="{Binding LabourOnsetTime}" Format="HH:mm" />
+                    </core:SfTextInputLayout>
+                </Grid>
 
-            </VerticalStackLayout>
-        </Grid>
+                <!-- Active Labour Diagnosis -->
+                <core:SfTextInputLayout Hint="Active Labour Diagnosis"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Clinical assessment of active labour">
+                    <Entry Text="{Binding ActiveLabourDiagnosis}"
+                               ReturnType="Next" />
+                </core:SfTextInputLayout>
+
+                <!-- Ruptured Membrane -->
+                <Label Text="Ruptured Membrane Date &amp; Time" 
+                           FontSize="14" 
+                           FontAttributes="Bold" 
+                           TextColor="{StaticResource TextPrimary}"
+                           Margin="0,8,0,4" />
+
+                <StackLayout Orientation="Horizontal" Spacing="12">
+                    <CheckBox IsChecked="{Binding HasRupturedMembrane}"
+                                  Color="{StaticResource PrimaryBlue}"
+                                  VerticalOptions="Center" />
+                    <Label Text="Membrane has ruptured"
+                               FontSize="14"
+                               TextColor="{StaticResource TextPrimary}"
+                               VerticalOptions="Center" />
+                </StackLayout>
+
+                <Grid ColumnDefinitions="*,*" 
+                          ColumnSpacing="12"
+                          IsVisible="{Binding HasRupturedMembrane}">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Rupture Date"
+                                                Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding RupturedMembraneDate}"
+                                       Format="dd/MM/yyyy" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Rupture Time"
+                                                Style="{StaticResource PatientInput}">
+                        <TimePicker Time="{Binding RupturedMembraneTime}"
+                                       Format="HH:mm" />
+                    </core:SfTextInputLayout>
+                </Grid>
+
+            </StackLayout>
+
+            <!-- Action Buttons -->
+            <StackLayout Padding="16" Spacing="12">
+
+                <!-- Error Messages -->
+                <Label Text="{Binding ErrorMessage}"
+                   Style="{StaticResource ErrorText}"
+                   IsVisible="{Binding HasError}"
+                   Margin="0,0,0,8" />
+
+                <!-- Save and Continue Button -->
+                <buttons:SfButton Text="Save Patient &amp; Start Partograph" 
+                              Style="{StaticResource PrimaryButton}"
+                              Command="{Binding SavePatientCommand}">
+                    <buttons:SfButton.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons"
+                                   Glyph="&#xe161;"
+                                   Size="20"
+                                   Color="{StaticResource SurfaceWhite}" />
+                    </buttons:SfButton.ImageSource>
+                </buttons:SfButton>
+
+                <!-- Save Draft Button -->
+                <buttons:SfButton Text="Save as Draft" 
+                              Style="{StaticResource SecondaryButton}"
+                              Command="{Binding SaveDraftCommand}">
+                    <buttons:SfButton.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons"
+                                   Glyph="&#xe161;"
+                                   Size="18"
+                                   Color="{StaticResource PrimaryBlue}" />
+                    </buttons:SfButton.ImageSource>
+                </buttons:SfButton>
+
+                <!-- Quick Action Grid -->
+                <!--<Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,16,0,0">
+                    <buttons:SfButton Grid.Column="0"
+                                 Text="📋 View Template"
+                                 FontSize="12"
+                                 HeightRequest="40"
+                                 CornerRadius="8"
+                                 Background="{StaticResource AccentTeal}"
+                                 TextColor="{StaticResource SurfaceWhite}"
+                                 Command="{Binding ViewTemplateCommand}" />
+
+                    <buttons:SfButton Grid.Column="1"
+                                 Text="🔄 Reset Form"
+                                 FontSize="12"
+                                 HeightRequest="40"
+                                 CornerRadius="8"
+                                 Background="{StaticResource WarningOrange}"
+                                 TextColor="{StaticResource SurfaceWhite}"
+                                 Command="{Binding ResetFormCommand}" />
+                </Grid>-->
+
+            </StackLayout>
+
+        </StackLayout>
     </ScrollView>
 </ContentPage>
