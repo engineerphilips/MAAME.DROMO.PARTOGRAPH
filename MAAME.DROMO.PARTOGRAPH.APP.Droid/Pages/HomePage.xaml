@@ -8,6 +8,8 @@
              xmlns:sfGauge="clr-namespace:Syncfusion.Maui.Gauges;assembly=Syncfusion.Maui.Gauges"
              xmlns:sfCards="clr-namespace:Syncfusion.Maui.Toolkit.Cards;assembly=Syncfusion.Maui.Toolkit"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Models"
+             xmlns:pages="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages"
+             xmlns:views="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views"
              xmlns:tabView="http://schemas.syncfusion.com/maui"
              xmlns:fonts="clr-namespace:Fonts"
              Title="Partograph Dashboard"
@@ -75,9 +77,10 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <tabView:SfTabView x:Name="TabView" TabBarHeight="72" EnableSwiping="True" TabBarPlacement="Bottom">
+    <tabView:SfTabView x:Name="TabView" TabBarHeight="72" EnableSwiping="False" TabBarPlacement="Bottom">
         <!--SelectionChanged="SfTabView_SelectionChanged"-->
         <tabView:SfTabItem Header="Home" ImagePosition="Top" ImageSource="home_svgrepo.png">
+            
             <!--ImageSource="{imageExtension:SfImageResource document.png}"-->
             <!--<tabView:SfTabItem.ImageSource>-->
                 <!--<FontImageSource  
@@ -743,108 +746,17 @@
                 </Grid>
             </ScrollView>
         </tabView:SfTabItem>
+        
         <tabView:SfTabItem Header="Pending" ImageSource="pending_silent_mute_sound_audio_off_svgrepo.png">
-            <!--ImageSource="{imageExtension:SfImageResource excel.png}"-->
-            <!--<tabView:SfTabItem.ImageSource>
-                <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                     Glyph="&#xE8D8;" 
-                     Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                     Size="20" />
-            </tabView:SfTabItem.ImageSource>-->
-            <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
-                <VerticalStackLayout>
-                    <BindableLayout.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>Content 1</x:String>
-                            <x:String>Content 2</x:String>
-                            <x:String>Content 3</x:String>
-                            <x:String>Content 4</x:String>
-                            <x:String>Content 5</x:String>
-                            <x:String>Content 6</x:String>
-                            <x:String>Content 7</x:String>
-                            <x:String>Content 8</x:String>
-                        </x:Array>
-                    </BindableLayout.ItemsSource>
-                    <!--<BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <HorizontalStackLayout Padding="5,0,5,0">
-                                <Image Source="{imageExtension:SfImageResource excel.png}"/>
-                                <Label x:DataType="{x:Type x:String}" Margin="10,20,0,20" Text="{Binding Converter={StaticResource TextToFileNameConverter}, ConverterParameter=.xlsx}"/>
-                            </HorizontalStackLayout>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>-->
-                </VerticalStackLayout>
-            </ScrollView>
+            <views:PendingPatientsView x:Name="PendingPatients" Loaded="PendingPatients_Loaded" />
         </tabView:SfTabItem>
+
         <tabView:SfTabItem Header="Active" ImageSource="bell_active_svgrepo.png">
-            <!--ImageSource="{imageExtension:SfImageResource pdftab.png}"-->
-            <!--<tabView:SfTabItem.ImageSource>
-                <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                     Glyph="&#xE8D8;" 
-                     Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                     Size="20" />
-            </tabView:SfTabItem.ImageSource>-->
-            <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
-                <VerticalStackLayout>
-                    <BindableLayout.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>Content 1</x:String>
-                            <x:String>Content 2</x:String>
-                            <x:String>Content 3</x:String>
-                            <x:String>Content 4</x:String>
-                            <x:String>Content 5</x:String>
-                            <x:String>Content 6</x:String>
-                            <x:String>Content 7</x:String>
-                            <x:String>Content 8</x:String>
-                            <x:String>Content 9</x:String>
-                            <x:String>Content 10</x:String>
-                            <x:String>Content 11</x:String>
-                            <x:String>Content 12</x:String>
-                            <x:String>Content 13</x:String>
-                            <x:String>Content 14</x:String>
-                            <x:String>Content 15</x:String>
-                        </x:Array>
-                    </BindableLayout.ItemsSource>
-                    <!--<BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <HorizontalStackLayout Padding="5,0,5,0">
-                                <Image Source="{imageExtension:SfImageResource pdftab.png}"/>
-                                <Label x:DataType="{x:Type x:String}" Margin="10,20,0,20" Text="{Binding Converter={StaticResource TextToFileNameConverter}, ConverterParameter=.pdf}"/>
-                            </HorizontalStackLayout>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>-->
-                </VerticalStackLayout>
-            </ScrollView>
+            <views:ActivePatientsView x:Name="ActivePatients" Loaded="ActivePatients_Loaded" />
         </tabView:SfTabItem>
+
         <tabView:SfTabItem Header="Completed" ImageSource="todo_done_svgrepo.png">
-            <!--ImageSource="{imageExtension:SfImageResource powerpoint.png}"-->
-            <!--<tabView:SfTabItem.ImageSource>
-                <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                     Glyph="&#xE8D8;" 
-                     Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                     Size="20" />
-            </tabView:SfTabItem.ImageSource>-->
-            <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
-                <VerticalStackLayout>
-                    <BindableLayout.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>Content 1</x:String>
-                            <x:String>Content 2</x:String>
-                            <x:String>Content 3</x:String>
-                            <x:String>Content 4</x:String>
-                            <x:String>Content 5</x:String>
-                        </x:Array>
-                    </BindableLayout.ItemsSource>
-                    <!--<BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <HorizontalStackLayout Padding="5,0,5,0">
-                                <Image Source="{imageExtension:SfImageResource powerpoint.png}"/>
-                                <Label x:DataType="{x:Type x:String}" Margin="10,20,0,20" Text="{Binding Converter={StaticResource TextToFileNameConverter}, ConverterParameter=.pptx}"/>
-                            </HorizontalStackLayout>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>-->
-                </VerticalStackLayout>
-            </ScrollView>
+            <views:CompletedPatientsView x:Name="CompletedPatients" Loaded="CompletedPatients_Loaded" />
         </tabView:SfTabItem>
     </tabView:SfTabView>
     

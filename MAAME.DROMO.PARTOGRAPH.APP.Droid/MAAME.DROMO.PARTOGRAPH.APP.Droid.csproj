@@ -126,6 +126,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="D:\repos\source codes\SMILE\EMPEROR.COMMON\EMPEROR.COMMON.csproj" />
+	  <ProjectReference Include="D:\repos\source codes\SMILE\EMPEROR.PERIOD\EMPEROR.PERIOD.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Pages\ActivePatientsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -181,6 +186,15 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\SettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Views\ActivePatientsView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Views\CompletedPatientsView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Views\PendingPatientsView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\VitalSignsPage.xaml">

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MAAME.DROMO.PARTOGRAPH.APP.Droid.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,12 +19,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
         public DateTime AdmissionDate { get; set; } = DateTime.Now;
         public DateTime? ExpectedDeliveryDate { get; set; }
         public string BloodGroup { get; set; } = string.Empty;
+        public string GestationalAge { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string EmergencyContact { get; set; } = string.Empty;
 
-        // Labor Information
+        // Labour Information
         public LaborStatus Status { get; set; } = LaborStatus.Pending;
         public DateTime? LaborStartTime { get; set; }
+        public string LaborStartTimeFormat => LaborStartTime != null ? ElapseTimeCalc.PeriodElapseTimeLower(LaborStartTime.Value, DateTime.Now) : string.Empty;
         public DateTime? DeliveryTime { get; set; }
         public int? CervicalDilationOnAdmission { get; set; }
         public string MembraneStatus { get; set; } = "Intact";
@@ -59,7 +62,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
         };
 
         [JsonIgnore]
-        public string DisplayInfo => $"G{Gravidity}P{Parity} • {Age}yrs • {HospitalNumber}";
+        public string DisplayInfo => $"G{Gravidity}P{Parity} • {Age}yrs • {GestationalAge}";
     }
 
     public enum LaborStatus

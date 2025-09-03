@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36401.2 d17.14
+VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAAME.DROMO.PARTOGRAPH.APP.Droid", "MAAME.DROMO.PARTOGRAPH.APP.Droid\MAAME.DROMO.PARTOGRAPH.APP.Droid.csproj", "{A471C318-CA29-BB55-CDC5-0AB03E4D6208}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EMPEROR.PERIOD", "D:\repos\source codes\SMILE\EMPEROR.PERIOD\EMPEROR.PERIOD.csproj", "{9E3BC719-8381-7F8A-5FE3-52566CA28CAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EMPEROR.COMMON", "D:\repos\source codes\SMILE\EMPEROR.COMMON\EMPEROR.COMMON.csproj", "{BABA0C6E-D1CD-3904-FF6D-0293C6CE2E81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,6 +20,14 @@ Global
 		{A471C318-CA29-BB55-CDC5-0AB03E4D6208}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{A471C318-CA29-BB55-CDC5-0AB03E4D6208}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A471C318-CA29-BB55-CDC5-0AB03E4D6208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E3BC719-8381-7F8A-5FE3-52566CA28CAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E3BC719-8381-7F8A-5FE3-52566CA28CAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E3BC719-8381-7F8A-5FE3-52566CA28CAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E3BC719-8381-7F8A-5FE3-52566CA28CAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BABA0C6E-D1CD-3904-FF6D-0293C6CE2E81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BABA0C6E-D1CD-3904-FF6D-0293C6CE2E81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BABA0C6E-D1CD-3904-FF6D-0293C6CE2E81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BABA0C6E-D1CD-3904-FF6D-0293C6CE2E81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
