@@ -1,0 +1,9 @@
+namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
+
+public partial class BPPulseModalView : ContentView
+{
+	public BPPulseModalView()
+	{
+		InitializeComponent();
+	}
+}

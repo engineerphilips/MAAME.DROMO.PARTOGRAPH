@@ -12,7 +12,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class HomePageModel : ObservableObject
     {
-        private readonly PatientRepository _patientRepository;
+        private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
         private bool _isNavigatedTo;
         private bool _dataLoaded;
@@ -21,10 +21,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private DashboardStats _dashboardStats = new();
 
         [ObservableProperty]
-        private List<Patient> _recentActivePatients = [];
+        private List<Partograph> _recentActivePatients = [];
 
         [ObservableProperty]
-        private List<Patient> _emergencyPatients = [];
+        private List<Partograph> _emergencyPatients = [];
 
         [ObservableProperty]
         private List<CategoryChartData> _laborStageData = [];
@@ -47,9 +47,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _staffName = "Dr. Phil"; // From authentication
 
-        public HomePageModel(PatientRepository patientRepository, ModalErrorHandler errorHandler)
+        public HomePageModel(PartographRepository partographRepository, ModalErrorHandler errorHandler)
         {
-            _patientRepository = patientRepository;
+            _partographRepository = partographRepository;
             _errorHandler = errorHandler;
         }
 
@@ -68,14 +68,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
 
                 // Load dashboard statistics
-                DashboardStats = await _patientRepository.GetDashboardStatsAsync();
+                DashboardStats = await _partographRepository.GetDashboardStatsAsync();
 
                 // Load recent active patients
-                var activePatients = await _patientRepository.ListAsync(LaborStatus.Active);
+                var activePatients = await _partographRepository.ListAsync(LaborStatus.Active);
                 RecentActivePatients = activePatients.Take(5).ToList();
 
                 // Load emergency patients
-                EmergencyPatients = await _patientRepository.ListAsync(LaborStatus.Emergency);
+                EmergencyPatients = await _partographRepository.ListAsync(LaborStatus.Emergency);
 
                 // Prepare chart data
                 var chartData = new List<CategoryChartData>
@@ -162,10 +162,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             => Shell.Current.GoToAsync("newpatient");
 
         [RelayCommand]
-        private async Task HandleEmergency(Patient patient)
+        private async Task HandleEmergency(Partograph patient)
         {
             patient.Status = LaborStatus.Emergency;
-            await _patientRepository.SaveItemAsync(patient);
+            //await _patientRepository.SaveItemAsync(patient);
             await AppShell.DisplaySnackbarAsync($"Emergency alert sent for {patient.Name}");
             await Refresh();
         }

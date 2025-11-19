@@ -12,9 +12,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class EnhancedPartographPageModel : ObservableObject, IQueryAttributable
     {
-        private Patient? _patient;
+        private Partograph? _partograph;
         private readonly PatientRepository _patientRepository;
-        private readonly PartographEntryRepository _partographRepository;
+        private readonly PartographRepository _partographRepository;
         private readonly VitalSignRepository _vitalSignRepository;
         private readonly AssessmentPlanRepository _assessmentPlanRepository;
         private readonly ModalErrorHandler _errorHandler;
@@ -99,7 +99,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public EnhancedPartographPageModel(
             PatientRepository patientRepository,
-            PartographEntryRepository partographRepository,
+            PartographRepository partographRepository,
             VitalSignRepository vitalSignRepository,
             AssessmentPlanRepository assessmentPlanRepository,
             ModalErrorHandler errorHandler)
@@ -118,7 +118,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (query.ContainsKey("id"))
             {
-                int id = Convert.ToInt32(query["id"]);
+                Guid? id = Guid.Parse(Convert.ToString(query["id"]));
                 LoadData(id).FireAndForgetSafeAsync(_errorHandler);
             }
         }
@@ -135,26 +135,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             });
         }
 
-        private async Task LoadData(int patientId)
+        private async Task LoadData(Guid? patientId)
         {
             try
             {
                 IsBusy = true;
 
-                _patient = await _patientRepository.GetAsync(patientId);
-                if (_patient == null)
+                _partograph = await _partographRepository.GetAsync(patientId);
+                if (_partograph == null)
                 {
                     _errorHandler.HandleError(new Exception($"Patient with id {patientId} not found."));
                     return;
                 }
 
-                PatientName = _patient.Name;
-                PatientInfo = _patient.DisplayInfo;
+                PatientName = _partograph.Name;
+                PatientInfo = _partograph.DisplayInfo;
 
                 // Calculate labor duration
-                if (_patient.LaborStartTime.HasValue)
+                if (_partograph.LaborStartTime.HasValue)
                 {
-                    var duration = DateTime.Now - _patient.LaborStartTime.Value;
+                    var duration = DateTime.Now - _partograph.LaborStartTime.Value;
                     LaborDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
                 }
 
@@ -174,28 +174,30 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private async Task LoadLatestMeasurements()
         {
-            if (_patient == null) return;
+            if (_partograph == null) return;
 
             try
             {
                 // Load latest partograph entries
-                var partographEntries = await _partographRepository.ListByPatientAsync(_patient.ID);
-                var latestEntry = partographEntries.OrderByDescending(e => e.RecordedTime).FirstOrDefault();
+                var partographEntries = await _partographRepository.ListByPatientAsync(_partograph.ID);
+                var latestEntry = partographEntries.OrderByDescending(e => e.Time).FirstOrDefault();
 
                 if (latestEntry != null)
                 {
-                    LatestCervicalDilation = latestEntry.CervicalDilation;
-                    LatestFHR = latestEntry.FetalHeartRate;
-                    LatestContractions = latestEntry.ContractionsPerTenMinutes;
+                    // It should be wroked on later
+
+                    //LatestCervicalDilation = latestEntry.CervicalDilation;
+                    //LatestFHR = latestEntry.FetalHeartRate;
+                    //LatestContractions = latestEntry.ContractionsPerTenMinutes;
 
                     // Set last measurement times (simulated based on partograph entries)
-                    LastBaselineFHRTime = latestEntry.RecordedTime;
-                    LastFHRDecelerationTime = latestEntry.RecordedTime;
-                    LastContractionsTime = latestEntry.RecordedTime;
+                    LastBaselineFHRTime = latestEntry.Time;
+                    LastFHRDecelerationTime = latestEntry.Time;
+                    LastContractionsTime = latestEntry.Time;
                 }
 
                 // Load latest vital signs
-                var vitalSigns = await _vitalSignRepository.ListByPatientAsync(_patient.ID);
+                var vitalSigns = await _vitalSignRepository.ListByPatientAsync(_partograph.ID);
                 var latestVitals = vitalSigns.OrderByDescending(v => v.RecordedTime).FirstOrDefault();
 
                 if (latestVitals != null)
@@ -205,20 +207,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 }
 
                 // Load latest assessment
-                var assessments = await _assessmentPlanRepository.ListByPatientAsync(_patient.ID);
-                var latestAssessment = assessments.OrderByDescending(a => a.RecordedTime).FirstOrDefault();
+                var assessments = await _assessmentPlanRepository.ListByPatientAsync(_partograph.ID);
+                var latestAssessment = assessments.OrderByDescending(a => a.Time).FirstOrDefault();
 
                 if (latestAssessment != null)
                 {
-                    LastAssessmentTime = latestAssessment.RecordedTime;
+                    LastAssessmentTime = latestAssessment.Time;
                 }
 
                 // Set default times if no measurements exist
-                if (LastBaselineFHRTime == default) LastBaselineFHRTime = _patient.LaborStartTime ?? DateTime.Now.AddHours(-2);
-                if (LastFHRDecelerationTime == default) LastFHRDecelerationTime = _patient.LaborStartTime ?? DateTime.Now.AddHours(-2);
-                if (LastContractionsTime == default) LastContractionsTime = _patient.LaborStartTime ?? DateTime.Now.AddHours(-2);
-                if (LastVitalSignsTime == default) LastVitalSignsTime = _patient.LaborStartTime ?? DateTime.Now.AddHours(-2);
-                if (LastAssessmentTime == default) LastAssessmentTime = _patient.LaborStartTime ?? DateTime.Now.AddHours(-4);
+                if (LastBaselineFHRTime == default) LastBaselineFHRTime = _partograph.LaborStartTime ?? DateTime.Now.AddHours(-2);
+                if (LastFHRDecelerationTime == default) LastFHRDecelerationTime = _partograph.LaborStartTime ?? DateTime.Now.AddHours(-2);
+                if (LastContractionsTime == default) LastContractionsTime = _partograph.LaborStartTime ?? DateTime.Now.AddHours(-2);
+                if (LastVitalSignsTime == default) LastVitalSignsTime = _partograph.LaborStartTime ?? DateTime.Now.AddHours(-2);
+                if (LastAssessmentTime == default) LastAssessmentTime = _partograph.LaborStartTime ?? DateTime.Now.AddHours(-4);
             }
             catch (Exception ex)
             {
@@ -321,9 +323,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Check for prolonged labor
-            if (_patient?.LaborStartTime != null)
+            if (_partograph?.LaborStartTime != null)
             {
-                var laborHours = (DateTime.Now - _patient.LaborStartTime.Value).TotalHours;
+                var laborHours = (DateTime.Now - _partograph.LaborStartTime.Value).TotalHours;
                 if (laborHours > 12 && LatestCervicalDilation < 10)
                 {
                     alerts.Add($"Prolonged labor: {laborHours:F1} hours");
@@ -331,9 +333,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Check for slow cervical progress
-            if (_patient?.LaborStartTime != null && LatestCervicalDilation > 0)
+            if (_partograph?.LaborStartTime != null && LatestCervicalDilation > 0)
             {
-                var laborHours = (DateTime.Now - _patient.LaborStartTime.Value).TotalHours;
+                var laborHours = (DateTime.Now - _partograph.LaborStartTime.Value).TotalHours;
                 var expectedDilation = Math.Min(4 + laborHours, 10);
                 if (LatestCervicalDilation < expectedDilation - 2)
                 {
@@ -352,93 +354,93 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         // Navigation Commands
         [RelayCommand]
         private Task OpenBaselineFHR()
-            => Shell.Current.GoToAsync($"baselinefhr?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"baselinefhr?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenFHRDeceleration()
-            => Shell.Current.GoToAsync($"fhrdeceleration?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"fhrdeceleration?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenContractions()
-            => Shell.Current.GoToAsync($"contractions?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"contractions?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenVitalSigns()
-            => Shell.Current.GoToAsync($"vitalsigns?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"vitalsigns?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenPainRelief()
-            => Shell.Current.GoToAsync($"painrelief?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"painrelief?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenAssessment()
-            => Shell.Current.GoToAsync($"assessmentplan?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"assessmentplan?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenCompanion()
-            => Shell.Current.GoToAsync($"companion?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"companion?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenOralFluid()
-            => Shell.Current.GoToAsync($"oralfluid?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"oralfluid?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenPosture()
-            => Shell.Current.GoToAsync($"posture?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"posture?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenAmnioticFluid()
-            => Shell.Current.GoToAsync($"amnioticfluid?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"amnioticfluid?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenFetalPosition()
-            => Shell.Current.GoToAsync($"fetalposition?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"fetalposition?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenCaput()
-            => Shell.Current.GoToAsync($"caput?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"caput?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenMoulding()
-            => Shell.Current.GoToAsync($"moulding?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"moulding?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenCervix()
-            => Shell.Current.GoToAsync($"cervix?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"cervix?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenHeadDescent()
-            => Shell.Current.GoToAsync($"headdescent?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"headdescent?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenOxytocin()
-            => Shell.Current.GoToAsync($"oxytocin?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"oxytocin?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenMedicine()
-            => Shell.Current.GoToAsync($"medicine?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"medicine?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenIVFluid()
-            => Shell.Current.GoToAsync($"ivfluid?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"ivfluid?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenUrine()
-            => Shell.Current.GoToAsync($"urine?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"urine?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task OpenTemperature()
-            => Shell.Current.GoToAsync($"temperature?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"temperature?patientId={_partograph?.ID}");
 
         [RelayCommand]
         private Task ViewChart()
-            => Shell.Current.GoToAsync($"partograph?id={_patient?.ID}");
+            => Shell.Current.GoToAsync($"partograph?id={_partograph?.ID}");
 
         [RelayCommand]
         private async Task Refresh()
         {
-            if (_patient != null)
-                await LoadData(_patient.ID);
+            if (_partograph != null)
+                await LoadData(_partograph.ID);
         }
     }
 }

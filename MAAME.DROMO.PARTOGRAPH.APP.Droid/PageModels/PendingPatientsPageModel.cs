@@ -12,11 +12,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class PendingPatientsPageModel : ObservableObject
     {
-        private readonly PatientRepository _patientRepository;
+        private readonly PartographRepository _patientRepository;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
-        private List<Patient> _patients = [];
+        private List<Partograph> _patients = [];
 
         [ObservableProperty]
         bool _isBusy;
@@ -27,9 +27,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _searchText = string.Empty;
 
-        private List<Patient> _allPatients = [];
+        private List<Partograph> _allPatients = [];
 
-        public PendingPatientsPageModel(PatientRepository patientRepository, ModalErrorHandler errorHandler)
+        public PendingPatientsPageModel(PartographRepository patientRepository, ModalErrorHandler errorHandler)
         {
             _patientRepository = patientRepository;
             _errorHandler = errorHandler;
@@ -69,7 +69,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 Patients = _allPatients.Where(p =>
                     p.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                    p.HospitalNumber.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                    p.Patient.HospitalNumber.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
         }
@@ -102,7 +102,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             => Shell.Current.GoToAsync("newpatient");
 
         [RelayCommand]
-        private async Task StartActiveLabor(Patient patient)
+        private async Task StartActiveLabor(Partograph patient)
         {
             patient.Status = LaborStatus.Active;
             patient.LaborStartTime = DateTime.Now;

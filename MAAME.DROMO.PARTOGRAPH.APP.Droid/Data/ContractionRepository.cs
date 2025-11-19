@@ -6,78 +6,152 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
     // Continue with more repositories...
     // Contractions Repository
-    public class ContractionRepository : BasePartographRepository<ContractionEntry>
+    public class ContractionRepository : BasePartographRepository<Contraction>
     {
-        protected override string TableName => "ContractionEntry";
+        protected override string TableName => "Tbl_Contraction";
         protected override string CreateTableSql => @"
-            CREATE TABLE IF NOT EXISTS ContractionEntry (
-                ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                PatientID INTEGER NOT NULL,
-                RecordedTime TEXT NOT NULL,
-                RecordedBy TEXT,
-                Notes TEXT,
-                FrequencyPer10Min INTEGER,
-                DurationSeconds INTEGER,
-                Strength TEXT,
-                Regularity TEXT,
-                PalpableAtRest INTEGER NOT NULL,
-                EffectOnCervix TEXT,
-                Coordinated INTEGER NOT NULL
-            );";
+            CREATE TABLE IF NOT EXISTS Tbl_Contraction (
+                ID TEXT PRIMARY KEY,
+                partographid TEXT,
+                time TEXT NOT NULL,
+                handler TEXT,
+                notes TEXT NOT NULL,
+                frequencyPer10Min INTEGER,
+                durationSeconds INTEGER,                              
+                createdtime INTEGER NOT NULL,
+                updatedtime INTEGER NOT NULL,
+                deletedtime INTEGER, 
+                deviceid TEXT NOT NULL,
+                origindeviceid TEXT NOT NULL,
+                syncstatus INTEGER DEFAULT 0,
+                version INTEGER DEFAULT 1,
+                serverversion INTEGER DEFAULT 0,
+                deleted INTEGER DEFAULT 0,
+                conflictdata TEXT,
+                datahash TEXT
+            );
+            
+            CREATE INDEX idx_contraction_sync ON Tbl_Contraction(updatedtime, syncstatus);
+            CREATE INDEX idx_contraction_server_version ON Tbl_Contraction(serverversion);
+
+            CREATE TRIGGER trg_contraction_insert 
+            AFTER INSERT ON Tbl_Contraction
+            WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
+            BEGIN
+                UPDATE Tbl_Contraction 
+                SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
+                    updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
+                WHERE ID = NEW.ID;
+            END;
+
+            CREATE TRIGGER trg_contraction_update 
+            AFTER UPDATE ON Tbl_Contraction
+            WHEN NEW.updatedtime = OLD.updatedtime
+            BEGIN
+                UPDATE Tbl_Contraction 
+                SET updatedtime = (strftime('%s', 'now') * 1000),
+                    version = OLD.version + 1,
+                    syncstatus = 0
+                WHERE ID = NEW.ID;
+            END;";
 
         public ContractionRepository(ILogger<ContractionRepository> logger) : base(logger) { }
 
-        protected override ContractionEntry MapFromReader(SqliteDataReader reader)
+        protected override Contraction MapFromReader(SqliteDataReader reader)
         {
-            return new ContractionEntry
+            return new Contraction
             {
-                ID = reader.GetInt32(0),
-                PatientID = reader.GetInt32(1),
-                RecordedTime = DateTime.Parse(reader.GetString(2)),
-                RecordedBy = reader.GetString(3),
+                ID = Guid.Parse(reader.GetString(0)),
+                PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
+                Time = reader.GetDateTime(2),
+                Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
                 Notes = reader.GetString(4),
-                FrequencyPer10Min = reader.GetInt32(5),
-                DurationSeconds = reader.GetInt32(6),
-                Strength = reader.GetString(7),
-                Regularity = reader.GetString(8),
-                PalpableAtRest = reader.GetBoolean(9),
-                EffectOnCervix = reader.GetString(10),
-                Coordinated = reader.GetBoolean(11)
+                FrequencyPer10Min = reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
+                DurationSeconds = reader.IsDBNull(6) ? 0 : reader.GetInt32(6),
+                CreatedTime = reader.GetInt64(7),
+                UpdatedTime = reader.GetInt64(8),
+                DeletedTime = reader.IsDBNull(9) ? null : reader.GetInt64(8),
+                DeviceId = reader.GetString(10),
+                OriginDeviceId = reader.GetString(11),
+                SyncStatus = reader.GetInt32(12),
+                Version = reader.GetInt32(13),
+                ServerVersion = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
+                Deleted = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
+                ConflictData = reader.GetString(16),
+                DataHash = reader.GetString(17)
             };
         }
 
-        protected override string GetInsertSql() => @"
-            INSERT INTO ContractionEntry (PatientID, RecordedTime, RecordedBy, Notes, FrequencyPer10Min, 
-                DurationSeconds, Strength, Regularity, PalpableAtRest, EffectOnCervix, Coordinated)
-            VALUES (@PatientID, @RecordedTime, @RecordedBy, @Notes, @FrequencyPer10Min, 
-                @DurationSeconds, @Strength, @Regularity, @PalpableAtRest, @EffectOnCervix, @Coordinated);
-            SELECT last_insert_rowid();";
+        protected override string GetInsertSql() => @"INSERT INTO Tbl_Contraction (ID, partographID, time, handler, notes, frequencyPer10Min, durationSeconds, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
+        VALUES (@id, @partographId, @time, @handler, @notes, @rate, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
 
         protected override string GetUpdateSql() => @"
-            UPDATE ContractionEntry SET RecordedTime = @RecordedTime, RecordedBy = @RecordedBy, Notes = @Notes,
-                FrequencyPer10Min = @FrequencyPer10Min, DurationSeconds = @DurationSeconds, Strength = @Strength,
-                Regularity = @Regularity, PalpableAtRest = @PalpableAtRest, EffectOnCervix = @EffectOnCervix, Coordinated = @Coordinated
-            WHERE ID = @ID";
+            UPDATE Tbl_FHR
+        SET partographID = @partographId,
+            time = @time, 
+            handler = @handler,
+            notes = @notes,
+            frequencyPer10Min = @frequencyPer10Min,
+            durationSeconds = @durationSeconds,
+            updatedtime = @updatedtime,
+            deviceid = @deviceid,
+            syncstatus = @syncstatus,
+            version = @version
+        WHERE ID = @id";
 
-        protected override void AddInsertParameters(SqliteCommand cmd, ContractionEntry item)
+        protected override void AddInsertParameters(SqliteCommand cmd, Contraction item)
         {
-            cmd.Parameters.AddWithValue("@PatientID", item.PatientID);
-            cmd.Parameters.AddWithValue("@RecordedTime", item.RecordedTime.ToString("O"));
-            cmd.Parameters.AddWithValue("@RecordedBy", item.RecordedBy ?? "");
-            cmd.Parameters.AddWithValue("@Notes", item.Notes ?? "");
-            cmd.Parameters.AddWithValue("@FrequencyPer10Min", item.FrequencyPer10Min);
-            cmd.Parameters.AddWithValue("@DurationSeconds", item.DurationSeconds);
-            cmd.Parameters.AddWithValue("@Strength", item.Strength ?? "Moderate");
-            cmd.Parameters.AddWithValue("@Regularity", item.Regularity ?? "Regular");
-            cmd.Parameters.AddWithValue("@PalpableAtRest", item.PalpableAtRest);
-            cmd.Parameters.AddWithValue("@EffectOnCervix", item.EffectOnCervix ?? "");
-            cmd.Parameters.AddWithValue("@Coordinated", item.Coordinated);
+            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            item.ID = item.ID ?? Guid.NewGuid();
+            item.CreatedTime = now;
+            item.UpdatedTime = now;
+            item.DeviceId = DeviceIdentity.GetOrCreateDeviceId();
+            item.OriginDeviceId = DeviceIdentity.GetOrCreateDeviceId();
+            item.Version = 1;
+            item.ServerVersion = 0;
+            item.SyncStatus = 0;
+            item.Deleted = 0;
+            item.DataHash = item.CalculateHash();
+
+            cmd.Parameters.AddWithValue("@id", item.ID.ToString());
+            cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
+            cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
+            cmd.Parameters.AddWithValue("@frequencyPer10Min", item.FrequencyPer10Min);
+            cmd.Parameters.AddWithValue("@durationSeconds", item.DurationSeconds);
+            cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
+            cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
+            cmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId);
+            cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
+            cmd.Parameters.AddWithValue("@version", item.Version);
+            cmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
+            cmd.Parameters.AddWithValue("@deleted", item.Deleted);
         }
 
-        protected override void AddUpdateParameters(SqliteCommand cmd, ContractionEntry item)
+        protected override void AddUpdateParameters(SqliteCommand cmd, Contraction item)
         {
-            AddInsertParameters(cmd, item);
-            cmd.Parameters.AddWithValue("@ID", item.ID);
+            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            item.UpdatedTime = now;
+            item.DeviceId = DeviceIdentity.GetOrCreateDeviceId();
+            item.Version++;
+            item.SyncStatus = 0; // Mark as needing sync
+            item.DataHash = item.CalculateHash();
+
+            cmd.Parameters.AddWithValue("@id", item.ID.ToString());
+            cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
+            cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
+            cmd.Parameters.AddWithValue("@frequencyPer10Min", item.FrequencyPer10Min);
+            cmd.Parameters.AddWithValue("@durationSeconds", item.DurationSeconds);
+            cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
+            cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
+            cmd.Parameters.AddWithValue("@version", item.Version);
         }
     }
 }

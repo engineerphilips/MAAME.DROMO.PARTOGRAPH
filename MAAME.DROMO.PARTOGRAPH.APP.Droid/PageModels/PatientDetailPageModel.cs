@@ -1,11 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
@@ -13,12 +8,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     {
         private Patient? _patient;
         private readonly PatientRepository _patientRepository;
-        private readonly PartographEntryRepository _partographRepository;
+        private readonly PartographRepository _partographRepository;
         private readonly VitalSignRepository _vitalSignRepository;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
-        private string _name = string.Empty;
+        private string _firstName = string.Empty;
+
+        [ObservableProperty]
+        private string _lastName = string.Empty;
 
         [ObservableProperty]
         private string _hospitalNumber = string.Empty;
@@ -66,7 +64,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _complications = string.Empty;
 
         [ObservableProperty]
-        private List<PartographEntry> _partographEntries = [];
+        private List<Partograph> _partographEntries = [];
 
         [ObservableProperty]
         private List<VitalSign> _vitalSigns = [];
@@ -80,10 +78,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private bool _isEditMode = false;
 
-        public bool IsNewPatient => _patient?.ID == 0;
+        public bool IsNewPatient => _patient?.ID == null;
 
         public PatientDetailPageModel(PatientRepository patientRepository,
-            PartographEntryRepository partographRepository,
+            PartographRepository partographRepository,
             VitalSignRepository vitalSignRepository,
             ModalErrorHandler errorHandler)
         {
@@ -97,7 +95,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (query.ContainsKey("id"))
             {
-                int id = Convert.ToInt32(query["id"]);
+                Guid? id = Guid.Parse(Convert.ToString(query["id"]));
                 LoadData(id).FireAndForgetSafeAsync(_errorHandler);
             }
             else
@@ -108,7 +106,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private async Task LoadData(int id)
+        private async Task LoadData(Guid? id)
         {
             try
             {
@@ -122,22 +120,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     return;
                 }
 
-                Name = _patient.Name;
+                FirstName = _patient.FirstName;
+                LastName = _patient.LastName; 
                 HospitalNumber = _patient.HospitalNumber;
-                Age = _patient.Age;
-                Gravidity = _patient.Gravidity;
-                Parity = _patient.Parity;
-                AdmissionDate = _patient.AdmissionDate;
-                ExpectedDeliveryDate = _patient.ExpectedDeliveryDate;
+                Age = _patient.Age ?? 0;
+                //Gravidity = _patient.Gravida;
+                //Parity = _patient.Parity;
+                //AdmissionDate = _patient.AdmissionDate;
+                //ExpectedDeliveryDate = _patient.ExpectedDeliveryDate;
                 BloodGroup = _patient.BloodGroup;
                 PhoneNumber = _patient.PhoneNumber;
                 EmergencyContact = _patient.EmergencyContact;
-                Status = _patient.Status;
-                MembraneStatus = _patient.MembraneStatus;
-                LiquorStatus = _patient.LiquorStatus;
-                CervicalDilationOnAdmission = _patient.CervicalDilationOnAdmission;
-                RiskFactors = _patient.RiskFactors;
-                Complications = _patient.Complications;
+                //Status = _patient.Status;
+                //MembraneStatus = _patient.MembraneStatus;
+                //LiquorStatus = _patient.LiquorStatus;
+                //CervicalDilationOnAdmission = _patient.CervicalDilationOnAdmission;
+                //RiskFactors = _patient.RiskFactors;
+                //Complications = _patient.Complications;
 
                 PartographEntries = _patient.PartographEntries;
                 VitalSigns = _patient.VitalSigns;
@@ -167,22 +166,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 _patient = new Patient();
             }
 
-            _patient.Name = Name;
+            _patient.FirstName = FirstName;
+            _patient.LastName = LastName;
             _patient.HospitalNumber = HospitalNumber;
             _patient.Age = Age;
-            _patient.Gravidity = Gravidity;
-            _patient.Parity = Parity;
-            _patient.AdmissionDate = AdmissionDate;
-            _patient.ExpectedDeliveryDate = ExpectedDeliveryDate;
+            //_patient.Gravida = Gravidity;
+            //_patient.Parity = Parity;
+            //_patient.AdmissionDate = AdmissionDate;
+            //_patient.ExpectedDeliveryDate = ExpectedDeliveryDate;
             _patient.BloodGroup = BloodGroup;
             _patient.PhoneNumber = PhoneNumber;
             _patient.EmergencyContact = EmergencyContact;
-            _patient.Status = Status;
-            _patient.MembraneStatus = MembraneStatus;
-            _patient.LiquorStatus = LiquorStatus;
-            _patient.CervicalDilationOnAdmission = CervicalDilationOnAdmission;
-            _patient.RiskFactors = RiskFactors;
-            _patient.Complications = Complications;
+            //_patient.Status = Status;
+            //_patient.MembraneStatus = MembraneStatus;
+            //_patient.LiquorStatus = LiquorStatus;
+            //_patient.CervicalDilationOnAdmission = CervicalDilationOnAdmission;
+            //_patient.RiskFactors = RiskFactors;
+            //_patient.Complications = Complications;
 
             await _patientRepository.SaveItemAsync(_patient);
 
@@ -215,10 +215,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (_patient != null)
             {
-                _patient.Status = LaborStatus.Active;
-                _patient.LaborStartTime = DateTime.Now;
+                //_patient.Status = LaborStatus.Active;
+                //_patient.LaborStartTime = DateTime.Now;
                 await _patientRepository.SaveItemAsync(_patient);
-                Status = _patient.Status;
+                //Status = _patient.Status;
                 await AppShell.DisplayToastAsync("Active labor started");
             }
         }
@@ -228,10 +228,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (_patient != null)
             {
-                _patient.Status = LaborStatus.Completed;
-                _patient.DeliveryTime = DateTime.Now;
+                //_patient.Status = LaborStatus.Completed;
+                //_patient.DeliveryTime = DateTime.Now;
                 await _patientRepository.SaveItemAsync(_patient);
-                Status = _patient.Status;
+                //Status = _patient.Status;
                 await AppShell.DisplayToastAsync("Delivery completed");
             }
         }
@@ -239,11 +239,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task Delete()
         {
-            if (_patient?.ID > 0)
+            if (_patient?.ID != null)
             {
                 var answer = await Shell.Current.DisplayAlert(
                     "Delete Patient",
-                    $"Are you sure you want to delete {_patient.Name}'s record?",
+                    $"Are you sure you want to delete {_patient.FirstName}'s record?",
                     "Yes", "No");
 
                 if (answer)

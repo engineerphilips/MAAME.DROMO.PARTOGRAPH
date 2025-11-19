@@ -1,3 +1,8 @@
+using Microsoft.Maui.Controls;
+using System.Diagnostics;
+using System.Threading.Tasks;
+//using static Android.Renderscripts.ScriptGroup;
+
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views;
 
 public partial class ActivePatientsView : ContentView
@@ -10,8 +15,9 @@ public partial class ActivePatientsView : ContentView
     private void OnShowMenuClicked(object sender, EventArgs e)
     {
         // Show popup relative to the button that was clicked
-        var button = sender as Button;
-        contextMenuPopup.ShowRelativeToView(button, Syncfusion.Maui.Popup.PopupRelativePosition.AlignBottom, 0, 5);
+
+        if (sender is Button button)
+            contextMenuPopup.ShowRelativeToView(button, Syncfusion.Maui.Popup.PopupRelativePosition.AlignBottom, 0, 5);
     }
 
     private void OnEditClicked(object sender, EventArgs e)
@@ -31,5 +37,33 @@ public partial class ActivePatientsView : ContentView
         contextMenuPopup.Dismiss();
         // Handle delete
     }
-    
+
+    private async void Partograph_Clicked(object sender, EventArgs e)
+    {
+        if (sender is Button button)
+        {
+            if (BindingContext is ActivePatientsPageModel pageModel)
+                //pageModel.BindToPatient((int)button.tag);
+                await Shell.Current.GoToAsync($"//partograph?patientId={2}");
+        }
+        //?id={patient.ID}
+        //await Shell.Current.GoToAsync("//main");
+    }
+
+    //private void Button_BindingContextChanged(object sender, EventArgs e)
+    //{
+    //    if (sender is Button btn)
+    //    {
+    //        if (btn.BindingContext == null)
+    //        {
+    //            Debug.WriteLine($"WARNING: No binding found");
+    //        }
+    //        else
+    //        {
+    //            //Debug.WriteLine($"Binding found for {btn.BindingContext}: Source={btn.BindingContext.Source}, Path={binding.Path}");
+
+    //            Debug.WriteLine($"Binding found for {btn.BindingContext}");
+    //        }
+    //    }
+    //}
 }

@@ -56,7 +56,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             _hasBeenInitialized = true;
         }
 
-        public async Task<List<VitalSign>> ListByPatientAsync(int patientId)
+        public async Task<List<VitalSign>> ListByPatientAsync(Guid? patientId)
         {
             await Init();
             await using var connection = new SqliteConnection(Constants.DatabasePath);
@@ -73,8 +73,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 vitalSigns.Add(new VitalSign
                 {
-                    ID = reader.GetInt32(0),
-                    PatientID = reader.GetInt32(1),
+                    ID = Guid.Parse(reader.GetString(0)),
+                    PatientID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
                     RecordedTime = DateTime.Parse(reader.GetString(2)),
                     SystolicBP = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
                     DiastolicBP = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
@@ -91,14 +91,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return vitalSigns;
         }
 
-        public async Task<int> SaveItemAsync(VitalSign item)
+        public async Task<Guid?> SaveItemAsync(VitalSign item)
         {
             await Init();
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
 
             var saveCmd = connection.CreateCommand();
-            if (item.ID == 0)
+            if (item.ID == null)
             {
                 saveCmd.CommandText = @"
                 INSERT INTO VitalSign (PatientID, RecordedTime, SystolicBP, DiastolicBP, Temperature,
@@ -132,9 +132,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             saveCmd.Parameters.AddWithValue("@RecordedBy", item.RecordedBy ?? "");
 
             var result = await saveCmd.ExecuteScalarAsync();
-            if (item.ID == 0)
+            if (item.ID == null)
             {
-                item.ID = Convert.ToInt32(result);
+                item.ID = Guid.Parse(Convert.ToString(result));
             }
 
             return item.ID;

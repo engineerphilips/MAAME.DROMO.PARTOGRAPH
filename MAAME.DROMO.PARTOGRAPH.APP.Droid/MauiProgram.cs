@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using FluentIcons.Maui;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
 using MauiIcons.Fluent;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
@@ -46,16 +47,30 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             // Register Repositories                        
             builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
             builder.Services.AddSingleton<PatientRepository>();
-            builder.Services.AddSingleton<PartographEntryRepository>();
-            builder.Services.AddSingleton<VitalSignRepository>();
+            builder.Services.AddSingleton<PartographRepository>();
+            //builder.Services.AddSingleton<VitalSignRepository>();
             builder.Services.AddSingleton<MedicalNoteRepository>();
             builder.Services.AddSingleton<StaffRepository>();
+            builder.Services.AddSingleton<CompanionRepository>();
+            builder.Services.AddSingleton<PainReliefRepository>();
+            builder.Services.AddSingleton<OralFluidRepository>();
+            builder.Services.AddSingleton<PostureRepository>();
+            builder.Services.AddSingleton<HeadDescentRepository>();
+            builder.Services.AddSingleton<ContractionRepository>();
+            builder.Services.AddSingleton<CervixDilatationRepository>();
+            builder.Services.AddSingleton<MouldingRepository>();
+            builder.Services.AddSingleton<FHRRepository>();
+            builder.Services.AddSingleton<TemperatureRepository>();
+            builder.Services.AddSingleton<FetalPositionRepository>();
+            builder.Services.AddSingleton<BPRepository>();
+            builder.Services.AddSingleton<CaputRepository>();
+            builder.Services.AddSingleton<UrineRepository>();
 
             // Keep existing repositories for compatibility during migration
-            builder.Services.AddSingleton<ProjectRepository>();
-            builder.Services.AddSingleton<TaskRepository>();
-            builder.Services.AddSingleton<CategoryRepository>();
-            builder.Services.AddSingleton<TagRepository>();
+            //builder.Services.AddSingleton<ProjectRepository>();
+            //builder.Services.AddSingleton<TaskRepository>();
+            //builder.Services.AddSingleton<CategoryRepository>();
+            //builder.Services.AddSingleton<TagRepository>();
 
             // Register Services
             builder.Services.AddSingleton<SeedDataService>();
@@ -69,6 +84,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<PendingPatientsPageModel>();
             builder.Services.AddSingleton<ActivePatientsPageModel>();
             builder.Services.AddSingleton<CompletedPatientsPageModel>();
+            builder.Services.AddSingleton<CompanionModalPageModel>();
+            builder.Services.AddSingleton<PainReliefModalPageModel>();
+            builder.Services.AddSingleton<OralFluidModalPageModel>();
+            builder.Services.AddSingleton<PostureModalPageModel>();
 
             // Register Pages and PageModels with routes
             builder.Services.AddTransientWithShellRoute<PatientDetailPage, PatientDetailPageModel>("patient");

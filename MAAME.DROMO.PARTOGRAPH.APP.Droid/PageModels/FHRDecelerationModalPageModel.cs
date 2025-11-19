@@ -13,7 +13,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly FHRDecelerationRepository _repository;
         private readonly ILogger<FHRDecelerationModalPageModel> _logger;
         private FHRDecelerationEntry _currentEntry;
-        private int _patientId;
+        private Guid? _patientId;
 
         public FHRDecelerationModalPageModel(FHRDecelerationRepository repository, ILogger<FHRDecelerationModalPageModel> logger)
         {
@@ -208,9 +208,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 var entry = new FHRDecelerationEntry
                 {
-                    PatientID = _patientId,
-                    RecordedTime = RecordingDate.Date + RecordingTime,
-                    RecordedBy = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
+                    PartographID = _patientId,
+                    Time = RecordingDate.Date + RecordingTime,
+                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
                     DecelerationsPresent = DecelerationsPresent,
                     DecelerationType = DecelerationsPresent ? SelectedDecelerationType : null,
                     Severity = DecelerationsPresent ? GetSeverity() : null,

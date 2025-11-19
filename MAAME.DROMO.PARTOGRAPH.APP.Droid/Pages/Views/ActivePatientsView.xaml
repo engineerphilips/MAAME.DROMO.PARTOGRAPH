@@ -2,10 +2,13 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.ActivePatientsView"
+             xmlns:f="clr-namespace:Fonts"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Models"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              xmlns:popup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
-             xmlns:fonts="clr-namespace:Fonts">
+             xmlns:fonts="clr-namespace:Fonts"
+             x:Name="PatientsView">
 
     <Grid RowDefinitions="Auto,Auto,*" Padding="20">
 
@@ -28,7 +31,8 @@
                      Command="{Binding RefreshCommand}">
             <CollectionView ItemsSource="{Binding Patients}"
                             ItemsLayout="VerticalList"
-                            SelectionMode="None">
+                            SelectionMode="None"
+                            x:Name="PatientCollectionView">
                 <CollectionView.EmptyView>
                     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20">
                         <Label Text="&#xE8B6;" 
@@ -102,13 +106,17 @@
                                         </HorizontalStackLayout>
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
-
+                                
                                 <!-- Action Buttons -->
                                 <Grid Grid.Column="2" RowDefinitions="*,*" RowSpacing="5">
+                                    <!--Glyph="{x:Static f:FluentUI.ribbon_20_regular}"
+FontFamily="{x:Static f:FluentUI.FontFamily}"
+Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}"-->
+
                                     <Button Grid.Row="0"
-                                            Text="&#xe780;"
-                                            FontFamily="MaterialAssets"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPartographCommand}"
+                                            Text="{x:Static f:FluentUI.note_24_regular}"
+                                            FontFamily="{x:Static f:FluentUI.FontFamily}" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:ActivePatientsPageModel}}, Path=NavigateToPartographCommand, x:DataType=pagemodels:ActivePatientsPageModel}" 
                                             CommandParameter="{Binding .}"
                                             BackgroundColor="#2196F3"
                                             TextColor="White"
@@ -116,28 +124,23 @@
                                             HeightRequest="45"
                                             CornerRadius="22"
                                             ToolTipProperties.Text="View Partograph" />
-
-                                    <!--Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AddPartographEntryCommand}"
-CommandParameter="{Binding .}"-->
+                                    <!--Text="&#xE710;"
+FontFamily="MaterialAssets"-->
 
                                     <Button Grid.Row="1"
-                                            Text="&#xE710;"
-                                            FontFamily="MaterialAssets"
+                                            Text="{x:Static f:FluentUI.edit_20_regular}"
+                                            FontFamily="{x:Static f:FluentUI.FontFamily}" 
                                             BackgroundColor="#4CAF50"
                                             TextColor="White"
                                             WidthRequest="45"
                                             HeightRequest="45"
                                             CornerRadius="22"
                                             ToolTipProperties.Text="Add Entry" 
-                                            Clicked="OnShowMenuClicked">
-                                        <FlyoutBase.ContextFlyout>
-                                            <MenuFlyout>
-                                                <MenuFlyoutItem Text="FHR" />
-                                                <MenuFlyoutItem Text="Contraction" />
-                                                <MenuFlyoutItem Text="Descent" />
-                                            </MenuFlyout>
-                                        </FlyoutBase.ContextFlyout>
-                                    </Button>
+                                            Clicked="OnShowMenuClicked"/>
+
+                                    <!--Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:ActivePatientsPageModel}}, Path=AddPartographEntryCommand, x:DataType=pagemodels:ActivePatientsPageModel}" 
+                                            CommandParameter="{Binding .}"-->
+
                                 </Grid>
                             </Grid>
                         </Border>
@@ -147,10 +150,11 @@ CommandParameter="{Binding .}"-->
         </RefreshView>
 
         <popup:SfPopup Grid.Row="2" x:Name="contextMenuPopup" OverlayMode="Transparent"
-               ShowFooter="False"
-               ShowHeader="False" 
+                       ShowFooter="False"
+                       ShowHeader="False" 
                        WidthRequest="200"
-                       HeaderHeight="800">
+                       HeaderHeight="800"
+                       >
             <popup:SfPopup.ContentTemplate>
                 <DataTemplate>
                     <StackLayout Padding="5" Spacing="0">

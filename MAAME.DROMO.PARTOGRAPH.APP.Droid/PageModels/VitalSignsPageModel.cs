@@ -11,9 +11,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class VitalSignsPageModel : ObservableObject, IQueryAttributable
     {
-        private Patient? _patient;
+        private Partograph? _patient;
         private VitalSign _vitalSign = new();
-        private readonly PatientRepository _patientRepository;
+        private readonly PartographRepository _patientRepository;
         private readonly VitalSignRepository _vitalSignRepository;
         private readonly ModalErrorHandler _errorHandler;
 
@@ -71,7 +71,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         bool _isBusy;
 
-        public VitalSignsPageModel(PatientRepository patientRepository,
+        public VitalSignsPageModel(PartographRepository patientRepository,
             VitalSignRepository vitalSignRepository,
             ModalErrorHandler errorHandler)
         {
@@ -86,12 +86,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (query.ContainsKey("patientId"))
             {
-                int patientId = Convert.ToInt32(query["patientId"]);
+                Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
                 LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
             }
         }
 
-        private async Task LoadPatient(int patientId)
+        private async Task LoadPatient(Guid? patientId)
         {
             try
             {

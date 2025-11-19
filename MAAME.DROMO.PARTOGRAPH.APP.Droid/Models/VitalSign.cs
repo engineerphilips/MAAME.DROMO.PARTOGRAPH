@@ -9,8 +9,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
 {
     public class VitalSign
     {
-        public int ID { get; set; }
-        public int PatientID { get; set; }
+        public Guid? ID { get; set; }
+        public Guid? PatientID { get; set; }
         public DateTime RecordedTime { get; set; } = DateTime.Now;
 
         public int SystolicBP { get; set; }

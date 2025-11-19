@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.FHRModalView"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:fonts="clr-namespace:Fonts">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+
+            <!-- Input Styles -->
+            <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Outlined" />
+                <Setter Property="OutlineCornerRadius" Value="8" />
+                <!--<Setter Property="Stroke" Value="{StaticResource BorderLight}" />-->
+                <!--<Setter Property="FocusedStroke" Value="{StaticResource PrimaryBlue}" />-->
+                <!--<Setter Property="ContainerBackground" Value="{StaticResource SurfaceWhite}" />-->
+                <!--<Setter Property="Margin" Value="0,4" />-->
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <!--<ContentView.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="{AppThemeBinding Light=#2196F3, Dark=#1565C0}" />
+    </ContentView.Behaviors>-->
+
+    <ScrollView>
+        <VerticalStackLayout Padding="15,10" Spacing="10">
+
+            <!-- Header -->
+            <!--<Border StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout Spacing="15">
+                    <Label Text="&#xE95E;" 
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="32"
+                           TextColor="{AppThemeBinding Light=#1976D2, Dark=White}"
+                           VerticalOptions="Center" />
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label Text="Pain Relief Assessment" FontSize="18" FontAttributes="Bold" />
+                        <Label Text="{Binding PatientName}" FontSize="14" Opacity="0.8" />
+                        <Label Text="{Binding RecordingTime, StringFormat='Recording at: {0:HH:mm}'}" FontSize="14" Opacity="0.7" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>-->
+
+            <!-- Pain Level Assessment -->
+
+            <core:SfTextInputLayout Hint="Date"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Recording time">
+                <DatePicker Date="{Binding RecordingDate}" />
+            </core:SfTextInputLayout>
+
+            <core:SfTextInputLayout Hint="Time"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Recording time">
+                <TimePicker Time="{Binding RecordingTime}" />
+            </core:SfTextInputLayout>
+
+            <VerticalStackLayout Padding="10,0,0,0">
+                <Label Text="What is the FHR deceleration?" FontAttributes="Bold"/>
+                <!--<buttons:SfRadioGroup x:Name="radioGroup" Margin="30,0,0,0">
+                    <buttons:SfRadioButton x:Name="no" Text="No" />
+                    <buttons:SfRadioButton x:Name="early" Text="Early"/>
+                    <buttons:SfRadioButton x:Name="late" Text="Late" />
+                    <buttons:SfRadioButton x:Name="variable" Text="Variable" />
+                </buttons:SfRadioGroup>-->
+
+                <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="3" SelectedIndex="{Binding PainReliefIndex}">
+                    <buttons:SfSegmentedControl.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>No</x:String>
+                            <x:String>Yes</x:String>
+                            <x:String>Declines</x:String>
+                        </x:Array>
+                    </buttons:SfSegmentedControl.ItemsSource>
+                </buttons:SfSegmentedControl>
+
+            </VerticalStackLayout>
+
+            <core:SfTextInputLayout Hint="Additional Notes"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Any other observations...">
+                <Entry Text="{Binding Notes}"
+                               Keyboard="Text"
+                               ReturnType="Next" />
+            </core:SfTextInputLayout>
+
+            <!--<Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Pain Level (0-10 Scale)" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,60">
+                        <Slider Grid.Column="0"
+                                Minimum="0" 
+                                Maximum="10"
+                                Value="{Binding PainLevel, Converter={toolkit:DoubleToIntConverter}}"
+                                ThumbColor="#EF5350"
+                                MinimumTrackColor="#EF5350"
+                                MaximumTrackColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" />
+                        <Border Grid.Column="1" 
+                                BackgroundColor="#EF5350"
+                                Padding="10"
+                                HorizontalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Label Text="{Binding PainLevel}" 
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="Center" />
+                        </Border>
+                    </Grid>
+
+                    -->
+            <!-- Pain Scale Reference -->
+            <!--
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" RowSpacing="5">
+                        <Label Grid.Column="0" Text="0-3: Mild" FontSize="12" TextColor="#4CAF50" HorizontalOptions="Center" />
+                        <Label Grid.Column="1" Text="4-6: Moderate" FontSize="12" TextColor="#FF9800" HorizontalOptions="Center" />
+                        <Label Grid.Column="2" Text="7-10: Severe" FontSize="12" TextColor="#EF5350" HorizontalOptions="Center" />
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="Manageable" FontSize="10" Opacity="0.7" HorizontalOptions="Center" />
+                        <Label Grid.Row="1" Grid.Column="1" Text="Interferes with activity" FontSize="10" Opacity="0.7" HorizontalOptions="Center" />
+                        <Label Grid.Row="1" Grid.Column="2" Text="Unable to function" FontSize="10" Opacity="0.7" HorizontalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>-->
+
+            <!-- Pain Relief Method -->
+            <!--<Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Pain Relief Method" FontSize="18" FontAttributes="Bold" />
+
+                    <Picker SelectedItem="{Binding PainReliefMethod}"
+                            Title="Select pain relief method">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>None</x:String>
+                                <x:String>Breathing techniques</x:String>
+                                <x:String>Position changes</x:String>
+                                <x:String>Massage</x:String>
+                                <x:String>Hot/Cold therapy</x:String>
+                                <x:String>TENS machine</x:String>
+                                <x:String>Water birth/bath</x:String>
+                                <x:String>Aromatherapy</x:String>
+                                <x:String>Paracetamol</x:String>
+                                <x:String>Codeine</x:String>
+                                <x:String>Pethidine injection</x:String>
+                                <x:String>Gas and air (Entonox)</x:String>
+                                <x:String>Epidural</x:String>
+                                <x:String>Spinal block</x:String>
+                                <x:String>Combined spinal-epidural</x:String>
+                                <x:String>Other</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+
+                    -->
+            <!-- Administration Details (visible when medication selected) -->
+            <!--
+                    <VerticalStackLayout IsVisible="{Binding ShowMedicationDetails}" Spacing="10">
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Text="Administration Time" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                <TimePicker Time="{Binding AdministrationTime}" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="1">
+                                <Label Text="Dose/Amount" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                <Entry Text="{Binding Dose}" Placeholder="e.g., 100mg, 50ml" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>-->
+
+            <!-- Effectiveness Assessment -->
+            <!--<Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Effectiveness Assessment" FontSize="18" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                        <RadioButton Grid.Column="0" 
+                                     Content="Poor"
+                                     GroupName="effectiveness"
+                                     IsChecked="{Binding EffectivenessPoor}" />
+                        <RadioButton Grid.Column="1" 
+                                     Content="Fair"
+                                     GroupName="effectiveness"
+                                     IsChecked="{Binding EffectivenessFair}" />
+                        <RadioButton Grid.Column="2" 
+                                     Content="Good"
+                                     GroupName="effectiveness"
+                                     IsChecked="{Binding EffectivenessGood}" />
+                        <RadioButton Grid.Column="3" 
+                                     Content="Excellent"
+                                     GroupName="effectiveness"
+                                     IsChecked="{Binding EffectivenessExcellent}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>-->
+
+            <!-- Side Effects -->
+            <!--<Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Side Effects" FontSize="18" FontAttributes="Bold" />
+
+                    <CheckBox x:Name="SideEffectsCheckBox"
+                              IsChecked="{Binding SideEffects}"
+                              Color="#EF5350" />
+                    <Label Text="Patient experiencing side effects"
+                           VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnSideEffectsLabelTapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                    <VerticalStackLayout IsVisible="{Binding SideEffects}" Spacing="10">
+                        <Label Text="Describe side effects:" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        <Editor Text="{Binding SideEffectsDescription}"
+                                Placeholder="e.g., Nausea, drowsiness, respiratory depression..."
+                                MinimumHeightRequest="80"
+                                AutoSize="TextChanges" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>-->
+
+            <!-- Additional Notes -->
+            <!--<Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Additional Notes" FontSize="18" FontAttributes="Bold" />
+                    <Editor Text="{Binding Notes}"
+                            Placeholder="Any additional observations about pain management..."
+                            MinimumHeightRequest="100"
+                            AutoSize="TextChanges" />
+                </VerticalStackLayout>
+            </Border>-->
+
+            <!-- Recorded By -->
+            <!--<Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label Text="Recorded By" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                    <Entry Text="{Binding RecordedBy}" 
+                           Placeholder="Staff name" />
+                </VerticalStackLayout>
+            </Border>-->
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,40">
+                <Button Grid.Column="0"
+                        Text="Cancel"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+
+                <Button Grid.Column="1"
+                        Text="Save Assessment"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

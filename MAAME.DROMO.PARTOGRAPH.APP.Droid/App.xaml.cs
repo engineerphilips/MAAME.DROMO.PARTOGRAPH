@@ -14,7 +14,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
         {
             var isAuthenticated = Preferences.Get("IsAuthenticated", false);
             var serviceProvider = IPlatformApplication.Current.Services;
-
+            
             if (isAuthenticated)
             {
                 // If authenticated, navigate to the main shell
@@ -23,11 +23,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
                 {
                     Name = Preferences.Get("StaffName", "Name"),
                     Role = Preferences.Get("StaffRole", "Role"),
-                    StaffID = "",
+                    StaffID = string.Empty,
                     Email = "",
                     IsActive = true,
                     Department = "",
-                    LastLogin = DateTime.Now,
+                    LastLogin = DateTime.Now, 
                 };
 
                 Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
@@ -43,6 +43,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
         protected override async void OnStart()
         {
             base.OnStart();
+
+            //Preferences.Remove("DatabaseInitialized");
 
             // Initialize database if needed
             await InitializeDatabase();

@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PartographPage1"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Models"
+             xmlns:fonts="clr-namespace:Fonts"
+             Title="Partograph Chart">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add Entry" 
+                     Command="{Binding AddEntryCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.add_16_regular}" />
+        <ToolbarItem Text="Print" 
+                     Command="{Binding PrintCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.print_16_regular}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,400,400,300,Auto" Padding="20">
+
+            <!-- Patient Header -->
+            <Border Grid.Row="0" 
+                    StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                    Padding="15"
+                    Margin="0,0,0,20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding PatientName}" FontSize="20" FontAttributes="Bold" />
+                        <Label Text="{Binding PatientInfo}" FontSize="14" Opacity="0.8" />
+                        <HorizontalStackLayout Spacing="20">
+                            <Label Text="{Binding LaborDuration, StringFormat='Labor Duration: {0}'}" FontSize="12" />
+                            <Label Text="{Binding LastRecordedTime, StringFormat='Last Entry: {0:HH:mm}'}" FontSize="12" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="{Binding CurrentDilation, StringFormat='{0} cm'}" 
+                               FontSize="32" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+                        <Label Text="Current Dilation" 
+                               FontSize="10"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Alert/Action Line Legend -->
+            <Grid Grid.Row="1" ColumnDefinitions="*,*,*" Margin="0,0,0,20">
+                <HorizontalStackLayout Grid.Column="0" Spacing="10">
+                    <BoxView WidthRequest="30" HeightRequest="3" Color="#FFA726" />
+                    <Label Text="Alert Line" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="1" Spacing="10" HorizontalOptions="Center">
+                    <BoxView WidthRequest="30" HeightRequest="3" Color="#EF5350" />
+                    <Label Text="Action Line" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="2" Spacing="10" HorizontalOptions="End">
+                    <BoxView WidthRequest="30" HeightRequest="3" Color="#66BB6A" />
+                    <Label Text="Progress Line" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Grid>
+
+            <!-- Cervical Dilation Chart -->
+            <Border Grid.Row="2" 
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid>
+                    <sf:SfCartesianChart>
+                        <sf:SfCartesianChart.Title>
+                            <Label Text="Cervical Dilation Progress" FontSize="16" FontAttributes="Bold" Margin="0,10" />
+                        </sf:SfCartesianChart.Title>
+
+                        <sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis IntervalType="Hours" Interval="1">
+                                <sf:DateTimeAxis.Title>
+                                    <sf:ChartAxisTitle Text="Time (Hours)"/>
+                                </sf:DateTimeAxis.Title>
+                            </sf:DateTimeAxis>
+                        </sf:SfCartesianChart.XAxes>
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Minimum="0" Maximum="10" Interval="1">
+                                <sf:NumericalAxis.Title>
+                                    <sf:ChartAxisTitle Text="Cervical Dilation (cm)"/>
+                                </sf:NumericalAxis.Title>
+                            </sf:NumericalAxis>
+                        </sf:SfCartesianChart.YAxes>
+
+                        <!--<sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis IntervalType="Hours" Interval="1">
+                                <sf:DateTimeAxis.Title>
+                                    <Label Text="Time (Hours)" />
+                                </sf:DateTimeAxis.Title>
+                            </sf:DateTimeAxis>
+                        </sf:SfCartesianChart.XAxes>
+
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Minimum="0" Maximum="10" Interval="1">
+                                <sf:NumericalAxis.Title>
+                                    <Label Text="Cervical Dilation (cm)" />
+                                </sf:NumericalAxis.Title>
+                            </sf:NumericalAxis>
+                        </sf:SfCartesianChart.YAxes>-->
+
+                        <!-- Progress Line -->
+                        <sf:SplineSeries ItemsSource="{Binding CervicalDilationData}"
+                                        XBindingPath="Time"
+                                        YBindingPath="Value"
+                                        ShowDataLabels="True"
+                                        Fill="#66BB6A"
+                                        StrokeWidth="3">
+                            <sf:SplineSeries.MarkerSettings>
+                                <sf:ChartMarkerSettings Type="Circle" 
+                                                      Fill="#66BB6A" 
+                                                      Width="10" 
+                                                      Height="10" />
+                            </sf:SplineSeries.MarkerSettings>
+                        </sf:SplineSeries>
+
+                        <!-- Alert Line -->
+                        <sf:LineSeries ItemsSource="{Binding AlertLineData}"
+                                      XBindingPath="Time"
+                                      YBindingPath="Value"
+                                      Fill="#FFA726"
+                                      StrokeWidth="2"
+                                      StrokeDashArray="5,5" />
+
+                        <!-- Action Line -->
+                        <sf:LineSeries ItemsSource="{Binding ActionLineData}"
+                                      XBindingPath="Time"
+                                      YBindingPath="Value"
+                                      Fill="#EF5350"
+                                      StrokeWidth="2"
+                                      StrokeDashArray="5,5" />
+                    </sf:SfCartesianChart>
+                </Grid>
+            </Border>
+
+            <!-- Fetal Heart Rate Chart -->
+            <Border Grid.Row="3" 
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="10"
+                    Margin="0,20,0,0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid>
+                    <sf:SfCartesianChart>
+                        <sf:SfCartesianChart.Title>
+                            <Label Text="Fetal Heart Rate" FontSize="16" FontAttributes="Bold" Margin="0,10" />
+                        </sf:SfCartesianChart.Title>
+
+                        <sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis IntervalType="Hours" Interval="1">
+                                <sf:DateTimeAxis.Title>
+                                    <sf:ChartAxisTitle Text="Time (Hours)"/>
+                                </sf:DateTimeAxis.Title>
+                            </sf:DateTimeAxis>
+                        </sf:SfCartesianChart.XAxes>
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Minimum="100" Maximum="180" Interval="20">
+                                <sf:NumericalAxis.Title>
+                                    <sf:ChartAxisTitle Text="FHR (bpm)"/>
+                                </sf:NumericalAxis.Title>
+                            </sf:NumericalAxis>
+                        </sf:SfCartesianChart.YAxes>
+
+                        <!--<sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis IntervalType="Hours" Interval="1">
+                                <sf:DateTimeAxis.Title>
+                                    <Label Text="Time (Hours)" />
+                                </sf:DateTimeAxis.Title>
+                            </sf:DateTimeAxis>
+                        </sf:SfCartesianChart.XAxes>
+
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Minimum="100" Maximum="180" Interval="20">
+                                <sf:NumericalAxis.Title>
+                                    <Label Text="FHR (bpm)" />
+                                </sf:NumericalAxis.Title>
+                                <sf:NumericalAxis.PlotBands>
+                                    <sf:NumericalPlotBandCollection>
+                                        <sf:ChartPlotBand Start="120" End="160" Fill="#66BB6A" Opacity="0.2" />
+                                    </sf:NumericalPlotBandCollection>
+                                </sf:NumericalAxis.PlotBands>
+                            </sf:NumericalAxis>
+                        </sf:SfCartesianChart.YAxes>-->
+
+                        <sf:SplineSeries ItemsSource="{Binding FetalHeartRateData}"
+                                        XBindingPath="Time"
+                                        YBindingPath="Value"
+                                        ShowDataLabels="False"
+                                        Fill="#2196F3"
+                                        StrokeWidth="2">
+                            <sf:SplineSeries.MarkerSettings>
+                                <sf:ChartMarkerSettings Type="Circle" 
+                                                      Fill="#2196F3" 
+                                                      Width="8" 
+                                                      Height="8" />
+                            </sf:SplineSeries.MarkerSettings>
+                        </sf:SplineSeries>
+                    </sf:SfCartesianChart>
+                </Grid>
+            </Border>
+
+            <!-- Contractions Pattern -->
+            <Border Grid.Row="4" 
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="10"
+                    Margin="0,20,0,0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid>
+                    <sf:SfCartesianChart>
+                        <sf:SfCartesianChart.Title>
+                            <Label Text="Contractions Pattern" FontSize="16" FontAttributes="Bold" Margin="0,10" />
+                        </sf:SfCartesianChart.Title>
+
+                        <sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis IntervalType="Hours" Interval="1">
+                                <sf:DateTimeAxis.Title>
+                                    <sf:ChartAxisTitle Text="Name"/>
+                                </sf:DateTimeAxis.Title>
+                            </sf:DateTimeAxis>
+                        </sf:SfCartesianChart.XAxes>
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Minimum="0" Maximum="5" Interval="1">
+                                <sf:NumericalAxis.Title>
+                                    <sf:ChartAxisTitle Text="Contractions per 10 min"/>
+                                </sf:NumericalAxis.Title>
+                            </sf:NumericalAxis>
+                        </sf:SfCartesianChart.YAxes>
+                        
+                        <sf:ColumnSeries ItemsSource="{Binding ContractionsData}"
+                                        XBindingPath="Time"
+                                        YBindingPath="Value"
+                                        Fill="#9C27B0"
+                                        ShowDataLabels="True" />
+                    </sf:SfCartesianChart>
+                </Grid>
+            </Border>
+
+            <!-- Data Table -->
+            <Border Grid.Row="5" 
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15"
+                    Margin="0,20,0,0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Partograph Entries" FontSize="18" FontAttributes="Bold" />
+
+                    <CollectionView ItemsSource="{Binding PartographEntries}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Partograph">
+                                <Border StrokeThickness="1"
+                                        Stroke="{AppThemeBinding Light=#F0F0F0, Dark=#333}"
+                                        BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2A2A2A}"
+                                        Margin="0,5"
+                                        Padding="15">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="5" />
+                                    </Border.StrokeShape>
+                                    <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                                        <!-- Header -->
+                                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                            <Label Text="{Binding RecordedTime, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="16" />
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding RecordedBy}"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                        </Grid>
+
+                                        <!-- Measurements -->
+                                        <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                                            <VerticalStackLayout Grid.Column="0">
+                                                <Label Text="{Binding CervicalDilation}" 
+                                                       FontSize="20" 
+                                                       FontAttributes="Bold"
+                                                       TextColor="#2196F3" />
+                                                <Label Text="Cervical (cm)" FontSize="10" />
+                                            </VerticalStackLayout>
+
+                                            <VerticalStackLayout Grid.Column="1">
+                                                <Label Text="{Binding FetalHeartRate}" 
+                                                       FontSize="20" 
+                                                       FontAttributes="Bold"
+                                                       TextColor="#4CAF50" />
+                                                <Label Text="FHR (bpm)" FontSize="10" />
+                                            </VerticalStackLayout>
+
+                                            <VerticalStackLayout Grid.Column="2">
+                                                <Label Text="{Binding ContractionsPerTenMinutes}" 
+                                                       FontSize="20" 
+                                                       FontAttributes="Bold"
+                                                       TextColor="#9C27B0" />
+                                                <Label Text="Ctx/10min" FontSize="10" />
+                                            </VerticalStackLayout>
+
+                                            <VerticalStackLayout Grid.Column="3">
+                                                <Label Text="{Binding ContractionDuration}" 
+                                                       FontSize="20" 
+                                                       FontAttributes="Bold"
+                                                       TextColor="#FF9800" />
+                                                <Label Text="Duration (s)" FontSize="10" />
+                                            </VerticalStackLayout>
+                                        </Grid>
+
+                                        <!-- Notes -->
+                                        <Label Grid.Row="2"
+                                               Text="{Binding Notes}"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                               IsVisible="{Binding Notes, Converter={toolkit:IsNotNullConverter}}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+        </Grid>
+    </ScrollView>
+</ContentPage>

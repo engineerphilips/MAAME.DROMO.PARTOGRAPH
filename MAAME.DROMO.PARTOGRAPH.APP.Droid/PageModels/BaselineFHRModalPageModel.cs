@@ -14,12 +14,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public class BaselineFHRModalPageModel : INotifyPropertyChanged
     {
-        private readonly BaselineFHRRepository _repository;
+        private readonly FHRRepository _repository;
         private readonly ILogger<BaselineFHRModalPageModel> _logger;
-        private BaselineFHREntry _currentEntry;
-        private int _patientId;
+        private FHR _currentEntry;
+        private Guid? _patientId;
 
-        public BaselineFHRModalPageModel(BaselineFHRRepository repository, ILogger<BaselineFHRModalPageModel> logger)
+        public BaselineFHRModalPageModel(FHRRepository repository, ILogger<BaselineFHRModalPageModel> logger)
         {
             _repository = repository;
             _logger = logger;
@@ -173,16 +173,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                var entry = new BaselineFHREntry
+                var entry = new FHR
                 {
-                    PatientID = _patientId,
-                    RecordedTime = RecordingDate.Date + RecordingTime,
-                    RecordedBy = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    BaselineRate = BaselineRate,
-                    Variability = SelectedVariability,
-                    Accelerations = HasAccelerations,
-                    Pattern = SelectedPattern,
-                    MonitoringMethod = GetMonitoringMethod(),
+                    PartographID = _patientId,
+                    Time = RecordingDate.Date + RecordingTime,
+                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
+                    //BaselineRate = BaselineRate,
+                    //Variability = SelectedVariability,
+                    //Accelerations = HasAccelerations,
+                    //Pattern = SelectedPattern,
+                    //MonitoringMethod = GetMonitoringMethod(),
                     Notes = Notes ?? string.Empty
                 };
 

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,115 +11,55 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
     // Base class for all partograph measurements
     public abstract class BasePartographMeasurement
     {
-        public int ID { get; set; }
-        public int PatientID { get; set; }
-        public DateTime RecordedTime { get; set; } = DateTime.Now;
-        public string RecordedBy { get; set; } = string.Empty;
+        public Guid? ID { get; set; }
+        public Guid? PartographID { get; set; }
+        public DateTime Time { get; set; } = DateTime.Now;
+        public string HandlerName { get; set; } = string.Empty;
+        public Guid? Handler { get; set; }
         public string Notes { get; set; } = string.Empty;
-    }
 
-    // Companion Support
-    public class CompanionEntry : BasePartographMeasurement
-    {
-        public bool HasCompanion { get; set; }
-        public string CompanionName { get; set; } = string.Empty;
-        public string CompanionRelationship { get; set; } = string.Empty; // Partner, Mother, Sister, etc.
-        public bool CompanionPresent { get; set; }
-        public string CompanionSupport { get; set; } = string.Empty; // Emotional, Physical, etc.
-    }
+        // Sync columns
+        public long CreatedTime { get; set; }
+        public long UpdatedTime { get; set; }
+        public long? DeletedTime { get; set; }
 
-    // Pain Relief Management
-    public class PainReliefEntry : BasePartographMeasurement
-    {
-        public string PainLevel { get; set; } = "0"; // 0-10 scale
-        public string PainReliefMethod { get; set; } = string.Empty; // None, Epidural, Pethidine, Gas & Air, etc.
-        public DateTime? AdministeredTime { get; set; }
-        public string Dose { get; set; } = string.Empty;
-        public string Effectiveness { get; set; } = string.Empty; // Poor, Fair, Good, Excellent
-        public bool SideEffects { get; set; }
-        public string SideEffectsDescription { get; set; } = string.Empty;
-    }
+        public string DeviceId { get; set; }
+        public string OriginDeviceId { get; set; }
+        public int SyncStatus { get; set; }  // 0=pending, 1=synced, 2=conflict
 
-    // Oral Fluid Intake
-    public class OralFluidEntry : BasePartographMeasurement
-    {
-        public string FluidType { get; set; } = string.Empty; // Water, Ice chips, Energy drink, etc.
-        public int AmountMl { get; set; }
-        public bool Tolerated { get; set; }
-        public bool Vomiting { get; set; }
-        public string Restrictions { get; set; } = string.Empty;
-    }
+        public int Version { get; set; }
+        public int ServerVersion { get; set; }
 
-    // Maternal Posture
-    public class PostureEntry : BasePartographMeasurement
-    {
-        public string Position { get; set; } = string.Empty; // Upright, Left lateral, Right lateral, Supine, etc.
-        public bool Mobilizing { get; set; }
-        public string MobilityLevel { get; set; } = string.Empty; // Full, Limited, Bed rest
-        public bool UsingBirthBall { get; set; }
-        public bool UsingBirthPool { get; set; }
-        public string ComfortMeasures { get; set; } = string.Empty;
-    }
+        public int Deleted { get; set; }
+        public string ConflictData { get; set; }
+        public string DataHash { get; set; }
 
-    // Baseline FHR (every 30 minutes)
-    public class BaselineFHREntry : BasePartographMeasurement
-    {
-        public int BaselineRate { get; set; } // 110-160 normal
-        public string Variability { get; set; } = string.Empty; // Absent, Minimal, Moderate, Marked
-        public bool Accelerations { get; set; }
-        public string Pattern { get; set; } = string.Empty; // Reassuring, Non-reassuring, Abnormal
-        public string MonitoringMethod { get; set; } = string.Empty; // Intermittent, Continuous CTG, Doppler
-    }
+        [Ignore]
+        public bool HasConflict => SyncStatus == 2;
 
-    // FHR Deceleration (every 30 minutes)
-    public class FHRDecelerationEntry : BasePartographMeasurement
-    {
-        public bool DecelerationsPresent { get; set; }
-        public string DecelerationType { get; set; } = string.Empty; // Early, Late, Variable, Prolonged
-        public string Severity { get; set; } = string.Empty; // Mild, Moderate, Severe
-        public int Duration { get; set; } // in seconds
-        public string Recovery { get; set; } = string.Empty; // Quick, Slow, Poor
-        public bool RequiresAction { get; set; }
-        public string ActionTaken { get; set; } = string.Empty;
-    }
+        [Ignore]
+        public bool NeedsSync => SyncStatus == 0;
 
-    // Amniotic Fluid
-    public class AmnioticFluidEntry : BasePartographMeasurement
-    {
-        public string Color { get; set; } = "Clear"; // Clear, Straw, Green, Brown, Blood-stained
-        public string Consistency { get; set; } = "Normal"; // Normal, Thick, Tenacious
-        public string Amount { get; set; } = "Normal"; // Normal, Reduced (oligohydramnios), Excessive (polyhydramnios)
-        public string Odor { get; set; } = "None"; // None, Offensive, Fishy
-        public bool MeconiumStaining { get; set; }
-        public string MeconiumGrade { get; set; } = string.Empty; // Grade I, II, III
+        public string CalculateHash()
+        {
+            var data = $"{Time}|{Handler}";
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
+                return Convert.ToBase64String(hashBytes);
+            }
+        }
     }
 
     // Fetal Position
-    public class FetalPositionEntry : BasePartographMeasurement
+    public class FetalPosition : BasePartographMeasurement
     {
         public string Position { get; set; } = string.Empty; // LOA, ROA, LOP, ROP, etc.
-        public string Presentation { get; set; } = "Vertex"; // Vertex, Breech, Transverse
-        public string Lie { get; set; } = "Longitudinal"; // Longitudinal, Transverse, Oblique
-        public bool Engaged { get; set; }
-        public string Flexion { get; set; } = "Flexed"; // Flexed, Deflexed, Extended
-    }
-
-    // Caput Succedaneum
-    public class CaputEntry : BasePartographMeasurement
-    {
-        public string Degree { get; set; } = "None"; // None, +, ++, +++
-        public string Location { get; set; } = string.Empty; // Parietal, Occipital, etc.
-        public bool Increasing { get; set; }
-        public string Consistency { get; set; } = string.Empty; // Soft, Firm, Hard
-    }
-
-    // Moulding
-    public class MouldingEntry : BasePartographMeasurement
-    {
-        public string Degree { get; set; } = "None"; // None, +, ++, +++
-        public bool SuturesOverlapping { get; set; }
-        public string Location { get; set; } = string.Empty; // Sagittal, Coronal, Lambdoid
-        public bool Reducing { get; set; }
+        public string? PositionDisplay => Position != null ? Position.ToString() : string.Empty;
+        //public string Presentation { get; set; } = "Vertex"; // Vertex, Breech, Transverse
+        //public string Lie { get; set; } = "Longitudinal"; // Longitudinal, Transverse, Oblique
+        //public bool Engaged { get; set; }
+        //public string Flexion { get; set; } = "Flexed"; // Flexed, Deflexed, Extended
     }
 
     // Enhanced Vital Signs (every hour)
@@ -133,66 +75,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
         public string TemperatureRoute { get; set; } = "Oral"; // Oral, Axillary, Tympanic
         public int RespiratoryRate { get; set; }
         public string RespiratoryPattern { get; set; } = "Normal"; // Normal, Shallow, Deep, Irregular
-    }
-
-    // Urine Output (every hour)
-    public class UrineEntry : BasePartographMeasurement
-    {
-        public int OutputMl { get; set; }
-        public string Color { get; set; } = "Yellow"; // Clear, Yellow, Dark yellow, Brown
-        public string Protein { get; set; } = "Nil"; // Nil, Trace, +, ++, +++
-        public string Glucose { get; set; } = "Nil"; // Nil, Trace, +, ++, +++
-        public string Ketones { get; set; } = "Nil"; // Nil, Trace, +, ++, +++
-        public string SpecificGravity { get; set; } = string.Empty;
-        public bool Catheterized { get; set; }
-        public DateTime? LastVoided { get; set; }
-    }
-
-    // Contractions (every 30 minutes)
-    public class ContractionEntry : BasePartographMeasurement
-    {
-        public int FrequencyPer10Min { get; set; }
-        public int DurationSeconds { get; set; }
-        public string Strength { get; set; } = "Moderate"; // Mild, Moderate, Strong
-        public string Regularity { get; set; } = "Regular"; // Regular, Irregular
-        public bool PalpableAtRest { get; set; }
-        public string EffectOnCervix { get; set; } = string.Empty; // Effacing, Dilating, No change
-        public bool Coordinated { get; set; }
-    }
-
-    // Cervical Dilatation
-    public class CervixDilatationEntry : BasePartographMeasurement
-    {
-        public int DilatationCm { get; set; }
-        public int EffacementPercent { get; set; }
-        public string Consistency { get; set; } = "Soft"; // Firm, Soft, Very soft
-        public string Position { get; set; } = "Central"; // Posterior, Central, Anterior
-        public bool ApplicationToHead { get; set; }
-        public string CervicalEdema { get; set; } = "None"; // None, Slight, Moderate, Marked
-    }
-
-    // Head Descent
-    public class HeadDescentEntry : BasePartographMeasurement
-    {
-        public string Station { get; set; } = "0"; // -3 to +3
-        public bool Engaged { get; set; }
-        public string Synclitism { get; set; } = "Normal"; // Normal, Asynclitic anterior, Asynclitic posterior
-        public string Flexion { get; set; } = "Flexed"; // Extended, Deflexed, Flexed, Well flexed
-        public bool VisibleAtIntroitus { get; set; }
-        public bool Crowning { get; set; }
-    }
-
-    // Oxytocin Administration
-    public class OxytocinEntry : BasePartographMeasurement
-    {
-        public bool InUse { get; set; }
-        public decimal DoseMUnitsPerMin { get; set; }
-        public decimal TotalVolumeInfused { get; set; }
-        public DateTime? StartTime { get; set; }
-        public string Indication { get; set; } = string.Empty; // Induction, Augmentation
-        public bool Contraindications { get; set; }
-        public string ContraindicationDetails { get; set; } = string.Empty;
-        public string Response { get; set; } = string.Empty; // Good, Poor, Hyperstimulation
     }
 
     // Medication Administration
@@ -243,13 +125,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
     {
         public static readonly Dictionary<Type, TimeSpan> ScheduleIntervals = new()
         {
-            { typeof(BaselineFHREntry), TimeSpan.FromMinutes(30) },
-            { typeof(FHRDecelerationEntry), TimeSpan.FromMinutes(30) },
-            { typeof(ContractionEntry), TimeSpan.FromMinutes(30) },
+            { typeof(FHR), TimeSpan.FromMinutes(30) },
+            //{ typeof(FHRDecelerationEntry), TimeSpan.FromMinutes(30) },
+            { typeof(Contraction), TimeSpan.FromMinutes(30) },
             { typeof(EnhancedVitalSignEntry), TimeSpan.FromHours(1) },
-            { typeof(UrineEntry), TimeSpan.FromHours(1) },
-            { typeof(CervixDilatationEntry), TimeSpan.FromHours(4) }, // Or as needed
-            { typeof(HeadDescentEntry), TimeSpan.FromHours(4) }, // Or as needed
+            { typeof(Urine), TimeSpan.FromHours(1) },
+            { typeof(CervixDilatation), TimeSpan.FromHours(4) }, // Or as needed
+            { typeof(HeadDescent), TimeSpan.FromHours(4) }, // Or as needed
             { typeof(AssessmentPlanEntry), TimeSpan.FromHours(4) }
         };
 
@@ -268,5 +150,58 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
 
             return lastRecorded.Add(interval);
         }
+    }
+
+    [SQLite.Table("Tbl_SyncMetadata")]
+    public class SyncMetadata
+    {
+        [PrimaryKey]
+        public string TableName { get; set; }
+        public long LastPullTimestamp { get; set; }
+        public long LastPushTimestamp { get; set; }
+        public long LastSuccessfulSync { get; set; }
+        public int PendingPushCount { get; set; }
+        public int ConflictCount { get; set; }
+        public string DeviceId { get; set; }
+    }
+
+    // DTOs for API communication
+    public class SyncPullRequest
+    {
+        public string DeviceId { get; set; }
+        public long LastSyncTimestamp { get; set; }
+        public string TableName { get; set; }
+    }
+
+    public class SyncPullResponse
+    {
+        public List<CompanionEntry> Records { get; set; }
+        public long ServerTimestamp { get; set; }
+        public bool HasMore { get; set; }
+    }
+
+    public class SyncPushRequest
+    {
+        public string DeviceId { get; set; }
+        public List<CompanionEntry> Changes { get; set; }
+    }
+
+    public class SyncPushResponse
+    {
+        public List<string> Success { get; set; }
+        public List<ConflictRecord> Conflicts { get; set; }
+        public List<SyncError> Errors { get; set; }
+    }
+
+    public class ConflictRecord
+    {
+        public string Id { get; set; }
+        public CompanionEntry ServerRecord { get; set; }
+    }
+
+    public class SyncError
+    {
+        public string Id { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

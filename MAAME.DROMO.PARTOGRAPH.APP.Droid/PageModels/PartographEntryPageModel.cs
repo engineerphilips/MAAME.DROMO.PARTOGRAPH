@@ -11,10 +11,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class PartographEntryPageModel : ObservableObject, IQueryAttributable
     {
-        private Patient? _patient;
-        private PartographEntry _entry = new();
+        private Partograph? _patient;
+        private Partograph _entry = new();
         private readonly PatientRepository _patientRepository;
-        private readonly PartographEntryRepository _partographRepository;
+        private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
@@ -75,7 +75,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         bool _isBusy;
 
         public PartographEntryPageModel(PatientRepository patientRepository,
-            PartographEntryRepository partographRepository,
+            PartographRepository partographRepository,
             ModalErrorHandler errorHandler)
         {
             _patientRepository = patientRepository;
@@ -90,7 +90,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (query.ContainsKey("patientId"))
             {
-                int patientId = Convert.ToInt32(query["patientId"]);
+                Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
                 LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
             }
 
@@ -101,26 +101,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private async Task LoadPatient(int patientId)
+        private async Task LoadPatient(Guid? patientId)
         {
             try
             {
-                _patient = await _patientRepository.GetAsync(patientId);
+                _patient = await _partographRepository.GetAsync(patientId);
                 if (_patient != null)
                 {
                     PatientName = _patient.Name;
                     PatientInfo = _patient.DisplayInfo;
 
                     // Get last entry to suggest next values
-                    var lastEntry = _patient.PartographEntries
-                        .OrderByDescending(e => e.RecordedTime)
-                        .FirstOrDefault();
+                    //var lastEntry = _patient.PartographEntries
+                    //    .OrderByDescending(e => e.Time)
+                    //    .FirstOrDefault();
 
-                    if (lastEntry != null)
-                    {
-                        // Suggest progressive dilation
-                        CervicalDilation = Math.Min(lastEntry.CervicalDilation + 1, 10);
-                    }
+                    //if (lastEntry != null)
+                    //{
+                    //    // Suggest progressive dilation
+                    //    CervicalDilation = Math.Min(lastEntry.CervicalDilation + 1, 10);
+                    //}
                 }
             }
             catch (Exception e)
@@ -152,21 +152,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 var recordedDateTime = RecordedDate.Date + RecordedTime;
 
                 _entry.PatientID = _patient.ID;
-                _entry.RecordedTime = recordedDateTime;
-                _entry.CervicalDilation = CervicalDilation;
-                _entry.DescentOfHead = DescentOfHead;
-                _entry.Moulding = Moulding;
-                _entry.Caput = Caput;
-                _entry.FetalHeartRate = FetalHeartRate;
+                _entry.Time = recordedDateTime;
+                //_entry.CervicalDilation = CervicalDilation;
+                //_entry.DescentOfHead = DescentOfHead;
+                //_entry.Moulding = Moulding;
+                //_entry.Caput = Caput;
+                //_entry.FetalHeartRate = FetalHeartRate;
                 _entry.LiquorStatus = LiquorStatus;
-                _entry.ContractionsPerTenMinutes = ContractionsPerTenMinutes;
-                _entry.ContractionDuration = ContractionDuration;
-                _entry.ContractionStrength = ContractionStrength;
-                _entry.MedicationsGiven = MedicationsGiven;
-                _entry.OxytocinUnits = OxytocinUnits;
-                _entry.IVFluids = IVFluids;
-                _entry.Notes = Notes;
-                _entry.RecordedBy = RecordedBy;
+                //_entry.ContractionsPerTenMinutes = ContractionsPerTenMinutes;
+                //_entry.ContractionDuration = ContractionDuration;
+                //_entry.ContractionStrength = ContractionStrength;
+                //_entry.MedicationsGiven = MedicationsGiven;
+                //_entry.OxytocinUnits = OxytocinUnits;
+                //_entry.IVFluids = IVFluids;
+                //_entry.Notes = Notes;
+                //_entry.RecordedBy = RecordedBy;
 
                 await _partographRepository.SaveItemAsync(_entry);
 

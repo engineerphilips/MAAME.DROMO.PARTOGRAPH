@@ -11,9 +11,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class AssessmentPlanModalPageModel : ObservableObject, IQueryAttributable
     {
-        private Patient? _patient;
+        private Partograph? _patient;
         private readonly AssessmentPlanRepository _assessmentPlanRepository;
-        private readonly PatientRepository _patientRepository;
+        private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
@@ -106,10 +106,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private bool _isBusy;
 
         public AssessmentPlanModalPageModel(AssessmentPlanRepository assessmentPlanRepository,
-            PatientRepository patientRepository, ModalErrorHandler errorHandler)
+            PartographRepository partographRepository, ModalErrorHandler errorHandler)
         {
             _assessmentPlanRepository = assessmentPlanRepository;
-            _patientRepository = patientRepository;
+            _partographRepository = partographRepository;
             _errorHandler = errorHandler;
 
             // Set default assessed by from preferences
@@ -123,7 +123,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (query.ContainsKey("patientId"))
             {
-                int patientId = Convert.ToInt32(query["patientId"]);
+                Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
                 LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
             }
         }
@@ -138,14 +138,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             });
         }
 
-        private async Task LoadPatient(int patientId)
+        private async Task LoadPatient(Guid? patientId)
         {
             try
             {
-                _patient = await _patientRepository.GetAsync(patientId);
+                _patient = await _partographRepository.GetAsync(patientId);
                 if (_patient != null)
                 {
-                    PatientName = _patient.Name;
+                    PatientName = _patient.Patient?.Name;
 
                     // Calculate labor duration
                     if (_patient.LaborStartTime.HasValue)
@@ -159,7 +159,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     Complications = _patient.Complications;
 
                     // Auto-assess based on current data
-                    await PerformAutoAssessment();
+                    //await PerformAutoAssessment();
                 }
             }
             catch (Exception e)
@@ -168,106 +168,106 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private async Task PerformAutoAssessment()
-        {
-            if (_patient == null) return;
+        //private async Task PerformAutoAssessment()
+        //{
+        //    if (_patient == null) return;
 
-            try
-            {
-                // Assess labor progress based on cervical dilation and time
-                if (_patient.LaborStartTime.HasValue)
-                {
-                    var laborHours = (DateTime.Now - _patient.LaborStartTime.Value).TotalHours;
-                    var latestEntry = _patient.PartographEntries.OrderByDescending(e => e.RecordedTime).FirstOrDefault();
+        //    try
+        //    {
+        //        // Assess labor progress based on cervical dilation and time
+        //        if (_patient.LaborStartTime.HasValue)
+        //        {
+        //            var laborHours = (DateTime.Now - _patient.LaborStartTime.Value).TotalHours;
+        //            var latestEntry = _patient.PartographEntries.OrderByDescending(e => e.Time).FirstOrDefault();
 
-                    if (latestEntry != null)
-                    {
-                        var expectedDilation = Math.Min(4 + laborHours, 10); // Expecting 1cm/hour after 4cm
+        //            if (latestEntry != null)
+        //            {
+        //                var expectedDilation = Math.Min(4 + laborHours, 10); // Expecting 1cm/hour after 4cm
 
-                        if (latestEntry.CervicalDilation >= expectedDilation - 1)
-                        {
-                            LaborProgressNormal = true;
-                            LaborProgressStatus = "Normal";
-                            LaborProgressColor = Colors.Green;
-                        }
-                        else if (latestEntry.CervicalDilation < expectedDilation - 2)
-                        {
-                            LaborProgressDelayed = true;
-                            LaborProgressNormal = false;
-                            LaborProgressStatus = "Delayed";
-                            LaborProgressColor = Colors.Orange;
-                        }
-                    }
-                }
+        //                if (latestEntry.CervicalDilation >= expectedDilation - 1)
+        //                {
+        //                    LaborProgressNormal = true;
+        //                    LaborProgressStatus = "Normal";
+        //                    LaborProgressColor = Colors.Green;
+        //                }
+        //                else if (latestEntry.CervicalDilation < expectedDilation - 2)
+        //                {
+        //                    LaborProgressDelayed = true;
+        //                    LaborProgressNormal = false;
+        //                    LaborProgressStatus = "Delayed";
+        //                    LaborProgressColor = Colors.Orange;
+        //                }
+        //            }
+        //        }
 
-                // Assess fetal wellbeing based on latest FHR
-                var latestFHR = _patient.PartographEntries
-                    .Where(e => e.FetalHeartRate > 0)
-                    .OrderByDescending(e => e.RecordedTime)
-                    .FirstOrDefault();
+        //        // Assess fetal wellbeing based on latest FHR
+        //        var latestFHR = _patient.PartographEntries
+        //            .Where(e => e.FetalHeartRate > 0)
+        //            .OrderByDescending(e => e.RecordedTime)
+        //            .FirstOrDefault();
 
-                if (latestFHR != null)
-                {
-                    if (latestFHR.FetalHeartRate >= 110 && latestFHR.FetalHeartRate <= 160)
-                    {
-                        FetalWellbeingSatisfactory = true;
-                        FetalWellbeingStatus = "Satisfactory";
-                        FetalWellbeingColor = Colors.Green;
-                    }
-                    else if (latestFHR.FetalHeartRate < 110 || latestFHR.FetalHeartRate > 180)
-                    {
-                        FetalWellbeingCompromised = true;
-                        FetalWellbeingSatisfactory = false;
-                        FetalWellbeingStatus = "Compromised";
-                        FetalWellbeingColor = Colors.Red;
-                        RequiresIntervention = true;
-                        InterventionRequired = "Immediate review for abnormal FHR";
-                    }
-                    else
-                    {
-                        FetalWellbeingConcerning = true;
-                        FetalWellbeingSatisfactory = false;
-                        FetalWellbeingStatus = "Concerning";
-                        FetalWellbeingColor = Colors.Orange;
-                    }
-                }
+        //        if (latestFHR != null)
+        //        {
+        //            if (latestFHR.FetalHeartRate >= 110 && latestFHR.FetalHeartRate <= 160)
+        //            {
+        //                FetalWellbeingSatisfactory = true;
+        //                FetalWellbeingStatus = "Satisfactory";
+        //                FetalWellbeingColor = Colors.Green;
+        //            }
+        //            else if (latestFHR.FetalHeartRate < 110 || latestFHR.FetalHeartRate > 180)
+        //            {
+        //                FetalWellbeingCompromised = true;
+        //                FetalWellbeingSatisfactory = false;
+        //                FetalWellbeingStatus = "Compromised";
+        //                FetalWellbeingColor = Colors.Red;
+        //                RequiresIntervention = true;
+        //                InterventionRequired = "Immediate review for abnormal FHR";
+        //            }
+        //            else
+        //            {
+        //                FetalWellbeingConcerning = true;
+        //                FetalWellbeingSatisfactory = false;
+        //                FetalWellbeingStatus = "Concerning";
+        //                FetalWellbeingColor = Colors.Orange;
+        //            }
+        //        }
 
-                // Assess maternal condition based on vital signs
-                var latestVitals = _patient.VitalSigns.OrderByDescending(v => v.RecordedTime).FirstOrDefault();
-                if (latestVitals != null)
-                {
-                    if (latestVitals.SystolicBP > 160 || latestVitals.DiastolicBP > 100 ||
-                        latestVitals.Temperature > 38.0m || latestVitals.PulseRate > 120)
-                    {
-                        MaternalConditionCritical = true;
-                        MaternalConditionStable = false;
-                        MaternalConditionStatus = "Critical";
-                        MaternalConditionColor = Colors.Red;
-                        RequiresIntervention = true;
-                        if (string.IsNullOrEmpty(InterventionRequired))
-                            InterventionRequired = "Immediate review for abnormal maternal vital signs";
-                    }
-                    else if (latestVitals.SystolicBP > 140 || latestVitals.DiastolicBP > 90 ||
-                             latestVitals.Temperature > 37.5m)
-                    {
-                        MaternalConditionConcerned = true;
-                        MaternalConditionStable = false;
-                        MaternalConditionStatus = "Concerned";
-                        MaternalConditionColor = Colors.Orange;
-                    }
-                }
+        //        // Assess maternal condition based on vital signs
+        //        var latestVitals = _patient.VitalSigns.OrderByDescending(v => v.RecordedTime).FirstOrDefault();
+        //        if (latestVitals != null)
+        //        {
+        //            if (latestVitals.SystolicBP > 160 || latestVitals.DiastolicBP > 100 ||
+        //                latestVitals.Temperature > 38.0m || latestVitals.PulseRate > 120)
+        //            {
+        //                MaternalConditionCritical = true;
+        //                MaternalConditionStable = false;
+        //                MaternalConditionStatus = "Critical";
+        //                MaternalConditionColor = Colors.Red;
+        //                RequiresIntervention = true;
+        //                if (string.IsNullOrEmpty(InterventionRequired))
+        //                    InterventionRequired = "Immediate review for abnormal maternal vital signs";
+        //            }
+        //            else if (latestVitals.SystolicBP > 140 || latestVitals.DiastolicBP > 90 ||
+        //                     latestVitals.Temperature > 37.5m)
+        //            {
+        //                MaternalConditionConcerned = true;
+        //                MaternalConditionStable = false;
+        //                MaternalConditionStatus = "Concerned";
+        //                MaternalConditionColor = Colors.Orange;
+        //            }
+        //        }
 
-                // Set default plan based on assessment
-                if (string.IsNullOrEmpty(Plan))
-                {
-                    Plan = GenerateDefaultPlan();
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorHandler.HandleError(ex);
-            }
-        }
+        //        // Set default plan based on assessment
+        //        if (string.IsNullOrEmpty(Plan))
+        //        {
+        //            Plan = GenerateDefaultPlan();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorHandler.HandleError(ex);
+        //    }
+        //}
 
         private string GenerateDefaultPlan()
         {
@@ -410,8 +410,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 var entry = new AssessmentPlanEntry
                 {
-                    PatientID = _patient.ID,
-                    RecordedTime = DateTime.Now,
+                    PartographID = _patient.ID,
+                    Time = DateTime.Now,
                     LaborProgress = LaborProgressStatus,
                     FetalWellbeing = FetalWellbeingStatus,
                     MaternalCondition = MaternalConditionStatus,
@@ -423,7 +423,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     InterventionRequired = InterventionRequired,
                     NextAssessment = NextAssessmentDate.Date.Add(NextAssessmentTime),
                     AssessedBy = AssessedBy,
-                    RecordedBy = AssessedBy
+                    HandlerName = AssessedBy
                 };
 
                 await _assessmentPlanRepository.SaveItemAsync(entry);
@@ -433,7 +433,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     _patient.RiskFactors = RiskFactors;
                     _patient.Complications = Complications;
-                    await _patientRepository.SaveItemAsync(_patient);
+                    await _partographRepository.SaveItemAsync(_patient);
                 }
 
                 await Shell.Current.GoToAsync("..");

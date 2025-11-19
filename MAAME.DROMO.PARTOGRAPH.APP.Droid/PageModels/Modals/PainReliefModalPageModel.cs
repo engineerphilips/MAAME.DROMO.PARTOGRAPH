@@ -22,34 +22,40 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private DateTime _recordingTime = DateTime.Now;
 
         [ObservableProperty]
-        private int _painLevel = 0;
+        private int? _painReliefIndex = null;
 
         [ObservableProperty]
-        private string _painReliefMethod = "None";
+        private string _painReliefDisplay = string.Empty;
 
-        [ObservableProperty]
-        private TimeSpan _administrationTime = DateTime.Now.TimeOfDay;
+        //[ObservableProperty]
+        //private int _painLevel = 0;
 
-        [ObservableProperty]
-        private string _dose = string.Empty;
+        //[ObservableProperty]
+        //private string _painReliefMethod = "None";
 
-        [ObservableProperty]
-        private bool _effectivenessPoor;
+        //[ObservableProperty]
+        //private TimeSpan _administrationTime = DateTime.Now.TimeOfDay;
 
-        [ObservableProperty]
-        private bool _effectivenessFair;
+        //[ObservableProperty]
+        //private string _dose = string.Empty;
 
-        [ObservableProperty]
-        private bool _effectivenessGood;
+        //[ObservableProperty]
+        //private bool _effectivenessPoor;
 
-        [ObservableProperty]
-        private bool _effectivenessExcellent;
+        //[ObservableProperty]
+        //private bool _effectivenessFair;
 
-        [ObservableProperty]
-        private bool _sideEffects;
+        //[ObservableProperty]
+        //private bool _effectivenessGood;
 
-        [ObservableProperty]
-        private string _sideEffectsDescription = string.Empty;
+        //[ObservableProperty]
+        //private bool _effectivenessExcellent;
+
+        //[ObservableProperty]
+        //private bool _sideEffects;
+
+        //[ObservableProperty]
+        //private string _sideEffectsDescription = string.Empty;
 
         [ObservableProperty]
         private string _notes = string.Empty;
@@ -57,8 +63,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private string _recordedBy = string.Empty;
 
-        [ObservableProperty]
-        private bool _showMedicationDetails;
+        //[ObservableProperty]
+        //private bool _showMedicationDetails;
 
         [ObservableProperty]
         private bool _isBusy;
@@ -76,12 +82,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             if (query.ContainsKey("patientId"))
             {
-                int patientId = Convert.ToInt32(query["patientId"]);
+                Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
                 LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
             }
         }
 
-        private async Task LoadPatient(int patientId)
+        private async Task LoadPatient(Guid? patientId)
         {
             try
             {
@@ -93,7 +99,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var lastEntry = await _painReliefRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
-                    PainReliefMethod = lastEntry.PainReliefMethod;
+                    PainReliefDisplay = lastEntry.PainReliefDisplay;
                 }
             }
             catch (Exception e)
@@ -102,53 +108,53 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        partial void OnPainReliefMethodChanged(string value)
-        {
-            // Show medication details for pharmacological interventions
-            ShowMedicationDetails = value is "Paracetamol" or "Codeine" or "Pethidine injection"
-                                           or "Gas and air (Entonox)" or "Epidural" or "Spinal block"
-                                           or "Combined spinal-epidural";
-        }
+        //partial void OnPainReliefMethodChanged(string value)
+        //{
+        //    // Show medication details for pharmacological interventions
+        //    ShowMedicationDetails = value is "Paracetamol" or "Codeine" or "Pethidine injection"
+        //                                   or "Gas and air (Entonox)" or "Epidural" or "Spinal block"
+        //                                   or "Combined spinal-epidural";
+        //}
 
-        partial void OnEffectivenessPoorChanged(bool value)
-        {
-            if (value)
-            {
-                EffectivenessFair = false;
-                EffectivenessGood = false;
-                EffectivenessExcellent = false;
-            }
-        }
+        //partial void OnEffectivenessPoorChanged(bool value)
+        //{
+        //    if (value)
+        //    {
+        //        EffectivenessFair = false;
+        //        EffectivenessGood = false;
+        //        EffectivenessExcellent = false;
+        //    }
+        //}
 
-        partial void OnEffectivenessFairChanged(bool value)
-        {
-            if (value)
-            {
-                EffectivenessPoor = false;
-                EffectivenessGood = false;
-                EffectivenessExcellent = false;
-            }
-        }
+        //partial void OnEffectivenessFairChanged(bool value)
+        //{
+        //    if (value)
+        //    {
+        //        EffectivenessPoor = false;
+        //        EffectivenessGood = false;
+        //        EffectivenessExcellent = false;
+        //    }
+        //}
 
-        partial void OnEffectivenessGoodChanged(bool value)
-        {
-            if (value)
-            {
-                EffectivenessPoor = false;
-                EffectivenessFair = false;
-                EffectivenessExcellent = false;
-            }
-        }
+        //partial void OnEffectivenessGoodChanged(bool value)
+        //{
+        //    if (value)
+        //    {
+        //        EffectivenessPoor = false;
+        //        EffectivenessFair = false;
+        //        EffectivenessExcellent = false;
+        //    }
+        //}
 
-        partial void OnEffectivenessExcellentChanged(bool value)
-        {
-            if (value)
-            {
-                EffectivenessPoor = false;
-                EffectivenessFair = false;
-                EffectivenessGood = false;
-            }
-        }
+        //partial void OnEffectivenessExcellentChanged(bool value)
+        //{
+        //    if (value)
+        //    {
+        //        EffectivenessPoor = false;
+        //        EffectivenessFair = false;
+        //        EffectivenessGood = false;
+        //    }
+        //}
 
         [RelayCommand]
         private async Task Save()
@@ -165,17 +171,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
                 var entry = new PainReliefEntry
                 {
-                    PatientID = _patient.ID,
-                    RecordedTime = RecordingTime,
-                    PainLevel = PainLevel.ToString(),
-                    PainReliefMethod = PainReliefMethod,
-                    AdministeredTime = ShowMedicationDetails ? DateTime.Today.Add(AdministrationTime) : null,
-                    Dose = Dose,
-                    Effectiveness = GetSelectedEffectiveness(),
-                    SideEffects = SideEffects,
-                    SideEffectsDescription = SideEffectsDescription,
+                    PartographID = _patient.ID,
+                    Time = RecordingTime,
+                    PainRelief = PainReliefIndex == 0 ? 'N' : PainReliefIndex == 1 ? 'Y' : PainReliefIndex == 2 ? 'D' : null,
                     Notes = Notes,
-                    RecordedBy = RecordedBy
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
+                    //PainRelief = PainLevel.ToString(),
+                    //PainReliefMethod = PainReliefMethod,
+                    //AdministeredTime = ShowMedicationDetails ? DateTime.Today.Add(AdministrationTime) : null,
+                    //Dose = Dose,
+                    //Effectiveness = GetSelectedEffectiveness(),
+                    //SideEffects = SideEffects,
+                    //SideEffectsDescription = SideEffectsDescription,
+                    //Notes = Notes,
+                    //HandlerName = RecordedBy
                 };
 
                 await _painReliefRepository.SaveItemAsync(entry);
@@ -199,13 +209,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             await Shell.Current.GoToAsync("..");
         }
 
-        private string GetSelectedEffectiveness()
-        {
-            if (EffectivenessPoor) return "Poor";
-            if (EffectivenessFair) return "Fair";
-            if (EffectivenessGood) return "Good";
-            if (EffectivenessExcellent) return "Excellent";
-            return "";
-        }
+        //private string GetSelectedEffectiveness()
+        //{
+        //    if (EffectivenessPoor) return "Poor";
+        //    if (EffectivenessFair) return "Fair";
+        //    if (EffectivenessGood) return "Good";
+        //    if (EffectivenessExcellent) return "Excellent";
+        //    return "";
+        //}
     }
 }

@@ -12,10 +12,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class PartographPageModel : ObservableObject, IQueryAttributable
     {
-        private Patient? _patient;
+        private Partograph? _patient;
         private readonly PatientRepository _patientRepository;
-        private readonly PartographEntryRepository _partographRepository;
+        private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
+
+        [ObservableProperty]
+        private ObservableCollection<EnhancedTimeSlotViewModel> _timeSlots = new ();
+
+        [ObservableProperty]
+        private DateTime _startTime = DateTime.Today.AddHours(6);
 
         [ObservableProperty]
         private string _patientName = string.Empty;
@@ -33,7 +39,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private int _currentDilation;
 
         [ObservableProperty]
-        private ObservableCollection<PartographEntry> _partographEntries = new();
+        private ObservableCollection<Partograph> _partographEntries = new();
 
         [ObservableProperty]
         private ObservableCollection<ChartDataPoint> _cervicalDilationData = new();
@@ -53,31 +59,101 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         bool _isBusy;
 
+        [ObservableProperty]
+        private ObservableCollection<TimeSlots> _chartinghours;
+
         public PartographPageModel(PatientRepository patientRepository,
-            PartographEntryRepository partographRepository,
+            PartographRepository partographRepository,
             ModalErrorHandler errorHandler)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
             _errorHandler = errorHandler;
+            Chartinghours = new ObservableCollection<TimeSlots>();
+            TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
+            GenerateInitialTimeSlots();
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            if (query.ContainsKey("id"))
+            if (query.ContainsKey("patientId"))
             {
-                int id = Convert.ToInt32(query["id"]);
+                Guid? id = Guid.Parse(Convert.ToString(query["patientId"]));
                 LoadData(id).FireAndForgetSafeAsync(_errorHandler);
             }
         }
 
-        private async Task LoadData(int patientId)
+        private void GenerateInitialTimeSlots()
+        {
+            TimeSlots.Clear();
+            Chartinghours.Clear();
+            DateTime date;
+            date = new DateTime (StartTime.Year, StartTime.Month, StartTime.Day, StartTime.Hour, 0, 0);
+
+            for (int i = 0; i < 12; i++)
+            {
+                var currentTime = StartTime.AddHours(i);
+                var timeSlot = new EnhancedTimeSlotViewModel(currentTime, i + 1)
+                {
+                    Companion = CompanionType.None,
+                    OralFluid = OralFluidType.None,
+                    PainRelief = PainReliefType.None,
+                    Posture = PostureType.None
+                };
+
+                //timeSlot.DataChanged += OnTimeSlotDataChanged;
+                TimeSlots.Add(timeSlot);
+                Chartinghours.Add(new TimeSlots() { Id = i, Slot = date.AddHours(i) });
+            }
+
+            //var x = Chartinghours?.Count ?? 0;
+
+            if (TimeSlots.Any())
+                RegenerateTimeSlots();
+        }
+        
+        private void RegenerateTimeSlots()
+        {
+            foreach (var time in TimeSlots)
+            {
+                var x = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0);
+                var y = x.AddHours(1);
+                if (time.Time >= x && time.Time < y)
+                {
+                    time.Companion = CompanionType.Yes;
+                }
+                else
+                    time.Companion = CompanionType.None;
+            }
+        }
+
+        //private void RegenerateTimeSlots()
+        //{
+        //    var existingData = TimeSlots.ToDictionary(ts => ts.Time, ts => ts.GetData());
+        //    TimeSlots.Clear();
+
+        //    for (int i = 0; i < existingData.Count; i++)
+        //    {
+        //        var currentTime = StartTime.AddHours(i);
+        //        var timeSlot = new EnhancedTimeSlotViewModel(currentTime, i + 1);
+        //        timeSlot.DataChanged += OnTimeSlotDataChanged;
+
+        //        if (existingData.ContainsKey(currentTime))
+        //        {
+        //            timeSlot.LoadData(existingData[currentTime]);
+        //        }
+
+        //        TimeSlots.Add(timeSlot);
+        //    }
+        //}
+
+        private async Task LoadData(Guid? patientId)
         {
             try
             {
                 IsBusy = true;
 
-                _patient = await _patientRepository.GetAsync(patientId);
+                _patient = await _partographRepository.GetAsync(patientId);
                 if (_patient == null)
                 {
                     _errorHandler.HandleError(new Exception($"Patient with id {patientId} not found."));
@@ -96,13 +172,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 // Load partograph entries
                 var entries = await _partographRepository.ListByPatientAsync(patientId);
-                PartographEntries = new ObservableCollection<PartographEntry>(entries.OrderBy(e => e.RecordedTime));
+                PartographEntries = new ObservableCollection<Partograph>(entries.OrderBy(e => e.Time));
 
                 if (entries.Any())
                 {
-                    LastRecordedTime = entries.Max(e => e.RecordedTime);
-                    var latestEntry = entries.OrderByDescending(e => e.RecordedTime).First();
-                    CurrentDilation = latestEntry.CervicalDilation;
+                    LastRecordedTime = entries.Max(e => e.Time);
+                    var latestEntry = entries.OrderByDescending(e => e.Time).FirstOrDefault();
+                    //CurrentDilation = latestEntry.CervicalDilation;
                 }
 
                 // Prepare chart data
@@ -123,43 +199,44 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (!PartographEntries.Any()) return;
 
-            var baseTime = _patient?.LaborStartTime ?? PartographEntries.First().RecordedTime;
+            var baseTime = _patient?.LaborStartTime ?? PartographEntries.First().Time;
 
-            // Cervical Dilation Data
-            var dilationData = new ObservableCollection<ChartDataPoint>();
-            foreach (var entry in PartographEntries)
-            {
-                dilationData.Add(new ChartDataPoint
-                {
-                    Time = entry.RecordedTime,
-                    Value = entry.CervicalDilation
-                });
-            }
-            CervicalDilationData = dilationData;
+            //// Cervical Dilation Data
+            //var dilationData = new ObservableCollection<ChartDataPoint>();
+            //foreach (var entry in PartographEntries)
+            //{
+            //    dilationData.Add(new ChartDataPoint
+            //    {
+            //        Time = entry.Time,
+            //        Value = entry.CervicalDilation
+            //    });
+            //}
 
-            // Fetal Heart Rate Data
-            var fhrData = new ObservableCollection<ChartDataPoint>();
-            foreach (var entry in PartographEntries.Where(e => e.FetalHeartRate > 0))
-            {
-                fhrData.Add(new ChartDataPoint
-                {
-                    Time = entry.RecordedTime,
-                    Value = entry.FetalHeartRate
-                });
-            }
-            FetalHeartRateData = fhrData;
+            //CervicalDilationData = dilationData;
 
-            // Contractions Data
-            var contractionsData = new ObservableCollection<ChartDataPoint>();
-            foreach (var entry in PartographEntries)
-            {
-                contractionsData.Add(new ChartDataPoint
-                {
-                    Time = entry.RecordedTime,
-                    Value = entry.ContractionsPerTenMinutes
-                });
-            }
-            ContractionsData = contractionsData;
+            //// Fetal Heart Rate Data
+            //var fhrData = new ObservableCollection<ChartDataPoint>();
+            //foreach (var entry in PartographEntries.Where(e => e.FetalHeartRate > 0))
+            //{
+            //    fhrData.Add(new ChartDataPoint
+            //    {
+            //        Time = entry.RecordedTime,
+            //        Value = entry.FetalHeartRate
+            //    });
+            //}
+            //FetalHeartRateData = fhrData;
+
+            //// Contractions Data
+            //var contractionsData = new ObservableCollection<ChartDataPoint>();
+            //foreach (var entry in PartographEntries)
+            //{
+            //    contractionsData.Add(new ChartDataPoint
+            //    {
+            //        Time = entry.Time,
+            //        Value = entry.ContractionsPerTenMinutes
+            //    });
+            //}
+            //ContractionsData = contractionsData;
         }
 
         private void CalculateAlertActionLines()
@@ -170,36 +247,36 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             var alertLine = new ObservableCollection<ChartDataPoint>();
             var actionLine = new ObservableCollection<ChartDataPoint>();
 
-            // Alert line: Expected progress of 1cm/hour from 4cm
-            // Starting from when patient reached 4cm dilation
-            var fourCmEntry = PartographEntries.FirstOrDefault(e => e.CervicalDilation >= 4);
-            if (fourCmEntry != null)
-            {
-                var fourCmTime = fourCmEntry.RecordedTime;
+            //// Alert line: Expected progress of 1cm/hour from 4cm
+            //// Starting from when patient reached 4cm dilation
+            //var fourCmEntry = PartographEntries.FirstOrDefault(e => e.CervicalDilation >= 4);
+            //if (fourCmEntry != null)
+            //{
+            //    var fourCmTime = fourCmEntry.RecordedTime;
 
-                // Alert line - normal progress
-                for (int i = 4; i <= 10; i++)
-                {
-                    alertLine.Add(new ChartDataPoint
-                    {
-                        Time = fourCmTime.AddHours(i - 4),
-                        Value = i
-                    });
-                }
+            //    // Alert line - normal progress
+            //    for (int i = 4; i <= 10; i++)
+            //    {
+            //        alertLine.Add(new ChartDataPoint
+            //        {
+            //            Time = fourCmTime.AddHours(i - 4),
+            //            Value = i
+            //        });
+            //    }
 
-                // Action line - 2 hours behind alert line
-                for (int i = 4; i <= 10; i++)
-                {
-                    actionLine.Add(new ChartDataPoint
-                    {
-                        Time = fourCmTime.AddHours(i - 4 + 2),
-                        Value = i
-                    });
-                }
-            }
+            //    // Action line - 2 hours behind alert line
+            //    for (int i = 4; i <= 10; i++)
+            //    {
+            //        actionLine.Add(new ChartDataPoint
+            //        {
+            //            Time = fourCmTime.AddHours(i - 4 + 2),
+            //            Value = i
+            //        });
+            //    }
+            //}
 
-            AlertLineData = alertLine;
-            ActionLineData = actionLine;
+            //AlertLineData = alertLine;
+            //ActionLineData = actionLine;
         }
 
         [RelayCommand]

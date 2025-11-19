@@ -12,8 +12,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     {
         private readonly ContractionRepository _repository;
         private readonly ILogger<ContractionsModalPageModel> _logger;
-        private ContractionEntry _currentEntry;
-        private int _patientId;
+        private Contraction _currentEntry;
+        private Guid? _patientId;
 
         public ContractionsModalPageModel(ContractionRepository repository, ILogger<ContractionsModalPageModel> logger)
         {
@@ -228,11 +228,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                var entry = new ContractionEntry
+                var entry = new Contraction
                 {
-                    PatientID = _patientId,
-                    RecordedTime = RecordingDate.Date + RecordingTime,
-                    RecordedBy = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
+                    PartographID = _patientId,
+                    Time = RecordingDate.Date + RecordingTime,
+                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
                     FrequencyPer10Min = FrequencyPer10Min,
                     DurationSeconds = DurationSeconds,
                     Strength = GetStrength(),

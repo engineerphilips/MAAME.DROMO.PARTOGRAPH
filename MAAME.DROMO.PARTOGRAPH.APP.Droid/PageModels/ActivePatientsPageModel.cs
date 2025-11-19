@@ -11,11 +11,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class ActivePatientsPageModel : ObservableObject
     {
-        private readonly PatientRepository _patientRepository;
+        private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
-        private List<Patient> _patients = [];
+        private List<Partograph> _partographs = [];
 
         [ObservableProperty]
         bool _isBusy;
@@ -26,11 +26,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _searchText = string.Empty;
 
-        private List<Patient> _allPatients = [];
+        private List<Partograph> _allPartographs = [];
 
-        public ActivePatientsPageModel(PatientRepository patientRepository, ModalErrorHandler errorHandler)
+        public ActivePatientsPageModel(PartographRepository partographRepository, ModalErrorHandler errorHandler)
         {
-            _patientRepository = patientRepository;
+            _partographRepository = partographRepository;
             _errorHandler = errorHandler;
         }
 
@@ -45,10 +45,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
-                _allPatients = await _patientRepository.ListAsync(LaborStatus.Active);
+                _allPartographs = await _partographRepository.ListAsync(LaborStatus.Active);
 
                 // Calculate hours in labor for each patient
-                foreach (var patient in _allPatients)
+                foreach (var patient in _allPartographs)
                 {
                     if (patient.LaborStartTime.HasValue)
                     {
@@ -73,13 +73,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (string.IsNullOrWhiteSpace(SearchText))
             {
-                Patients = _allPatients;
+                Partographs = _allPartographs;
             }
             else
             {
-                Patients = _allPatients.Where(p =>
+                Partographs = _allPartographs.Where(p =>
                     p.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                    p.HospitalNumber.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                    p.Patient.HospitalNumber.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
         }
@@ -103,33 +103,34 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
+        public Partograph? BindToPatient(Guid? id) => Partographs?.FirstOrDefault(p => p.ID == id);
+
         [RelayCommand]
-        private Task NavigateToPatient(Patient patient)
+        private Task NavigateToPatient(Partograph patient)
             => Shell.Current.GoToAsync($"patient?id={patient.ID}");
 
         [RelayCommand]
-        private Task NavigateToPartograph(Patient patient)
-            => Shell.Current.GoToAsync($"partograph?id={patient.ID}");
+        public Task NavigateToPartograph(Partograph patient) => Shell.Current.GoToAsync($"partograph?patientId={patient.ID}");
 
         [RelayCommand]
-        private Task AddPartographEntry(Patient patient)
+        private Task AddPartographEntry(Partograph patient)
             => Shell.Current.GoToAsync($"partographentry?patientId={patient.ID}");
 
         [RelayCommand]
-        private async Task CompleteDelivery(Patient patient)
+        private async Task CompleteDelivery(Partograph patient)
         {
             patient.Status = LaborStatus.Completed;
             patient.DeliveryTime = DateTime.Now;
-            await _patientRepository.SaveItemAsync(patient);
+            await _partographRepository.SaveItemAsync(patient);
             await AppShell.DisplayToastAsync($"Delivery completed for {patient.Name}");
             await LoadData();
         }
 
         [RelayCommand]
-        private async Task MarkAsEmergency(Patient patient)
+        private async Task MarkAsEmergency(Partograph patient)
         {
             patient.Status = LaborStatus.Emergency;
-            await _patientRepository.SaveItemAsync(patient);
+            await _partographRepository.SaveItemAsync(patient);
             await AppShell.DisplaySnackbarAsync($"Emergency alert sent for {patient.Name}");
             await LoadData();
         }

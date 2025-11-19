@@ -12,16 +12,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     public partial class CompletedPatientsPageModel : ObservableObject
     {
         private readonly PatientRepository _patientRepository;
+        private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
-        private List<Patient> _patients = [];
+        private List<Partograph> _partographs = [];
 
         [ObservableProperty]
-        private List<Patient> _todaysDeliveries = [];
+        private List<Partograph> _todaysDeliveries = [];
 
         [ObservableProperty]
-        private List<Patient> _recentDeliveries = [];
+        private List<Partograph> _recentDeliveries = [];
 
         [ObservableProperty]
         bool _isBusy;
@@ -35,11 +36,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private DateTime _selectedDate = DateTime.Today;
 
-        private List<Patient> _allPatients = [];
+        private List<Partograph> _allPatients = [];
 
-        public CompletedPatientsPageModel(PatientRepository patientRepository, ModalErrorHandler errorHandler)
+        public CompletedPatientsPageModel(PatientRepository patientRepository, PartographRepository partographRepository, ModalErrorHandler errorHandler)
         {
             _patientRepository = patientRepository;
+            _partographRepository = partographRepository;
             _errorHandler = errorHandler;
         }
 
@@ -54,17 +56,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
-                _allPatients = await _patientRepository.ListAsync(LaborStatus.Completed);
+                _allPatients = await _partographRepository.ListAsync(LaborStatus.Completed);
 
                 // Separate today's deliveries
                 TodaysDeliveries = _allPatients
-                    .Where(p => p.DeliveryTime?.Date == DateTime.Today)
+                    .Where(p => p?.DeliveryTime.Value.Date == DateTime.Today)
                     .OrderByDescending(p => p.DeliveryTime)
                     .ToList();
 
                 // Recent deliveries (last 7 days)
                 RecentDeliveries = _allPatients
-                    .Where(p => p.DeliveryTime?.Date > DateTime.Today.AddDays(-7) &&
+                    .Where(p => p.DeliveryTime.Value.Date > DateTime.Today.AddDays(-7) &&
                                p.DeliveryTime?.Date < DateTime.Today)
                     .OrderByDescending(p => p.DeliveryTime)
                     .ToList();
@@ -89,8 +91,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 filtered = filtered.Where(p =>
-                    p.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                    p.HospitalNumber.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+                    p.Patient.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                    p.Patient.HospitalNumber.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
             }
 
             // Filter by selected date
@@ -99,7 +101,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 filtered = filtered.Where(p => p.DeliveryTime?.Date == SelectedDate.Date);
             }
 
-            Patients = filtered.OrderByDescending(p => p.DeliveryTime).ToList();
+            Partographs = filtered.OrderByDescending(p => p.DeliveryTime.Value.Date).ToList();
         }
 
         partial void OnSearchTextChanged(string value)

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:fonts="clr-namespace:Fonts"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.UrineModalView">
+    <ContentView.Resources>
+        <ResourceDictionary>
+
+            <!-- Input Styles -->
+            <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Outlined" />
+                <Setter Property="OutlineCornerRadius" Value="8" />
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="15,10" Spacing="10">
+
+            <!-- Header -->
+            <!-- Pain Level Assessment -->
+
+            <core:SfTextInputLayout Hint="Date"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Recording time">
+                <DatePicker Date="{Binding RecordingDate}" />
+            </core:SfTextInputLayout>
+
+            <core:SfTextInputLayout Hint="Time"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Recording time">
+                <TimePicker Time="{Binding RecordingTime}" />
+            </core:SfTextInputLayout>
+
+            <VerticalStackLayout Padding="10,0,0,0">
+                <Label Text="What is the protien content in the urine?" FontAttributes="Bold"/>
+                <!--<buttons:SfRadioGroup x:Name="proteinRadioGroup" Margin="30,0,0,0">
+                    <buttons:SfRadioButton x:Name="pNo" Text="P-" />
+                    <buttons:SfRadioButton x:Name="P" Text="P" />
+                    <buttons:SfRadioButton x:Name="P1" Text="P1+"/>
+                    <buttons:SfRadioButton x:Name="P2" Text="P2+" />
+                    <buttons:SfRadioButton x:Name="P3" Text="P3+" />
+                </buttons:SfRadioGroup>-->
+            </VerticalStackLayout>
+
+            <buttons:SfSegmentedControl x:Name="protienSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="5" SelectedIndex="{Binding ProteinIndex}">
+                <buttons:SfSegmentedControl.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-</x:String>
+                        <x:String>P</x:String>
+                        <x:String>P1+</x:String>
+                        <x:String>P2+</x:String>
+                        <x:String>P3+</x:String>
+                    </x:Array>
+                </buttons:SfSegmentedControl.ItemsSource>
+            </buttons:SfSegmentedControl>
+
+            <VerticalStackLayout Padding="10,0,0,0">
+                <Label Text="What is the acetone content in the urine?" FontAttributes="Bold"/>
+                <!--<buttons:SfRadioGroup x:Name="acetoneRadioGroup" Margin="30,0,0,0">
+                    <buttons:SfRadioButton x:Name="aNo" Text="A-" />
+                    <buttons:SfRadioButton x:Name="A" Text="A" />
+                    <buttons:SfRadioButton x:Name="A1" Text="A1+"/>
+                    <buttons:SfRadioButton x:Name="A2" Text="A2+" />
+                    <buttons:SfRadioButton x:Name="A3" Text="A3+" />
+                </buttons:SfRadioGroup>-->
+            </VerticalStackLayout>
+
+            <buttons:SfSegmentedControl x:Name="acetoneSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="5" SelectedIndex="{Binding AcetoneIndex}">
+                <buttons:SfSegmentedControl.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>A-</x:String>
+                        <x:String>A</x:String>
+                        <x:String>A1+</x:String>
+                        <x:String>A2+</x:String>
+                        <x:String>A3+</x:String>
+                    </x:Array>
+                </buttons:SfSegmentedControl.ItemsSource>
+            </buttons:SfSegmentedControl>
+
+            <core:SfTextInputLayout Hint="Additional Notes"
+                                    Style="{StaticResource PatientInput}"
+                                    HelperText="Any other observations...">
+                <Entry Text="{Binding Notes}"
+                       Keyboard="Text"
+                       ReturnType="Next" />
+            </core:SfTextInputLayout>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,40">
+                <Button Grid.Column="0"
+                        Text="Cancel"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+
+                <Button Grid.Column="1"
+                        Text="Save Assessment"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

@@ -26,6 +26,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
                 // Simulate authentication
                 //await Task.Delay(500);
+
+                //await _staffRepository.AuthenticateAsync();
                 var staff = await _staffRepository.AuthenticateAsync(emailOrStaffId, password);
                 if (staff != null)
                 {
@@ -47,7 +49,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
                     Constants.Staff = new Models.Staff()
                     {
-                        ID = 0,
+                        ID = null,
                         Name = "SUPER-ADMIN",
                         Role = "SUPER-ADMIN",
                         StaffID = "SUPER",
