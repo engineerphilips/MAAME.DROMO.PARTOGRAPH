@@ -320,5 +320,81 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         //    return stats;
         //}
+
+        /// <summary>
+        /// Upserts a patient record (insert if new, update if exists) - used for sync operations
+        /// </summary>
+        public async Task UpsertPatientAsync(Patient patient)
+        {
+            await Init();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            // Check if record exists
+            var checkCmd = connection.CreateCommand();
+            checkCmd.CommandText = "SELECT COUNT(*) FROM Tbl_Patient WHERE ID = @id";
+            checkCmd.Parameters.AddWithValue("@id", patient.ID.ToString());
+            var exists = Convert.ToInt32(await checkCmd.ExecuteScalarAsync()) > 0;
+
+            var cmd = connection.CreateCommand();
+
+            if (exists)
+            {
+                // Update existing record - only if server version is newer or equal
+                cmd.CommandText = @"
+                    UPDATE Tbl_Patient SET
+                        firstName = @firstName,
+                        lastName = @lastName,
+                        hospitalNumber = @hospitalNumber,
+                        dateofbirth = @dateofbirth,
+                        age = @age,
+                        bloodGroup = @bloodGroup,
+                        phoneNumber = @phoneNumber,
+                        emergencyContact = @emergencyContact,
+                        handler = @handler,
+                        updatedtime = @updatedtime,
+                        serverversion = @serverversion,
+                        syncstatus = 1,
+                        datahash = @datahash
+                    WHERE ID = @ID AND serverversion <= @serverversion";
+            }
+            else
+            {
+                // Insert new record
+                cmd.CommandText = @"
+                    INSERT INTO Tbl_Patient (
+                        ID, firstName, lastName, hospitalNumber, dateofbirth, age,
+                        bloodGroup, phoneNumber, emergencyContact, handler,
+                        createdtime, updatedtime, deviceid, origindeviceid,
+                        syncstatus, version, serverversion, deleted, datahash
+                    ) VALUES (
+                        @ID, @firstName, @lastName, @hospitalNumber, @dateofbirth, @age,
+                        @bloodGroup, @phoneNumber, @emergencyContact, @handler,
+                        @createdtime, @updatedtime, @deviceid, @origindeviceid,
+                        1, @version, @serverversion, @deleted, @datahash
+                    )";
+            }
+
+            cmd.Parameters.AddWithValue("@ID", patient.ID.ToString());
+            cmd.Parameters.AddWithValue("@firstName", patient.FirstName ?? "");
+            cmd.Parameters.AddWithValue("@lastName", patient.LastName ?? "");
+            cmd.Parameters.AddWithValue("@hospitalNumber", patient.HospitalNumber ?? "");
+            cmd.Parameters.AddWithValue("@dateofbirth", patient.DateOfBirth.ToString("yyyy-MM-dd"));
+            cmd.Parameters.AddWithValue("@age", patient.Age);
+            cmd.Parameters.AddWithValue("@bloodGroup", patient.BloodGroup ?? "");
+            cmd.Parameters.AddWithValue("@phoneNumber", patient.PhoneNumber ?? "");
+            cmd.Parameters.AddWithValue("@emergencyContact", patient.EmergencyContact ?? "");
+            cmd.Parameters.AddWithValue("@handler", patient.Handler?.ToString() ?? "");
+            cmd.Parameters.AddWithValue("@createdtime", patient.CreatedTime);
+            cmd.Parameters.AddWithValue("@updatedtime", patient.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deviceid", patient.DeviceId ?? "");
+            cmd.Parameters.AddWithValue("@origindeviceid", patient.OriginDeviceId ?? "");
+            cmd.Parameters.AddWithValue("@version", patient.Version);
+            cmd.Parameters.AddWithValue("@serverversion", patient.ServerVersion);
+            cmd.Parameters.AddWithValue("@deleted", patient.Deleted);
+            cmd.Parameters.AddWithValue("@datahash", patient.DataHash ?? "");
+
+            await cmd.ExecuteNonQueryAsync();
+        }
     }
 }
