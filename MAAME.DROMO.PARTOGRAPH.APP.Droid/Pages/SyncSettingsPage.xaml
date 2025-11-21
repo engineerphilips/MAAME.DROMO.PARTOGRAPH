@@ -6,9 +6,9 @@
              x:DataType="pagemodels:SyncSettingsPageModel"
              Title="Sync Settings">
 
-    <ContentPage.Behaviors>
+    <!--<ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
-    </ContentPage.Behaviors>
+    </ContentPage.Behaviors>-->
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">

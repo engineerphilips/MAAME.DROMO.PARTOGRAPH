@@ -33,7 +33,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             // Partograph routes
             Routing.RegisterRoute("partograph", typeof(PartographPage));
             Routing.RegisterRoute("partographentry", typeof(PartographEntryPage));
-            Routing.RegisterRoute("vitalsigns", typeof(VitalSignsPage));
+            //Routing.RegisterRoute("vitalsigns", typeof(VitalSignsPage));
             //Routing.RegisterRoute("medicalnote", typeof(MedicalNotePage));
 
             // Settings and profile routes

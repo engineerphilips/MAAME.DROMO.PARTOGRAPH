@@ -61,7 +61,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
 
         // Navigation Properties
         public List<Partograph> PartographEntries { get; set; } = [];
-        public List<VitalSign> VitalSigns { get; set; } = [];
+        //public List<VitalSign> VitalSigns { get; set; } = [];
         public List<MedicalNote> MedicalNotes { get; set; } = [];
     }
 

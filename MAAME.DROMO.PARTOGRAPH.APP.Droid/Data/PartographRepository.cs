@@ -56,9 +56,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     datahash TEXT
                 );
             
-                CREATE INDEX idx_partograph_sync ON Tbl_Partograph(updatedtime, syncstatus);
-                CREATE INDEX idx_partograph_server_version ON Tbl_Partograph(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_partograph_sync ON Tbl_Partograph(updatedtime, syncstatus);
+                CREATE INDEX IF NOT EXISTS idx_partograph_server_version ON Tbl_Partograph(serverversion);
 
+                DROP TRIGGER IF EXISTS trg_partograph_insert;
                 CREATE TRIGGER trg_partograph_insert 
                 AFTER INSERT ON Tbl_Partograph
                 WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -69,6 +70,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     WHERE ID = NEW.ID;
                 END;
 
+                DROP TRIGGER IF EXISTS trg_partograph_update;
                 CREATE TRIGGER trg_partograph_update 
                 AFTER UPDATE ON Tbl_Partograph
                 WHEN NEW.updatedtime = OLD.updatedtime
@@ -223,7 +225,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             var result = await saveCmd.ExecuteScalarAsync();
             if (item.ID == null)
             {
-                item.ID = Guid.Parse(Convert.ToString(result));
+                item.ID = Guid.Parse(result.ToString());
             }
 
             return item.ID;
@@ -476,7 +478,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@ID", partograph.ID.ToString());
             cmd.Parameters.AddWithValue("@patientID", partograph.PatientID?.ToString() ?? "");
             cmd.Parameters.AddWithValue("@time", partograph.Time.ToString("yyyy-MM-dd HH:mm:ss"));
-            cmd.Parameters.AddWithValue("@status", partograph.LaborStatus.ToString());
+            cmd.Parameters.AddWithValue("@status", partograph.Status.ToString());
             cmd.Parameters.AddWithValue("@gravida", partograph.Gravida);
             cmd.Parameters.AddWithValue("@parity", partograph.Parity);
             cmd.Parameters.AddWithValue("@admissionDate", partograph.AdmissionDate.ToString("yyyy-MM-dd HH:mm:ss"));

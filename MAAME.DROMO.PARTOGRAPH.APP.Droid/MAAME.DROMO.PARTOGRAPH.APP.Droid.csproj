@@ -102,28 +102,54 @@
 	  <Compile Remove="Data\TagRepository.cs" />
 	  <Compile Remove="Data\TaskRespository.cs" />
 	  <Compile Remove="Data\VitalSignRepository.cs" />
-	  <Compile Remove="Models\Category.cs" />
-	  <Compile Remove="Models\CategoryChartData.cs" />
 	  <Compile Remove="Models\Project.cs" />
 	  <Compile Remove="Models\ProjectsTags.cs" />
 	  <Compile Remove="Models\ProjectTask.cs" />
-	  <Compile Remove="Models\Tag.cs" />
 	  <Compile Remove="Models\VitalSign.cs" />
 	  <Compile Remove="PageModels\FHRDecelerationModalPageModel.cs" />
+	  <Compile Remove="PageModels\IProjectTaskPageModel.cs" />
+	  <Compile Remove="PageModels\MainPageModel.cs" />
+	  <Compile Remove="PageModels\ManageMetaPageModel.cs" />
+	  <Compile Remove="PageModels\ProjectDetailPageModel.cs" />
+	  <Compile Remove="PageModels\ProjectListPageModel.cs" />
+	  <Compile Remove="PageModels\TaskDetailPageModel.cs" />
+	  <Compile Remove="PageModels\VitalSignsPageModel.cs" />
+	  <Compile Remove="Pages\Controls\CategoryChart.xaml.cs" />
+	  <Compile Remove="Pages\Controls\ProjectCardView.xaml.cs" />
+	  <Compile Remove="Pages\Controls\TagView.xaml.cs" />
+	  <Compile Remove="Pages\Controls\TaskView.xaml.cs" />
+	  <Compile Remove="Pages\MainPage.xaml.cs" />
+	  <Compile Remove="Pages\ManageMetaPage.xaml.cs" />
 	  <Compile Remove="Pages\Modals\CompanionModalPage.xaml.cs" />
 	  <Compile Remove="Pages\Modals\ContractionsModalPage.xaml.cs" />
 	  <Compile Remove="Pages\Modals\PainReliefModalPage.xaml.cs" />
+	  <Compile Remove="Pages\ProjectDetailPage.xaml.cs" />
+	  <Compile Remove="Pages\ProjectListPage.xaml.cs" />
+	  <Compile Remove="Pages\TaskDetailPage.xaml.cs" />
+	  <Compile Remove="Pages\VitalSignsPage.xaml.cs" />
+	  <Compile Remove="Utilities\ProjectExtentions.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Remove="Pages\Controls\CategoryChart.xaml" />
+	  <MauiXaml Remove="Pages\Controls\ProjectCardView.xaml" />
+	  <MauiXaml Remove="Pages\Controls\TagView.xaml" />
+	  <MauiXaml Remove="Pages\Controls\TaskView.xaml" />
+	  <MauiXaml Remove="Pages\MainPage.xaml" />
+	  <MauiXaml Remove="Pages\ManageMetaPage.xaml" />
 	  <MauiXaml Remove="Pages\Modals\CompanionModalPage.xaml" />
 	  <MauiXaml Remove="Pages\Modals\ContractionsModalPage.xaml" />
 	  <MauiXaml Remove="Pages\Modals\PainReliefModalPage.xaml" />
+	  <MauiXaml Remove="Pages\ProjectDetailPage.xaml" />
+	  <MauiXaml Remove="Pages\ProjectListPage.xaml" />
+	  <MauiXaml Remove="Pages\TaskDetailPage.xaml" />
+	  <MauiXaml Remove="Pages\VitalSignsPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AathifMahir.Maui.MauiIcons.Fluent" Version="4.0.0" />
 		<PackageReference Include="FluentIcons.Maui" Version="1.1.303" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 		<PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.8" />
@@ -303,9 +329,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Views\PendingPatientsView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\VitalSignsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

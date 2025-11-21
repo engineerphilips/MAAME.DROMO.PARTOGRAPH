@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
+namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
     public class BaselineFHRModalPageModel : INotifyPropertyChanged
     {

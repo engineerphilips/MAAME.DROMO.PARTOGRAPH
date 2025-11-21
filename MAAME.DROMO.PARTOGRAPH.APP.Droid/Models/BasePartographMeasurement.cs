@@ -51,17 +51,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
         }
     }
 
-    // Fetal Position
-    public class FetalPosition : BasePartographMeasurement
-    {
-        public string Position { get; set; } = string.Empty; // LOA, ROA, LOP, ROP, etc.
-        public string? PositionDisplay => Position != null ? Position.ToString() : string.Empty;
-        //public string Presentation { get; set; } = "Vertex"; // Vertex, Breech, Transverse
-        //public string Lie { get; set; } = "Longitudinal"; // Longitudinal, Transverse, Oblique
-        //public bool Engaged { get; set; }
-        //public string Flexion { get; set; } = "Flexed"; // Flexed, Deflexed, Extended
-    }
-
     // Enhanced Vital Signs (every hour)
     public class EnhancedVitalSignEntry : BasePartographMeasurement
     {
@@ -75,49 +64,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
         public string TemperatureRoute { get; set; } = "Oral"; // Oral, Axillary, Tympanic
         public int RespiratoryRate { get; set; }
         public string RespiratoryPattern { get; set; } = "Normal"; // Normal, Shallow, Deep, Irregular
-    }
-
-    // Medication Administration
-    public class MedicationEntry : BasePartographMeasurement
-    {
-        public string MedicationName { get; set; } = string.Empty;
-        public string Dose { get; set; } = string.Empty;
-        public string Route { get; set; } = string.Empty; // IV, IM, PO, Sublingual, etc.
-        public DateTime AdministrationTime { get; set; } = DateTime.Now;
-        public string Indication { get; set; } = string.Empty;
-        public string PrescribedBy { get; set; } = string.Empty;
-        public string Response { get; set; } = string.Empty;
-        public bool AdverseReaction { get; set; }
-        public string AdverseReactionDetails { get; set; } = string.Empty;
-    }
-
-    // IV Fluid Management
-    public class IVFluidEntry : BasePartographMeasurement
-    {
-        public string FluidType { get; set; } = string.Empty; // Normal saline, Hartmann's, Dextrose, etc.
-        public int VolumeInfused { get; set; }
-        public string Rate { get; set; } = string.Empty; // ml/hr
-        public DateTime? StartTime { get; set; }
-        public string Additives { get; set; } = string.Empty; // KCl, Syntocinon, etc.
-        public string IVSite { get; set; } = string.Empty; // Left hand, Right forearm, etc.
-        public bool SiteHealthy { get; set; }
-        public string SiteCondition { get; set; } = string.Empty; // Clean, Inflamed, Swollen, etc.
-    }
-
-    // Assessment and Plan
-    public class AssessmentPlanEntry : BasePartographMeasurement
-    {
-        public string LaborProgress { get; set; } = string.Empty; // Normal, Delayed, Rapid
-        public string FetalWellbeing { get; set; } = string.Empty; // Satisfactory, Concerning, Compromised
-        public string MaternalCondition { get; set; } = string.Empty; // Stable, Concerned, Critical
-        public string RiskFactors { get; set; } = string.Empty;
-        public string Complications { get; set; } = string.Empty;
-        public string Plan { get; set; } = string.Empty;
-        public string ExpectedDelivery { get; set; } = string.Empty; // Normal vaginal, Instrumental, Cesarean
-        public bool RequiresIntervention { get; set; }
-        public string InterventionRequired { get; set; } = string.Empty;
-        public DateTime? NextAssessment { get; set; }
-        public string AssessedBy { get; set; } = string.Empty;
     }
 
     // Measurement Schedule Helper
@@ -152,26 +98,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
         }
     }
 
-    [SQLite.Table("Tbl_SyncMetadata")]
-    public class SyncMetadata
-    {
-        [PrimaryKey]
-        public string TableName { get; set; }
-        public long LastPullTimestamp { get; set; }
-        public long LastPushTimestamp { get; set; }
-        public long LastSuccessfulSync { get; set; }
-        public int PendingPushCount { get; set; }
-        public int ConflictCount { get; set; }
-        public string DeviceId { get; set; }
-    }
+    //[SQLite.Table("Tbl_SyncMetadata")]
+    //public class SyncMetadata
+    //{
+    //    [PrimaryKey]
+    //    public string TableName { get; set; }
+    //    public long LastPullTimestamp { get; set; }
+    //    public long LastPushTimestamp { get; set; }
+    //    public long LastSuccessfulSync { get; set; }
+    //    public int PendingPushCount { get; set; }
+    //    public int ConflictCount { get; set; }
+    //    public string DeviceId { get; set; }
+    //}
 
     // DTOs for API communication
-    public class SyncPullRequest
-    {
-        public string DeviceId { get; set; }
-        public long LastSyncTimestamp { get; set; }
-        public string TableName { get; set; }
-    }
+    //public class SyncPullRequest
+    //{
+    //    public string DeviceId { get; set; }
+    //    public long LastSyncTimestamp { get; set; }
+    //    public string TableName { get; set; }
+    //}
 
     public class SyncPullResponse
     {
@@ -199,9 +145,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
         public CompanionEntry ServerRecord { get; set; }
     }
 
-    public class SyncError
-    {
-        public string Id { get; set; }
-        public string ErrorMessage { get; set; }
-    }
+    //public class SyncError
+    //{
+    //    public string Id { get; set; }
+    //    public string ErrorMessage { get; set; }
+    //}
 }

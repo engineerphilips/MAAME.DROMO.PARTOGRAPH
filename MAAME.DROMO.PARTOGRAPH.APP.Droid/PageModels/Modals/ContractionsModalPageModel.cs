@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
-namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
+namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
     // ContractionsModalPageModel
     public class ContractionsModalPageModel : INotifyPropertyChanged
@@ -235,11 +235,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
                     FrequencyPer10Min = FrequencyPer10Min,
                     DurationSeconds = DurationSeconds,
-                    Strength = GetStrength(),
-                    Regularity = GetRegularity(),
-                    PalpableAtRest = PalpableAtRest,
-                    EffectOnCervix = SelectedCervixEffect,
-                    Coordinated = Coordinated,
+                    //Strength = GetStrength(),
+                    //Regularity = GetRegularity(),
+                    //PalpableAtRest = PalpableAtRest,
+                    //EffectOnCervix = SelectedCervixEffect,
+                    //Coordinated = Coordinated,
                     Notes = Notes ?? string.Empty
                 };
 

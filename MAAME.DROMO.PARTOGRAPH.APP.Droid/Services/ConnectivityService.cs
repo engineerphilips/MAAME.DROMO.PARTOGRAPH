@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 

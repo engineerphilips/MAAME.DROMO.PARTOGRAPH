@@ -1,6 +1,7 @@
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Models;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
@@ -168,7 +169,7 @@ public class SyncService : ISyncService
         {
             _logger.LogInformation("Starting push operation");
 
-            var deviceId = DeviceIdentity.GetDeviceId();
+            var deviceId = DeviceIdentity.GetOrCreateDeviceId();
 
             // Push patients
             var patientsProgress = new SyncProgress { TableName = "Patients", CurrentOperation = "Pushing patients" };
@@ -260,18 +261,18 @@ public class SyncService : ISyncService
         {
             _logger.LogInformation("Starting pull operation");
 
-            var deviceId = DeviceIdentity.GetDeviceId();
+            var deviceId = DeviceIdentity.GetOrCreateDeviceId();
             var lastPullTimestamp = Preferences.Get("LastPullTimestamp", 0L);
 
             // Pull patients
-            var patientsProgress = new SyncProgress { TableName = "Patients", CurrentOperation = "Pulling patients" };
+            var patientsProgress = new SyncProgress { TableName = "Tbl_Patient", CurrentOperation = "Pulling patients" };
             ProgressChanged?.Invoke(this, patientsProgress);
 
             var patientPullRequest = new SyncPullRequest
             {
                 DeviceId = deviceId,
                 LastSyncTimestamp = lastPullTimestamp,
-                TableName = "Patients"
+                TableName = "Tbl_Patient"
             };
 
             var patientPullResponse = await _apiClient.PullPatientsAsync(patientPullRequest);
@@ -288,14 +289,14 @@ public class SyncService : ISyncService
             ProgressChanged?.Invoke(this, patientsProgress);
 
             // Pull partographs
-            var partographsProgress = new SyncProgress { TableName = "Partographs", CurrentOperation = "Pulling partographs" };
+            var partographsProgress = new SyncProgress { TableName = "Tbl_Partograph", CurrentOperation = "Pulling partographs" };
             ProgressChanged?.Invoke(this, partographsProgress);
 
             var partographPullRequest = new SyncPullRequest
             {
                 DeviceId = deviceId,
                 LastSyncTimestamp = lastPullTimestamp,
-                TableName = "Partographs"
+                TableName = "Tbl_Partograph"
             };
 
             var partographPullResponse = await _apiClient.PullPartographsAsync(partographPullRequest);

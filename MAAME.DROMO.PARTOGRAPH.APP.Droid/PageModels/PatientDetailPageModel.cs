@@ -9,7 +9,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private Patient? _patient;
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
-        private readonly VitalSignRepository _vitalSignRepository;
+        //private readonly VitalSignRepository _vitalSignRepository;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
@@ -66,8 +66,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private List<Partograph> _partographEntries = [];
 
-        [ObservableProperty]
-        private List<VitalSign> _vitalSigns = [];
+        //[ObservableProperty]
+        //private List<VitalSign> _vitalSigns = [];
 
         [ObservableProperty]
         private List<MedicalNote> _medicalNotes = [];
@@ -80,14 +80,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public bool IsNewPatient => _patient?.ID == null;
 
+        //VitalSignRepository vitalSignRepository,
         public PatientDetailPageModel(PatientRepository patientRepository,
             PartographRepository partographRepository,
-            VitalSignRepository vitalSignRepository,
             ModalErrorHandler errorHandler)
         {
+            //_vitalSignRepository = vitalSignRepository;
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
-            _vitalSignRepository = vitalSignRepository;
             _errorHandler = errorHandler;
         }
 
@@ -139,7 +139,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 //Complications = _patient.Complications;
 
                 PartographEntries = _patient.PartographEntries;
-                VitalSigns = _patient.VitalSigns;
+                //VitalSigns = _patient.VitalSigns;
                 MedicalNotes = _patient.MedicalNotes;
             }
             catch (Exception e)
@@ -206,9 +206,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private Task AddPartographEntry()
             => Shell.Current.GoToAsync($"partographentry?patientId={_patient?.ID}");
 
-        [RelayCommand]
-        private Task AddVitalSigns()
-            => Shell.Current.GoToAsync($"vitalsigns?patientId={_patient?.ID}");
+        //[RelayCommand]
+        //private Task AddVitalSigns()
+        //    => Shell.Current.GoToAsync($"vitalsigns?patientId={_patient?.ID}");
 
         [RelayCommand]
         private async Task StartActiveLabor()

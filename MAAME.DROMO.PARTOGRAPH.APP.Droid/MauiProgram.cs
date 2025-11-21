@@ -83,8 +83,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddHttpClient<ISyncApiClient, SyncApiClient>(client =>
             {
                 // Configure API base URL from preferences or use default
-                var apiUrl = Preferences.Get("SyncApiUrl", "https://api.partograph.example.com");
-                client.BaseAddress = new Uri(apiUrl);
+                // var apiUrl = Preferences.Get("SyncApiUrl", "https://api.partograph.example.com");
+                client.BaseAddress = new Uri("https://localhost:7193/");
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
             builder.Services.AddSingleton<ISyncService, SyncService>();
@@ -107,8 +107,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddTransientWithShellRoute<PatientDetailPage, PatientDetailPageModel>("patient");
             builder.Services.AddTransientWithShellRoute<PartographPage, PartographPageModel>("partograph");
             builder.Services.AddTransientWithShellRoute<PartographEntryPage, PartographEntryPageModel>("partographentry");
-            builder.Services.AddTransientWithShellRoute<VitalSignsPage, VitalSignsPageModel>("vitalsigns");
+
+            //builder.Services.AddTransientWithShellRoute<VitalSignsPage, VitalSignsPageModel>("vitalsigns");
+            // builder.Services.AddTransientWithShellRoute<VitalSignsPage, VitalSignsPageModel>("vitalsigns");
             builder.Services.AddTransientWithShellRoute<SyncSettingsPage, SyncSettingsPageModel>("syncsettings");
+            // 1b8b53456b4bed2b1a0122e743bff645ace745d3
             //builder.Services.AddTransientWithShellRoute<MedicalNotePage, MedicalNotePageModel>("medicalnote");
 
             // Register Pages

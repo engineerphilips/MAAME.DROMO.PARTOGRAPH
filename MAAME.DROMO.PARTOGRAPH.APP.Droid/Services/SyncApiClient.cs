@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Models;
+using Microsoft.Extensions.Logging;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 

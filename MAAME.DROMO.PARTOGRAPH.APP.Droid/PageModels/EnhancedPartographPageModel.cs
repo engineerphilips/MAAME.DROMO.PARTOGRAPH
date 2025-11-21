@@ -15,7 +15,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private Partograph? _partograph;
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
-        private readonly VitalSignRepository _vitalSignRepository;
+        //private readonly VitalSignRepository _vitalSignRepository;
         private readonly AssessmentPlanRepository _assessmentPlanRepository;
         private readonly ModalErrorHandler _errorHandler;
 
@@ -97,16 +97,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private bool _isBusy;
 
+        //VitalSignRepository vitalSignRepository,
         public EnhancedPartographPageModel(
             PatientRepository patientRepository,
             PartographRepository partographRepository,
-            VitalSignRepository vitalSignRepository,
             AssessmentPlanRepository assessmentPlanRepository,
             ModalErrorHandler errorHandler)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
-            _vitalSignRepository = vitalSignRepository;
+            //_vitalSignRepository = vitalSignRepository;
             _assessmentPlanRepository = assessmentPlanRepository;
             _errorHandler = errorHandler;
 
@@ -196,15 +196,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     LastContractionsTime = latestEntry.Time;
                 }
 
-                // Load latest vital signs
-                var vitalSigns = await _vitalSignRepository.ListByPatientAsync(_partograph.ID);
-                var latestVitals = vitalSigns.OrderByDescending(v => v.RecordedTime).FirstOrDefault();
+                //// Load latest vital signs
+                //var vitalSigns = await _vitalSignRepository.ListByPatientAsync(_partograph.ID);
+                //var latestVitals = vitalSigns.OrderByDescending(v => v.RecordedTime).FirstOrDefault();
 
-                if (latestVitals != null)
-                {
-                    LatestBP = latestVitals.BPDisplay;
-                    LastVitalSignsTime = latestVitals.RecordedTime;
-                }
+                //if (latestVitals != null)
+                //{
+                //    LatestBP = latestVitals.BPDisplay;
+                //    LastVitalSignsTime = latestVitals.RecordedTime;
+                //}
 
                 // Load latest assessment
                 var assessments = await _assessmentPlanRepository.ListByPatientAsync(_partograph.ID);

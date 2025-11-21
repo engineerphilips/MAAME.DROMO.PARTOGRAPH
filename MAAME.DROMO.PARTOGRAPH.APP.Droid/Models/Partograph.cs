@@ -22,6 +22,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
         public DateTime? ExpectedDeliveryDate { get; set; }
 
         public string GestationalAge { get; set; } = string.Empty;
+
         // Labour Information
         public LaborStatus Status { get; set; } = LaborStatus.Pending;
         public DateTime? LaborStartTime { get; set; }
@@ -34,6 +35,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Models
         // Risk Factors
         public string RiskFactors { get; set; } = string.Empty;
         public string Complications { get; set; } = string.Empty;
+
+        // Partographs
+        public IEnumerable<Contraction> Contractions { get; set; }
+        public IEnumerable<Caput> Caputs { get; set; }
+        public IEnumerable<BP> BPs { get; set; }
+        public IEnumerable<Moulding> Mouldings { get; set; }
+        public IEnumerable<FetalPosition> FetalPositions { get; set; }
+        public IEnumerable<CervixDilatation> Dilatations { get; set; }
+        public IEnumerable<AmnioticFluid> AmnioticFluids { get; set; }
+        public IEnumerable<HeadDescent> HeadDescents { get; set; }
+        public IEnumerable<FHR> Fhrs { get; set; }
+        public IEnumerable<PainReliefEntry> PainReliefs { get; set; }
+        public IEnumerable<PostureEntry> Postures { get; set; }
+        public IEnumerable<Temperature> Temperatures { get; set; }
+        public IEnumerable<Urine> Urines { get; set; }
+        public IEnumerable<OralFluidEntry> OralFluids { get; set; }
+        public IEnumerable<Oxytocin> Oxytocins { get; set; }
+        public IEnumerable<IVFluidEntry> IVFluids { get; set; }
 
         //// Cervical Progress
         //public int CervicalDilation { get; set; } // 0-10 cm

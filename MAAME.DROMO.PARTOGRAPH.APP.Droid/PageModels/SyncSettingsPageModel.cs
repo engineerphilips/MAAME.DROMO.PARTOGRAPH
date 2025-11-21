@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
+using Microsoft.Extensions.Logging;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels;
 

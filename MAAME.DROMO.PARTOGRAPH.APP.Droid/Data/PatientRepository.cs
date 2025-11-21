@@ -15,16 +15,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         private bool _hasBeenInitialized = false;
         private readonly ILogger _logger;
         private readonly PartographRepository _partographRepository;
-        private readonly VitalSignRepository _vitalSignRepository;
+        //private readonly VitalSignRepository _vitalSignRepository;
 
+        //_vitalSignRepository = vitalSignRepository;
         public PatientRepository(PartographRepository partographRepository,
-            VitalSignRepository vitalSignRepository, ILogger<PatientRepository> logger)
+            ILogger<PatientRepository> logger)
         {
             _partographRepository = partographRepository;
-            _vitalSignRepository = vitalSignRepository;
             _logger = logger;
         }
-
+        //VitalSignRepository vitalSignRepository,
         private async Task Init()
         {
             if (_hasBeenInitialized)
@@ -62,9 +62,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     datahash TEXT
                 );
             
-                CREATE INDEX idx_patient_sync ON Tbl_Patient(updatedtime, syncstatus);
-                CREATE INDEX idx_patient_server_version ON Tbl_Patient(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_patient_sync ON Tbl_Patient(updatedtime, syncstatus);
+                CREATE INDEX IF NOT EXISTS idx_patient_server_version ON Tbl_Patient(serverversion);
 
+                DROP TRIGGER IF EXISTS trg_patient_insert;
                 CREATE TRIGGER trg_patient_insert 
                 AFTER INSERT ON Tbl_Patient
                 WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -75,6 +76,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     WHERE ID = NEW.ID;
                 END;
 
+                DROP TRIGGER IF EXISTS trg_patient_update;
                 CREATE TRIGGER trg_patient_update 
                 AFTER UPDATE ON Tbl_Patient
                 WHEN NEW.updatedtime = OLD.updatedtime
@@ -135,7 +137,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 // Load related data
                 patient.PartographEntries = await _partographRepository.ListByPatientAsync(patient.ID);
-                patient.VitalSigns = await _vitalSignRepository.ListByPatientAsync(patient.ID);
+                //patient.VitalSigns = await _vitalSignRepository.ListByPatientAsync(patient.ID);
 
                 patients.Add(patient);
             }
@@ -204,7 +206,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 // Load related data
                 patient.PartographEntries = await _partographRepository.ListByPatientAsync(patient.ID);
-                patient.VitalSigns = await _vitalSignRepository.ListByPatientAsync(patient.ID);
+                //patient.VitalSigns = await _vitalSignRepository.ListByPatientAsync(patient.ID);
 
                 return patient;
             }
@@ -379,8 +381,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@firstName", patient.FirstName ?? "");
             cmd.Parameters.AddWithValue("@lastName", patient.LastName ?? "");
             cmd.Parameters.AddWithValue("@hospitalNumber", patient.HospitalNumber ?? "");
-            cmd.Parameters.AddWithValue("@dateofbirth", patient.DateOfBirth.ToString("yyyy-MM-dd"));
-            cmd.Parameters.AddWithValue("@age", patient.Age);
+            cmd.Parameters.AddWithValue("@dateofbirth", patient.DateOfBirth != null ? patient.DateOfBirth.Value.ToString("yyyy-MM-dd") : null);
+            cmd.Parameters.AddWithValue("@age", patient.Age); 
             cmd.Parameters.AddWithValue("@bloodGroup", patient.BloodGroup ?? "");
             cmd.Parameters.AddWithValue("@phoneNumber", patient.PhoneNumber ?? "");
             cmd.Parameters.AddWithValue("@emergencyContact", patient.EmergencyContact ?? "");

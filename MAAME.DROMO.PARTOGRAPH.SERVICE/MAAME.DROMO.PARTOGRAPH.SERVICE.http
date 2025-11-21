@@ -1,0 +1,6 @@
+@MAAME.DROMO.PARTOGRAPH.SERVICE_HostAddress = http://localhost:5218
+
+GET {{MAAME.DROMO.PARTOGRAPH.SERVICE_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

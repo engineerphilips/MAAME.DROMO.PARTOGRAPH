@@ -31,9 +31,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX idx_contraction_sync ON Tbl_Contraction(updatedtime, syncstatus);
-            CREATE INDEX idx_contraction_server_version ON Tbl_Contraction(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_contraction_sync ON Tbl_Contraction(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_contraction_server_version ON Tbl_Contraction(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_contraction_insert;
             CREATE TRIGGER trg_contraction_insert 
             AFTER INSERT ON Tbl_Contraction
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -44,6 +45,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_contraction_update;
             CREATE TRIGGER trg_contraction_update 
             AFTER UPDATE ON Tbl_Contraction
             WHEN NEW.updatedtime = OLD.updatedtime

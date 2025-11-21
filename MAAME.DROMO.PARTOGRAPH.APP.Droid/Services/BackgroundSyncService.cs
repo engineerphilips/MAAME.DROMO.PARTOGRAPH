@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 
 /// <summary>

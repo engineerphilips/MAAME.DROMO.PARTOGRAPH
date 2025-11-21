@@ -32,9 +32,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX idx_caput_sync ON Tbl_Caput(updatedtime, syncstatus);
-            CREATE INDEX idx_caput_server_version ON Tbl_Caput(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_caput_sync ON Tbl_Caput(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_caput_server_version ON Tbl_Caput(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_caput_insert;
             CREATE TRIGGER trg_caput_insert 
             AFTER INSERT ON Tbl_Caput
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -45,6 +46,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_caput_update;
             CREATE TRIGGER trg_caput_update 
             AFTER UPDATE ON Tbl_Caput
             WHEN NEW.updatedtime = OLD.updatedtime
