@@ -7,9 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Data Source=partograph.db";
+    ?? "Server=localhost;Database=PartographDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False";
 builder.Services.AddDbContext<PartographDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseSqlServer(connectionString));
 
 // Configure CORS for mobile app access
 builder.Services.AddCors(options =>
@@ -49,11 +49,11 @@ builder.Logging.AddDebug();
 
 var app = builder.Build();
 
-// Ensure database is created
+// Ensure database is created and migrations are applied
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<PartographDbContext>();
-    dbContext.Database.EnsureCreated();
+    dbContext.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
