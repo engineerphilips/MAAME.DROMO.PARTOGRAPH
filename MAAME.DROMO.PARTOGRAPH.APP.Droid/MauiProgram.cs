@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using FluentIcons.Maui;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MauiIcons.Fluent;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
@@ -77,6 +78,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<ModalErrorHandler>();
             //builder.Services.AddSingleton<AuthenticationService>();
 
+            // Register Sync Services
+            builder.Services.AddSingleton<IConnectivityService, ConnectivityService>();
+            builder.Services.AddHttpClient<ISyncApiClient, SyncApiClient>(client =>
+            {
+                // Configure API base URL from preferences or use default
+                var apiUrl = Preferences.Get("SyncApiUrl", "https://api.partograph.example.com");
+                client.BaseAddress = new Uri(apiUrl);
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+            builder.Services.AddSingleton<ISyncService, SyncService>();
+            builder.Services.AddSingleton<BackgroundSyncService>();
+
             // Register PageModels
             builder.Services.AddSingleton<AppShellModel>();
             builder.Services.AddSingleton<LoginPageModel>();
@@ -88,12 +101,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<PainReliefModalPageModel>();
             builder.Services.AddSingleton<OralFluidModalPageModel>();
             builder.Services.AddSingleton<PostureModalPageModel>();
+            builder.Services.AddSingleton<SyncSettingsPageModel>();
 
             // Register Pages and PageModels with routes
             builder.Services.AddTransientWithShellRoute<PatientDetailPage, PatientDetailPageModel>("patient");
             builder.Services.AddTransientWithShellRoute<PartographPage, PartographPageModel>("partograph");
             builder.Services.AddTransientWithShellRoute<PartographEntryPage, PartographEntryPageModel>("partographentry");
             builder.Services.AddTransientWithShellRoute<VitalSignsPage, VitalSignsPageModel>("vitalsigns");
+            builder.Services.AddTransientWithShellRoute<SyncSettingsPage, SyncSettingsPageModel>("syncsettings");
             //builder.Services.AddTransientWithShellRoute<MedicalNotePage, MedicalNotePageModel>("medicalnote");
 
             // Register Pages
@@ -102,6 +117,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddTransient<PendingPatientsPage>();
             builder.Services.AddTransient<ActivePatientsPage>();
             builder.Services.AddTransient<CompletedPatientsPage>();
+            builder.Services.AddTransient<SyncSettingsPage>();
 
             //                .ConfigureMauiHandlers(handlers =>
             //                {

@@ -408,5 +408,97 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             return stats;
         }
+
+        /// <summary>
+        /// Upserts a partograph record (insert if new, update if exists) - used for sync operations
+        /// </summary>
+        public async Task UpsertPartographAsync(Partograph partograph)
+        {
+            await Init();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            // Check if record exists
+            var checkCmd = connection.CreateCommand();
+            checkCmd.CommandText = "SELECT COUNT(*) FROM Tbl_Partograph WHERE ID = @id";
+            checkCmd.Parameters.AddWithValue("@id", partograph.ID.ToString());
+            var exists = Convert.ToInt32(await checkCmd.ExecuteScalarAsync()) > 0;
+
+            var cmd = connection.CreateCommand();
+
+            if (exists)
+            {
+                // Update existing record - only if server version is newer or equal
+                cmd.CommandText = @"
+                    UPDATE Tbl_Partograph SET
+                        patientID = @patientID,
+                        time = @time,
+                        status = @status,
+                        gravida = @gravida,
+                        parity = @parity,
+                        admissionDate = @admissionDate,
+                        expectedDeliveryDate = @expectedDeliveryDate,
+                        laborStartTime = @laborStartTime,
+                        deliveryTime = @deliveryTime,
+                        cervicalDilationOnAdmission = @cervicalDilationOnAdmission,
+                        membraneStatus = @membraneStatus,
+                        liquorStatus = @liquorStatus,
+                        riskFactors = @riskFactors,
+                        complications = @complications,
+                        handler = @handler,
+                        updatedtime = @updatedtime,
+                        serverversion = @serverversion,
+                        syncstatus = 1,
+                        datahash = @datahash
+                    WHERE ID = @ID AND serverversion <= @serverversion";
+            }
+            else
+            {
+                // Insert new record
+                cmd.CommandText = @"
+                    INSERT INTO Tbl_Partograph (
+                        ID, patientID, time, status, gravida, parity,
+                        admissionDate, expectedDeliveryDate, laborStartTime, deliveryTime,
+                        cervicalDilationOnAdmission, membraneStatus, liquorStatus,
+                        riskFactors, complications, handler,
+                        createdtime, updatedtime, deviceid, origindeviceid,
+                        syncstatus, version, serverversion, deleted, datahash
+                    ) VALUES (
+                        @ID, @patientID, @time, @status, @gravida, @parity,
+                        @admissionDate, @expectedDeliveryDate, @laborStartTime, @deliveryTime,
+                        @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus,
+                        @riskFactors, @complications, @handler,
+                        @createdtime, @updatedtime, @deviceid, @origindeviceid,
+                        1, @version, @serverversion, @deleted, @datahash
+                    )";
+            }
+
+            cmd.Parameters.AddWithValue("@ID", partograph.ID.ToString());
+            cmd.Parameters.AddWithValue("@patientID", partograph.PatientID?.ToString() ?? "");
+            cmd.Parameters.AddWithValue("@time", partograph.Time.ToString("yyyy-MM-dd HH:mm:ss"));
+            cmd.Parameters.AddWithValue("@status", partograph.LaborStatus.ToString());
+            cmd.Parameters.AddWithValue("@gravida", partograph.Gravida);
+            cmd.Parameters.AddWithValue("@parity", partograph.Parity);
+            cmd.Parameters.AddWithValue("@admissionDate", partograph.AdmissionDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            cmd.Parameters.AddWithValue("@expectedDeliveryDate", partograph.ExpectedDeliveryDate?.ToString("yyyy-MM-dd") ?? "");
+            cmd.Parameters.AddWithValue("@laborStartTime", partograph.LaborStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "");
+            cmd.Parameters.AddWithValue("@deliveryTime", partograph.DeliveryTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "");
+            cmd.Parameters.AddWithValue("@cervicalDilationOnAdmission", partograph.CervicalDilationOnAdmission ?? 0);
+            cmd.Parameters.AddWithValue("@membraneStatus", partograph.MembraneStatus ?? "");
+            cmd.Parameters.AddWithValue("@liquorStatus", partograph.LiquorStatus ?? "");
+            cmd.Parameters.AddWithValue("@riskFactors", partograph.RiskFactors ?? "");
+            cmd.Parameters.AddWithValue("@complications", partograph.Complications ?? "");
+            cmd.Parameters.AddWithValue("@handler", partograph.Handler?.ToString() ?? "");
+            cmd.Parameters.AddWithValue("@createdtime", partograph.CreatedTime);
+            cmd.Parameters.AddWithValue("@updatedtime", partograph.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deviceid", partograph.DeviceId ?? "");
+            cmd.Parameters.AddWithValue("@origindeviceid", partograph.OriginDeviceId ?? "");
+            cmd.Parameters.AddWithValue("@version", partograph.Version);
+            cmd.Parameters.AddWithValue("@serverversion", partograph.ServerVersion);
+            cmd.Parameters.AddWithValue("@deleted", partograph.Deleted);
+            cmd.Parameters.AddWithValue("@datahash", partograph.DataHash ?? "");
+
+            await cmd.ExecuteNonQueryAsync();
+        }
     }
 }
