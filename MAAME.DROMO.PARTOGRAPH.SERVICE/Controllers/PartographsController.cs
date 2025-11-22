@@ -293,51 +293,16 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     return NotFound(new { error = "Partograph not found", id });
                 }
 
-                // Validate status transition for Active status - prevent multiple active partographs per patient
-                if (status == LaborStatus.Active && partograph.Status != LaborStatus.Active)
-                {
-                    var hasActivePartograph = await _context.Partographs
-                        .AnyAsync(p => p.PatientID == partograph.PatientID &&
-                                      p.ID != id &&
-                                      p.Status == LaborStatus.Active &&
-                                      p.Deleted == 0);
-
-                    if (hasActivePartograph)
-                    {
-                        return BadRequest(new
-                        {
-                            error = "Patient already has an active partograph",
-                            patientId = partograph.PatientID,
-                            message = "Please complete or update the existing active partograph before starting a new one"
-                        });
-                    }
-                }
-
-                var oldStatus = partograph.Status;
                 partograph.Status = status;
                 partograph.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 partograph.ServerVersion++;
 
-                // Set LaborStartTime when transitioning to Active status
-                if (status == LaborStatus.Active && oldStatus != LaborStatus.Active && !partograph.LaborStartTime.HasValue)
+                if (status == LaborStatus.Completed && !partograph.DeliveryTime.HasValue)
                 {
-                    partograph.LaborStartTime = DateTime.UtcNow;
-                    _logger.LogInformation("Labor started for partograph {PartographId} at {LaborStartTime}",
-                        id, partograph.LaborStartTime);
-                }
-
-                // Set DeliveryTime when transitioning to Completed status
-                if (status == LaborStatus.Completed && oldStatus != LaborStatus.Completed && !partograph.DeliveryTime.HasValue)
-                {
-                    partograph.DeliveryTime = DateTime.UtcNow;
-                    _logger.LogInformation("Delivery completed for partograph {PartographId} at {DeliveryTime}",
-                        id, partograph.DeliveryTime);
+                    partograph.DeliveryTime = DateTime.Now;
                 }
 
                 await _context.SaveChangesAsync();
-
-                _logger.LogInformation("Partograph {PartographId} status changed from {OldStatus} to {NewStatus}",
-                    id, oldStatus, status);
 
                 return Ok(partograph);
             }
