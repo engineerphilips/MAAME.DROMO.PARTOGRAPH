@@ -126,17 +126,51 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     patient.ID = Guid.NewGuid();
                 }
 
-                patient.CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                patient.UpdatedTime = patient.CreatedTime;
+                var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                patient.CreatedTime = currentTime;
+                patient.UpdatedTime = currentTime;
                 patient.ServerVersion = 1;
                 patient.Version = 1;
                 patient.SyncStatus = 1; // Synced
                 patient.Deleted = 0;
 
                 _context.Patients.Add(patient);
+
+                // Automatically create a Partograph with Pending status
+                var partograph = new Partograph
+                {
+                    ID = Guid.NewGuid(),
+                    PatientID = patient.ID,
+                    Status = LaborStatus.Pending,
+                    AdmissionDate = DateTime.UtcNow,
+                    Time = DateTime.UtcNow,
+                    MembraneStatus = "Intact",
+                    LiquorStatus = "Clear",
+                    HandlerName = patient.HandlerName,
+                    Handler = patient.Handler,
+                    DeviceId = patient.DeviceId,
+                    OriginDeviceId = patient.OriginDeviceId ?? patient.DeviceId,
+                    CreatedTime = currentTime,
+                    UpdatedTime = currentTime,
+                    ServerVersion = 1,
+                    Version = 1,
+                    SyncStatus = 1, // Synced
+                    Deleted = 0
+                };
+
+                _context.Partographs.Add(partograph);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetPatient), new { id = patient.ID }, patient);
+                // Load the created partograph for the response
+                var createdPatient = await _context.Patients
+                    .Include(p => p.PartographEntries)
+                    .Include(p => p.MedicalNotes)
+                    .FirstOrDefaultAsync(p => p.ID == patient.ID);
+
+                _logger.LogInformation("Created patient {PatientId} with automatic partograph {PartographId} in Pending status",
+                    patient.ID, partograph.ID);
+
+                return CreatedAtAction(nameof(GetPatient), new { id = patient.ID }, createdPatient);
             }
             catch (Exception ex)
             {
@@ -245,6 +279,54 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 _logger.LogError(ex, "Error searching patients with query {Query}", query);
                 return StatusCode(500, new { error = "Failed to search patients", message = ex.Message });
+            }
+        }
+
+        // GET: api/Patients/{id}/current-partograph
+        [HttpGet("{id}/current-partograph")]
+        public async Task<ActionResult<Partograph>> GetCurrentPartograph(Guid id)
+        {
+            try
+            {
+                var patient = await _context.Patients
+                    .FirstOrDefaultAsync(p => p.ID == id && p.Deleted == 0);
+
+                if (patient == null)
+                {
+                    return NotFound(new { error = "Patient not found", id });
+                }
+
+                // First try to find an active partograph
+                var currentPartograph = await _context.Partographs
+                    .Where(p => p.PatientID == id && p.Deleted == 0 && p.Status == LaborStatus.Active)
+                    .OrderByDescending(p => p.AdmissionDate)
+                    .FirstOrDefaultAsync();
+
+                // If no active partograph, get the most recent pending one
+                if (currentPartograph == null)
+                {
+                    currentPartograph = await _context.Partographs
+                        .Where(p => p.PatientID == id && p.Deleted == 0 && p.Status == LaborStatus.Pending)
+                        .OrderByDescending(p => p.AdmissionDate)
+                        .FirstOrDefaultAsync();
+                }
+
+                if (currentPartograph == null)
+                {
+                    return NotFound(new
+                    {
+                        error = "No current partograph found",
+                        patientId = id,
+                        message = "Patient has no active or pending partograph"
+                    });
+                }
+
+                return Ok(currentPartograph);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving current partograph for patient {PatientId}", id);
+                return StatusCode(500, new { error = "Failed to retrieve current partograph", message = ex.Message });
             }
         }
 
