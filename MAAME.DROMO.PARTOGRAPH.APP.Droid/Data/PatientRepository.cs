@@ -220,61 +220,105 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
 
-            var saveCmd = connection.CreateCommand();
-            if (item.ID == null)
+            var isNewPatient = item.ID == null || item.ID == Guid.Empty;
+            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            if (isNewPatient)
             {
                 item.ID = Guid.NewGuid();
+            }
+
+            item.CreatedTime = isNewPatient ? now : item.CreatedTime;
+            item.UpdatedTime = now;
+            item.DeviceId = DeviceIdentity.GetOrCreateDeviceId();
+            item.OriginDeviceId = item.OriginDeviceId ?? DeviceIdentity.GetOrCreateDeviceId();
+            item.Version = isNewPatient ? 1 : item.Version + 1;
+            item.ServerVersion = isNewPatient ? 0 : item.ServerVersion;
+            item.SyncStatus = 0; // Mark as needing sync
+            item.Deleted = 0;
+            item.DataHash = item.CalculateHash();
+
+            var saveCmd = connection.CreateCommand();
+            if (isNewPatient)
+            {
                 saveCmd.CommandText = @"
                 INSERT INTO Tbl_Patient (ID, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContact, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-                VALUES (@firstName, @lastName, @hospitalNumber, @dateofbirth, @age, @bloodGroup, @phoneNumber, @emergencyContact, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
-
-                //SELECT last_insert_rowid();
-
-                saveCmd.Parameters.AddWithValue("@ID", item.ID);
+                VALUES (@ID, @firstName, @lastName, @hospitalNumber, @dateofbirth, @age, @bloodGroup, @phoneNumber, @emergencyContact, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted)";
             }
             else
             {
                 saveCmd.CommandText = @"
-                UPDATE Tbl_Patient SET 
-                    firstName = @firstName, lastName = @lastName, hospitalNumber = @hospitalNumber, dateofbirth = @dateofbirth, age = @age, gravida = @gravida, parity = @parity, admissionDate = @admissionDate, expectedDeliveryDate = @expectedDeliveryDate, bloodGroup = @bloodGroup, phoneNumber = @phoneNumber, emergencyContact = @emergencyContact, laborStartTime = @laborStartTime, deliveryTime = @deliveryTime, cervicalDilationOnAdmission = @cervicalDilationOnAdmission, membraneStatus = @membraneStatus, liquorStatus = @liquorStatus, riskFactors = @riskFactors, complications = @complications, updatedtime = @updatedtime, deviceid = @deviceid, syncstatus = @syncstatus, version = @version
+                UPDATE Tbl_Patient SET
+                    firstName = @firstName,
+                    lastName = @lastName,
+                    hospitalNumber = @hospitalNumber,
+                    dateofbirth = @dateofbirth,
+                    age = @age,
+                    bloodGroup = @bloodGroup,
+                    phoneNumber = @phoneNumber,
+                    emergencyContact = @emergencyContact,
+                    handler = @handler,
+                    updatedtime = @updatedtime,
+                    deviceid = @deviceid,
+                    syncstatus = @syncstatus,
+                    version = @version
                 WHERE ID = @ID";
-                saveCmd.Parameters.AddWithValue("@ID", item.ID);
             }
 
-            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-
-            item.ID = item.ID ?? Guid.NewGuid();
-            item.CreatedTime = now;
-            item.UpdatedTime = now;
-            item.DeviceId = DeviceIdentity.GetOrCreateDeviceId();
-            item.OriginDeviceId = DeviceIdentity.GetOrCreateDeviceId();
-            item.Version = 1;
-            item.ServerVersion = 0;
-            item.SyncStatus = 0;
-            item.Deleted = 0;
-            item.DataHash = item.CalculateHash();
-
-            saveCmd.Parameters.AddWithValue("@firstname", item.FirstName);
-            saveCmd.Parameters.AddWithValue("@lastname", item.LastName);
-            saveCmd.Parameters.AddWithValue("@hospitalNumber", item.HospitalNumber);
-            saveCmd.Parameters.AddWithValue("@dateofbirth", item.DateOfBirth);
-            saveCmd.Parameters.AddWithValue("@age", item.Age);
+            saveCmd.Parameters.AddWithValue("@ID", item.ID.ToString());
+            saveCmd.Parameters.AddWithValue("@firstName", item.FirstName ?? "");
+            saveCmd.Parameters.AddWithValue("@lastName", item.LastName ?? "");
+            saveCmd.Parameters.AddWithValue("@hospitalNumber", item.HospitalNumber ?? "");
+            saveCmd.Parameters.AddWithValue("@dateofbirth", item.DateOfBirth?.ToString("yyyy-MM-dd") ?? (object)DBNull.Value);
+            saveCmd.Parameters.AddWithValue("@age", item.Age ?? (object)DBNull.Value);
             saveCmd.Parameters.AddWithValue("@bloodGroup", item.BloodGroup ?? "");
             saveCmd.Parameters.AddWithValue("@phoneNumber", item.PhoneNumber ?? "");
             saveCmd.Parameters.AddWithValue("@emergencyContact", item.EmergencyContact ?? "");
-            saveCmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
+            saveCmd.Parameters.AddWithValue("@handler", item.Handler?.ToString() ?? (object)DBNull.Value);
             saveCmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             saveCmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            saveCmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime ?? (object)DBNull.Value);
             saveCmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             saveCmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId);
             saveCmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             saveCmd.Parameters.AddWithValue("@version", item.Version);
+            saveCmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
             saveCmd.Parameters.AddWithValue("@deleted", item.Deleted);
 
-            var result = await saveCmd.ExecuteScalarAsync();
-            if (item.ID == null)
+            await saveCmd.ExecuteNonQueryAsync();
+
+            // Automatically create a Partograph with Pending status for new patients
+            if (isNewPatient)
             {
-                item.ID = Guid.Parse(Convert.ToString(result));
+                var partograph = new Partograph
+                {
+                    ID = Guid.NewGuid(),
+                    PatientID = item.ID,
+                    Status = LaborStatus.Pending,
+                    Time = DateTime.UtcNow,
+                    AdmissionDate = DateTime.UtcNow,
+                    Gravida = 0,
+                    Parity = 0,
+                    MembraneStatus = "Intact",
+                    LiquorStatus = "Clear",
+                    HandlerName = item.HandlerName,
+                    Handler = item.Handler,
+                    DeviceId = item.DeviceId,
+                    OriginDeviceId = item.OriginDeviceId,
+                    CreatedTime = now,
+                    UpdatedTime = now,
+                    Version = 1,
+                    ServerVersion = 0,
+                    SyncStatus = 0,
+                    Deleted = 0
+                };
+
+                partograph.DataHash = partograph.CalculateHash();
+
+                await _partographRepository.SaveItemAsync(partograph);
+
+                _logger.LogInformation("Created patient {PatientId} with automatic partograph {PartographId} in Pending status",
+                    item.ID, partograph.ID);
             }
 
             return item.ID;
