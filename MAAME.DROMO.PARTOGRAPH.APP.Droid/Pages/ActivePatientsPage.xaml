@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.ActivePatientsPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Models"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:fonts="clr-namespace:Fonts"
              Title="Active Labor Patients">
 
@@ -96,13 +96,13 @@
                                             <Label Text="{Binding LaborStartTime, StringFormat='{0:HH:mm}'}" 
                                                    FontSize="12" />
                                         </HorizontalStackLayout>
-                                        <HorizontalStackLayout Spacing="5">
+                                        <!--<HorizontalStackLayout Spacing="5">
                                             <Label Text="FHR:" FontSize="12" />
                                             <Label Text="{Binding PartographEntries[0].FetalHeartRate, StringFormat='{0}bpm'}" 
                                                    FontSize="12"
                                                    FontAttributes="Bold"
                                                    TextColor="{Binding PartographEntries[0].FetalHeartRate, Converter={StaticResource FHRColorConverter}}" />
-                                        </HorizontalStackLayout>
+                                        </HorizontalStackLayout>-->
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
 

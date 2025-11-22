@@ -95,6 +95,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Helper\**" />
+	  <AndroidResource Remove="Models\**" />
+	  <Compile Remove="Helper\**" />
+	  <Compile Remove="Models\**" />
+	  <EmbeddedResource Remove="Helper\**" />
+	  <EmbeddedResource Remove="Models\**" />
+	  <MauiCss Remove="Helper\**" />
+	  <MauiCss Remove="Models\**" />
+	  <MauiXaml Remove="Helper\**" />
+	  <MauiXaml Remove="Models\**" />
+	  <None Remove="Helper\**" />
+	  <None Remove="Models\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Compile Remove="Data\CategoryRepository.cs" />
 	  <Compile Remove="Data\JsonContext.cs" />
 	  <Compile Remove="Data\ProjectRepository.cs" />
@@ -102,10 +117,6 @@
 	  <Compile Remove="Data\TagRepository.cs" />
 	  <Compile Remove="Data\TaskRespository.cs" />
 	  <Compile Remove="Data\VitalSignRepository.cs" />
-	  <Compile Remove="Models\Project.cs" />
-	  <Compile Remove="Models\ProjectsTags.cs" />
-	  <Compile Remove="Models\ProjectTask.cs" />
-	  <Compile Remove="Models\VitalSign.cs" />
 	  <Compile Remove="PageModels\FHRDecelerationModalPageModel.cs" />
 	  <Compile Remove="PageModels\IProjectTaskPageModel.cs" />
 	  <Compile Remove="PageModels\MainPageModel.cs" />
@@ -115,6 +126,7 @@
 	  <Compile Remove="PageModels\TaskDetailPageModel.cs" />
 	  <Compile Remove="PageModels\VitalSignsPageModel.cs" />
 	  <Compile Remove="Pages\Controls\CategoryChart.xaml.cs" />
+	  <Compile Remove="Pages\Controls\ChipDataTemplateSelector.cs" />
 	  <Compile Remove="Pages\Controls\ProjectCardView.xaml.cs" />
 	  <Compile Remove="Pages\Controls\TagView.xaml.cs" />
 	  <Compile Remove="Pages\Controls\TaskView.xaml.cs" />
@@ -176,8 +188,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="D:\repos\source codes\SMILE\EMPEROR.COMMON\EMPEROR.COMMON.csproj" />
-	  <ProjectReference Include="D:\repos\source codes\SMILE\EMPEROR.PERIOD\EMPEROR.PERIOD.csproj" />
+	  <ProjectReference Include="..\MAAME.DROMO.PARTOGRAPH.MODEL\MAAME.DROMO.PARTOGRAPH.MODEL.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

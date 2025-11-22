@@ -1,5 +1,5 @@
 using MAAME.DROMO.PARTOGRAPH.SERVICE.Data;
-using MAAME.DROMO.PARTOGRAPH.SERVICE.Models;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -106,14 +106,14 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     caputs = await _context.Caputs.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
                     mouldings = await _context.Mouldings.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
                     fetalPositions = await _context.FetalPositions.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
-                    painReliefEntries = await _context.PainReliefEntries.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
-                    postureEntries = await _context.PostureEntries.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
-                    oralFluidEntries = await _context.OralFluidEntries.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
-                    ivFluidEntries = await _context.IVFluidEntries.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
-                    medicationEntries = await _context.MedicationEntries.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
+                    painReliefEntries = await _context.PainReliefs.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
+                    postureEntries = await _context.Postures.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
+                    oralFluidEntries = await _context.OralFluids.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
+                    ivFluidEntries = await _context.IVFluids.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
+                    medicationEntries = await _context.Medications.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
                     oxytocins = await _context.Oxytocins.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
-                    companionEntries = await _context.CompanionEntries.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
-                    assessmentPlanEntries = await _context.AssessmentPlanEntries.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync()
+                    companionEntries = await _context.Companions.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
+                    assessmentPlanEntries = await _context.AssessmentPlans.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync()
                 };
 
                 return Ok(measurements);

@@ -7,7 +7,7 @@
              xmlns:controls="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls"
              xmlns:sfGauge="clr-namespace:Syncfusion.Maui.Gauges;assembly=Syncfusion.Maui.Gauges"
              xmlns:sfCards="clr-namespace:Syncfusion.Maui.Toolkit.Cards;assembly=Syncfusion.Maui.Toolkit"
-             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Models"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:pages="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages"
              xmlns:views="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views"
              xmlns:tabView="http://schemas.syncfusion.com/maui"

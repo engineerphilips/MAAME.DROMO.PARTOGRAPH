@@ -1,5 +1,5 @@
 using MAAME.DROMO.PARTOGRAPH.SERVICE.Data;
-using MAAME.DROMO.PARTOGRAPH.SERVICE.Models;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -279,7 +279,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         [HttpGet("medications")]
         public async Task<ActionResult<IEnumerable<MedicationEntry>>> GetMedications([FromQuery] Guid? partographId = null)
         {
-            var query = _context.MedicationEntries.Where(m => m.Deleted == 0);
+            var query = _context.Medications.Where(m => m.Deleted == 0);
             if (partographId.HasValue)
                 query = query.Where(m => m.PartographID == partographId.Value);
 
@@ -289,19 +289,19 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         [HttpPost("medications")]
         public async Task<ActionResult<MedicationEntry>> CreateMedication(MedicationEntry measurement)
         {
-            return await CreateMeasurement(_context.MedicationEntries, measurement, nameof(GetMedications));
+            return await CreateMeasurement(_context.Medications, measurement, nameof(GetMedications));
         }
 
         [HttpPut("medications/{id}")]
         public async Task<IActionResult> UpdateMedication(Guid id, MedicationEntry measurement)
         {
-            return await UpdateMeasurement(_context.MedicationEntries, id, measurement);
+            return await UpdateMeasurement(_context.Medications, id, measurement);
         }
 
         [HttpDelete("medications/{id}")]
         public async Task<IActionResult> DeleteMedication(Guid id)
         {
-            return await DeleteMeasurement(_context.MedicationEntries, id);
+            return await DeleteMeasurement(_context.Medications, id);
         }
 
         #endregion

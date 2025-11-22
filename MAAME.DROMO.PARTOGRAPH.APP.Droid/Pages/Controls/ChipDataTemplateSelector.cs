@@ -1,4 +1,4 @@
-using MAAME.DROMO.PARTOGRAPH.APP.Droid.Models;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls
 {

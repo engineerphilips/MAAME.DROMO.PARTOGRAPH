@@ -1,4 +1,4 @@
-﻿using MAAME.DROMO.PARTOGRAPH.APP.Droid.Models;
+﻿using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

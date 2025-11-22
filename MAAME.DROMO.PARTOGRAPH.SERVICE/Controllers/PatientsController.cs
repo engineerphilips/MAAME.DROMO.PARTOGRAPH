@@ -1,5 +1,5 @@
 using MAAME.DROMO.PARTOGRAPH.SERVICE.Data;
-using MAAME.DROMO.PARTOGRAPH.SERVICE.Models;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

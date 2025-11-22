@@ -1,4 +1,4 @@
-using MAAME.DROMO.PARTOGRAPH.SERVICE.Models;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.EntityFrameworkCore;
 
 namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
@@ -27,23 +27,23 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
         public DbSet<Caput> Caputs { get; set; }
         public DbSet<Moulding> Mouldings { get; set; }
         public DbSet<FetalPosition> FetalPositions { get; set; }
-        public DbSet<PainReliefEntry> PainReliefEntries { get; set; }
-        public DbSet<PostureEntry> PostureEntries { get; set; }
-        public DbSet<OralFluidEntry> OralFluidEntries { get; set; }
-        public DbSet<IVFluidEntry> IVFluidEntries { get; set; }
-        public DbSet<MedicationEntry> MedicationEntries { get; set; }
+        public DbSet<PainReliefEntry> PainReliefs { get; set; }
+        public DbSet<PostureEntry> Postures { get; set; }
+        public DbSet<OralFluidEntry> OralFluids { get; set; }
+        public DbSet<IVFluidEntry> IVFluids { get; set; }
+        public DbSet<MedicationEntry> Medications { get; set; }
         public DbSet<Oxytocin> Oxytocins { get; set; }
-        public DbSet<CompanionEntry> CompanionEntries { get; set; }
-        public DbSet<AssessmentPlanEntry> AssessmentPlanEntries { get; set; }
+        public DbSet<CompanionEntry> Companions { get; set; }
+        public DbSet<AssessmentPlanEntry> AssessmentPlans { get; set; }
         public DbSet<MedicalNote> MedicalNotes { get; set; }
 
         // Supporting Entities
-        public DbSet<VitalSign> VitalSigns { get; set; }
-        public DbSet<Project> Projects { get; set; }
-        public DbSet<ProjectTask> ProjectTasks { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<ProjectsTags> ProjectsTags { get; set; }
+        //public DbSet<VitalSign> VitalSigns { get; set; }
+        //public DbSet<Project> Projects { get; set; }
+        //public DbSet<ProjectTask> ProjectTasks { get; set; }
+        //public DbSet<Category> Categories { get; set; }
+        //public DbSet<Tag> Tags { get; set; }
+        //public DbSet<ProjectsTags> ProjectsTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,10 +71,10 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     .HasForeignKey(p => p.PatientID)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(p => p.MedicalNotes)
-                    .WithOne()
-                    .HasForeignKey(m => m.PatientID)
-                    .OnDelete(DeleteBehavior.Cascade);
+                //entity.HasMany(p => p.MedicalNotes)
+                //    .WithOne()
+                //    .HasForeignKey(m => m.PartographID)
+                //    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configure Partograph
@@ -137,44 +137,44 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             ConfigureMeasurement<MedicalNote>(modelBuilder);
 
             // Configure VitalSign
-            modelBuilder.Entity<VitalSign>(entity =>
-            {
-                entity.HasKey(e => e.ID);
-                entity.HasIndex(e => e.PatientID);
-                entity.HasIndex(e => e.Time);
-            });
+            //modelBuilder.Entity<VitalSign>(entity =>
+            //{
+            //    entity.HasKey(e => e.ID);
+            //    entity.HasIndex(e => e.PatientID);
+            //    entity.HasIndex(e => e.Time);
+            //});
 
             // Configure Project entities
-            modelBuilder.Entity<Project>(entity =>
-            {
-                entity.HasKey(e => e.ID);
-                entity.Property(e => e.Name).HasMaxLength(200);
-            });
+            //modelBuilder.Entity<Project>(entity =>
+            //{
+            //    entity.HasKey(e => e.ID);
+            //    entity.Property(e => e.Name).HasMaxLength(200);
+            //});
 
-            modelBuilder.Entity<ProjectTask>(entity =>
-            {
-                entity.HasKey(e => e.ID);
-                entity.HasIndex(e => e.ProjectID);
-            });
+            //modelBuilder.Entity<ProjectTask>(entity =>
+            //{
+            //    entity.HasKey(e => e.ID);
+            //    entity.HasIndex(e => e.ProjectID);
+            //});
 
-            modelBuilder.Entity<Category>(entity =>
-            {
-                entity.HasKey(e => e.ID);
-                entity.Property(e => e.Name).HasMaxLength(100);
-            });
+            //modelBuilder.Entity<Category>(entity =>
+            //{
+            //    entity.HasKey(e => e.ID);
+            //    entity.Property(e => e.Name).HasMaxLength(100);
+            //});
 
-            modelBuilder.Entity<Tag>(entity =>
-            {
-                entity.HasKey(e => e.ID);
-                entity.Property(e => e.Name).HasMaxLength(50);
-                entity.HasIndex(e => e.Name).IsUnique();
-            });
+            //modelBuilder.Entity<Tag>(entity =>
+            //{
+            //    entity.HasKey(e => e.ID);
+            //    entity.Property(e => e.Name).HasMaxLength(50);
+            //    entity.HasIndex(e => e.Name).IsUnique();
+            //});
 
-            modelBuilder.Entity<ProjectsTags>(entity =>
-            {
-                entity.HasKey(e => e.ID);
-                entity.HasIndex(e => new { e.ProjectID, e.TagID }).IsUnique();
-            });
+            //modelBuilder.Entity<ProjectsTags>(entity =>
+            //{
+            //    entity.HasKey(e => e.ID);
+            //    entity.HasIndex(e => new { e.ProjectID, e.TagID }).IsUnique();
+            //});
         }
 
         private void ConfigureMeasurement<T>(ModelBuilder modelBuilder) where T : BasePartographMeasurement

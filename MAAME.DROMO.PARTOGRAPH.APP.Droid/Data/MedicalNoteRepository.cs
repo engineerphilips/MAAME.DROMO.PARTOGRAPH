@@ -1,4 +1,4 @@
-﻿using MAAME.DROMO.PARTOGRAPH.APP.Droid.Models;
+﻿using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using System;
@@ -68,9 +68,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 notes.Add(new MedicalNote
                 {
-                    ID = reader.GetInt32(0),
-                    PatientID = reader.GetInt32(1),
-                    CreatedTime = DateTime.Parse(reader.GetString(2)),
+                    ID = Guid.Parse(reader.GetString(0)),
+                    PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
+                    Time = reader.GetDateTime(2), 
                     NoteType = reader.GetString(3),
                     Content = reader.GetString(4),
                     CreatedBy = reader.GetString(5),
@@ -81,14 +81,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return notes;
         }
 
-        public async Task<int> SaveItemAsync(MedicalNote item)
+        public async Task<Guid?> SaveItemAsync(MedicalNote item)
         {
             await Init();
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
 
             var saveCmd = connection.CreateCommand();
-            if (item.ID == 0)
+            if (item.ID == null)
             {
                 saveCmd.CommandText = @"
                 INSERT INTO MedicalNote (PatientID, CreatedTime, NoteType, Content, CreatedBy, IsImportant)
@@ -104,18 +104,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 saveCmd.Parameters.AddWithValue("@ID", item.ID);
             }
 
-            saveCmd.Parameters.AddWithValue("@PatientID", item.PatientID);
-            saveCmd.Parameters.AddWithValue("@CreatedTime", item.CreatedTime.ToString("O"));
-            saveCmd.Parameters.AddWithValue("@NoteType", item.NoteType);
-            saveCmd.Parameters.AddWithValue("@Content", item.Content);
-            saveCmd.Parameters.AddWithValue("@CreatedBy", item.CreatedBy);
-            saveCmd.Parameters.AddWithValue("@IsImportant", item.IsImportant);
+            //saveCmd.Parameters.AddWithValue("@PatientID", item.PatientID);
+            //saveCmd.Parameters.AddWithValue("@CreatedTime", item.CreatedTime.ToString("O"));
+            //saveCmd.Parameters.AddWithValue("@NoteType", item.NoteType);
+            //saveCmd.Parameters.AddWithValue("@Content", item.Content);
+            //saveCmd.Parameters.AddWithValue("@CreatedBy", item.CreatedBy);
+            //saveCmd.Parameters.AddWithValue("@IsImportant", item.IsImportant);
 
-            var result = await saveCmd.ExecuteScalarAsync();
-            if (item.ID == 0)
-            {
-                item.ID = Convert.ToInt32(result);
-            }
+            //var result = await saveCmd.ExecuteScalarAsync();
+            //if (item.ID == null)
+            //{
+            //    item.ID = Guid.Parse(Convert.ToInt32(result));
+            //}
 
             return item.ID;
         }

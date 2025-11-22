@@ -47,7 +47,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     Preferences.Set("StaffRole", "Super-Admin");
                     Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
 
-                    Constants.Staff = new Models.Staff()
+                    Constants.Staff = new MODEL.Staff()
                     {
                         ID = null,
                         Name = "SUPER-ADMIN",

@@ -1,5 +1,5 @@
 using MAAME.DROMO.PARTOGRAPH.SERVICE.Data;
-using MAAME.DROMO.PARTOGRAPH.SERVICE.Models;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -140,7 +140,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
 
-                var result = tableName.ToLower() switch
+                object? result = null;
+                result = tableName.ToLower() switch
                 {
                     "fhrs" => await PullGenericMeasurements<FHR>(_context.FHRs, request, maxRecords),
                     "contractions" => await PullGenericMeasurements<Contraction>(_context.Contractions, request, maxRecords),
@@ -153,18 +154,17 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     "caputs" => await PullGenericMeasurements<Caput>(_context.Caputs, request, maxRecords),
                     "mouldings" => await PullGenericMeasurements<Moulding>(_context.Mouldings, request, maxRecords),
                     "fetalpositions" => await PullGenericMeasurements<FetalPosition>(_context.FetalPositions, request, maxRecords),
-                    "painreliefentries" => await PullGenericMeasurements<PainReliefEntry>(_context.PainReliefEntries, request, maxRecords),
-                    "postureentries" => await PullGenericMeasurements<PostureEntry>(_context.PostureEntries, request, maxRecords),
-                    "oralfluidentries" => await PullGenericMeasurements<OralFluidEntry>(_context.OralFluidEntries, request, maxRecords),
-                    "ivfluidentries" => await PullGenericMeasurements<IVFluidEntry>(_context.IVFluidEntries, request, maxRecords),
-                    "medicationentries" => await PullGenericMeasurements<MedicationEntry>(_context.MedicationEntries, request, maxRecords),
+                    "painreliefentries" => await PullGenericMeasurements<PainReliefEntry>(_context.PainReliefs, request, maxRecords),
+                    "postureentries" => await PullGenericMeasurements<PostureEntry>(_context.Postures, request, maxRecords),
+                    "oralfluidentries" => await PullGenericMeasurements<OralFluidEntry>(_context.OralFluids, request, maxRecords),
+                    "ivfluidentries" => await PullGenericMeasurements<IVFluidEntry>(_context.IVFluids, request, maxRecords),
+                    "medicationentries" => await PullGenericMeasurements<MedicationEntry>(_context.Medications, request, maxRecords),
                     "oxytocins" => await PullGenericMeasurements<Oxytocin>(_context.Oxytocins, request, maxRecords),
-                    "companionentries" => await PullGenericMeasurements<CompanionEntry>(_context.CompanionEntries, request, maxRecords),
-                    "assessmentplanentries" => await PullGenericMeasurements<AssessmentPlanEntry>(_context.AssessmentPlanEntries, request, maxRecords),
+                    "companionentries" => await PullGenericMeasurements<CompanionEntry>(_context.Companions, request, maxRecords),
+                    "assessmentplanentries" => await PullGenericMeasurements<AssessmentPlanEntry>(_context.AssessmentPlans, request, maxRecords),
                     "medicalnotes" => await PullGenericMeasurements<MedicalNote>(_context.MedicalNotes, request, maxRecords),
-                    _ => null
+                    _ => null,
                 };
-
                 if (result == null)
                     return BadRequest(new { error = "Unknown table name", tableName });
 
@@ -402,7 +402,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         {
             try
             {
-                var result = tableName.ToLower() switch
+                object? result = null;
+                result = tableName.ToLower() switch
                 {
                     "fhrs" => await PushGenericMeasurements<FHR>(_context.FHRs, request),
                     "contractions" => await PushGenericMeasurements<Contraction>(_context.Contractions, request),
@@ -415,14 +416,14 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     "caputs" => await PushGenericMeasurements<Caput>(_context.Caputs, request),
                     "mouldings" => await PushGenericMeasurements<Moulding>(_context.Mouldings, request),
                     "fetalpositions" => await PushGenericMeasurements<FetalPosition>(_context.FetalPositions, request),
-                    "painreliefentries" => await PushGenericMeasurements<PainReliefEntry>(_context.PainReliefEntries, request),
-                    "postureentries" => await PushGenericMeasurements<PostureEntry>(_context.PostureEntries, request),
-                    "oralfluidentries" => await PushGenericMeasurements<OralFluidEntry>(_context.OralFluidEntries, request),
-                    "ivfluidentries" => await PushGenericMeasurements<IVFluidEntry>(_context.IVFluidEntries, request),
-                    "medicationentries" => await PushGenericMeasurements<MedicationEntry>(_context.MedicationEntries, request),
+                    "painreliefentries" => await PushGenericMeasurements<PainReliefEntry>(_context.PainReliefs, request),
+                    "postureentries" => await PushGenericMeasurements<PostureEntry>(_context.Postures, request),
+                    "oralfluidentries" => await PushGenericMeasurements<OralFluidEntry>(_context.OralFluids, request),
+                    "ivfluidentries" => await PushGenericMeasurements<IVFluidEntry>(_context.IVFluids, request),
+                    "medicationentries" => await PushGenericMeasurements<MedicationEntry>(_context.Medications, request),
                     "oxytocins" => await PushGenericMeasurements<Oxytocin>(_context.Oxytocins, request),
-                    "companionentries" => await PushGenericMeasurements<CompanionEntry>(_context.CompanionEntries, request),
-                    "assessmentplanentries" => await PushGenericMeasurements<AssessmentPlanEntry>(_context.AssessmentPlanEntries, request),
+                    "companionentries" => await PushGenericMeasurements<CompanionEntry>(_context.Companions, request),
+                    "assessmentplanentries" => await PushGenericMeasurements<AssessmentPlanEntry>(_context.AssessmentPlans, request),
                     "medicalnotes" => await PushGenericMeasurements<MedicalNote>(_context.MedicalNotes, request),
                     _ => null
                 };

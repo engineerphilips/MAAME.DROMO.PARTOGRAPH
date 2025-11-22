@@ -19,7 +19,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             {
                 // If authenticated, navigate to the main shell
 
-                Constants.Staff = new Models.Staff()
+                Constants.Staff = new MODEL.Staff()
                 {
                     Name = Preferences.Get("StaffName", "Name"),
                     Role = Preferences.Get("StaffRole", "Role"),

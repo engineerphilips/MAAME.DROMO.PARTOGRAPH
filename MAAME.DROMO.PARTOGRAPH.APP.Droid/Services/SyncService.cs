@@ -1,5 +1,5 @@
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
-using MAAME.DROMO.PARTOGRAPH.APP.Droid.Models;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
