@@ -41,7 +41,6 @@
             <!-- Stat Card Style -->
             <Style x:Key="StatCardStyle" TargetType="sfCards:SfCardView">
                 <Setter Property="CornerRadius" Value="8" />
-                <!--<Setter Property="HasShadow" Value="True" />-->
                 <Setter Property="BorderWidth" Value="0" />
                 <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E293B}" />
             </Style>
@@ -78,15 +77,7 @@
     </ContentPage.Resources>
 
     <tabView:SfTabView x:Name="TabView" TabBarHeight="72" EnableSwiping="False" TabBarPlacement="Bottom">
-        <!--SelectionChanged="SfTabView_SelectionChanged"-->
         <tabView:SfTabItem Header="Home" ImagePosition="Top" ImageSource="home_svgrepo.png">
-            
-            <!--ImageSource="{imageExtension:SfImageResource document.png}"-->
-            <!--<tabView:SfTabItem.ImageSource>-->
-                <!--<FontImageSource  
-                     Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                     Size="20" />-->
-            <!--</tabView:SfTabItem.ImageSource>-->
             <ScrollView>
                 <Grid RowDefinitions="Auto,Auto,*" Padding="20" RowSpacing="32">
 
@@ -113,17 +104,13 @@
                         </VerticalStackLayout>
 
                         <!-- Quick Action FAB -->
-                        <controls:AddButton Grid.Column="1" 
+                        <controls:AddButton Grid.Column="1"
                                     BackgroundColor="#3B82F6"
                                     WidthRequest="64"
                                     HeightRequest="64"
                                     FontSize="24"
                                     ToolTipProperties.Text="Admit New Patient"
-                                    Command="{Binding AddNewPatientCommand}">
-                            <!--<controls:AddButton.Shadow>
-                                <Shadow Brush="#3B82F6" Opacity="0.4" Radius="16" Offset="0,8" />
-                            </controls:AddButton.Shadow>-->
-                        </controls:AddButton>
+                                    Command="{Binding AddNewPatientCommand}" />
                     </Grid>
 
                     <!-- Advanced Metrics Grid -->
@@ -139,24 +126,11 @@
                                    TextColor="#10B981" />
                                     <HorizontalStackLayout Spacing="4">
                                         <Label Text="●" FontSize="8" TextColor="#10B981" VerticalOptions="Center" />
-                                        <Label Text="Real-time monitoring" 
+                                        <Label Text="Real-time monitoring"
                                        FontSize="11"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
-
-                                <!-- Progress Indicator -->
-                                <!--<sfGauge:SfLinearGauge Grid.Row="2" HeightRequest="8" Orientation="Horizontal">
-                            <sfGauge:SfLinearGauge.Axis>
-                                <sfGauge:LinearAxis ShowTicks="False" ShowLabels="False" ShowAxisLine="False"
-                                                   Minimum="0" Maximum="100">
-                                    <sfGauge:LinearAxis.Ranges>
-                                        <sfGauge:LinearRange StartValue="0" EndValue="{Binding ActiveLaborProgress}" 
-                                                           Fill="#10B981" StartWidth="8" EndWidth="8" />
-                                    </sfGauge:LinearAxis.Ranges>
-                                </sfGauge:LinearAxis>
-                            </sfGauge:SfLinearGauge.Axis>
-                        </sfGauge:SfLinearGauge>-->
                             </Grid>
                             <sfCards:SfCardView.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding NavigateToActivePatientsCommand}" />
@@ -174,23 +148,11 @@
                                    TextColor="#F59E0B" />
                                     <HorizontalStackLayout Spacing="4">
                                         <Label Text="▲" FontSize="12" TextColor="#10B981" VerticalOptions="Center" />
-                                        <Label Text="+2 admissions today" 
+                                        <Label Text="+2 admissions today"
                                        FontSize="11"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
-
-                                <!--<sfGauge:SfLinearGauge Grid.Row="2" HeightRequest="8" Orientation="Horizontal">
-                            <sfGauge:SfLinearGauge.Axis>
-                                <sfGauge:LinearAxis ShowTicks="False" ShowLabels="False" ShowAxisLine="False"
-                                                   Minimum="0" Maximum="100">
-                                    <sfGauge:LinearAxis.Ranges>
-                                        <sfGauge:LinearRange StartValue="0" EndValue="{Binding PreLaborProgress}" 
-                                                           Fill="#F59E0B" StartWidth="8" EndWidth="8" />
-                                    </sfGauge:LinearAxis.Ranges>
-                                </sfGauge:LinearAxis>
-                            </sfGauge:SfLinearGauge.Axis>
-                        </sfGauge:SfLinearGauge>-->
                             </Grid>
                             <sfCards:SfCardView.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding NavigateToPendingPatientsCommand}" />
@@ -208,23 +170,11 @@
                                    TextColor="#3B82F6" />
                                     <HorizontalStackLayout Spacing="4">
                                         <Label Text="⏱" FontSize="10" VerticalOptions="Center" />
-                                        <Label Text="{Binding DashboardStats.AvgDeliveryTime, StringFormat='Avg: {0}h'}" 
+                                        <Label Text="{Binding DashboardStats.AvgDeliveryTime, StringFormat='Avg: {0}h'}"
                                        FontSize="11"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
-
-                                <!--<sfGauge:SfLinearGauge Grid.Row="2" HeightRequest="8" Orientation="Horizontal">
-                            <sfGauge:SfLinearGauge.Axis>
-                                <sfGauge:LinearAxis ShowTicks="False" ShowLabels="False" ShowAxisLine="False"
-                                                   Minimum="0" Maximum="100">
-                                    <sfGauge:LinearAxis.Ranges>
-                                        <sfGauge:LinearRange StartValue="0" EndValue="{Binding DeliveryProgress}" 
-                                                           Fill="#3B82F6" StartWidth="8" EndWidth="8" />
-                                    </sfGauge:LinearAxis.Ranges>
-                                </sfGauge:LinearAxis>
-                            </sfGauge:SfLinearGauge.Axis>
-                        </sfGauge:SfLinearGauge>-->
                             </Grid>
                             <sfCards:SfCardView.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding NavigateToCompletedPatientsCommand}" />
@@ -242,507 +192,17 @@
                                    TextColor="#EF4444" />
                                     <HorizontalStackLayout Spacing="4">
                                         <Label Text="🚨" FontSize="10" VerticalOptions="Center" />
-                                        <Label Text="Immediate attention" 
+                                        <Label Text="Immediate attention"
                                        FontSize="11"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
-
-                                <!--<Border Grid.Row="2" BackgroundColor="#FEE2E2" HeightRequest="8">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="4" />
-                                    </Border.StrokeShape>
-                                    <Border BackgroundColor="#EF4444" 
-                                    WidthRequest="{Binding EmergencyAlertWidth}" 
-                                    HorizontalOptions="Start">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="4" />
-                                        </Border.StrokeShape>
-                                    </Border>
-                                </Border>-->
                             </Grid>
                             <sfCards:SfCardView.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding NavigateToEmergencyPatientsCommand}" />
                             </sfCards:SfCardView.GestureRecognizers>
                         </sfCards:SfCardView>
                     </Grid>
-
-                    <!-- Main Content Area -->
-                    <!--<VerticalStackLayout Grid.Row="2" Spacing="32">
-
-                -->
-                    <!-- Advanced Analytics Section -->
-                    <!--
-                <Grid ColumnDefinitions="2*,*" ColumnSpacing="24">
-                    -->
-                    <!-- Labor Progress Tracking -->
-                    <!--
-                    <Border Grid.Column="0" Style="{StaticResource ModernCardStyle}">
-                        <VerticalStackLayout Spacing="20">
-                            <HorizontalStackLayout Spacing="12">
-                                <Border BackgroundColor="#F0F9FF" WidthRequest="40" HeightRequest="40">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="20" />
-                                    </Border.StrokeShape>
-                                    <Label Text="📊" 
-                                           FontSize="20"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
-                                </Border>
-                                <VerticalStackLayout VerticalOptions="Center">
-                                    <Label Text="Labor Progress Analytics" 
-                                           FontSize="20" 
-                                           FontAttributes="Bold"
-                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
-                                    <Label Text="Real-time cervical dilation tracking" 
-                                           FontSize="14"
-                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
-                                </VerticalStackLayout>
-                            </HorizontalStackLayout>
-
-                            <sf:SfCartesianChart HeightRequest="280">
-                                <sf:SfCartesianChart.XAxes>
-                                    <sf:DateTimeAxis ShowMajorGridLines="False" 
-                                                   LabelStyle="{Binding XAxisLabelStyle}"
-                                                   AxisLineStyle="{Binding AxisLineStyle}" />
-                                </sf:SfCartesianChart.XAxes>
-                                <sf:SfCartesianChart.YAxes>
-                                    <sf:NumericalAxis ShowMajorGridLines="True" 
-                                                     Minimum="0" Maximum="10"
-                                                     LabelStyle="{Binding YAxisLabelStyle}"
-                                                     MajorGridLineStyle="{Binding GridLineStyle}" />
-                                </sf:SfCartesianChart.YAxes>
-
-                                -->
-                    <!-- Cervical Dilation Progress -->
-                    <!--
-                                <sf:SplineAreaSeries ItemsSource="{Binding CervicalDilationData}"
-                                                   XBindingPath="Time"
-                                                   YBindingPath="Dilation"
-                                                   Fill="#1010B981"
-                                                   StrokeWidth="3"
-                                                   Stroke="#10B981"
-                                                   EnableAnimation="True" />
-                                -->
-                    <!--AnimationDuration="1000"-->
-
-                    <!-- Alert Lines -->
-                    <!--
-                                <sf:LineSeries ItemsSource="{Binding AlertLineData}"
-                                             XBindingPath="Time"
-                                             YBindingPath="AlertLevel"
-                                             StrokeWidth="2"
-                                             StrokeDashArray="5,5"
-                                             EnableAnimation="True" />
-
-                                -->
-                    <!--Stroke="#EF4444"-->
-                    <!--
-                            </sf:SfCartesianChart>
-                        </VerticalStackLayout>
-                    </Border>
-
-                    -->
-                    <!-- Quick Overview Panel -->
-                    <!--
-                    <VerticalStackLayout Grid.Column="1" Spacing="16">
-                        -->
-                    <!-- Fetal Heart Rate Monitor -->
-                    <!--
-                        <Border Style="{StaticResource ModernCardStyle}">
-                            <VerticalStackLayout Spacing="12">
-                                <HorizontalStackLayout Spacing="8">
-                                    <Label Text="💓" FontSize="16" VerticalOptions="Center" />
-                                    <Label Text="Fetal Heart Rate" 
-                                           FontSize="16" 
-                                           FontAttributes="Bold"
-                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
-                                </HorizontalStackLayout>
-
-                                -->
-                    <!--<sfGauge:SfRadialGauge HeightRequest="120">
-                                    <sfGauge:SfRadialGauge.Axes>
-                                        <sfGauge:RadialAxis StartAngle="180" EndAngle="360" 
-                                                          Minimum="110" Maximum="180"
-                                                          ShowLabels="False" ShowTicks="False">
-                                            <sfGauge:RadialAxis.Ranges>
-                                                <sfGauge:GaugeRange StartValue="110" EndValue="160" 
-                                                                  Fill="#10B981" StartWidth="8" EndWidth="8" />
-                                                <sfGauge:GaugeRange StartValue="160" EndValue="180" 
-                                                                  Fill="#EF4444" StartWidth="8" EndWidth="8" />
-                                            </sfGauge:RadialAxis.Ranges>
-                                            <sfGauge:RadialAxis.Pointers>
-                                                <sfGauge:NeedlePointer Value="{Binding CurrentFetalHeartRate}"
-                                                                     NeedleFill="#1E293B"
-                                                                     KnobFill="#3B82F6"
-                                                                     NeedleStartWidth="2"
-                                                                     NeedleEndWidth="8"
-                                                                     KnobRadius="8" />
-                                            </sfGauge:RadialAxis.Pointers>
-                                        </sfGauge:RadialAxis>
-                                    </sfGauge:SfRadialGauge.Axes>
-                                </sfGauge:SfRadialGauge>-->
-                    <!--
-
-                                <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-                                    <Label Text="{Binding CurrentFetalHeartRate}" 
-                                           FontSize="20"
-                                           FontAttributes="Bold"
-                                           TextColor="#3B82F6" />
-                                    <Label Text="bpm" 
-                                           FontSize="14"
-                                           VerticalOptions="End"
-                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
-                                </HorizontalStackLayout>
-                            </VerticalStackLayout>
-                        </Border>
-
-                        -->
-                    <!-- Contraction Intensity -->
-                    <!--
-                        <Border Style="{StaticResource ModernCardStyle}">
-                            <VerticalStackLayout Spacing="12">
-                                <HorizontalStackLayout Spacing="8">
-                                    <Label Text="📈" FontSize="16" VerticalOptions="Center" />
-                                    <Label Text="Contractions" 
-                                           FontSize="16" 
-                                           FontAttributes="Bold"
-                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
-                                </HorizontalStackLayout>
-
-                                <Grid RowDefinitions="Auto,Auto" RowSpacing="8">
-                                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-                                        <Label Text="{Binding CurrentContractions}" 
-                                               FontSize="24"
-                                               FontAttributes="Bold"
-                                               TextColor="#F59E0B" />
-                                        <Label Text="/10min" 
-                                               FontSize="14"
-                                               VerticalOptions="End"
-                                               TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
-                                    </HorizontalStackLayout>
-
-                                    -->
-                    <!--<sfGauge:SfLinearGauge Grid.Row="1" HeightRequest="12" Orientation="Horizontal">
-                                        <sfGauge:SfLinearGauge.Axis>
-                                            <sfGauge:LinearAxis ShowTicks="False" ShowLabels="False" ShowAxisLine="False"
-                                                               Minimum="0" Maximum="5">
-                                                <sfGauge:LinearAxis.Ranges>
-                                                    <sfGauge:LinearRange StartValue="0" EndValue="{Binding CurrentContractions}" 
-                                                                       Fill="#F59E0B" StartWidth="12" EndWidth="12" />
-                                                </sfGauge:LinearAxis.Ranges>
-                                            </sfGauge:LinearAxis>
-                                        </sfGauge:SfLinearGauge.Axis>
-                                    </sfGauge:SfLinearGauge>-->
-                    <!--
-                                </Grid>
-                            </VerticalStackLayout>
-                        </Border>
-
-                        -->
-                    <!-- Ward Capacity -->
-                    <!--
-                        <Border Style="{StaticResource ModernCardStyle}">
-                            <VerticalStackLayout Spacing="12">
-                                <HorizontalStackLayout Spacing="8">
-                                    <Label Text="🏥" FontSize="16" VerticalOptions="Center" />
-                                    <Label Text="Ward Capacity" 
-                                           FontSize="16" 
-                                           FontAttributes="Bold"
-                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
-                                </HorizontalStackLayout>
-
-                                <sf:SfCircularChart HeightRequest="100" >
-                                    <sf:DoughnutSeries ItemsSource="{Binding CapacityData}"
-                                                     XBindingPath="Category"
-                                                     YBindingPath="Value"
-                                                     InnerRadius="0.7"
-                                                     PaletteBrushes="{Binding CapacityColors}"
-                                                     EnableAnimation="True">
-                                    </sf:DoughnutSeries>
-                                </sf:SfCircularChart>
-
-                                <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-                                    <Label Text="{Binding OccupiedBeds}" 
-                                           FontSize="18"
-                                           FontAttributes="Bold"
-                                           TextColor="#1E293B" />
-                                    <Label Text="/" 
-                                           FontSize="14"
-                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
-                                    <Label Text="{Binding TotalBeds}" 
-                                           FontSize="14"
-                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
-                                    <Label Text="beds" 
-                                           FontSize="14"
-                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
-                                </HorizontalStackLayout>
-                            </VerticalStackLayout>
-                        </Border>
-                    </VerticalStackLayout>
-                </Grid>
-
-                -->
-                    <!-- Active Patients Section -->
-                    <!--
-                <Border Style="{StaticResource ModernCardStyle}">
-                    <VerticalStackLayout Spacing="24">
-                        <HorizontalStackLayout Spacing="12">
-                            <Border BackgroundColor="#F0FDF4" WidthRequest="40" HeightRequest="40">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="20" />
-                                </Border.StrokeShape>
-                                <Label Text="👥" 
-                                       FontSize="20"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center" />
-                            </Border>
-                            <VerticalStackLayout VerticalOptions="Center">
-                                <Label Text="Active Labor Monitoring" 
-                                       FontSize="22" 
-                                       FontAttributes="Bold"
-                                       TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
-                                <Label Text="Real-time patient status and measurements" 
-                                       FontSize="14"
-                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
-                            </VerticalStackLayout>
-                        </HorizontalStackLayout>
-
-                        <CollectionView ItemsSource="{Binding RecentActivePatients}" HeightRequest="400">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:Patient">
-                                    <Border StrokeThickness="1"
-                                            Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#475569}"
-                                            BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#334155}"
-                                            Padding="20"
-                                            Margin="0,8">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="16" />
-                                        </Border.StrokeShape>
-
-                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="20">
-                                            -->
-                    <!-- Patient Avatar -->
-                    <!--
-                                            <Border Grid.Column="0"
-                                                    WidthRequest="64"
-                                                    HeightRequest="64"
-                                                    BackgroundColor="#F0FDF4">
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="32" />
-                                                </Border.StrokeShape>
-                                                <Label Text="{Binding Initials}"
-                                                       HorizontalOptions="Center"
-                                                       VerticalOptions="Center"
-                                                       FontSize="20"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#16A34A" />
-                                            </Border>
-
-                                            -->
-                    <!-- Patient Info -->
-                    <!--
-                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="8">
-                                                <HorizontalStackLayout Spacing="12">
-                                                    <Label Text="{Binding FullName}" 
-                                                           FontAttributes="Bold" 
-                                                           FontSize="18"
-                                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
-                                                    <Border BackgroundColor="#10B981" Padding="6,2">
-                                                        <Border.StrokeShape>
-                                                            <RoundRectangle CornerRadius="8" />
-                                                        </Border.StrokeShape>
-                                                        <Label Text="{Binding CurrentStage}" 
-                                                               FontSize="10"
-                                                               FontAttributes="Bold"
-                                                               TextColor="White" />
-                                                    </Border>
-                                                </HorizontalStackLayout>
-
-                                                <Label Text="{Binding DisplayInfo}" 
-                                                       FontSize="14"
-                                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
-                                                       Margin="0,0,0,8" />
-
-                                                -->
-                    <!-- Vital Metrics -->
-                    <!--
-                                                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="20">
-                                                    <VerticalStackLayout Grid.Column="0">
-                                                        <Label Text="Cervical" FontSize="10" Opacity="0.7" />
-                                                        <HorizontalStackLayout Spacing="4">
-                                                            <Label Text="{Binding LatestCervicalDilation}" 
-                                                                   FontSize="16"
-                                                                   FontAttributes="Bold"
-                                                                   TextColor="#10B981" />
-                                                            <Label Text="cm" FontSize="12" VerticalOptions="End" Opacity="0.7" />
-                                                        </HorizontalStackLayout>
-                                                    </VerticalStackLayout>
-
-                                                    <VerticalStackLayout Grid.Column="1">
-                                                        <Label Text="Contractions" FontSize="10" Opacity="0.7" />
-                                                        <HorizontalStackLayout Spacing="4">
-                                                            <Label Text="{Binding LatestContractions}" 
-                                                                   FontSize="16"
-                                                                   FontAttributes="Bold"
-                                                                   TextColor="#F59E0B" />
-                                                            <Label Text="/10min" FontSize="12" VerticalOptions="End" Opacity="0.7" />
-                                                        </HorizontalStackLayout>
-                                                    </VerticalStackLayout>
-
-                                                    <VerticalStackLayout Grid.Column="2">
-                                                        <Label Text="Fetal HR" FontSize="10" Opacity="0.7" />
-                                                        <HorizontalStackLayout Spacing="4">
-                                                            <Label Text="{Binding LatestFetalHeartRate}" 
-                                                                   FontSize="16"
-                                                                   FontAttributes="Bold"
-                                                                   TextColor="#3B82F6" />
-                                                            <Label Text="bpm" FontSize="12" VerticalOptions="End" Opacity="0.7" />
-                                                        </HorizontalStackLayout>
-                                                    </VerticalStackLayout>
-
-                                                    <VerticalStackLayout Grid.Column="3">
-                                                        <Label Text="Duration" FontSize="10" Opacity="0.7" />
-                                                        <Label Text="{Binding LaborDuration}" 
-                                                               FontSize="16"
-                                                               FontAttributes="Bold"
-                                                               TextColor="#8B5CF6" />
-                                                    </VerticalStackLayout>
-                                                </Grid>
-                                            </VerticalStackLayout>
-
-                                            -->
-                    <!-- Action Buttons -->
-                    <!--
-                                            <VerticalStackLayout Grid.Column="2" Spacing="8">
-                                                <Button Text="📊"
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPartographCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                        BackgroundColor="#3B82F6"
-                                                        TextColor="White"
-                                                        WidthRequest="44"
-                                                        HeightRequest="44"
-                                                        CornerRadius="22"
-                                                        FontSize="16" />
-
-                                                <Button Text="➕"
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AddMeasurementCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                        BackgroundColor="#10B981"
-                                                        TextColor="White"
-                                                        WidthRequest="44"
-                                                        HeightRequest="44"
-                                                        CornerRadius="22"
-                                                        FontSize="16" />
-                                            </VerticalStackLayout>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Border>
-
-                -->
-                    <!-- Emergency Alerts -->
-                    <!--
-                <Border Style="{StaticResource ModernCardStyle}"
-                        BackgroundColor="{AppThemeBinding Light=#FEF2F2, Dark=#7F1D1D}"
-                        IsVisible="{Binding EmergencyPatients.Count, Converter={toolkit:IntToBoolConverter}}">
-                    <VerticalStackLayout Spacing="20">
-                        <HorizontalStackLayout Spacing="12">
-                            <Border BackgroundColor="#FEE2E2" WidthRequest="40" HeightRequest="40">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="20" />
-                                </Border.StrokeShape>
-                                <Label Text="🚨" 
-                                       FontSize="20"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center" />
-                            </Border>
-                            <VerticalStackLayout VerticalOptions="Center">
-                                <Label Text="Emergency Cases" 
-                                       FontSize="20" 
-                                       FontAttributes="Bold"
-                                       TextColor="#DC2626" />
-                                <Label Text="Immediate medical attention required" 
-                                       FontSize="14"
-                                       TextColor="#EF4444" />
-                            </VerticalStackLayout>
-                        </HorizontalStackLayout>
-
-                        <CollectionView ItemsSource="{Binding EmergencyPatients}">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:Patient">
-                                    <Border StrokeThickness="2"
-                                            Stroke="#EF4444"
-                                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E293B}"
-                                            Padding="16"
-                                            Margin="0,6">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="12" />
-                                        </Border.StrokeShape>
-
-                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="16">
-                                            <Border Grid.Column="0"
-                                                    WidthRequest="48"
-                                                    HeightRequest="48"
-                                                    BackgroundColor="#FEE2E2">
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="24" />
-                                                </Border.StrokeShape>
-                                                <Label Text="{Binding Initials}"
-                                                       HorizontalOptions="Center"
-                                                       VerticalOptions="Center"
-                                                       FontSize="16"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#DC2626" />
-                                            </Border>
-
-                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                                <Label Text="{Binding FullName}" 
-                                                       FontAttributes="Bold" 
-                                                       FontSize="16"
-                                                       TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
-                                                <Label Text="{Binding EmergencyReason}" 
-                                                       FontSize="13"
-                                                       TextColor="#EF4444"
-                                                       Margin="0,2" />
-                                                <Label Text="{Binding TimeInEmergency, StringFormat='{0} minutes ago'}" 
-                                                       FontSize="12"
-                                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
-                                            </VerticalStackLayout>
-
-                                            <Button Grid.Column="2"
-                                                    Text="📞"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CallDoctorCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    BackgroundColor="#F59E0B"
-                                                    TextColor="White"
-                                                    WidthRequest="40"
-                                                    HeightRequest="40"
-                                                    CornerRadius="20"
-                                                    FontSize="16" />
-
-                                            <Button Grid.Column="3"
-                                                    Text="➡️"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPatientCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    BackgroundColor="#EF4444"
-                                                    TextColor="White"
-                                                    WidthRequest="40"
-                                                    HeightRequest="40"
-                                                    CornerRadius="20"
-                                                    FontSize="16" />
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Border>
-
-            </VerticalStackLayout>-->
                 </Grid>
             </ScrollView>
         </tabView:SfTabItem>

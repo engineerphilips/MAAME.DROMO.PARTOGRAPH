@@ -38,7 +38,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task Appearing()
         {
-            await LoadData();
+            try
+            {
+                await LoadData();
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
         }
 
         private async Task LoadData()
@@ -48,10 +55,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
                 _allPatients = await _patientRepository.ListAsync(LaborStatus.Pending);
                 FilterPatients();
-            }
-            catch (Exception e)
-            {
-                _errorHandler.HandleError(e);
             }
             finally
             {

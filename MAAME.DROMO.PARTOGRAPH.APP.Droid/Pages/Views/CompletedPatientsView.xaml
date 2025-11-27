@@ -7,23 +7,16 @@
              xmlns:popup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:fonts="clr-namespace:Fonts">
 
-    <Grid RowDefinitions="Auto,Auto,*" Padding="20">
-
-        <!-- Header -->
-        <!--<Label Grid.Row="0" 
-               Text="Active Labor Monitoring" 
-               FontSize="24" 
-               FontAttributes="Bold"
-               Margin="0,0,0,20" />-->
+    <Grid RowDefinitions="Auto,*" Padding="20">
 
         <!-- Search Bar -->
-        <SearchBar Grid.Row="1"
+        <SearchBar Grid.Row="0"
                    Placeholder="Search by name or hospital number..."
                    Text="{Binding SearchText}"
                    Margin="0,0,0,20" />
 
         <!-- Patients List -->
-        <RefreshView Grid.Row="2"
+        <RefreshView Grid.Row="1"
                      IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshCommand}">
             <CollectionView ItemsSource="{Binding Patients}"
@@ -103,41 +96,18 @@
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
 
-                                <!-- Action Buttons -->
-                                <Grid Grid.Column="2" RowDefinitions="*,*" RowSpacing="5">
-                                    <Button Grid.Row="0"
-                                            Text="&#xe780;"
-                                            FontFamily="MaterialAssets"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPartographCommand}"
-                                            CommandParameter="{Binding .}"
-                                            BackgroundColor="#2196F3"
-                                            TextColor="White"
-                                            WidthRequest="45"
-                                            HeightRequest="45"
-                                            CornerRadius="22"
-                                            ToolTipProperties.Text="View Partograph" />
-
-                                    <!--Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AddPartographEntryCommand}"
-CommandParameter="{Binding .}"-->
-
-                                    <Button Grid.Row="1"
-                                            Text="&#xE710;"
-                                            FontFamily="MaterialAssets"
-                                            BackgroundColor="#4CAF50"
-                                            TextColor="White"
-                                            WidthRequest="45"
-                                            HeightRequest="45"
-                                            CornerRadius="22"
-                                            ToolTipProperties.Text="Add Entry">
-                                        <FlyoutBase.ContextFlyout>
-                                            <MenuFlyout>
-                                                <MenuFlyoutItem Text="FHR" />
-                                                <MenuFlyoutItem Text="Contraction" />
-                                                <MenuFlyoutItem Text="Descent" />
-                                            </MenuFlyout>
-                                        </FlyoutBase.ContextFlyout>
-                                    </Button>
-                                </Grid>
+                                <!-- Action Button -->
+                                <Button Grid.Column="2"
+                                        Text="&#xe780;"
+                                        FontFamily="MaterialAssets"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewPartographCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="#2196F3"
+                                        TextColor="White"
+                                        WidthRequest="45"
+                                        HeightRequest="45"
+                                        CornerRadius="22"
+                                        ToolTipProperties.Text="View Partograph" />
                             </Grid>
                         </Border>
                     </DataTemplate>

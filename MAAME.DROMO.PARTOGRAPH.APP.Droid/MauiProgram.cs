@@ -98,10 +98,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             // Register PageModels
             builder.Services.AddSingleton<AppShellModel>();
             builder.Services.AddSingleton<LoginPageModel>();
-            builder.Services.AddSingleton<HomePageModel>();
-            builder.Services.AddSingleton<PendingPatientsPageModel>();
-            builder.Services.AddSingleton<ActivePatientsPageModel>();
-            builder.Services.AddSingleton<CompletedPatientsPageModel>();
+            builder.Services.AddTransient<HomePageModel>();
+            builder.Services.AddTransient<PendingPatientsPageModel>();
+            builder.Services.AddTransient<ActivePatientsPageModel>();
+            builder.Services.AddTransient<CompletedPatientsPageModel>();
             builder.Services.AddSingleton<CompanionModalPageModel>();
             builder.Services.AddSingleton<PainReliefModalPageModel>();
             builder.Services.AddSingleton<OralFluidModalPageModel>();
