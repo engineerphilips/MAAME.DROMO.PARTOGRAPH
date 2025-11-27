@@ -1,9 +1,12 @@
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
+
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 public partial class BPPulseModalView : ContentView
 {
-	public BPPulseModalView()
+	public BPPulseModalView(BPPulseModalPageModel pageModel)
 	{
 		InitializeComponent();
+		BindingContext = pageModel;
 	}
 }
