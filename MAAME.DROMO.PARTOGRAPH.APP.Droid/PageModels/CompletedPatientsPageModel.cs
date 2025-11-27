@@ -19,12 +19,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private List<Partograph> _partographs = [];
 
         [ObservableProperty]
-        private List<Partograph> _todaysDeliveries = [];
-
-        [ObservableProperty]
-        private List<Partograph> _recentDeliveries = [];
-
-        [ObservableProperty]
         bool _isBusy;
 
         [ObservableProperty]
@@ -48,7 +42,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task Appearing()
         {
-            await LoadData();
+            try
+            {
+                await LoadData();
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
         }
 
         private async Task LoadData()
@@ -57,25 +58,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 IsBusy = true;
                 _allPatients = await _partographRepository.ListAsync(LaborStatus.Completed);
-
-                // Separate today's deliveries
-                TodaysDeliveries = _allPatients
-                    .Where(p => p?.DeliveryTime.Value.Date == DateTime.Today)
-                    .OrderByDescending(p => p.DeliveryTime)
-                    .ToList();
-
-                // Recent deliveries (last 7 days)
-                RecentDeliveries = _allPatients
-                    .Where(p => p.DeliveryTime.Value.Date > DateTime.Today.AddDays(-7) &&
-                               p.DeliveryTime?.Date < DateTime.Today)
-                    .OrderByDescending(p => p.DeliveryTime)
-                    .ToList();
-
                 FilterPatients();
-            }
-            catch (Exception e)
-            {
-                _errorHandler.HandleError(e);
             }
             finally
             {
@@ -85,23 +68,34 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private void FilterPatients()
         {
-            var filtered = _allPatients.AsEnumerable();
-
-            // Filter by search text
-            if (!string.IsNullOrWhiteSpace(SearchText))
+            if (string.IsNullOrWhiteSpace(SearchText) && SelectedDate == DateTime.MinValue)
             {
-                filtered = filtered.Where(p =>
-                    p.Patient.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                    p.Patient.HospitalNumber.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+                Partographs = _allPatients.OrderByDescending(p => p.DeliveryTime).ToList();
+                return;
             }
 
-            // Filter by selected date
-            if (SelectedDate != DateTime.MinValue)
+            var filtered = _allPatients.Where(p =>
             {
-                filtered = filtered.Where(p => p.DeliveryTime?.Date == SelectedDate.Date);
-            }
+                // Filter by search text
+                if (!string.IsNullOrWhiteSpace(SearchText))
+                {
+                    if (!p.Patient.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) &&
+                        !p.Patient.HospitalNumber.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+                }
 
-            Partographs = filtered.OrderByDescending(p => p.DeliveryTime.Value.Date).ToList();
+                // Filter by selected date
+                if (SelectedDate != DateTime.MinValue && p.DeliveryTime?.Date != SelectedDate.Date)
+                {
+                    return false;
+                }
+
+                return true;
+            });
+
+            Partographs = filtered.OrderByDescending(p => p.DeliveryTime).ToList();
         }
 
         partial void OnSearchTextChanged(string value)

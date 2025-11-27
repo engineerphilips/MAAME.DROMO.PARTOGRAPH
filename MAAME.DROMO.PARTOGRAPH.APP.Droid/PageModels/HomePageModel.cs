@@ -14,23 +14,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     {
         private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
-        private bool _isNavigatedTo;
-        private bool _dataLoaded;
 
         [ObservableProperty]
         private DashboardStats _dashboardStats = new();
-
-        [ObservableProperty]
-        private List<Partograph> _recentActivePatients = [];
-
-        [ObservableProperty]
-        private List<Partograph> _emergencyPatients = [];
-
-        [ObservableProperty]
-        private List<CategoryChartData> _laborStageData = [];
-
-        [ObservableProperty]
-        private List<Brush> _laborStageColors = [];
 
         [ObservableProperty]
         bool _isBusy;
@@ -67,35 +53,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 IsBusy = true;
 
-                // Load dashboard statistics
+                // Load only dashboard statistics - lightweight and fast
                 DashboardStats = await _partographRepository.GetDashboardStatsAsync();
-
-                // Load recent active patients
-                var activePatients = await _partographRepository.ListAsync(LaborStatus.Active);
-                RecentActivePatients = activePatients.Take(5).ToList();
-
-                // Load emergency patients
-                EmergencyPatients = await _partographRepository.ListAsync(LaborStatus.Emergency);
-
-                // Prepare chart data
-                var chartData = new List<CategoryChartData>
-                {
-                    new("Pre-Laboor", DashboardStats.PendingLabor),
-                    new("Active Labor", DashboardStats.ActiveLabor),
-                    new("Delivered Today", DashboardStats.CompletedToday),
-                    new("Emergency", DashboardStats.EmergencyCases)
-                };
-
-                var chartColors = new List<Brush>
-                {
-                    new SolidColorBrush(Colors.Orange),
-                    new SolidColorBrush(Colors.Green),
-                    new SolidColorBrush(Colors.Blue),
-                    new SolidColorBrush(Colors.Red)
-                };
-
-                LaborStageData = chartData;
-                LaborStageColors = chartColors;
             }
             finally
             {
@@ -122,22 +81,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private void NavigatedTo() => _isNavigatedTo = true;
-
-        [RelayCommand]
-        private void NavigatedFrom() => _isNavigatedTo = false;
-
-        [RelayCommand]
         private async Task Appearing()
         {
-            if (!_dataLoaded)
+            try
             {
-                _dataLoaded = true;
                 await LoadData();
             }
-            else if (!_isNavigatedTo)
+            catch (Exception e)
             {
-                await Refresh();
+                _errorHandler.HandleError(e);
             }
         }
 

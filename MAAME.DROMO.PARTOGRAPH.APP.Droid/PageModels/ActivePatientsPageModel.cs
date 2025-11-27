@@ -37,7 +37,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task Appearing()
         {
-            await LoadData();
+            try
+            {
+                await LoadData();
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
         }
 
         private async Task LoadData()
@@ -46,22 +53,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 IsBusy = true;
                 _allPartographs = await _partographRepository.ListAsync(LaborStatus.Active);
-
-                // Calculate hours in labor for each patient
-                foreach (var patient in _allPartographs)
-                {
-                    if (patient.LaborStartTime.HasValue)
-                    {
-                        var hoursInLabor = (DateTime.Now - patient.LaborStartTime.Value).TotalHours;
-                        // You can add this as a property to display
-                    }
-                }
-
                 FilterPatients();
-            }
-            catch (Exception e)
-            {
-                _errorHandler.HandleError(e);
             }
             finally
             {

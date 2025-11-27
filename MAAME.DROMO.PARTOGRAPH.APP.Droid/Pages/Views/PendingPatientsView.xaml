@@ -6,34 +6,16 @@
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:fonts="clr-namespace:Fonts">
 
-    <!--<ContentView.Behaviors>
-        <toolkit:EventToCommandBehavior EventName="Appearing" 
-                                       Command="{Binding AppearingCommand}" />
-    </ContentView.Behaviors>-->
-
-    <!--<ContentView.ToolbarItems>
-        <ToolbarItem Text="Add Patient" 
-                     Command="{Binding AddNewPatientCommand}"
-                     IconImageSource="{x:Static fonts:FluentUI.add_16_regular}" />
-    </ContentView.ToolbarItems>-->
-
-    <Grid RowDefinitions="Auto,Auto,*" Padding="20">
-
-        <!-- Header -->
-        <!--<Label Grid.Row="0" 
-               Text="Pre-Labor Ward" 
-               FontSize="24" 
-               FontAttributes="Bold"
-               Margin="0,0,0,20" />-->
+    <Grid RowDefinitions="Auto,*" Padding="20">
 
         <!-- Search Bar -->
-        <SearchBar Grid.Row="1"
+        <SearchBar Grid.Row="0"
                    Placeholder="Search by name or hospital number..."
                    Text="{Binding SearchText}"
                    Margin="0,0,0,20" />
 
         <!-- Patients List -->
-        <RefreshView Grid.Row="2"
+        <RefreshView Grid.Row="1"
                      IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshCommand}">
             <CollectionView ItemsSource="{Binding Patients}"
@@ -101,16 +83,14 @@
                                         <Label Text="{Binding Name}" 
                                                FontAttributes="Bold" 
                                                FontSize="16" />
-                                        <Label Text="{Binding HospitalNumber}" 
+                                        <Label Text="{Binding HospitalNumber}"
                                                FontSize="12"
-                                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" /> 
-                                        
-                                        <Label Text="{Binding DisplayInfo}" 
-        FontSize="12" />
-
-                                        <Label Text="{Binding AdmissionDate, StringFormat='Admitted: {0:dd-MM-dd HH:mm}'}" 
-                                                   FontSize="12"
-                                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                        <Label Text="{Binding DisplayInfo}"
+                                               FontSize="12" />
+                                        <Label Text="{Binding AdmissionDate, StringFormat='Admitted: {0:dd-MM-dd HH:mm}'}"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
                                     </VerticalStackLayout>
 
                                     <!-- Action Button -->
