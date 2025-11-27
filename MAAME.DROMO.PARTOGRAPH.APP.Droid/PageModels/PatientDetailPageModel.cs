@@ -22,8 +22,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _hospitalNumber = string.Empty;
 
         [ObservableProperty]
-        private int _age;
+        private int? _age;
 
+        [ObservableProperty]
+        private DateTime? _dateOfBirth = null;
+        
         [ObservableProperty]
         private int _gravidity;
 
@@ -34,7 +37,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private DateTime _admissionDate = DateTime.Now;
 
         [ObservableProperty]
-        private DateTime? _expectedDeliveryDate;
+        private DateTime? _expectedDeliveryDate = null;
+        [ObservableProperty]
+        private DateTime? _lastMenstralDate = null;
+        [ObservableProperty]
+        private DateTime? _laborStartTime = null;
+        
+        [ObservableProperty]
+        private string _address = string.Empty;
 
         [ObservableProperty]
         private string _bloodGroup = string.Empty;
@@ -43,8 +53,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _phoneNumber = string.Empty;
 
         [ObservableProperty]
-        private string _emergencyContact = string.Empty;
+        private string _emergencyContactPhone = string.Empty;
 
+        [ObservableProperty]
+        private string _emergencyContactRelationship = string.Empty;
+
+        [ObservableProperty]
+        private string _emergencyContactName = string.Empty;
+        
         [ObservableProperty]
         private LaborStatus _status = LaborStatus.Pending;
 
@@ -130,7 +146,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 //ExpectedDeliveryDate = _patient.ExpectedDeliveryDate;
                 BloodGroup = _patient.BloodGroup;
                 PhoneNumber = _patient.PhoneNumber;
-                EmergencyContact = _patient.EmergencyContact;
+                EmergencyContactName = _patient.EmergencyContactName;
+                EmergencyContactPhone = _patient.EmergencyContactPhone;
+                EmergencyContactRelationship = _patient.EmergencyContactRelationship;
                 //Status = _patient.Status;
                 //MembraneStatus = _patient.MembraneStatus;
                 //LiquorStatus = _patient.LiquorStatus;
@@ -169,14 +187,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _patient.FirstName = FirstName;
             _patient.LastName = LastName;
             _patient.HospitalNumber = HospitalNumber;
+            _patient.DateOfBirth = DateOfBirth;
             _patient.Age = Age;
             //_patient.Gravida = Gravidity;
             //_patient.Parity = Parity;
             //_patient.AdmissionDate = AdmissionDate;
             //_patient.ExpectedDeliveryDate = ExpectedDeliveryDate;
+            //_patient.LastMenstralDate = LastMenstralDate;
             _patient.BloodGroup = BloodGroup;
             _patient.PhoneNumber = PhoneNumber;
-            _patient.EmergencyContact = EmergencyContact;
+            _patient.EmergencyContactName = EmergencyContactName;
+            _patient.EmergencyContactPhone = EmergencyContactPhone;
+            _patient.EmergencyContactRelationship = EmergencyContactRelationship;
             //_patient.Status = Status;
             //_patient.MembraneStatus = MembraneStatus;
             //_patient.LiquorStatus = LiquorStatus;
@@ -184,18 +206,45 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             //_patient.RiskFactors = RiskFactors;
             //_patient.Complications = Complications;
 
-            await _patientRepository.SaveItemAsync(_patient);
+            var id = await _patientRepository.SaveItemAsync(_patient);
 
-            if (IsNewPatient)
+            if (id != null)
             {
-                await Shell.Current.GoToAsync("..");
-                await AppShell.DisplayToastAsync("Patient registered successfully");
+                _patient.ID = id;
+                var partographId = await _partographRepository.SaveItemAsync(new Partograph
+                {
+                    PatientID = id.Value,
+                    Patient = _patient,
+                    CreatedTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                    AdmissionDate = DateTime.Now,
+                    Gravida = Gravidity,
+                    Parity = Parity,
+                    Time = DateTime.Now, 
+                    LaborStartTime = LaborStartTime,
+                    LiquorStatus = LiquorStatus,
+                    MembraneStatus = MembraneStatus,
+                    RiskFactors = RiskFactors, 
+                    ExpectedDeliveryDate = ExpectedDeliveryDate,
+                    LastMenstralDate = LastMenstralDate,
+
+                });
+
+                if (partographId != null)
+                {
+                    if (IsNewPatient)
+                    {
+                        await AppShell.DisplayToastAsync("Patient registered successfully");
+                        //await Shell.Current.GoToAsync("..");
+                        await Shell.Current.GoToAsync($"//partograph?patientId={partographId}");
+                    }
+                }
             }
             else
             {
                 IsEditMode = false;
                 await AppShell.DisplayToastAsync("Patient information updated");
             }
+            ;
         }
 
         [RelayCommand]

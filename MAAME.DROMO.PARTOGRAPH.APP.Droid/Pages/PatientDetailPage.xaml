@@ -133,11 +133,10 @@
             <StackLayout Padding="20" Spacing="0">
 
                 <!-- Patient ID -->
-                <core:SfTextInputLayout Hint="Patient ID"
+                <core:SfTextInputLayout Hint="MRN"
                                             Style="{StaticResource PatientInput}"
-                                            HelperText="Auto-generated or manual entry">
-                    <Entry Text="{Binding PatientId}"
-                               IsReadOnly="{Binding IsPatientIdReadOnly}"
+                                            HelperText="Medical Record Number/Folder Number">
+                    <Entry Text="{Binding HospitalNumber}"
                                ReturnType="Next" />
                 </core:SfTextInputLayout>
 
@@ -229,7 +228,6 @@
             <!-- Obstetric History Section -->
             <Label Text="🤱 Obstetric History" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
-
             <StackLayout Padding="20" Spacing="0">
 
                 <!-- Gravida and Para -->
@@ -238,7 +236,7 @@
                                                 Hint="Gravida (G)"
                                                 Style="{StaticResource PatientInput}"
                                                 HelperText="Total pregnancies">
-                        <Entry Text="{Binding Gravida}"
+                        <Entry Text="{Binding Gravidity}"
                                    Keyboard="Numeric"
                                    ReturnType="Next" />
                     </core:SfTextInputLayout>
@@ -247,14 +245,14 @@
                                                 Hint="Para (P)"
                                                 Style="{StaticResource PatientInput}"
                                                 HelperText="Previous births">
-                        <Entry Text="{Binding Para}"
+                        <Entry Text="{Binding Parity}"
                                    Keyboard="Numeric"
                                    ReturnType="Next" />
                     </core:SfTextInputLayout>
                 </Grid>
 
                 <!-- Gestational Age -->
-                <Label Text="Gestational Age" 
+                <!--<Label Text="Gestational Age" 
                            FontSize="14" 
                            FontAttributes="Bold" 
                            TextColor="{StaticResource TextPrimary}"
@@ -276,8 +274,24 @@
                                    Keyboard="Numeric"
                                    ReturnType="Next" />
                     </core:SfTextInputLayout>
-                </Grid>
+                </Grid>-->
 
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                            Hint="Estimated Delivery Date"
+                            Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding ExpectedDeliveryDate}"
+                   Format="dd/MM/yyyy" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Grid.Column="1"
+                            Hint="Last Menstrual Date"
+                            Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding LastMenstralDate}"
+                   Format="dd/MM/yyyy" />
+                    </core:SfTextInputLayout>
+                </Grid>
+                
                 <Label Text="{Binding FormattedGestationalAge}"
                            FontSize="12"
                            TextColor="{StaticResource AccentTeal}"
@@ -292,12 +306,12 @@
             <StackLayout Padding="20" Spacing="0">
 
                 <!-- Insurance -->
-                <core:SfTextInputLayout Hint="Insurance Provider"
+                <!--<core:SfTextInputLayout Hint="Insurance Provider"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Health insurance details">
                     <Entry Text="{Binding Insurance}"
                                ReturnType="Next" />
-                </core:SfTextInputLayout>
+                </core:SfTextInputLayout>-->
 
                 <!-- Risk Factors -->
                 <core:SfTextInputLayout Hint="Risk Factors"
@@ -308,12 +322,12 @@
                 </core:SfTextInputLayout>
 
                 <!-- Allergies -->
-                <core:SfTextInputLayout Hint="Allergies"
+                <!--<core:SfTextInputLayout Hint="Allergies"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Drug allergies and reactions">
                     <Entry Text="{Binding Allergies}"
                                ReturnType="Next" />
-                </core:SfTextInputLayout>
+                </core:SfTextInputLayout>-->
 
             </StackLayout>
 
@@ -334,14 +348,15 @@
                                                 Hint="Date"
                                                 Style="{StaticResource PatientInput}">
                         <DatePicker Date="{Binding LabourOnsetDate}"
-                                       Format="dd/MM/yyyy" />
+                                       Format="dd/MM/yyyy HH:mm" />
+                        <!--<picker:SfDateTimePicker SelectedDate="{Binding LabourOnsetDate}" DateFormat="dd_MM_yyyy" TimeFormat="HH_mm" />-->
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="1"
+                    <!--<core:SfTextInputLayout Grid.Column="1"
                                                 Hint="Time"
                                                 Style="{StaticResource PatientInput}">
                         <TimePicker Time="{Binding LabourOnsetTime}" Format="HH:mm" />
-                    </core:SfTextInputLayout>
+                    </core:SfTextInputLayout>-->
                 </Grid>
 
                 <!-- Active Labour Diagnosis -->

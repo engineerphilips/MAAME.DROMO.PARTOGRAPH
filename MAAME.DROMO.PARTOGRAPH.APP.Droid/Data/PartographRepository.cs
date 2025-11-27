@@ -99,7 +99,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.admissionDate, P.expectedDeliveryDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContact FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @Id ORDER BY P.Time DESC";
+            selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.admissionDate, P.expectedDeliveryDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @Id ORDER BY P.Time DESC";
 
             selectCmd.Parameters.AddWithValue("@Id", patientId);
 
@@ -145,7 +145,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         Age = reader.IsDBNull(30) ? null : int.Parse(reader.GetString(30)),
                         BloodGroup = reader.IsDBNull(31) ? "" : reader.GetString(31),
                         PhoneNumber = reader.IsDBNull(32) ? "" : reader.GetString(32),
-                        EmergencyContact = reader.IsDBNull(33) ? "" : reader.GetString(33)
+                        EmergencyContactName = reader.IsDBNull(33) ? "" : reader.GetString(33),
+                        EmergencyContactPhone = reader.IsDBNull(34) ? "" : reader.GetString(34),
+                        EmergencyContactRelationship = reader.IsDBNull(35) ? "" : reader.GetString(35)
                     },
                     //CervicalDilation = reader.GetInt32(3),
                     //DescentOfHead = reader.IsDBNull(4) ? "" : reader.GetString(4),
@@ -324,7 +326,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
             else
             {
-                selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.admissionDate, P.expectedDeliveryDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContact FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID ORDER BY P.status, P.admissionDate DESC";
+                selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID ORDER BY P.status, P.admissionDate DESC";
             }
 
             var partographs = new List<Partograph>();
@@ -342,34 +344,37 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Parity = reader.GetInt32(6),
                     AdmissionDate = DateTime.Parse(reader.GetString(7)),
                     ExpectedDeliveryDate = reader.IsDBNull(8) ? null : DateTime.Parse(reader.GetString(8)),
-                    LaborStartTime = reader.IsDBNull(9) ? null : DateTime.Parse(reader.GetString(9)),
-                    DeliveryTime = reader.IsDBNull(10) ? null : DateTime.Parse(reader.GetString(10)),
-                    CervicalDilationOnAdmission = reader.IsDBNull(11) ? null : reader.GetInt32(11),
-                    MembraneStatus = reader.IsDBNull(12) ? "Intact" : reader.GetString(12),
-                    LiquorStatus = reader.IsDBNull(13) ? "Clear" : reader.GetString(13),
-                    RiskFactors = reader.IsDBNull(14) ? "" : reader.GetString(14),
-                    Complications = reader.IsDBNull(15) ? "" : reader.GetString(15),
-                    Handler = reader.IsDBNull(16) ? null : Guid.Parse(reader.GetString(16)),
-                    CreatedTime = reader.GetInt64(17),
-                    UpdatedTime = reader.GetInt64(18),
-                    DeletedTime = reader.IsDBNull(19) ? null : reader.GetInt64(19),
-                    DeviceId = reader.GetString(20),
-                    OriginDeviceId = reader.GetString(21),
-                    SyncStatus = reader.GetInt32(22),
-                    Version = reader.GetInt32(23),
-                    ServerVersion = reader.IsDBNull(24) ? 0 : reader.GetInt32(24),
-                    Deleted = reader.IsDBNull(25) ? 0 : reader.GetInt32(25),
+                    LastMenstralDate = reader.IsDBNull(9) ? null : DateTime.Parse(reader.GetString(9)),
+                    LaborStartTime = reader.IsDBNull(10) ? null : DateTime.Parse(reader.GetString(10)),
+                    DeliveryTime = reader.IsDBNull(11) ? null : DateTime.Parse(reader.GetString(11)),
+                    CervicalDilationOnAdmission = reader.IsDBNull(12) ? null : reader.GetInt32(12),
+                    MembraneStatus = reader.IsDBNull(13) ? "Intact" : reader.GetString(13),
+                    LiquorStatus = reader.IsDBNull(14) ? "Clear" : reader.GetString(14),
+                    RiskFactors = reader.IsDBNull(15) ? "" : reader.GetString(15),
+                    Complications = reader.IsDBNull(16) ? "" : reader.GetString(16),
+                    Handler = reader.IsDBNull(17) ? null : Guid.Parse(reader.GetString(17)),
+                    CreatedTime = reader.GetInt64(18),
+                    UpdatedTime = reader.GetInt64(19),
+                    DeletedTime = reader.IsDBNull(20) ? null : reader.GetInt64(20),
+                    DeviceId = reader.GetString(21),
+                    OriginDeviceId = reader.GetString(22),
+                    SyncStatus = reader.GetInt32(23),
+                    Version = reader.GetInt32(24),
+                    ServerVersion = reader.IsDBNull(25) ? 0 : reader.GetInt32(25),
+                    Deleted = reader.IsDBNull(26) ? 0 : reader.GetInt32(26),
                     Patient = new Patient
                     {
                         ID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
-                        FirstName = reader.GetString(26),
-                        LastName = reader.GetString(27),
-                        HospitalNumber = reader.GetString(28),
-                        DateOfBirth = reader.IsDBNull(29) ? null : DateTime.Parse(reader.GetString(29)),
-                        Age = reader.IsDBNull(30) ? null : int.Parse(reader.GetString(30)),
-                        BloodGroup = reader.IsDBNull(31) ? "" : reader.GetString(31),
-                        PhoneNumber = reader.IsDBNull(32) ? "" : reader.GetString(32),
-                        EmergencyContact = reader.IsDBNull(33) ? "" : reader.GetString(33)
+                        FirstName = reader.GetString(27),
+                        LastName = reader.GetString(28),
+                        HospitalNumber = reader.GetString(29),
+                        DateOfBirth = reader.IsDBNull(30) ? null : DateTime.Parse(reader.GetString(30)),
+                        Age = reader.IsDBNull(31) ? null : int.Parse(reader.GetString(31)),
+                        BloodGroup = reader.IsDBNull(32) ? "" : reader.GetString(32),
+                        PhoneNumber = reader.IsDBNull(33) ? "" : reader.GetString(33),
+                        EmergencyContactName = reader.IsDBNull(34) ? "" : reader.GetString(34),
+                        EmergencyContactPhone = reader.IsDBNull(35) ? "" : reader.GetString(35),
+                        EmergencyContactRelationship = reader.IsDBNull(36) ? "" : reader.GetString(36)
                     },
                 };
 
@@ -390,7 +395,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.admissionDate, P.expectedDeliveryDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContact FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @id";
+            selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.admissionDate, P.expectedDeliveryDate, P.lastMenstraualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @id";
             selectCmd.Parameters.AddWithValue("@id", id);
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -406,34 +411,37 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Parity = reader.GetInt32(6),
                     AdmissionDate = DateTime.Parse(reader.GetString(7)),
                     ExpectedDeliveryDate = reader.IsDBNull(8) ? null : DateTime.Parse(reader.GetString(8)),
-                    LaborStartTime = reader.IsDBNull(9) ? null : DateTime.Parse(reader.GetString(9)),
-                    DeliveryTime = reader.IsDBNull(10) ? null : DateTime.Parse(reader.GetString(10)),
-                    CervicalDilationOnAdmission = reader.IsDBNull(11) ? null : reader.GetInt32(11),
-                    MembraneStatus = reader.IsDBNull(12) ? "Intact" : reader.GetString(12),
-                    LiquorStatus = reader.IsDBNull(13) ? "Clear" : reader.GetString(13),
-                    RiskFactors = reader.IsDBNull(14) ? "" : reader.GetString(14),
-                    Complications = reader.IsDBNull(15) ? "" : reader.GetString(15),
-                    Handler = reader.IsDBNull(16) ? null : Guid.Parse(reader.GetString(16)),
-                    CreatedTime = reader.GetInt64(17),
-                    UpdatedTime = reader.GetInt64(18),
-                    DeletedTime = reader.IsDBNull(19) ? null : reader.GetInt64(19),
-                    DeviceId = reader.GetString(20),
-                    OriginDeviceId = reader.GetString(21),
-                    SyncStatus = reader.GetInt32(22),
-                    Version = reader.GetInt32(23),
-                    ServerVersion = reader.IsDBNull(24) ? 0 : reader.GetInt32(24),
-                    Deleted = reader.IsDBNull(25) ? 0 : reader.GetInt32(25),
+                    LastMenstralDate = reader.IsDBNull(9) ? null : DateTime.Parse(reader.GetString(9)),
+                    LaborStartTime = reader.IsDBNull(10) ? null : DateTime.Parse(reader.GetString(10)),
+                    DeliveryTime = reader.IsDBNull(11) ? null : DateTime.Parse(reader.GetString(11)),
+                    CervicalDilationOnAdmission = reader.IsDBNull(12) ? null : reader.GetInt32(12),
+                    MembraneStatus = reader.IsDBNull(13) ? "Intact" : reader.GetString(13),
+                    LiquorStatus = reader.IsDBNull(14) ? "Clear" : reader.GetString(14),
+                    RiskFactors = reader.IsDBNull(15) ? "" : reader.GetString(15),
+                    Complications = reader.IsDBNull(16) ? "" : reader.GetString(16),
+                    Handler = reader.IsDBNull(17) ? null : Guid.Parse(reader.GetString(17)),
+                    CreatedTime = reader.GetInt64(18),
+                    UpdatedTime = reader.GetInt64(19),
+                    DeletedTime = reader.IsDBNull(20) ? null : reader.GetInt64(20),
+                    DeviceId = reader.GetString(21),
+                    OriginDeviceId = reader.GetString(22),
+                    SyncStatus = reader.GetInt32(23),
+                    Version = reader.GetInt32(24),
+                    ServerVersion = reader.IsDBNull(25) ? 0 : reader.GetInt32(25),
+                    Deleted = reader.IsDBNull(26) ? 0 : reader.GetInt32(26),
                     Patient = new Patient
                     {
                         ID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
-                        FirstName = reader.GetString(26),
-                        LastName = reader.GetString(27),
-                        HospitalNumber = reader.GetString(28),
-                        DateOfBirth = reader.IsDBNull(29) ? null : DateTime.Parse(reader.GetString(29)),
-                        Age = reader.IsDBNull(30) ? null : int.Parse(reader.GetString(30)),
-                        BloodGroup = reader.IsDBNull(31) ? "" : reader.GetString(31),
-                        PhoneNumber = reader.IsDBNull(32) ? "" : reader.GetString(32),
-                        EmergencyContact = reader.IsDBNull(33) ? "" : reader.GetString(33)
+                        FirstName = reader.GetString(27),
+                        LastName = reader.GetString(28),
+                        HospitalNumber = reader.GetString(29),
+                        DateOfBirth = reader.IsDBNull(30) ? null : DateTime.Parse(reader.GetString(30)),
+                        Age = reader.IsDBNull(31) ? null : int.Parse(reader.GetString(31)),
+                        BloodGroup = reader.IsDBNull(32) ? "" : reader.GetString(32),
+                        PhoneNumber = reader.IsDBNull(33) ? "" : reader.GetString(33),
+                        EmergencyContactName = reader.IsDBNull(34) ? "" : reader.GetString(34),
+                        EmergencyContactPhone = reader.IsDBNull(35) ? "" : reader.GetString(35),
+                        EmergencyContactRelationship = reader.IsDBNull(36) ? "" : reader.GetString(36)
                     },
                 };
 

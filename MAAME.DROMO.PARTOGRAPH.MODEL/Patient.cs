@@ -21,7 +21,9 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public int? Age { get; set; }
         public string BloodGroup { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-        public string EmergencyContact { get; set; } = string.Empty;
+        public string EmergencyContactName { get; set; } = string.Empty;
+        public string EmergencyContactPhone { get; set; } = string.Empty;
+        public string EmergencyContactRelationship { get; set; } = string.Empty;
 
         //User
         public string HandlerName { get; set; } = string.Empty;

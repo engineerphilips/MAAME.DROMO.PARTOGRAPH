@@ -18,7 +18,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public int Parity { get; set; } // Number of births
         public DateTime AdmissionDate { get; set; } = DateTime.Now;
         public DateTime? ExpectedDeliveryDate { get; set; }
-
+        public DateTime? LastMenstralDate { get; set; }
+        
         public string GestationalAge { get; set; } = string.Empty;
 
         // Labour Information

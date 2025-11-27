@@ -125,7 +125,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         Age = 28,
                         BloodGroup = "O+",
                         PhoneNumber = "+233501234567",
-                        EmergencyContact = "+233509876543",
+                        EmergencyContactName = "Adwoa",
+                        EmergencyContactRelationship = "Sister",
+                        EmergencyContactPhone = "+233509876543",
                     }
                     },
                      new Partograph
@@ -153,7 +155,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         Age = 25,
                         BloodGroup = "A+",
                         PhoneNumber = "+233502345678",
-                        EmergencyContact = "+233508765432",
+                        EmergencyContactName = "Abena",
+                        EmergencyContactRelationship = "Sister",
+                        EmergencyContactPhone = "+233508765432",
                     }
                      },
                     new Partograph
@@ -181,7 +185,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         Age = 32,
                         BloodGroup = "B+",
                         PhoneNumber = "+233503456789",
-                        EmergencyContact = "+233507654321",
+                        EmergencyContactName = "Akua",
+                        EmergencyContactRelationship = "Aunt",
+                        EmergencyContactPhone = "+233507654321",    
                     }
                     },
                     new Partograph
@@ -210,7 +216,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         Age = 30,
                         BloodGroup = "AB+",
                         PhoneNumber = "+233504567890",
-                        EmergencyContact = "+233506543210",
+                        EmergencyContactName = "Adwoa",
+                        EmergencyContactRelationship = "Sister",
+                        EmergencyContactPhone = "+233506543210",
                     }
                     },
                     new Partograph
@@ -240,7 +248,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         Age = 35,
                         BloodGroup = "O-",
                         PhoneNumber = "+233505678901",
-                        EmergencyContact = "+233505432109"
+                        EmergencyContactName = "Akua",
+                        EmergencyContactRelationship = "Aunt",
+                        EmergencyContactPhone = "+233505432109"
                     }
                     }
                 };
