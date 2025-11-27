@@ -66,6 +66,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<BPRepository>();
             builder.Services.AddSingleton<CaputRepository>();
             builder.Services.AddSingleton<UrineRepository>();
+            builder.Services.AddSingleton<AmnioticFluidRepository>();
+            builder.Services.AddSingleton<IVFluidEntryRepository>();
+            builder.Services.AddSingleton<MedicationEntryRepository>();
+            builder.Services.AddSingleton<OxytocinRepository>();
+            builder.Services.AddSingleton<AssessmentPlanRepository>();
 
             // Keep existing repositories for compatibility during migration
             //builder.Services.AddSingleton<ProjectRepository>();
@@ -102,6 +107,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<OralFluidModalPageModel>();
             builder.Services.AddSingleton<PostureModalPageModel>();
             builder.Services.AddSingleton<SyncSettingsPageModel>();
+
+            // Register Measurement Modal PageModels
+            builder.Services.AddSingleton<CervixDilatationModalPageModel>();
+            builder.Services.AddSingleton<HeadDescentModalPageModel>();
+            builder.Services.AddSingleton<BPPulseModalPageModel>();
+            builder.Services.AddSingleton<TemperatureModalPageModel>();
+            builder.Services.AddSingleton<UrineModalPageModel>();
+            builder.Services.AddSingleton<AmnioticFluidModalPageModel>();
+            builder.Services.AddSingleton<FetalPositionModalPageModel>();
+            builder.Services.AddSingleton<MouldingModalPageModel>();
+            builder.Services.AddSingleton<IVFluidModalPageModel>();
+            builder.Services.AddSingleton<MedicationModalPageModel>();
+            builder.Services.AddSingleton<OxytocinModalPageModel>();
+            builder.Services.AddSingleton<ContractionsModalPageModel>();
+            builder.Services.AddSingleton<BaselineFHRModalPageModel>();
+            builder.Services.AddSingleton<CaputModalPageModel>();
+            builder.Services.AddSingleton<AssessmentPlanModalPageModel>();
 
             // Register Pages and PageModels with routes
             builder.Services.AddTransientWithShellRoute<PatientDetailPage, PatientDetailPageModel>("patient");
