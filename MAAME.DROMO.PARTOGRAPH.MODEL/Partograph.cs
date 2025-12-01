@@ -95,20 +95,22 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
             _ => "Unknown"
         };
 
-        //[JsonIgnore]
-        //public Color StatusColor => Status switch
-        //{
-        //    LaborStatus.Pending => Colors.Orange,
-        //    LaborStatus.Active => Colors.Green,
-        //    LaborStatus.Completed => Colors.Blue,
-        //    LaborStatus.Emergency => Colors.Red,
-        //    _ => Colors.Gray
-        //};
+        [JsonIgnore]
+        public Color StatusColor => Status switch
+        {
+            LaborStatus.Pending => Colors.Orange,
+            LaborStatus.Active => Colors.Green,
+            LaborStatus.Completed => Colors.Blue,
+            LaborStatus.Emergency => Colors.Red,
+            _ => Colors.Gray
+        };
 
         [JsonIgnore]
         public string DisplayInfo => $"G{Gravida}P{Parity} • {Patient?.Age}yrs • {GestationalAge}";
         [JsonIgnore]
         public string Name => Patient?.Name;
+        [JsonIgnore]
+        public string HospitalNumber => Patient?.HospitalNumber;
         // Sync columns
         public long CreatedTime { get; set; }
         public long UpdatedTime { get; set; }
