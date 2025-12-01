@@ -4,9 +4,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 public partial class UrineModalView : ContentView
 {
-	public UrineModalView(UrineModalPageModel pageModel)
+	public UrineModalView()
 	{
 		InitializeComponent();
-		BindingContext = pageModel;
 	}
 }

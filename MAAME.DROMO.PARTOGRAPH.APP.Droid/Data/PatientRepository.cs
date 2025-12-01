@@ -33,6 +33,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
 
+            //try
+            //{
+            //    var dropTableCmd = connection.CreateCommand();
+            //    dropTableCmd.CommandText = @"
+            //    DROP TABLE Tbl_Patient;";
+            //    await dropTableCmd.ExecuteNonQueryAsync();
+            //}
+            //catch (Exception e)
+            //{
+            //    _logger.LogError(e, "Error dropping PartographEntry table");
+            //    throw;
+            //}
+
             try
             {
                 var createTableCmd = connection.CreateCommand();
@@ -47,7 +60,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     age INTEGER NULL,
                     bloodGroup TEXT,
                     phoneNumber TEXT,
-                    emergencyContact TEXT, 
+                    emergencyContactName TEXT, 
+                    emergencyContactRelationship TEXT, 
+                    emergencyContactPhone TEXT, 
                     handler TEXT,                
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
@@ -105,7 +120,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContact, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted FROM Tbl_Patient ORDER BY admissionDate DESC";
+            selectCmd.CommandText = "SELECT ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted FROM Tbl_Patient ORDER BY admissionDate DESC";
 
             var patients = new List<Patient>();
 
@@ -118,7 +133,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     FirstName = reader.GetString(1),
                     LastName = reader.GetString(2),
                     HospitalNumber = reader.GetString(3),
-                    DateOfBirth = reader.IsDBNull(4) ? null : DateTime.Parse(reader.GetString(4)),
+                    DateOfBirth = reader.IsDBNull(4) ? null : DateOnly.Parse(reader.GetString(4)),
                     Age = reader.IsDBNull(5) ? null : int.Parse(reader.GetString(5)),
                     BloodGroup = reader.IsDBNull(6) ? "" : reader.GetString(6),
                     PhoneNumber = reader.IsDBNull(7) ? "" : reader.GetString(7),
@@ -166,7 +181,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     FirstName = reader.GetString(1),
                     LastName = reader.GetString(2),
                     HospitalNumber = reader.GetString(3),
-                    DateOfBirth = reader.IsDBNull(4) ? null : DateTime.Parse(reader.GetString(4)),
+                    DateOfBirth = reader.IsDBNull(4) ? null : DateOnly.Parse(reader.GetString(4)),
                     Age = reader.IsDBNull(5) ? null : int.Parse(reader.GetString(5)),
                     BloodGroup = reader.IsDBNull(6) ? "" : reader.GetString(6),
                     PhoneNumber = reader.IsDBNull(7) ? "" : reader.GetString(7),
@@ -246,8 +261,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             if (isNewPatient)
             {
                 saveCmd.CommandText = @"
-                INSERT INTO Tbl_Patient (ID, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-                VALUES (@ID, @firstName, @lastName, @hospitalNumber, @dateofbirth, @age, @bloodGroup, @phoneNumber, @emergencyContactName, @emergencyContactRelationship, @emergencyContactPhone, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted)";
+                INSERT INTO Tbl_Patient (ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
+                VALUES (@ID, @time, @firstName, @lastName, @hospitalNumber, @dateofbirth, @age, @bloodGroup, @phoneNumber, @emergencyContactName, @emergencyContactRelationship, @emergencyContactPhone, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted)";
             }
             else
             {
@@ -272,20 +287,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
 
             saveCmd.Parameters.AddWithValue("@ID", item.ID.ToString());
+            saveCmd.Parameters.AddWithValue("@time", now.ToString());
             saveCmd.Parameters.AddWithValue("@firstName", item.FirstName ?? "");
             saveCmd.Parameters.AddWithValue("@lastName", item.LastName ?? "");
             saveCmd.Parameters.AddWithValue("@hospitalNumber", item.HospitalNumber ?? "");
-            saveCmd.Parameters.AddWithValue("@dateofbirth", item.DateOfBirth?.ToString("yyyy-MM-dd") ?? (object)DBNull.Value);
-            saveCmd.Parameters.AddWithValue("@age", item.Age ?? (object)DBNull.Value);
+
+            saveCmd.Parameters.AddWithValue("@dateofbirth", item.DateOfBirth != null ? item.DateOfBirth?.ToString("yyyy-MM-dd") : DBNull.Value);
+
+            saveCmd.Parameters.AddWithValue("@age", item.Age != null ? item.Age : DBNull.Value);
+
             saveCmd.Parameters.AddWithValue("@bloodGroup", item.BloodGroup ?? "");
             saveCmd.Parameters.AddWithValue("@phoneNumber", item.PhoneNumber ?? "");
             saveCmd.Parameters.AddWithValue("@emergencyContactName", item.EmergencyContactName ?? "");
             saveCmd.Parameters.AddWithValue("@emergencyContactRelationship", item.EmergencyContactRelationship ?? "");
             saveCmd.Parameters.AddWithValue("@emergencyContactPhone", item.EmergencyContactPhone ?? "");
-            saveCmd.Parameters.AddWithValue("@handler", item.Handler?.ToString() ?? (object)DBNull.Value);
+            saveCmd.Parameters.AddWithValue("@handler", item.Handler != null ? item.Handler?.ToString() : DBNull.Value);
             saveCmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             saveCmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
-            saveCmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime ?? (object)DBNull.Value);
+            saveCmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             saveCmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             saveCmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId);
             saveCmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);

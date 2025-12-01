@@ -4,9 +4,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 public partial class FetalPositionModalView : ContentView
 {
-	public FetalPositionModalView(FetalPositionModalPageModel pageModel)
+	public FetalPositionModalView()
 	{
 		InitializeComponent();
-		BindingContext = pageModel;
 	}
 }

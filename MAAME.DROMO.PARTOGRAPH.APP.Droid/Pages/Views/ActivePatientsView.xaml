@@ -90,13 +90,13 @@
                                             <Label Text="{Binding LaborStartTimeFormat}" 
                                                    FontSize="12" />                                            
                                         </HorizontalStackLayout>
-                                        <HorizontalStackLayout Spacing="5">
+                                        <!--<HorizontalStackLayout Spacing="5">
                                             <Label Text="FHR:" FontSize="12" />
                                             <Label Text="{Binding PartographEntries[0].FetalHeartRate, StringFormat='{0}bpm'}" 
                                                    FontSize="12"
                                                    FontAttributes="Bold"
                                                    TextColor="{Binding PartographEntries[0].FetalHeartRate, Converter={StaticResource FHRColorConverter}}" />
-                                        </HorizontalStackLayout>
+                                        </HorizontalStackLayout>-->
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
                                 

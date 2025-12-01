@@ -17,7 +17,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Name => $"{FirstName} {LastName}";
 
         public string HospitalNumber { get; set; } = string.Empty;
-        public DateTime? DateOfBirth { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
         public int? Age { get; set; }
         public string BloodGroup { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;

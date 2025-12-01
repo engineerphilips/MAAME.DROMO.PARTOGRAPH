@@ -94,7 +94,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private Task NavigateToPatient(Patient patient)
+        private Task NavigateToPatient(Partograph patient)
             => Shell.Current.GoToAsync($"patient?id={patient.ID}");
 
         [RelayCommand]

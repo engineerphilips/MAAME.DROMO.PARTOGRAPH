@@ -27,8 +27,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             Routing.RegisterRoute("completedpatients", typeof(CompletedPatientsPage));
 
             // Patient management routes
-            Routing.RegisterRoute("patient", typeof(PatientDetailPage));
-            Routing.RegisterRoute("newpatient", typeof(PatientDetailPage));
+            Routing.RegisterRoute("patient", typeof(PatientPage));
+            Routing.RegisterRoute("newpatient", typeof(PatientPage));
 
             // Partograph routes
             Routing.RegisterRoute("partograph", typeof(PartographPage));

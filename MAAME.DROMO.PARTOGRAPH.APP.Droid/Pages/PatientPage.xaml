@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PatientDetailPage"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PatientPage"
              xmlns:cards="clr-namespace:Syncfusion.Maui.Cards;assembly=Syncfusion.Maui.Cards"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:effects="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:picker="clr-namespace:Syncfusion.Maui.Picker;assembly=Syncfusion.Maui.Picker"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:chip="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:fonts="clr-namespace:Fonts"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              Title="Patient Registration"
              BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}">
     <!--<ContentPage.ToolbarItems>
@@ -119,13 +121,14 @@
             </Style>
 
         </ResourceDictionary>
+
+        <x:Static Member="system:DateTime.Today" x:Key="Today" />
     </ContentPage.Resources>
 
     <ScrollView>
         <StackLayout Spacing="0" Padding="0,0,0,10">
 
             <!-- Header Card -->
-            <!--<Label Text="Patient Registration" FontSize="20" Margin="10,0" />-->
             <Label Text="👤 Demographics" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
             <!-- Patient Demographics Section -->
@@ -136,8 +139,8 @@
                 <core:SfTextInputLayout Hint="MRN"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Medical Record Number/Folder Number">
-                    <Entry Text="{Binding HospitalNumber}"
-                               ReturnType="Next" />
+                    <Entry Text="{Binding HospitalNumber, Mode=TwoWay}"
+                           ReturnType="Next" />
                 </core:SfTextInputLayout>
 
                 <!-- Name Fields -->
@@ -145,14 +148,12 @@
                     <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="First Name"
                                                 Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding FirstName}"
+                        <Entry Text="{Binding FirstName, Mode=TwoWay}"
                                    ReturnType="Next" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Last Name"
-                                                Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding LastName}"
+                    <core:SfTextInputLayout Grid.Column="1" Hint="Last Name" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding LastName, Mode=TwoWay}"
                                    ReturnType="Next" />
                     </core:SfTextInputLayout>
                 </Grid>
@@ -162,17 +163,18 @@
                     <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Date of Birth"
                                                 Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding DateOfBirth}"
-                                       Format="dd/MM/yyyy" />
+                        <DatePicker Date="{Binding DateOfBirth, Mode=TwoWay}"
+                                       Format="dd-MM-yyyy" MinimumDate="01/01/1950" MaximumDate="{StaticResource Today}" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Age"
+                    <core:SfTextInputLayout Grid.Column="1" Hint="Age"
                                                 Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding Age}"
-                                   Keyboard="Numeric"
-                                   IsReadOnly="True"
-                                   ReturnType="Next" />
+                        <editors:SfNumericEntry Value="{Binding Age, Mode=TwoWay}" 
+                                                ReturnType="Next" 
+                                                IsEditable="{Binding AgeIsReadOnly}"
+                                                    Minimum="0"
+                                                Maximum="60"
+                                                MaximumNumberDecimalDigits="0" />
                     </core:SfTextInputLayout>
                 </Grid>
 
@@ -180,7 +182,7 @@
                 <core:SfTextInputLayout Hint="Phone Number"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Primary contact number">
-                    <Entry Text="{Binding PhoneNumber}"
+                    <Entry Text="{Binding PhoneNumber, Mode=TwoWay}"
                                Keyboard="Telephone"
                                ReturnType="Next" />
                 </core:SfTextInputLayout>
@@ -189,7 +191,7 @@
                 <core:SfTextInputLayout Hint="Address"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Complete residential address">
-                    <Entry Text="{Binding Address}"
+                    <Entry Text="{Binding Address, Mode=TwoWay}"
                                ReturnType="Next" />
                 </core:SfTextInputLayout>
 
@@ -204,14 +206,14 @@
                     <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Emergency Contact Name"
                                                 Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding EmergencyContactName}"
+                        <Entry Text="{Binding EmergencyContactName, Mode=TwoWay}"
                                    ReturnType="Next" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Grid.Column="1"
                                                 Hint="Relationship"
                                                 Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding EmergencyContactRelationship}"
+                        <Entry Text="{Binding EmergencyContactRelationship, Mode=TwoWay}"
                                    ReturnType="Next" />
                     </core:SfTextInputLayout>
                 </Grid>
@@ -219,7 +221,7 @@
                 <core:SfTextInputLayout Hint="Emergency Contact Phone"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Available 24/7">
-                    <Entry Text="{Binding EmergencyContactPhone}"
+                    <Entry Text="{Binding EmergencyContactPhone, Mode=TwoWay}"
                                Keyboard="Telephone"
                                ReturnType="Next" />
                 </core:SfTextInputLayout>
@@ -231,72 +233,66 @@
             <StackLayout Padding="20" Spacing="0">
 
                 <!-- Gravida and Para -->
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                    <core:SfTextInputLayout Grid.Column="0"
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto" ColumnSpacing="12">
+                    
+                        <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Gravida (G)"
                                                 Style="{StaticResource PatientInput}"
                                                 HelperText="Total pregnancies">
-                        <Entry Text="{Binding Gravidity}"
-                                   Keyboard="Numeric"
-                                   ReturnType="Next" />
+                       
+                        <editors:SfNumericEntry Value="{Binding Gravidity, Mode=TwoWay}" 
+                                                    ReturnType="Next" 
+                                                    Maximum="20"
+                                                    Minimum="0" 
+                                                MaximumNumberDecimalDigits="0"/>
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Para (P)"
+                                                Hint="Parity (P)"
                                                 Style="{StaticResource PatientInput}"
                                                 HelperText="Previous births">
-                        <Entry Text="{Binding Parity}"
-                                   Keyboard="Numeric"
-                                   ReturnType="Next" />
-                    </core:SfTextInputLayout>
+                        
+                        <editors:SfNumericEntry Value="{Binding Parity, Mode=TwoWay}" 
+                                                    ReturnType="Next" 
+                                                    Maximum="20"
+                                                    Minimum="0"
+                                                MaximumNumberDecimalDigits="0"/>
+                        </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Grid.Column="0" Grid.Row="1"
+                            Hint="Abortion"
+                            Style="{StaticResource PatientInput}"
+                            HelperText="Number of abortions"
+                                            IsVisible="{Binding AbortionVisibility, Mode=OneWay}">
+                        
+                        <editors:SfNumericEntry Value="{Binding Abortion, Mode=TwoWay}" 
+                                                    ReturnType="Next" 
+                                                    Maximum="20"
+                                                    Minimum="0"
+                                                MaximumNumberDecimalDigits="0"/>
+                        </core:SfTextInputLayout>
                 </Grid>
-
-                <!-- Gestational Age -->
-                <!--<Label Text="Gestational Age" 
-                           FontSize="14" 
-                           FontAttributes="Bold" 
-                           TextColor="{StaticResource TextPrimary}"
-                           Margin="0,8,0,4" />
-
-                <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
-                    <core:SfTextInputLayout Grid.Column="0"
-                                                Hint="Weeks"
-                                                Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding GestationalWeeks}"
-                                   Keyboard="Numeric"
-                                   ReturnType="Next" />
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Days"
-                                                Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding GestationalDays}"
-                                   Keyboard="Numeric"
-                                   ReturnType="Next" />
-                    </core:SfTextInputLayout>
-                </Grid>-->
-
+                
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                     <core:SfTextInputLayout Grid.Column="0"
                             Hint="Estimated Delivery Date"
                             Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding ExpectedDeliveryDate}"
-                   Format="dd/MM/yyyy" />
+                        <DatePicker Date="{Binding ExpectedDeliveryDate, Mode=TwoWay}" Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Grid.Column="1"
                             Hint="Last Menstrual Date"
                             Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding LastMenstralDate}"
-                   Format="dd/MM/yyyy" />
+                        <DatePicker Date="{Binding LastMenstrualDate, Mode=TwoWay}" Format="dd-MM-yyyy" MinimumDate="01/01/1950" MaximumDate="{StaticResource Today}" />
                     </core:SfTextInputLayout>
                 </Grid>
                 
                 <Label Text="{Binding FormattedGestationalAge}"
-                           FontSize="12"
+                           FontSize="18"
                            TextColor="{StaticResource AccentTeal}"
                            FontAttributes="Bold"
-                           Margin="0,4,0,0" />
+                           Margin="0,4,0,0"
+                       Visual="{Binding GestationalAgeVisibility}"/>
 
             </StackLayout>
 
@@ -304,31 +300,12 @@
             <Label Text="🏥 Medical Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
             <StackLayout Padding="20" Spacing="0">
-
-                <!-- Insurance -->
-                <!--<core:SfTextInputLayout Hint="Insurance Provider"
-                                            Style="{StaticResource PatientInput}"
-                                            HelperText="Health insurance details">
-                    <Entry Text="{Binding Insurance}"
-                               ReturnType="Next" />
-                </core:SfTextInputLayout>-->
-
                 <!-- Risk Factors -->
                 <core:SfTextInputLayout Hint="Risk Factors"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="High-risk conditions or complications">
-                    <Entry Text="{Binding RiskFactors}"
-                               ReturnType="Next" />
+                    <Entry Text="{Binding RiskFactors, Mode=TwoWay}" ReturnType="Next" />
                 </core:SfTextInputLayout>
-
-                <!-- Allergies -->
-                <!--<core:SfTextInputLayout Hint="Allergies"
-                                            Style="{StaticResource PatientInput}"
-                                            HelperText="Drug allergies and reactions">
-                    <Entry Text="{Binding Allergies}"
-                               ReturnType="Next" />
-                </core:SfTextInputLayout>-->
-
             </StackLayout>
 
             <!-- Labour Information Section -->
@@ -347,25 +324,34 @@
                     <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Date"
                                                 Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding LabourOnsetDate}"
-                                       Format="dd/MM/yyyy HH:mm" />
+                        <DatePicker Date="{Binding LaborStartDate, Mode=TwoWay}"
+                                       Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                         <!--<picker:SfDateTimePicker SelectedDate="{Binding LabourOnsetDate}" DateFormat="dd_MM_yyyy" TimeFormat="HH_mm" />-->
                     </core:SfTextInputLayout>
 
-                    <!--<core:SfTextInputLayout Grid.Column="1"
+                    <core:SfTextInputLayout Grid.Column="1"
                                                 Hint="Time"
                                                 Style="{StaticResource PatientInput}">
-                        <TimePicker Time="{Binding LabourOnsetTime}" Format="HH:mm" />
-                    </core:SfTextInputLayout>-->
+                        <TimePicker Time="{Binding LaborStartTime, Mode=TwoWay}" Format="HH:mm" />
+                    </core:SfTextInputLayout>
                 </Grid>
 
                 <!-- Active Labour Diagnosis -->
+                <Label Text="⏱️ Active Labour Diagnosis" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+
+                <chip:SfChipGroup ItemsSource="{Binding Diagnoses}" 
+                  DisplayMemberPath="Name" Margin="0,8,16,8" FlowDirection="MatchParent"  />
+
                 <core:SfTextInputLayout Hint="Active Labour Diagnosis"
-                                            Style="{StaticResource PatientInput}"
-                                            HelperText="Clinical assessment of active labour">
+                            Style="{StaticResource PatientInput}"
+                            HelperText="Clinical assessment of active labour" >
+                    <!--<Entry ReturnType="Next" />-->
                     <Entry Text="{Binding ActiveLabourDiagnosis}"
-                               ReturnType="Next" />
+                                Completed="Entry_Completed" Unfocused="Entry_Completed"
+                                   ReturnType="Next" />
+
                 </core:SfTextInputLayout>
+
 
                 <!-- Ruptured Membrane -->
                 <Label Text="Ruptured Membrane Date &amp; Time" 
@@ -390,14 +376,14 @@
                     <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Rupture Date"
                                                 Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding RupturedMembraneDate}"
-                                       Format="dd/MM/yyyy" />
+                        <DatePicker Date="{Binding RupturedMembraneDate, Mode=TwoWay}"
+                                       Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Rupture Time"
-                                                Style="{StaticResource PatientInput}">
-                        <TimePicker Time="{Binding RupturedMembraneTime}"
+                                            Hint="Rupture Time"
+                                            Style="{StaticResource PatientInput}">
+                        <TimePicker Time="{Binding RupturedMembraneTime, Mode=TwoWay}"
                                        Format="HH:mm" />
                     </core:SfTextInputLayout>
                 </Grid>
@@ -416,7 +402,7 @@
                 <!-- Save and Continue Button -->
                 <buttons:SfButton Text="Save Patient &amp; Start Partograph" 
                               Style="{StaticResource PrimaryButton}"
-                              Command="{Binding SavePatientCommand}">
+                              Command="{Binding SaveCommand}">
                     <buttons:SfButton.ImageSource>
                         <FontImageSource FontFamily="MaterialIcons"
                                    Glyph="&#xe161;"

@@ -4,9 +4,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 public partial class MedicationModalView : ContentView
 {
-	public MedicationModalView(MedicationModalPageModel pageModel)
+	public MedicationModalView()
 	{
 		InitializeComponent();
-		BindingContext = pageModel;
 	}
 }

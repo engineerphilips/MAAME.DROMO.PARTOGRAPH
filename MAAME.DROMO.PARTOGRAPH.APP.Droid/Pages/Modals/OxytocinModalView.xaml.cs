@@ -4,9 +4,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 public partial class OxytocinModalView : ContentView
 {
-	public OxytocinModalView(OxytocinModalPageModel pageModel)
+	public OxytocinModalView()
 	{
 		InitializeComponent();
-		BindingContext = pageModel;
 	}
 }

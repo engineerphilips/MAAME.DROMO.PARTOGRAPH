@@ -222,6 +222,9 @@
 	  <Compile Update="Pages\PartographPage1.xaml.cs">
 	    <DependentUpon>PartographPage1.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Pages\PatientPage.xaml.cs">
+	    <DependentUpon>PatientPage.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -321,7 +324,7 @@
 	  <MauiXaml Update="Pages\PartographPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\PatientDetailPage.xaml">
+	  <MauiXaml Update="Pages\PatientPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\PendingPatientsPage.xaml">

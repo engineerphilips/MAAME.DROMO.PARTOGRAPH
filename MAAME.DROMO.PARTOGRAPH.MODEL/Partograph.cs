@@ -16,9 +16,10 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public Patient? Patient { get; set; }
         public int Gravida { get; set; } // Number of pregnancies
         public int Parity { get; set; } // Number of births
+        public int Abortion { get; set; } // Number of abortions
         public DateTime AdmissionDate { get; set; } = DateTime.Now;
-        public DateTime? ExpectedDeliveryDate { get; set; }
-        public DateTime? LastMenstralDate { get; set; }
+        public DateOnly? ExpectedDeliveryDate { get; set; }
+        public DateOnly? LastMenstrualDate { get; set; }
         
         public string GestationalAge { get; set; } = string.Empty;
 
@@ -26,6 +27,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public LaborStatus Status { get; set; } = LaborStatus.Pending;
         public DateTime? LaborStartTime { get; set; }
         public string LaborStartTimeFormat => LaborStartTime != null ? ElapseTimeCalc.PeriodElapseTimeLower(LaborStartTime.Value, DateTime.Now) : string.Empty;
+        public DateTime? RupturedMembraneTime { get; set; }
+        public string RupturedMembraneTimeFormat => RupturedMembraneTime != null ? ElapseTimeCalc.PeriodElapseTimeLower(RupturedMembraneTime.Value, DateTime.Now) : string.Empty;
         public DateTime? DeliveryTime { get; set; }
         public int? CervicalDilationOnAdmission { get; set; }
         public string MembraneStatus { get; set; } = "Intact";

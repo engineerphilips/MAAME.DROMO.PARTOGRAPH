@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
-    public partial class PatientDetailPageModel : ObservableObject, IQueryAttributable
+    public partial class PatientPageModel : ObservableObject, IQueryAttributable
     {
         private Patient? _patient;
         private readonly PatientRepository _patientRepository;
@@ -23,26 +25,101 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private int? _age;
-
-        [ObservableProperty]
-        private DateTime? _dateOfBirth = null;
         
-        [ObservableProperty]
+        private DateTime? _dateOfBirth;
+        public DateTime? DateOfBirth
+        {
+            get => _dateOfBirth;
+            set
+            {
+                SetProperty(ref _dateOfBirth, value);
+                OnPropertyChanged(nameof(AgeIsReadOnly));
+                LoadAgeFromDateOfBirth();
+            }
+        }
+
+        public bool AgeIsReadOnly => DateOfBirth != null;
+
+        public void LoadAgeFromDateOfBirth()
+        {
+            if (DateOfBirth != null)
+                Age = new EMPEROR.COMMON.Age(DateOfBirth.Value, DateTime.Today).Years;
+        }
+
         private int _gravidity;
+        public int Gravidity
+        {
+            get => _gravidity;
+            set
+            {
+                SetProperty(ref _gravidity, value);
+                OnPropertyChanged(nameof(AbortionVisibility));
+                LoadAbortion();
+            }
+        }
+
+        private int _parity;
+
+        public int Parity
+        {
+            get => _parity;
+            set
+            {
+                SetProperty(ref _parity, value);
+                OnPropertyChanged(nameof(AbortionVisibility));
+                LoadAbortion();
+            }
+        }
 
         [ObservableProperty]
-        private int _parity;
+        private int _abortion;
+        public bool AbortionVisibility => Gravidity - Parity > 1;
+        public void LoadAbortion()
+        {
+            if (AbortionVisibility)
+                Abortion = (Gravidity - Parity) - 1;
+        }
 
         [ObservableProperty]
         private DateTime _admissionDate = DateTime.Now;
 
-        [ObservableProperty]
         private DateTime? _expectedDeliveryDate = null;
+        public DateTime? ExpectedDeliveryDate
+        {
+            get => _expectedDeliveryDate;
+            set
+            {
+                SetProperty(ref _expectedDeliveryDate, value);
+                OnPropertyChanged(nameof(FormattedGestationalAge));
+                OnPropertyChanged(nameof(GestationalAgeVisibility));
+            }
+        }
+
+        private DateTime? _lastMenstrualDate = null;
+        public DateTime? LastMenstrualDate
+        {
+            get => _lastMenstrualDate;
+            set
+            {
+                SetProperty(ref _lastMenstrualDate, value);
+                OnPropertyChanged(nameof(FormattedGestationalAge));
+                OnPropertyChanged(nameof(GestationalAgeVisibility));
+            }
+        }
+
+        public string FormattedGestationalAge => ExpectedDeliveryDate != null ? new EMPEROR.COMMON.GestationalAge().Age(DateTime.Now, ExpectedDeliveryDate.Value, true) : LastMenstrualDate != null ? new EMPEROR.COMMON.GestationalAge().Age(LastMenstrualDate.Value, DateTime.Now, false) : string.Empty;
+
+        public bool GestationalAgeVisibility => !string.IsNullOrWhiteSpace(FormattedGestationalAge);
+
         [ObservableProperty]
-        private DateTime? _lastMenstralDate = null;
+        private DateOnly? _laborStartDate = null;
         [ObservableProperty]
-        private DateTime? _laborStartTime = null;
-        
+        private TimeSpan? _laborStartTime = null;
+        [ObservableProperty]
+        private DateOnly? _rupturedMembraneDate = null;
+        [ObservableProperty]
+        private TimeSpan? _rupturedMembraneTime = null;
+
         [ObservableProperty]
         private string _address = string.Empty;
 
@@ -62,6 +139,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _emergencyContactName = string.Empty;
         
         [ObservableProperty]
+        private bool _hasRupturedMembrane = false;
+
+        [ObservableProperty]
         private LaborStatus _status = LaborStatus.Pending;
 
         [ObservableProperty]
@@ -78,6 +158,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private string _complications = string.Empty;
+
+        private ObservableCollection<Diagnosis> _diagnoses = new ObservableCollection<Diagnosis>();
+
+        public ObservableCollection<Diagnosis> Diagnoses
+        {
+            get { return _diagnoses; }
+            set
+            {
+                SetProperty(ref _diagnoses, value);
+                OnPropertyChanged(nameof(Diagnoses));
+            }
+        }
 
         [ObservableProperty]
         private List<Partograph> _partographEntries = [];
@@ -97,7 +189,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public bool IsNewPatient => _patient?.ID == null;
 
         //VitalSignRepository vitalSignRepository,
-        public PatientDetailPageModel(PatientRepository patientRepository,
+        public PatientPageModel(PatientRepository patientRepository,
             PartographRepository partographRepository,
             ModalErrorHandler errorHandler)
         {
@@ -187,7 +279,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _patient.FirstName = FirstName;
             _patient.LastName = LastName;
             _patient.HospitalNumber = HospitalNumber;
-            _patient.DateOfBirth = DateOfBirth;
+            _patient.DateOfBirth = DateOfBirth != null ? DateOnly.FromDateTime(DateOfBirth.Value) : null;
             _patient.Age = Age;
             //_patient.Gravida = Gravidity;
             //_patient.Parity = Parity;
@@ -219,24 +311,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     AdmissionDate = DateTime.Now,
                     Gravida = Gravidity,
                     Parity = Parity,
-                    Time = DateTime.Now, 
-                    LaborStartTime = LaborStartTime,
+                    Abortion = Abortion,
+                    Time = DateTime.Now,
+                    LaborStartTime = LaborStartDate != null && LaborStartTime != null ? new DateTime(LaborStartDate.Value.Year, LaborStartDate.Value.Month, LaborStartDate.Value.Day).Add(LaborStartTime.Value) : null,
                     LiquorStatus = LiquorStatus,
                     MembraneStatus = MembraneStatus,
-                    RiskFactors = RiskFactors, 
-                    ExpectedDeliveryDate = ExpectedDeliveryDate,
-                    LastMenstralDate = LastMenstralDate,
-
+                    RiskFactors = RiskFactors,
+                    ExpectedDeliveryDate = ExpectedDeliveryDate != null ? DateOnly.FromDateTime(ExpectedDeliveryDate.Value) : null,
+                    LastMenstrualDate = LastMenstrualDate != null ? DateOnly.FromDateTime(LastMenstrualDate.Value) : null,
+                    RupturedMembraneTime = RupturedMembraneDate != null && RupturedMembraneTime != null ? new DateTime(RupturedMembraneDate.Value.Year, RupturedMembraneDate.Value.Month, RupturedMembraneDate.Value.Day).Add(RupturedMembraneTime.Value) : null
                 });
+                //LaborStartDate.Value.ToDateTime(LaborStartTime.Value)
 
                 if (partographId != null)
                 {
-                    if (IsNewPatient)
-                    {
-                        await AppShell.DisplayToastAsync("Patient registered successfully");
-                        //await Shell.Current.GoToAsync("..");
-                        await Shell.Current.GoToAsync($"//partograph?patientId={partographId}");
-                    }
+                    //if (IsNewPatient)
+                    //{
+                    //}
+
+                    await AppShell.DisplayToastAsync("Patient registered successfully");
+                    //await Shell.Current.GoToAsync("..");
+                    await Shell.Current.GoToAsync($"//partograph?patientId={partographId}");
                 }
             }
             else

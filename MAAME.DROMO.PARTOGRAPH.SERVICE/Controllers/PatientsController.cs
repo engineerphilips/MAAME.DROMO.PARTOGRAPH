@@ -170,7 +170,9 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 existing.Age = patient.Age;
                 existing.BloodGroup = patient.BloodGroup;
                 existing.PhoneNumber = patient.PhoneNumber;
-                existing.EmergencyContact = patient.EmergencyContact;
+                existing.EmergencyContactName = patient.EmergencyContactName;
+                existing.EmergencyContactRelationship = patient.EmergencyContactRelationship;
+                existing.EmergencyContactPhone = patient.EmergencyContactPhone;
                 existing.HandlerName = patient.HandlerName;
                 existing.Handler = patient.Handler;
 

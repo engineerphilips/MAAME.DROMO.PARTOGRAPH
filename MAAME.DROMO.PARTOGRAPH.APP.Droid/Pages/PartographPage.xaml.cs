@@ -7,12 +7,24 @@ public partial class PartographPage : ContentPage
 {
     public string PatientId { get; set; }
 
-    public PartographPage(PartographPageModel pageModel, CompanionModalPageModel companionPageModel, PainReliefModalPageModel painReliefPageModel)
+    public PartographPage(PartographPageModel pageModel, CompanionModalPageModel companionPageModel, PainReliefModalPageModel painReliefPageModel, FetalPositionModalPageModel fetalPositionPageModel, AmnioticFluidModalPageModel amnioticFluidPageModel, AssessmentPlanModalPageModel assessmentPlanPageModel, MouldingModalPageModel mouldingModalPageModel, UrineModalPageModel urineModalPageModel, TemperatureModalPageModel temperatureModalPageModel, OxytocinModalPageModel oxytocinModalPageModel, MedicationModalPageModel medicationModalPageModel, IVFluidModalPageModel ivFluidModalPageModel, HeadDescentModalPageModel headDescentPageModel, CervixDilatationModalPageModel cervixDilatationPageModel, BPPulseModalPageModel bPPulseModalPageModel)
 	{
 		InitializeComponent();
 		BindingContext = pageModel;
         sfPopupPainRelief.BindingContext = painReliefPageModel;
         sfPopupCompanion.BindingContext = companionPageModel;
+        sfPopupFetalPosition.BindingContext = fetalPositionPageModel;
+        sfPopupAmnioticFluid.BindingContext = amnioticFluidPageModel;
+        //sfPopupAssessmentPlan.BindingContext = assessmentPlanPageModel;
+        sfPopupMoulding.BindingContext = mouldingModalPageModel;
+        sfPopupUrine.BindingContext = urineModalPageModel;
+        sfPopupTemperature.BindingContext = temperatureModalPageModel;
+        sfPopupOxytocin.BindingContext = oxytocinModalPageModel;
+        sfPopupMedication.BindingContext = medicationModalPageModel;
+        sfPopupIVFluid.BindingContext = ivFluidModalPageModel;
+        sfPopupHeadDescent.BindingContext = headDescentPageModel;
+        sfPopupCervixDilatation.BindingContext = cervixDilatationPageModel;
+        sfPopupBpPulse.BindingContext = bPPulseModalPageModel;
 
         //Loaded += (s, e) =>
         //{

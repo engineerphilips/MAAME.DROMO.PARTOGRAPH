@@ -552,7 +552,7 @@ public class SyncService : ISyncService
             ID = Guid.Parse(reader["ID"].ToString()!),
             FirstName = reader["FirstName"]?.ToString() ?? string.Empty,
             LastName = reader["LastName"]?.ToString() ?? string.Empty,
-            DateOfBirth = DateTime.Parse(reader["DateOfBirth"]?.ToString() ?? DateTime.Now.ToString()),
+            DateOfBirth = DateOnly.Parse(reader["DateOfBirth"]?.ToString() ?? DateTime.Now.ToString()),
             // Add other properties as needed
         };
     }

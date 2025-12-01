@@ -4,9 +4,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 public partial class HeadDescentModalView : ContentView
 {
-	public HeadDescentModalView(HeadDescentModalPageModel pageModel)
+	public HeadDescentModalView()
 	{
 		InitializeComponent();
-		BindingContext = pageModel;
 	}
 }

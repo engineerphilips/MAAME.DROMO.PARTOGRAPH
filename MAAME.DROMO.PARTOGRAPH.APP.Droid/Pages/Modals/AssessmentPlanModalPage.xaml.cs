@@ -2,10 +2,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 public partial class AssessmentPlanModalPage : ContentPage
 {
-	public AssessmentPlanModalPage(AssessmentPlanModalPageModel pageModel)
+	public AssessmentPlanModalPage()
     {
         InitializeComponent();
-        BindingContext = pageModel;
     }
 
     private void OnInterventionLabelTapped(object sender, TappedEventArgs e)

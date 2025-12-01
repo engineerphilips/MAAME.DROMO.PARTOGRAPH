@@ -4,9 +4,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 public partial class AmnioticFluidModalView : ContentView
 {
-	public AmnioticFluidModalView(AmnioticFluidModalPageModel pageModel)
+	public AmnioticFluidModalView()
 	{
 		InitializeComponent();
-		BindingContext = pageModel;
 	}
 }

@@ -4,9 +4,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 public partial class TemperatureModalView : ContentView
 {
-	public TemperatureModalView(TemperatureModalPageModel pageModel)
+	public TemperatureModalView()
 	{
 		InitializeComponent();
-		BindingContext = pageModel;
 	}
 }
