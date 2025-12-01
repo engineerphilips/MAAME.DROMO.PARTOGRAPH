@@ -61,7 +61,7 @@
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Patient">
+                    <DataTemplate x:DataType="models:Partograph">
                         <SwipeView>
                             <SwipeView.RightItems>
                                 <SwipeItems>

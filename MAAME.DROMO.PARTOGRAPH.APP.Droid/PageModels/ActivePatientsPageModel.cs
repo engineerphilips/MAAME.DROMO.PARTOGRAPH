@@ -109,22 +109,72 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             => Shell.Current.GoToAsync($"partographentry?patientId={patient.ID}");
 
         [RelayCommand]
-        private async Task CompleteDelivery(Partograph patient)
+        private async Task CompleteDelivery(Partograph partograph)
         {
-            patient.Status = LaborStatus.Completed;
-            patient.DeliveryTime = DateTime.Now;
-            await _partographRepository.SaveItemAsync(patient);
-            await AppShell.DisplayToastAsync($"Delivery completed for {patient.Name}");
-            await LoadData();
+            try
+            {
+                // Show confirmation dialog
+                var confirm = await Shell.Current.DisplayAlert(
+                    "Complete Delivery",
+                    $"Are you sure you want to mark delivery as completed for {partograph.Name}?",
+                    "Yes, Complete",
+                    "Cancel");
+
+                if (!confirm)
+                    return;
+
+                // Update partograph status
+                partograph.Status = LaborStatus.Completed;
+                partograph.DeliveryTime = DateTime.UtcNow;
+
+                // Save to database (repository handles DeliveryTime setting)
+                await _partographRepository.SaveItemAsync(partograph);
+
+                // Show success message
+                await AppShell.DisplayToastAsync($"Delivery completed for {partograph.Name}");
+
+                // Reload data to refresh the list
+                await LoadData();
+            }
+            catch (Exception ex)
+            {
+                // Handle errors
+                _errorHandler.HandleError(ex);
+            }
         }
 
         [RelayCommand]
-        private async Task MarkAsEmergency(Partograph patient)
+        private async Task MarkAsEmergency(Partograph partograph)
         {
-            patient.Status = LaborStatus.Emergency;
-            await _partographRepository.SaveItemAsync(patient);
-            await AppShell.DisplaySnackbarAsync($"Emergency alert sent for {patient.Name}");
-            await LoadData();
+            try
+            {
+                // Show confirmation dialog
+                var confirm = await Shell.Current.DisplayAlert(
+                    "Mark as Emergency",
+                    $"Are you sure you want to mark {partograph.Name} as an emergency?",
+                    "Yes, Emergency",
+                    "Cancel");
+
+                if (!confirm)
+                    return;
+
+                // Update partograph status
+                partograph.Status = LaborStatus.Emergency;
+
+                // Save to database
+                await _partographRepository.SaveItemAsync(partograph);
+
+                // Show success message
+                await AppShell.DisplaySnackbarAsync($"Emergency alert sent for {partograph.Name}");
+
+                // Reload data to refresh the list
+                await LoadData();
+            }
+            catch (Exception ex)
+            {
+                // Handle errors
+                _errorHandler.HandleError(ex);
+            }
         }
     }
 }

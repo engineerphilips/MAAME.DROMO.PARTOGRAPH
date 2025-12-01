@@ -97,21 +97,54 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private Task NavigateToPatient(Patient patient)
-            => Shell.Current.GoToAsync($"patient?id={patient.ID}");
+        private Task NavigateToPatient(Partograph partograph)
+            => Shell.Current.GoToAsync($"patient?id={partograph.PatientID}");
 
         [RelayCommand]
         private Task AddNewPatient()
             => Shell.Current.GoToAsync("newpatient");
 
         [RelayCommand]
-        private async Task StartActiveLabor(Partograph patient)
+        private async Task StartActiveLabor(Partograph partograph)
         {
-            patient.Status = LaborStatus.Active;
-            patient.LaborStartTime = DateTime.Now;
-            await _patientRepository.SaveItemAsync(patient);
-            await AppShell.DisplayToastAsync($"Labor started for {patient.Name}");
-            await LoadData();
+            try
+            {
+                // Show confirmation dialog
+                var confirm = await Shell.Current.DisplayAlert(
+                    "Start Active Labor",
+                    $"Are you sure you want to start active labor for {partograph.Name}?",
+                    "Yes, Start Labor",
+                    "Cancel");
+
+                if (!confirm)
+                    return;
+
+                // Update partograph status
+                partograph.Status = LaborStatus.Active;
+                partograph.LaborStartTime = DateTime.UtcNow;
+
+                // Save to database (repository handles validation and LaborStartTime setting)
+                await _patientRepository.SaveItemAsync(partograph);
+
+                // Show success message
+                await AppShell.DisplayToastAsync($"Labor started for {partograph.Name}");
+
+                // Reload data to refresh the list
+                await LoadData();
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Handle specific case where patient already has active partograph
+                await Shell.Current.DisplayAlert(
+                    "Cannot Start Labor",
+                    ex.Message,
+                    "OK");
+            }
+            catch (Exception ex)
+            {
+                // Handle any other errors
+                _errorHandler.HandleError(ex);
+            }
         }
     }
 }
