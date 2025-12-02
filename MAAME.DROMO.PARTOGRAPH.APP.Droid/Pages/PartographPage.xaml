@@ -205,15 +205,15 @@
                        FontSize="Micro" 
                        Margin="0,0,1,1" />-->
 
-                <Button Grid.Row="3" Grid.Column="0" 
-                       Text="Companion" 
+                <Button Grid.Row="3" Grid.Column="0"
+                       Text="Companion"
                        BackgroundColor="LightGray"
                        Padding="5"
-                       FontSize="Micro" 
-                       Margin="0,0,1,1" 
-                        CornerRadius="0" 
+                       FontSize="Micro"
+                       Margin="0,0,1,1"
+                        CornerRadius="0"
                         TextColor="Black"
-                        Clicked="CompanionButton_Clicked" />
+                        Command="{Binding OpenCompanionPopupCommand}" />
 
                 <Label Grid.Row="3" Grid.Column="1" 
                        Text="N" 
@@ -265,15 +265,15 @@
                        FontSize="Micro" 
                        Margin="0,0,1,1"/>-->
 
-                <Button Grid.Row="4" Grid.Column="0" 
-                       Text="Pain relief" 
+                <Button Grid.Row="4" Grid.Column="0"
+                       Text="Pain relief"
                        BackgroundColor="LightGray"
                        Padding="5"
-                       FontSize="Micro" 
-                       Margin="0,0,1,1" 
-                        CornerRadius="0" 
+                       FontSize="Micro"
+                       Margin="0,0,1,1"
+                        CornerRadius="0"
                         TextColor="Black"
-                        Clicked="PainReliefButton_Clicked" />
+                        Command="{Binding OpenPainReliefPopupCommand}" />
 
                 <Label Grid.Row="4" Grid.Column="1" 
                        Text="N" 
@@ -322,15 +322,15 @@
                        FontSize="Micro" 
                        Margin="0,0,1,1"/>-->
 
-                <Button Grid.Row="5" Grid.Column="0" 
-                       Text="Oral fluid" 
+                <Button Grid.Row="5" Grid.Column="0"
+                       Text="Oral fluid"
                        BackgroundColor="LightGray"
                        Padding="5"
-                       FontSize="Micro" 
-                       Margin="0,0,1,1" 
-                        CornerRadius="0" 
+                       FontSize="Micro"
+                       Margin="0,0,1,1"
+                        CornerRadius="0"
                         TextColor="Black"
-                        Clicked="OralFluidButton_Clicked" />
+                        Command="{Binding OpenOralFluidPopupCommand}" />
 
                 <Label Grid.Row="5" Grid.Column="1" 
                        Text="N" 
@@ -386,7 +386,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="PostureButton_Clicked" />
+                        Command="{Binding OpenPosturePopupCommand}" />
 
                 <Label Grid.Row="6" Grid.Column="1" 
        Text="N" 
@@ -441,7 +441,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="FHRContractionButton_Clicked" />
+                        Command="{Binding OpenFHRContractionPopupCommand}" />
 
                 <Label Grid.Row="8" Grid.Column="1" 
        Text="&gt;110, ≥160" 
@@ -496,7 +496,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="FHRContractionButton_Clicked" />
+                        Command="{Binding OpenFHRContractionPopupCommand}" />
 
                 <Label Grid.Row="9" Grid.Column="1" 
        Text="L" 
@@ -551,7 +551,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="AmnioticFluidButton_Clicked" />
+                        Command="{Binding OpenAmnioticFluidPopupCommand}" />
 
                 <Label Grid.Row="10" Grid.Column="1" 
        Text="M+++, B" 
@@ -605,7 +605,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="FetalPositionButton_Clicked" />
+                        Command="{Binding OpenFetalPositionPopupCommand}" />
 
                 <Label Grid.Row="11" Grid.Column="1" 
        Text="P, T" 
@@ -659,7 +659,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="CaputButton_Clicked" />
+                        Command="{Binding OpenCaputPopupCommand}" />
 
                 <Label Grid.Row="12" Grid.Column="1" 
        Text="+++" 
@@ -757,7 +757,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="BpPulse_Clicked" />
+                        Command="{Binding OpenBpPulsePopupCommand}" />
 
                 <Label Grid.Row="15" Grid.Column="1" 
        Text="&gt;60, ≥120" 
@@ -811,7 +811,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="BpPulse_Clicked" />
+                        Command="{Binding OpenBpPulsePopupCommand}" />
 
                 <Label Grid.Row="16" Grid.Column="1" 
        Text="&gt;80, ≥140" 
@@ -865,7 +865,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="BpPulse_Clicked" />
+                        Command="{Binding OpenBpPulsePopupCommand}" />
 
                 <Label Grid.Row="17" Grid.Column="1" 
        Text="≥90" 
@@ -919,7 +919,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="TemperatureButton_Clicked" />
+                        Command="{Binding OpenTemperaturePopupCommand}" />
 
                 <Label Grid.Row="18" Grid.Column="1" 
        Text="&gt;35.0, ≥ 37.5" 
@@ -973,7 +973,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="UrineButton_Clicked" />
+                        Command="{Binding OpenUrinePopupCommand}" />
 
                 <Label Grid.Row="19" Grid.Column="1" 
        Text="P++, A++" 
@@ -1019,7 +1019,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="FHRContractionButton_Clicked" />
+                        Command="{Binding OpenFHRContractionPopupCommand}" />
 
                 <!--<Label Grid.Row="21" Grid.Column="0" 
        Text=" Contractions per 10 min" 
@@ -1081,7 +1081,7 @@
                        Margin="0,0,1,1" 
                         CornerRadius="0" 
                         TextColor="Black"
-                        Clicked="FHRContractionButton_Clicked" />
+                        Command="{Binding OpenFHRContractionPopupCommand}" />
 
                 <Label Grid.Row="22" Grid.Column="1" 
        Text="&lt;20, >60" 
@@ -1121,13 +1121,14 @@
 
             </Grid>
             
-            <sfPopup:SfPopup x:Name="sfPopupCompanion"     
+            <sfPopup:SfPopup x:Name="sfPopupCompanion"
+                             IsOpen="{Binding IsCompanionPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Companion"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="70"
                              Grid.Row="0"
                              Grid.RowSpan="5">
                 <sfPopup:SfPopup.ContentTemplate>
@@ -1137,13 +1138,14 @@
                 </sfPopup:SfPopup.ContentTemplate>
             </sfPopup:SfPopup>
 
-            <sfPopup:SfPopup x:Name="sfPopupPainRelief"     
+            <sfPopup:SfPopup x:Name="sfPopupPainRelief"
+                             IsOpen="{Binding IsPainReliefPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Pain relief"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="70"
                              Grid.Row="0"
                              Grid.RowSpan="5">
                 <sfPopup:SfPopup.ContentTemplate>
@@ -1153,13 +1155,14 @@
                 </sfPopup:SfPopup.ContentTemplate>
             </sfPopup:SfPopup>
 
-            <sfPopup:SfPopup x:Name="sfPopupOralFluid"     
+            <sfPopup:SfPopup x:Name="sfPopupOralFluid"
+                             IsOpen="{Binding IsOralFluidPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Oral fluid"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="70"
                              Grid.Row="0"
                              Grid.RowSpan="5">
                 <sfPopup:SfPopup.ContentTemplate>
@@ -1170,6 +1173,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupPosture"     
+                             IsOpen="{Binding IsPosturePopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Posture"
                              ShowCloseButton="True"
@@ -1186,6 +1190,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupFHRDeceleration"     
+                             IsOpen="{Binding IsFHRDecelerationPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="FHR Deceleration"
                              ShowCloseButton="True"
@@ -1202,6 +1207,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupAmnioticFluid"     
+                             IsOpen="{Binding IsAmnioticFluidPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Amniotic Fluid"
                              ShowCloseButton="True"
@@ -1218,6 +1224,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupFetalPosition"     
+                             IsOpen="{Binding IsFetalPositionPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Fetal Position"
                              ShowCloseButton="True"
@@ -1234,6 +1241,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupCaput"     
+                             IsOpen="{Binding IsCaputPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Caput"
                              ShowCloseButton="True"
@@ -1250,6 +1258,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupMoulding"     
+                             IsOpen="{Binding IsMouldingPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Moulding"
                              ShowCloseButton="True"
@@ -1266,6 +1275,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupFHRContraction"     
+                             IsOpen="{Binding IsFHRContractionPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="FHR &amp; Contraction"
                              ShowCloseButton="True"
@@ -1282,6 +1292,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupUrine"     
+                             IsOpen="{Binding IsUrinePopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Urine"
                              ShowCloseButton="True"
@@ -1298,6 +1309,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupTemperature"     
+                             IsOpen="{Binding IsTemperaturePopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Temperature"
                              ShowCloseButton="True"
@@ -1314,6 +1326,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupBpPulse"     
+                             IsOpen="{Binding IsBpPulsePopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="BP &amp; Pulse"
                              ShowCloseButton="True"
@@ -1330,6 +1343,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupCervixDilatation"     
+                             IsOpen="{Binding IsCervixDilatationPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Cervix dilatation"
                              ShowCloseButton="True"
@@ -1346,6 +1360,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupHeadDescent"     
+                             IsOpen="{Binding IsHeadDescentPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Head descent"
                              ShowCloseButton="True"
@@ -1362,6 +1377,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupOxytocin"     
+                             IsOpen="{Binding IsOxytocinPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Oxytocin"
                              ShowCloseButton="True"
@@ -1378,6 +1394,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupIVFluid"     
+                             IsOpen="{Binding IsIVFluidPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="IV Fluid"
                              ShowCloseButton="True"
@@ -1394,6 +1411,7 @@
             </sfPopup:SfPopup>
 
             <sfPopup:SfPopup x:Name="sfPopupMedication"     
+                             IsOpen="{Binding IsMedicationPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Medication"
                              ShowCloseButton="True"

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +18,41 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
         private readonly CompanionRepository _companionRepository;
+
+        // Modal page models
+        private readonly CompanionModalPageModel _companionModalPageModel;
+        private readonly PainReliefModalPageModel _painReliefModalPageModel;
+        private readonly OralFluidModalPageModel _oralFluidModalPageModel;
+        private readonly PostureModalPageModel _postureModalPageModel;
+        private readonly FetalPositionModalPageModel _fetalPositionModalPageModel;
+        private readonly AmnioticFluidModalPageModel _amnioticFluidModalPageModel;
+        private readonly CaputModalPageModel _caputModalPageModel;
+        private readonly MouldingModalPageModel _mouldingModalPageModel;
+        private readonly UrineModalPageModel _urineModalPageModel;
+        private readonly TemperatureModalPageModel _temperatureModalPageModel;
+        private readonly OxytocinModalPageModel _oxytocinModalPageModel;
+        private readonly MedicationModalPageModel _medicationModalPageModel;
+        private readonly IVFluidModalPageModel _ivFluidModalPageModel;
+        private readonly HeadDescentModalPageModel _headDescentModalPageModel;
+        private readonly CervixDilatationModalPageModel _cervixDilatationModalPageModel;
+        private readonly BPPulseModalPageModel _bpPulseModalPageModel;
+
+        public CompanionModalPageModel CompanionModalPageModel => _companionModalPageModel;
+        public PainReliefModalPageModel PainReliefModalPageModel => _painReliefModalPageModel;
+        public OralFluidModalPageModel OralFluidModalPageModel => _oralFluidModalPageModel;
+        public PostureModalPageModel PostureModalPageModel => _postureModalPageModel;
+        public FetalPositionModalPageModel FetalPositionModalPageModel => _fetalPositionModalPageModel;
+        public AmnioticFluidModalPageModel AmnioticFluidModalPageModel => _amnioticFluidModalPageModel;
+        public CaputModalPageModel CaputModalPageModel => _caputModalPageModel;
+        public MouldingModalPageModel MouldingModalPageModel => _mouldingModalPageModel;
+        public UrineModalPageModel UrineModalPageModel => _urineModalPageModel;
+        public TemperatureModalPageModel TemperatureModalPageModel => _temperatureModalPageModel;
+        public OxytocinModalPageModel OxytocinModalPageModel => _oxytocinModalPageModel;
+        public MedicationModalPageModel MedicationModalPageModel => _medicationModalPageModel;
+        public IVFluidModalPageModel IVFluidModalPageModel => _ivFluidModalPageModel;
+        public HeadDescentModalPageModel HeadDescentModalPageModel => _headDescentModalPageModel;
+        public CervixDilatationModalPageModel CervixDilatationModalPageModel => _cervixDilatationModalPageModel;
+        public BPPulseModalPageModel BPPulseModalPageModel => _bpPulseModalPageModel;
 
         [ObservableProperty]
         private ObservableCollection<EnhancedTimeSlotViewModel> _timeSlots = new ();
@@ -65,13 +101,45 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public PartographPageModel(PatientRepository patientRepository,
             PartographRepository partographRepository,
-            CompanionRepository companionRepository,    
-            ModalErrorHandler errorHandler)
+            CompanionRepository companionRepository,
+            ModalErrorHandler errorHandler,
+            CompanionModalPageModel companionModalPageModel,
+            PainReliefModalPageModel painReliefModalPageModel,
+            OralFluidModalPageModel oralFluidModalPageModel,
+            PostureModalPageModel postureModalPageModel,
+            FetalPositionModalPageModel fetalPositionModalPageModel,
+            AmnioticFluidModalPageModel amnioticFluidModalPageModel,
+            CaputModalPageModel caputModalPageModel,
+            MouldingModalPageModel mouldingModalPageModel,
+            UrineModalPageModel urineModalPageModel,
+            TemperatureModalPageModel temperatureModalPageModel,
+            OxytocinModalPageModel oxytocinModalPageModel,
+            MedicationModalPageModel medicationModalPageModel,
+            IVFluidModalPageModel ivFluidModalPageModel,
+            HeadDescentModalPageModel headDescentModalPageModel,
+            CervixDilatationModalPageModel cervixDilatationModalPageModel,
+            BPPulseModalPageModel bpPulseModalPageModel)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
-            _companionRepository = companionRepository; 
+            _companionRepository = companionRepository;
             _errorHandler = errorHandler;
+            _companionModalPageModel = companionModalPageModel;
+            _painReliefModalPageModel = painReliefModalPageModel;
+            _oralFluidModalPageModel = oralFluidModalPageModel;
+            _postureModalPageModel = postureModalPageModel;
+            _fetalPositionModalPageModel = fetalPositionModalPageModel;
+            _amnioticFluidModalPageModel = amnioticFluidModalPageModel;
+            _caputModalPageModel = caputModalPageModel;
+            _mouldingModalPageModel = mouldingModalPageModel;
+            _urineModalPageModel = urineModalPageModel;
+            _temperatureModalPageModel = temperatureModalPageModel;
+            _oxytocinModalPageModel = oxytocinModalPageModel;
+            _medicationModalPageModel = medicationModalPageModel;
+            _ivFluidModalPageModel = ivFluidModalPageModel;
+            _headDescentModalPageModel = headDescentModalPageModel;
+            _cervixDilatationModalPageModel = cervixDilatationModalPageModel;
+            _bpPulseModalPageModel = bpPulseModalPageModel;
             Chartinghours = new ObservableCollection<TimeSlots>();
             TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
             GenerateInitialTimeSlots();
@@ -298,6 +366,245 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (_patient != null)
                 await LoadData(_patient.ID);
+        }
+
+        // Popup IsOpen properties
+        [ObservableProperty]
+        private bool _isCompanionPopupOpen;
+
+        [ObservableProperty]
+        private bool _isPainReliefPopupOpen;
+
+        [ObservableProperty]
+        private bool _isOralFluidPopupOpen;
+
+        [ObservableProperty]
+        private bool _isPosturePopupOpen;
+
+        [ObservableProperty]
+        private bool _isAmnioticFluidPopupOpen;
+
+        [ObservableProperty]
+        private bool _isFetalPositionPopupOpen;
+
+        [ObservableProperty]
+        private bool _isCaputPopupOpen;
+
+        [ObservableProperty]
+        private bool _isFHRContractionPopupOpen;
+
+        [ObservableProperty]
+        private bool _isUrinePopupOpen;
+
+        [ObservableProperty]
+        private bool _isTemperaturePopupOpen;
+
+        [ObservableProperty]
+        private bool _isBpPulsePopupOpen;
+
+        [ObservableProperty]
+        private bool _isMedicationPopupOpen;
+
+        [ObservableProperty]
+        private bool _isIVFluidPopupOpen;
+
+        [ObservableProperty]
+        private bool _isOxytocinPopupOpen;
+
+        [ObservableProperty]
+        private bool _isHeadDescentPopupOpen;
+
+        [ObservableProperty]
+        private bool _isCervixDilatationPopupOpen;
+
+        [ObservableProperty]
+        private bool _isMouldingPopupOpen;
+
+        [ObservableProperty]
+        private bool _isFHRDecelerationPopupOpen;
+
+        // Popup Open Commands
+        [RelayCommand]
+        private async Task OpenCompanionPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _companionModalPageModel._patient = _patient;
+                _companionModalPageModel.ClosePopup = () => IsCompanionPopupOpen = false;
+                await _companionModalPageModel.LoadPatient(_patient.ID);
+                IsCompanionPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenPainReliefPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _painReliefModalPageModel._patient = _patient;
+                _painReliefModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsPainReliefPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenOralFluidPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _oralFluidModalPageModel._patient = _patient;
+                _oralFluidModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsOralFluidPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenPosturePopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _postureModalPageModel._patient = _patient;
+                _postureModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsPosturePopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenAmnioticFluidPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _amnioticFluidModalPageModel._patient = _patient;
+                _amnioticFluidModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsAmnioticFluidPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenFetalPositionPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _fetalPositionModalPageModel._patient = _patient;
+                _fetalPositionModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsFetalPositionPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenCaputPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _caputModalPageModel._patient = _patient;
+                _caputModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsCaputPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenFHRContractionPopup()
+        {
+            IsFHRContractionPopupOpen = true;
+        }
+
+        [RelayCommand]
+        private void OpenUrinePopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _urineModalPageModel._patient = _patient;
+                _urineModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsUrinePopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenTemperaturePopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _temperatureModalPageModel._patient = _patient;
+                _temperatureModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsTemperaturePopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenBpPulsePopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _bpPulseModalPageModel._patient = _patient;
+                _bpPulseModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsBpPulsePopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenMedicationPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _medicationModalPageModel._patient = _patient;
+                _medicationModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsMedicationPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenIVFluidPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _ivFluidModalPageModel._patient = _patient;
+                _ivFluidModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsIVFluidPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenOxytocinPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _oxytocinModalPageModel._patient = _patient;
+                _oxytocinModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsOxytocinPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenHeadDescentPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _headDescentModalPageModel._patient = _patient;
+                _headDescentModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsHeadDescentPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenCervixDilatationPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _cervixDilatationModalPageModel._patient = _patient;
+                _cervixDilatationModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsCervixDilatationPopupOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenMouldingPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _mouldingModalPageModel._patient = _patient;
+                _mouldingModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
+                IsMouldingPopupOpen = true;
+            }
         }
     }
 
