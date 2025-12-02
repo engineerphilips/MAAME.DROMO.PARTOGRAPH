@@ -94,7 +94,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Time = RecordingTime,
                     Posture = PostureIndex == 0 ? 'N' : PostureIndex == 1 ? 'Y' : PostureIndex == 2 ? 'D' : null,
                     Notes = Notes,
-                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 

@@ -96,8 +96,8 @@
                     <buttons:SfRadioButton x:Name="no" Text="No" />
                     <buttons:SfRadioButton x:Name="declines" Text="Woman declines" />
                 </buttons:SfRadioGroup>-->
-
-                <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="3" SelectedIndex="{Binding CompanionIndex}">
+                
+                <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="3" SelectedIndex="{Binding CompanionIndex, Mode=TwoWay}">
                     <buttons:SfSegmentedControl.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
                             <x:String>No</x:String>

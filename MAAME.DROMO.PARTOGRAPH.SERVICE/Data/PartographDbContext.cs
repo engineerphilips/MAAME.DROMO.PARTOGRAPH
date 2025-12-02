@@ -101,7 +101,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             modelBuilder.Entity<Staff>(entity =>
             {
                 entity.HasKey(e => e.ID);
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.FacilityName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.StaffID).HasMaxLength(50);
                 entity.Property(e => e.Email).HasMaxLength(100);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);

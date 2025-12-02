@@ -22,7 +22,7 @@
         <RefreshView Grid.Row="1"
                      IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshCommand}">
-            <CollectionView ItemsSource="{Binding Patients}"
+            <CollectionView ItemsSource="{Binding Partographs}"
                             ItemsLayout="VerticalList"
                             SelectionMode="None"
                             x:Name="PatientCollectionView">
@@ -41,7 +41,7 @@
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Patient">
+                    <DataTemplate x:DataType="models:Partograph">
                         <Border StrokeThickness="1"
                                 Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
                                 BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"

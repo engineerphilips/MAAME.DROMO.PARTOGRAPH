@@ -21,6 +21,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public bool IsActive { get; set; } = true;
 
         public Guid? Facility { get; set; }
+        public string FacilityName { get; set; } = string.Empty;
         // Sync columns
         public long CreatedTime { get; set; }
         public long UpdatedTime { get; set; }

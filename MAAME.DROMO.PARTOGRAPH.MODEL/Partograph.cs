@@ -1,6 +1,7 @@
 ﻿using MAAME.DROMO.PARTOGRAPH.Helper;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -98,11 +99,11 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [JsonIgnore]
         public Color StatusColor => Status switch
         {
-            LaborStatus.Pending => Colors.Orange,
-            LaborStatus.Active => Colors.Green,
-            LaborStatus.Completed => Colors.Blue,
-            LaborStatus.Emergency => Colors.Red,
-            _ => Colors.Gray
+            LaborStatus.Pending => Color.Orange,
+            LaborStatus.Active => Color.Green,
+            LaborStatus.Completed => Color.Blue,
+            LaborStatus.Emergency => Color.Red,
+            _ => Color.Gray
         };
 
         [JsonIgnore]

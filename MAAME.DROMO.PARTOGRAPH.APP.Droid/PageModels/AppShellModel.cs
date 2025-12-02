@@ -11,6 +11,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     public class AppShellModel : INotifyPropertyChanged
     {
         public string? Name => Constants.Staff?.Name;
+        public string? Facility => Constants.Staff?.FacilityName;
         public string? Email => Constants.Staff?.Email;
 
         #region INotifyPropertyChanged

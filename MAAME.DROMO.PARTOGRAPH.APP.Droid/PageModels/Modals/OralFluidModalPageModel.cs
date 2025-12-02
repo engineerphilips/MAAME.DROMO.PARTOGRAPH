@@ -175,7 +175,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Time = RecordingTime,
                     OralFluid = OralFluidIndex == 0 ? 'N' : OralFluidIndex == 1 ? 'Y' : OralFluidIndex == 2 ? 'D' : null,
                     Notes = Notes,
-                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 

@@ -40,44 +40,58 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             _hasBeenInitialized = true;
         }
 
-        public virtual async Task<List<T>> ListByPatientAsync(Guid? patientId)
+        public virtual async Task<List<T>> ListByPatientAsync(Guid? id)
         {
             await Init();
-            await using var connection = new SqliteConnection(Constants.DatabasePath);
-            await connection.OpenAsync();
-
-            var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = $"SELECT * FROM {TableName} WHERE partographId = @partographId ORDER BY time DESC";
-            selectCmd.Parameters.AddWithValue("@partographId", patientId);
-
             var entries = new List<T>();
-            await using var reader = await selectCmd.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
+            try
             {
-                entries.Add(MapFromReader(reader));
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = $"SELECT * FROM {TableName} WHERE partographid = @partographid ORDER BY time DESC";
+                selectCmd.Parameters.AddWithValue("@partographid", id.ToString());
+
+                await using var reader = await selectCmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    entries.Add(MapFromReader(reader));
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
             }
 
             return entries;
         }
 
-        public virtual async Task<T?> GetLatestByPatientAsync(Guid? patientId)
+        public virtual async Task<T?> GetLatestByPatientAsync(Guid? id)
         {
             await Init();
-            await using var connection = new SqliteConnection(Constants.DatabasePath);
-            await connection.OpenAsync();
-
-            var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = $"SELECT * FROM {TableName} WHERE partographId = @partographId ORDER BY time DESC LIMIT 1";
-            selectCmd.Parameters.AddWithValue("@partographId", patientId.ToString());
-
-            await using var reader = await selectCmd.ExecuteReaderAsync();
-
-            if (await reader.ReadAsync())
+            try
             {
-                return MapFromReader(reader);
-            }
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
 
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = $"SELECT * FROM {TableName} WHERE partographid = @partographid ORDER BY time DESC LIMIT 1";
+                selectCmd.Parameters.AddWithValue("@partographid", id.ToString());
+
+                await using var reader = await selectCmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    return MapFromReader(reader);
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
             return null;
         }
 
@@ -92,8 +106,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 saveCmd.CommandText = GetInsertSql();
                 AddInsertParameters(saveCmd, item);
-                var result = await saveCmd.ExecuteScalarAsync();
-                item.ID = Guid.Parse(Convert.ToString(result));
+                await saveCmd.ExecuteScalarAsync();
+                //item.ID = Guid.Parse(Convert.ToString(result));
             }
             else
             {

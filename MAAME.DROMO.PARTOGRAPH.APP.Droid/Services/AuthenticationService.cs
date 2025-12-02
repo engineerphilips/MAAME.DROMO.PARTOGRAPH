@@ -33,8 +33,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 {
                     // Store authentication state
                     Preferences.Set("IsAuthenticated", true);
-                    Preferences.Set("StaffName", staff.Name);
+                    Preferences.Set("StaffName", staff.FacilityName);
                     Preferences.Set("StaffRole", staff.Role);
+                    Preferences.Set("StaffId", staff.ID.ToString());
                     Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
                     Constants.Staff = staff;
                     return true;
@@ -45,12 +46,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     Preferences.Set("IsAuthenticated", true);
                     Preferences.Set("StaffName", "Administrator");
                     Preferences.Set("StaffRole", "Super-Admin");
+                    Preferences.Set("StaffId", "2bef74f2-a5cd-4f66-99fe-e36a08b29613");
                     Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
 
                     Constants.Staff = new MODEL.Staff()
                     {
-                        ID = null,
-                        Name = "SUPER-ADMIN",
+                        ID = new Guid("2bef74f2-a5cd-4f66-99fe-e36a08b29613"),
+                        FacilityName = "SUPER-ADMIN",
                         Role = "SUPER-ADMIN",
                         StaffID = "SUPER",
                         Email = "super@emperorsoftware.co", 
@@ -67,6 +69,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     Preferences.Set("StaffName", "");
                     Preferences.Set("StaffRole", "");
                     Preferences.Set("LastLogin", "");
+                    Preferences.Set("StaffId", "");
                     Constants.Staff = null;
 
                     return false;

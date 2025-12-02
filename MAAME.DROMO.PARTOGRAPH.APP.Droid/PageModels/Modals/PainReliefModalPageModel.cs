@@ -175,7 +175,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Time = RecordingTime,
                     PainRelief = PainReliefIndex == 0 ? 'N' : PainReliefIndex == 1 ? 'Y' : PainReliefIndex == 2 ? 'D' : null,
                     Notes = Notes,
-                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
                     Handler = Constants.Staff?.ID
                     //PainRelief = PainLevel.ToString(),
                     //PainReliefMethod = PainReliefMethod,

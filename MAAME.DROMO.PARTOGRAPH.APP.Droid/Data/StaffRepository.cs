@@ -210,7 +210,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     var staff = new Staff
                     {
                         ID = Guid.Parse(reader.GetString(0)),
-                        Name = reader.GetString(1),
+                        FacilityName = reader.GetString(1),
                         StaffID = reader.GetString(2),
                         Email = reader.GetString(3),
                         Role = reader.GetString(4),

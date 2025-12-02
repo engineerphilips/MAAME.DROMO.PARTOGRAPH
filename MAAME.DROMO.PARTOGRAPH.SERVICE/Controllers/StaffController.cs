@@ -46,13 +46,13 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                 var total = await query.CountAsync();
                 var staff = await query
-                    .OrderBy(s => s.Name)
+                    .OrderBy(s => s.FacilityName)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .Select(s => new
                     {
                         s.ID,
-                        s.Name,
+                        s.FacilityName,
                         s.StaffID,
                         s.Email,
                         s.Role,
@@ -90,7 +90,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     .Select(s => new
                     {
                         s.ID,
-                        s.Name,
+                        s.FacilityName,
                         s.StaffID,
                         s.Email,
                         s.Role,
@@ -154,7 +154,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     staff = new
                     {
                         staff.ID,
-                        staff.Name,
+                        staff.FacilityName,
                         staff.StaffID,
                         staff.Email,
                         staff.Role,
@@ -224,7 +224,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 return CreatedAtAction(nameof(GetStaff), new { id = staff.ID }, new
                 {
                     staff.ID,
-                    staff.Name,
+                    staff.FacilityName,
                     staff.StaffID,
                     staff.Email,
                     staff.Role,
@@ -267,7 +267,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 }
 
                 // Update fields
-                existing.Name = staff.Name;
+                existing.FacilityName = staff.FacilityName;
                 existing.StaffID = staff.StaffID;
                 existing.Email = staff.Email;
                 existing.Role = staff.Role;
@@ -290,7 +290,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 return Ok(new
                 {
                     existing.ID,
-                    existing.Name,
+                    existing.FacilityName,
                     existing.StaffID,
                     existing.Email,
                     existing.Role,

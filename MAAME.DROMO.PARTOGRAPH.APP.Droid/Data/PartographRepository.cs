@@ -16,11 +16,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         private async Task Init()
         {
+
             if (_hasBeenInitialized)
                 return;
 
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
+            
+            //    try
+            //{
+            //    var dropTableCmd = connection.CreateCommand();
+            //    dropTableCmd.CommandText = @"
+            //    DELETE FROM Tbl_Companion;";
+            //    await dropTableCmd.ExecuteNonQueryAsync();
+            //}
+            //catch (Exception e)
+            //{
+            //    _logger.LogError(e, "Error dropping PartographEntry table");
+            //    throw;
+            //}
 
             //try
             //{
@@ -118,7 +132,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @Id ORDER BY P.Time DESC";
+                selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @Id ORDER BY P.time DESC";
 
                 selectCmd.Parameters.AddWithValue("@Id", patientId);
 
@@ -261,8 +275,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 if (isNewPartograph)
                 {
                     saveCmd.CommandText = @"
-                    INSERT INTO Tbl_Partograph (ID, patientID, time, status, gravida, parity, abortion, admissionDate, expectedDeliveryDate, laborStartTime, deliveryTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus, riskFactors, complications, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-                    VALUES (@ID, @patientID, @time, @status, @gravida, @parity, @abortion, @admissionDate, @expectedDeliveryDate, @laborStartTime, @deliveryTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus, @riskFactors, @complications, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted)";
+                    INSERT INTO Tbl_Partograph (ID, patientID, time, status, gravida, parity, abortion, admissionDate, expectedDeliveryDate, lastMenstrualDate, laborStartTime, deliveryTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus, riskFactors, complications, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
+                    VALUES (@ID, @patientID, @time, @status, @gravida, @parity, @abortion, @admissionDate, @expectedDeliveryDate, @lastMenstrualDate, @laborStartTime, @deliveryTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus, @riskFactors, @complications, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted)";
                 }
                 else
                 {
@@ -275,6 +289,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         abortion = @abortion,   
                         admissionDate = @admissionDate,
                         expectedDeliveryDate = @expectedDeliveryDate,
+                        lastMenstrualDate = @lastMenstrualDate, 
                         laborStartTime = @laborStartTime,
                         deliveryTime = @deliveryTime,
                         cervicalDilationOnAdmission = @cervicalDilationOnAdmission,
@@ -299,6 +314,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 saveCmd.Parameters.AddWithValue("@abortion", item.Abortion);
                 saveCmd.Parameters.AddWithValue("@admissionDate", item.AdmissionDate.ToString("yyyy-MM-dd HH:mm"));
                 saveCmd.Parameters.AddWithValue("@expectedDeliveryDate", item.ExpectedDeliveryDate != null ? item.ExpectedDeliveryDate?.ToString("yyyy-MM-dd") : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@lastMenstrualDate", item.LastMenstrualDate != null ? item.LastMenstrualDate?.ToString("yyyy-MM-dd") : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@laborStartTime", item.LaborStartTime != null ? item.LaborStartTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@deliveryTime", item.DeliveryTime != null ? item.DeliveryTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@cervicalDilationOnAdmission", item.CervicalDilationOnAdmission != null ? item.CervicalDilationOnAdmission : DBNull.Value);
@@ -383,8 +399,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstraualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @id";
-                selectCmd.Parameters.AddWithValue("@id", id);
+                selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.riskFactors, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @id";
+                selectCmd.Parameters.AddWithValue("@id", id.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 if (await reader.ReadAsync())
@@ -613,19 +629,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 cmd.Parameters.AddWithValue("@gravida", partograph.Gravida);
                 cmd.Parameters.AddWithValue("@parity", partograph.Parity);
                 cmd.Parameters.AddWithValue("@abortion", partograph.Abortion);
-                cmd.Parameters.AddWithValue("@admissionDate", partograph.AdmissionDate.ToString("yyyy-MM-dd HH:mm:ss"));
+                cmd.Parameters.AddWithValue("@admissionDate", partograph.AdmissionDate.ToString("yyyy-MM-dd HH:mm"));
 
-                if (partograph.ExpectedDeliveryDate != null)
-                    cmd.Parameters.AddWithValue("@expectedDeliveryDate", partograph.ExpectedDeliveryDate?.ToString("yyyy-MM-dd") ?? "");
+                cmd.Parameters.AddWithValue("@expectedDeliveryDate", partograph.ExpectedDeliveryDate != null ? partograph.ExpectedDeliveryDate?.ToString("yyyy-MM-dd") : DBNull.Value);
 
-                if (partograph.LastMenstrualDate != null)
-                    cmd.Parameters.AddWithValue("@lastMenstrualDate", partograph.LastMenstrualDate?.ToString("yyyy-MM-dd") ?? "");
+                cmd.Parameters.AddWithValue("@lastMenstrualDate", partograph.LastMenstrualDate != null ? partograph.LastMenstrualDate?.ToString("yyyy-MM-dd") : DBNull.Value);
 
-                if (partograph.LaborStartTime != null)
-                    cmd.Parameters.AddWithValue("@laborStartTime", partograph.LaborStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "");
+                cmd.Parameters.AddWithValue("@laborStartTime", partograph.LaborStartTime != null ? partograph.LaborStartTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
 
-                if (partograph.DeliveryTime != null)
-                    cmd.Parameters.AddWithValue("@deliveryTime", partograph.DeliveryTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "");
+                cmd.Parameters.AddWithValue("@deliveryTime", partograph.DeliveryTime != null ? partograph.DeliveryTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
 
                 cmd.Parameters.AddWithValue("@cervicalDilationOnAdmission", partograph.CervicalDilationOnAdmission ?? 0);
                 cmd.Parameters.AddWithValue("@membraneStatus", partograph.MembraneStatus ?? "");

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public partial class CompanionModalPageModel : ObservableObject, IQueryAttributable
+    public partial class CompanionModalPageModel : ObservableObject
     {
-        private Patient? _patient;
+        public Partograph? _patient;
         private readonly CompanionRepository _companionRepository;
         private readonly ModalErrorHandler _errorHandler;
 
@@ -19,13 +19,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private string _patientName = string.Empty;
 
         [ObservableProperty]
-        private DateTime _recordingTime = DateTime.Now;
-
-        //[ObservableProperty]
-        //private int _painLevel = 0;
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
-        private int? _companionAvailableIndex = null;
+        private int _companionIndex = -1;
 
         //[ObservableProperty]
         //private bool? _companionNotAvailable = null;
@@ -57,17 +56,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordedBy = Preferences.Get("StaffName", "Staff");
         }
 
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
-        {
-            if (query.ContainsKey("patientId"))
-            {
-                Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
-                LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
-            }
-        }
+        //public void ApplyQueryAttributes(IDictionary<string, object> query)
+        //{
+        //    if (query.ContainsKey("patientId"))
+        //    {
+        //        Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
+        //        LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
+        //    }
+        //}
 
-        private async Task LoadPatient(Guid? patientId)
+        public async Task LoadPatient(Guid? patientId)
         {
+
             try
             {
                 // This would typically load from PatientRepository
@@ -144,7 +144,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 return;
             }
 
-            if (CompanionAvailableIndex is null or 0)
+            if (CompanionIndex < 0)
             {
                 _errorHandler.HandleError(new Exception("Companion status is not selected."));
                 return;
@@ -157,8 +157,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var entry = new CompanionEntry
                 {
                     PartographID = _patient.ID,
-                    Time = RecordingTime,
-                    Companion = CompanionAvailableIndex == 0 ? 'N' : CompanionAvailableIndex == 1 ? 'Y' : CompanionAvailableIndex == 2 ? 'D' : null,
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
+                    Companion = CompanionIndex == 0 ? "N" : CompanionIndex == 1 ? "Y" : CompanionIndex == 2 ? "D" : null,
                     //PainReliefMethod = PainReliefMethod,
                     //AdministeredTime = ShowMedicationDetails ? DateTime.Today.Add(AdministrationTime) : null,
                     //Dose = Dose,
@@ -166,14 +166,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     //SideEffects = SideEffects,
                     //SideEffectsDescription = SideEffectsDescription,
                     Notes = Notes,
-                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 
-                await _companionRepository.SaveItemAsync(entry);
-
-                await Shell.Current.GoToAsync("..");
-                await AppShell.DisplayToastAsync("Companion assessment saved successfully");
+                if (await _companionRepository.SaveItemAsync(entry) != null)
+                {
+                    await Shell.Current.GoToAsync("..");
+                    await AppShell.DisplayToastAsync("Companion assessment saved successfully");
+                }
+                else
+                    await AppShell.DisplayToastAsync("Companion assessment failed to save");
             }
             catch (Exception e)
             {

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.PendingPatientsView"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL" 
              xmlns:fonts="clr-namespace:Fonts">
 
     <Grid RowDefinitions="Auto,*" Padding="20">
@@ -48,8 +48,8 @@
                                 <SwipeItems>
                                     <SwipeItem Text="Start Labour"
                                                BackgroundColor="#4CAF50"
-                                               Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.StartActiveLaborCommand}"
-                                               CommandParameter="{Binding .}" />
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, x:DataType={x:Null}, Path=BindingContext.StartActiveLaborCommand}"
+                                            CommandParameter="{Binding .}" />
                                 </SwipeItems>
                             </SwipeView.RightItems>
 
@@ -83,12 +83,15 @@
                                         <Label Text="{Binding Name}" 
                                                FontAttributes="Bold" 
                                                FontSize="16" />
+                                        <!--<Label Text="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, x:DataType={x:Null}, Path=BindingContext.StartActiveLaborCommand}" 
+       FontAttributes="Bold" 
+       FontSize="16" />-->
                                         <Label Text="{Binding HospitalNumber}"
                                                FontSize="12"
                                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
                                         <Label Text="{Binding DisplayInfo}"
                                                FontSize="12" />
-                                        <Label Text="{Binding AdmissionDate, StringFormat='Admitted: {0:dd-MM-dd HH:mm}'}"
+                                        <Label Text="{Binding AdmissionDate, StringFormat='Admitted: {0:dd-MM-yyyy HH:mm}'}"
                                                FontSize="12"
                                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
                                     </VerticalStackLayout>
@@ -97,7 +100,7 @@
                                     <Button Grid.Column="2"
                                             Text="&#xe784;"
                                             FontFamily="MaterialAssets"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPatientCommand}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, x:DataType={x:Null}, Path=BindingContext.StartActiveLaborCommand}"
                                             CommandParameter="{Binding .}"
                                             BackgroundColor="Transparent"
                                             TextColor="#2196F3"

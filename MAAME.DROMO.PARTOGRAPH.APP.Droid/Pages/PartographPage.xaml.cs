@@ -35,9 +35,16 @@ public partial class PartographPage : ContentPage
         //};
     }
 
-    private void CompanionButton_Clicked(object sender, EventArgs e)
+    private async void CompanionButton_Clicked(object sender, EventArgs e)
     {
         sfPopupCompanion.IsOpen = true;
+        if (BindingContext is PartographPageModel pageModel)
+            if (sfPopupCompanion.BindingContext is CompanionModalPageModel companionPageModel)
+                if (pageModel._patient?.ID != null)
+                {
+                    companionPageModel._patient = pageModel._patient;
+                    await companionPageModel.LoadPatient(pageModel._patient.ID);
+                }
     }
 
     private void PainReliefButton_Clicked(object sender, EventArgs e)

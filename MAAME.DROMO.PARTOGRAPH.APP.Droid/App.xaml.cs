@@ -21,9 +21,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 
                 Constants.Staff = new MODEL.Staff()
                 {
-                    Name = Preferences.Get("StaffName", "Name"),
+                    FacilityName = Preferences.Get("StaffName", "Name"),
                     Role = Preferences.Get("StaffRole", "Role"),
-                    StaffID = string.Empty,
+                    StaffID = Preferences.Get("StaffId", "Id"),
                     Email = "",
                     IsActive = true,
                     Department = "",
@@ -45,6 +45,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             base.OnStart();
 
             //Preferences.Remove("DatabaseInitialized");
+            //Preferences.Remove("IsAuthenticated");
+            //Preferences.Remove("StaffName");
+            //Preferences.Remove("StaffRole");
+            //Preferences.Remove("LastLogin");
+            //Preferences.Remove("StaffId");
 
             // Initialize database if needed
             await InitializeDatabase();

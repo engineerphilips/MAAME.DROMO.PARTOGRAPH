@@ -12,10 +12,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class PartographPageModel : ObservableObject, IQueryAttributable
     {
-        private Partograph? _patient;
+        public Partograph? _patient;
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
+        private readonly CompanionRepository _companionRepository;
 
         [ObservableProperty]
         private ObservableCollection<EnhancedTimeSlotViewModel> _timeSlots = new ();
@@ -64,10 +65,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public PartographPageModel(PatientRepository patientRepository,
             PartographRepository partographRepository,
+            CompanionRepository companionRepository,    
             ModalErrorHandler errorHandler)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
+            _companionRepository = companionRepository; 
             _errorHandler = errorHandler;
             Chartinghours = new ObservableCollection<TimeSlots>();
             TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
@@ -170,6 +173,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     LaborDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
                 }
 
+                var companions = await _companionRepository.ListByPatientAsync(patientId);
                 // Load partograph entries
                 var entries = await _partographRepository.ListByPatientAsync(patientId);
                 PartographEntries = new ObservableCollection<Partograph>(entries.OrderBy(e => e.Time));

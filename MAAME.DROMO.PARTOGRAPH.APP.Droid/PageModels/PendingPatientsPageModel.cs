@@ -111,9 +111,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 // Show confirmation dialog
                 var confirm = await Shell.Current.DisplayAlert(
-                    "Start Active Labor",
-                    $"Are you sure you want to start active labor for {partograph.Name}?",
-                    "Yes, Start Labor",
+                    "Start Active Labour",
+                    $"Are you sure you want to start active labour for {partograph.Name}?",
+                    "Yes, Start Labour",
                     "Cancel");
 
                 if (!confirm)
@@ -127,7 +127,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 await _patientRepository.SaveItemAsync(partograph);
 
                 // Show success message
-                await AppShell.DisplayToastAsync($"Labor started for {partograph.Name}");
+                await AppShell.DisplayToastAsync($"Labour started for {partograph.Name}");
 
                 // Reload data to refresh the list
                 await LoadData();
@@ -136,7 +136,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 // Handle specific case where patient already has active partograph
                 await Shell.Current.DisplayAlert(
-                    "Cannot Start Labor",
+                    "Cannot Start Labour",
                     ex.Message,
                     "OK");
             }
