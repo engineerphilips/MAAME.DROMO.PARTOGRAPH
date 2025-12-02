@@ -15,6 +15,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private readonly CompanionRepository _companionRepository;
         private readonly ModalErrorHandler _errorHandler;
 
+        public Action? ClosePopup { get; set; }
+
         [ObservableProperty]
         private string _patientName = string.Empty;
 
@@ -26,12 +28,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private int _companionIndex = -1;
 
-        //[ObservableProperty]
-        //private bool? _companionNotAvailable = null;
-
-        //[ObservableProperty]
-        //private TimeSpan _administrationTime = DateTime.Now.TimeOfDay;
-
         [ObservableProperty]
         private string _notes = string.Empty;
 
@@ -40,9 +36,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         [ObservableProperty]
         private string _companionDisplay = string.Empty;
-        
-        //[ObservableProperty]
-        //private bool _showMedicationDetails;
 
         [ObservableProperty]
         private bool _isBusy;
@@ -159,12 +152,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
                     Companion = CompanionIndex == 0 ? "N" : CompanionIndex == 1 ? "Y" : CompanionIndex == 2 ? "D" : null,
-                    //PainReliefMethod = PainReliefMethod,
-                    //AdministeredTime = ShowMedicationDetails ? DateTime.Today.Add(AdministrationTime) : null,
-                    //Dose = Dose,
-                    //Effectiveness = GetSelectedEffectiveness(),
-                    //SideEffects = SideEffects,
-                    //SideEffectsDescription = SideEffectsDescription,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
                     Handler = Constants.Staff?.ID
@@ -172,11 +159,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
                 if (await _companionRepository.SaveItemAsync(entry) != null)
                 {
-                    await Shell.Current.GoToAsync("..");
                     await AppShell.DisplayToastAsync("Companion assessment saved successfully");
+
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
                 }
                 else
+                {
                     await AppShell.DisplayToastAsync("Companion assessment failed to save");
+                }
             }
             catch (Exception e)
             {
@@ -189,9 +183,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         }
 
         [RelayCommand]
-        private async Task Cancel()
+        private void Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
+        }
+
+        private void ResetFields()
+        {
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            CompanionIndex = -1;
+            Notes = string.Empty;
         }
 
         //private string GetSelectedEffectiveness()
