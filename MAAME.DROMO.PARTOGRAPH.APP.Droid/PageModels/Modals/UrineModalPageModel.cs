@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -7,166 +9,104 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class UrineModalPageModel : INotifyPropertyChanged
+    public partial class UrineModalPageModel : ObservableObject
     {
-        private readonly UrineRepository _repository;
-        private readonly ILogger<UrineModalPageModel> _logger;
-        private Urine _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly UrineRepository _urineRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public UrineModalPageModel(UrineRepository repository, ILogger<UrineModalPageModel> logger)
+        public UrineModalPageModel(UrineRepository repository, ModalErrorHandler errorHandler)
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            _urineRepository = repository;
+            _errorHandler = errorHandler;
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
-        {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _patientName = string.Empty;
 
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private DateTime _recordingTime = DateTime.Now;
 
-        public ObservableCollection<string> ProteinOptions { get; } = new ObservableCollection<string>
-        {
-            "Nil", "Trace", "+", "++", "+++"
-        };
+        [ObservableProperty]
+        private string _protein;
 
-        public ObservableCollection<string> AcetoneOptions { get; } = new ObservableCollection<string>
-        {
-            "Nil", "Trace", "+", "++", "+++"
-        };
+        [ObservableProperty]
+        private string _acetone;
 
-        private string _selectedProtein = "Nil";
-        public string SelectedProtein
-        {
-            get => _selectedProtein;
-            set
-            {
-                _selectedProtein = value;
-                OnPropertyChanged();
-                UpdateUrineStatus();
-            }
-        }
+        [ObservableProperty]
+        private string _notes = string.Empty;
 
-        private string _selectedAcetone = "Nil";
-        public string SelectedAcetone
-        {
-            get => _selectedAcetone;
-            set
-            {
-                _selectedAcetone = value;
-                OnPropertyChanged();
-                UpdateUrineStatus();
-            }
-        }
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
 
-        private Color _urineColor = Colors.Green;
-        public Color UrineColor
-        {
-            get => _urineColor;
-            set { _urineColor = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private bool _isBusy;
 
-        private string _urineStatus = "Normal";
-        public string UrineStatus
-        {
-            get => _urineStatus;
-            set { _urineStatus = value; OnPropertyChanged(); }
-        }
-
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
-
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
-
-        private void InitializeData()
-        {
-            UpdateUrineStatus();
-        }
-
-        private void UpdateUrineStatus()
-        {
-            bool hasProtein = SelectedProtein != "Nil";
-            bool hasAcetone = SelectedAcetone != "Nil";
-
-            if (hasProtein && (SelectedProtein == "+++" || SelectedProtein == "++"))
-            {
-                UrineColor = Colors.Red;
-                UrineStatus = "⚠️ Significant proteinuria - Check for pre-eclampsia";
-            }
-            else if (hasProtein || hasAcetone)
-            {
-                UrineColor = Colors.Orange;
-                UrineStatus = "Abnormal findings - Monitor closely";
-            }
-            else
-            {
-                UrineColor = Colors.Green;
-                UrineStatus = "Normal urine";
-            }
-        }
-
-        private async Task SaveEntry()
+        internal async Task LoadPatient(Guid? patientId)
         {
             try
             {
-                var entry = new Urine
-                {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    Protein = SelectedProtein,
-                    Acetone = SelectedAcetone,
-                    Notes = Notes ?? string.Empty
-                };
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
 
-                if (_currentEntry != null)
+                // Load last pain relief entry to prefill some values
+                var lastEntry = await _urineRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
                 {
-                    entry.ID = _currentEntry.ID;
+                    Acetone = lastEntry.Acetone;
+                    Protein = lastEntry.Protein;
                 }
-
-                await _repository.SaveItemAsync(entry);
-                await Shell.Current.GoToAsync("..");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving urine entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
             }
         }
 
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
+                var entry = new Urine
+                {
+                    PartographID = _patient.ID,
+                    Time = RecordingTime,
+                    Protein = Protein,
+                    Acetone = Acetone,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
+                };
+
+                await _urineRepository.SaveItemAsync(entry);
+
+                await Shell.Current.GoToAsync("..");
+                await AppShell.DisplayToastAsync("Urine assessment saved successfully");
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
         private async Task Cancel()
         {
             await Shell.Current.GoToAsync("..");
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

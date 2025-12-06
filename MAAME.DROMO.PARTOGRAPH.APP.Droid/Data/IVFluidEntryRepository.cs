@@ -6,10 +6,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
     public class IVFluidEntryRepository : BasePartographRepository<IVFluidEntry>
     {
-        protected override string TableName => "Tbl_IVFluidEntry";
+        protected override string TableName => "Tbl_IVFluid";
 
         protected override string CreateTableSql => @"
-            CREATE TABLE IF NOT EXISTS Tbl_IVFluidEntry (
+            CREATE TABLE IF NOT EXISTS Tbl_IVFluid (
                 ID TEXT PRIMARY KEY,
                 partographid TEXT,
                 time TEXT NOT NULL,
@@ -18,11 +18,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 fluidtype TEXT NOT NULL,
                 volumeinfused INTEGER NOT NULL,
                 rate TEXT NOT NULL,
-                starttime TEXT,
-                additives TEXT NOT NULL,
-                ivsite TEXT NOT NULL,
-                sitehealthy INTEGER NOT NULL,
-                sitecondition TEXT NOT NULL,
                 createdtime INTEGER NOT NULL,
                 updatedtime INTEGER NOT NULL,
                 deletedtime INTEGER,
@@ -36,24 +31,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
-            CREATE INDEX idx_ivfluid_sync ON Tbl_IVFluidEntry(updatedtime, syncstatus);
-            CREATE INDEX idx_ivfluid_server_version ON Tbl_IVFluidEntry(serverversion);
+            CREATE INDEX idx_ivfluid_sync ON Tbl_IVFluid(updatedtime, syncstatus);
+            CREATE INDEX idx_ivfluid_server_version ON Tbl_IVFluid(serverversion);
 
             CREATE TRIGGER trg_ivfluid_insert
-            AFTER INSERT ON Tbl_IVFluidEntry
+            AFTER INSERT ON Tbl_IVFluid
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
             BEGIN
-                UPDATE Tbl_IVFluidEntry
+                UPDATE Tbl_IVFluid
                 SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
                     updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
                 WHERE ID = NEW.ID;
             END;
 
             CREATE TRIGGER trg_ivfluid_update
-            AFTER UPDATE ON Tbl_IVFluidEntry
+            AFTER UPDATE ON Tbl_IVFluid
             WHEN NEW.updatedtime = OLD.updatedtime
             BEGIN
-                UPDATE Tbl_IVFluidEntry
+                UPDATE Tbl_IVFluid
                 SET updatedtime = (strftime('%s', 'now') * 1000),
                     version = OLD.version + 1,
                     syncstatus = 0
@@ -74,44 +69,34 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Notes = reader.GetString(4),
                 FluidType = reader.GetString(5),
                 VolumeInfused = reader.GetInt32(6),
-                Rate = reader.GetString(7),
-                StartTime = reader.IsDBNull(8) ? null : reader.GetDateTime(8),
-                Additives = reader.GetString(9),
-                IVSite = reader.GetString(10),
-                SiteHealthy = reader.GetBoolean(11),
-                SiteCondition = reader.GetString(12),
-                CreatedTime = reader.GetInt64(13),
-                UpdatedTime = reader.GetInt64(14),
-                DeletedTime = reader.IsDBNull(15) ? null : reader.GetInt64(15),
-                DeviceId = reader.GetString(16),
-                OriginDeviceId = reader.GetString(17),
-                SyncStatus = reader.GetInt32(18),
-                Version = reader.GetInt32(19),
-                ServerVersion = reader.IsDBNull(20) ? 0 : reader.GetInt32(20),
-                Deleted = reader.IsDBNull(21) ? 0 : reader.GetInt32(21),
-                ConflictData = reader.GetString(22),
-                DataHash = reader.GetString(23)
+                Rate = reader.GetString(7), 
+                CreatedTime = reader.GetInt64(8),
+                UpdatedTime = reader.GetInt64(9),
+                DeletedTime = reader.IsDBNull(10) ? null : reader.GetInt64(10),
+                DeviceId = reader.GetString(11),
+                OriginDeviceId = reader.GetString(12),
+                SyncStatus = reader.GetInt32(13),
+                Version = reader.GetInt32(14),
+                ServerVersion = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
+                Deleted = reader.IsDBNull(16) ? 0 : reader.GetInt32(16),
+                ConflictData = reader.GetString(17),
+                DataHash = reader.GetString(18)
             };
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_IVFluidEntry (ID, partographID, time, handler, notes, fluidtype, volumeinfused, rate, starttime, additives, ivsite, sitehealthy, sitecondition, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-        VALUES (@id, @partographId, @time, @handler, @notes, @fluidtype, @volumeinfused, @rate, @starttime, @additives, @ivsite, @sitehealthy, @sitecondition, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
+        INSERT INTO Tbl_IVFluid (ID, partographID, time, handler, notes, fluidtype, volumeinfused, rate, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
+        VALUES (@id, @partographId, @time, @handler, @notes, @fluidtype, @volumeinfused, @rate,  @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
 
         protected override string GetUpdateSql() => @"
-        UPDATE Tbl_IVFluidEntry
+        UPDATE Tbl_IVFluid
         SET partographID = @partographId,
             time = @time,
             handler = @handler,
             notes = @notes,
             fluidtype = @fluidtype,
             volumeinfused = @volumeinfused,
-            rate = @rate,
-            starttime = @starttime,
-            additives = @additives,
-            ivsite = @ivsite,
-            sitehealthy = @sitehealthy,
-            sitecondition = @sitecondition,
+            rate = @rate, 
             updatedtime = @updatedtime,
             deviceid = @deviceid,
             syncstatus = @syncstatus,
@@ -135,17 +120,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@fluidtype", item.FluidType ?? "");
             cmd.Parameters.AddWithValue("@volumeinfused", item.VolumeInfused);
             cmd.Parameters.AddWithValue("@rate", item.Rate ?? "");
-            cmd.Parameters.AddWithValue("@starttime", item.StartTime?.ToString("O") ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@additives", item.Additives ?? "");
-            cmd.Parameters.AddWithValue("@ivsite", item.IVSite ?? "");
-            cmd.Parameters.AddWithValue("@sitehealthy", item.SiteHealthy ? 1 : 0);
-            cmd.Parameters.AddWithValue("@sitecondition", item.SiteCondition ?? "");
+            //cmd.Parameters.AddWithValue("@starttime", item.StartTime?.ToString("O") ?? (object)DBNull.Value);
+            //cmd.Parameters.AddWithValue("@additives", item.Additives ?? "");
+            //cmd.Parameters.AddWithValue("@ivsite", item.IVSite ?? "");
+            //cmd.Parameters.AddWithValue("@sitehealthy", item.SiteHealthy ? 1 : 0);
+            //cmd.Parameters.AddWithValue("@sitecondition", item.SiteCondition ?? "");
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
@@ -168,17 +153,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@fluidtype", item.FluidType ?? "");
             cmd.Parameters.AddWithValue("@volumeinfused", item.VolumeInfused);
             cmd.Parameters.AddWithValue("@rate", item.Rate ?? "");
-            cmd.Parameters.AddWithValue("@starttime", item.StartTime?.ToString("O") ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@additives", item.Additives ?? "");
-            cmd.Parameters.AddWithValue("@ivsite", item.IVSite ?? "");
-            cmd.Parameters.AddWithValue("@sitehealthy", item.SiteHealthy ? 1 : 0);
-            cmd.Parameters.AddWithValue("@sitecondition", item.SiteCondition ?? "");
+            //cmd.Parameters.AddWithValue("@starttime", item.StartTime?.ToString("O") ?? (object)DBNull.Value);
+            //cmd.Parameters.AddWithValue("@additives", item.Additives ?? "");
+            //cmd.Parameters.AddWithValue("@ivsite", item.IVSite ?? "");
+            //cmd.Parameters.AddWithValue("@sitehealthy", item.SiteHealthy ? 1 : 0);
+            //cmd.Parameters.AddWithValue("@sitecondition", item.SiteCondition ?? "");
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);

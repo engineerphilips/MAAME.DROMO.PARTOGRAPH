@@ -6,10 +6,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
     public class MedicationEntryRepository : BasePartographRepository<MedicationEntry>
     {
-        protected override string TableName => "Tbl_MedicationEntry";
+        protected override string TableName => "Tbl_Medication";
 
         protected override string CreateTableSql => @"
-            CREATE TABLE IF NOT EXISTS Tbl_MedicationEntry (
+            CREATE TABLE IF NOT EXISTS Tbl_Medication (
                 ID TEXT PRIMARY KEY,
                 partographid TEXT,
                 time TEXT NOT NULL,
@@ -18,12 +18,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 medicationname TEXT NOT NULL,
                 dose TEXT NOT NULL,
                 route TEXT NOT NULL,
-                administrationtime TEXT NOT NULL,
-                indication TEXT NOT NULL,
-                prescribedby TEXT NOT NULL,
-                response TEXT NOT NULL,
-                adversereaction INTEGER NOT NULL,
-                adversereactiondetails TEXT NOT NULL,
                 createdtime INTEGER NOT NULL,
                 updatedtime INTEGER NOT NULL,
                 deletedtime INTEGER,
@@ -76,45 +70,33 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 MedicationName = reader.GetString(5),
                 Dose = reader.GetString(6),
                 Route = reader.GetString(7),
-                AdministrationTime = reader.GetDateTime(8),
-                Indication = reader.GetString(9),
-                PrescribedBy = reader.GetString(10),
-                Response = reader.GetString(11),
-                AdverseReaction = reader.GetBoolean(12),
-                AdverseReactionDetails = reader.GetString(13),
-                CreatedTime = reader.GetInt64(14),
-                UpdatedTime = reader.GetInt64(15),
-                DeletedTime = reader.IsDBNull(16) ? null : reader.GetInt64(16),
-                DeviceId = reader.GetString(17),
-                OriginDeviceId = reader.GetString(18),
-                SyncStatus = reader.GetInt32(19),
-                Version = reader.GetInt32(20),
-                ServerVersion = reader.IsDBNull(21) ? 0 : reader.GetInt32(21),
-                Deleted = reader.IsDBNull(22) ? 0 : reader.GetInt32(22),
-                ConflictData = reader.GetString(23),
-                DataHash = reader.GetString(24)
+                CreatedTime = reader.GetInt64(8),
+                UpdatedTime = reader.GetInt64(9),
+                DeletedTime = reader.IsDBNull(10) ? null : reader.GetInt64(10),
+                DeviceId = reader.GetString(11),
+                OriginDeviceId = reader.GetString(12),
+                SyncStatus = reader.GetInt32(13),
+                Version = reader.GetInt32(14),
+                ServerVersion = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
+                Deleted = reader.IsDBNull(16) ? 0 : reader.GetInt32(16),
+                ConflictData = reader.GetString(17),
+                DataHash = reader.GetString(18)
             };
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_MedicationEntry (ID, partographID, time, handler, notes, medicationname, dose, route, administrationtime, indication, prescribedby, response, adversereaction, adversereactiondetails, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-        VALUES (@id, @partographId, @time, @handler, @notes, @medicationname, @dose, @route, @administrationtime, @indication, @prescribedby, @response, @adversereaction, @adversereactiondetails, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
+        INSERT INTO Tbl_Medication (ID, partographID, time, handler, notes, medicationname, dose, route, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
+        VALUES (@id, @partographId, @time, @handler, @notes, @medicationname, @dose, @route, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
 
         protected override string GetUpdateSql() => @"
-        UPDATE Tbl_MedicationEntry
+        UPDATE Tbl_Medication
         SET partographID = @partographId,
             time = @time,
             handler = @handler,
             notes = @notes,
             medicationname = @medicationname,
             dose = @dose,
-            route = @route,
-            administrationtime = @administrationtime,
-            indication = @indication,
-            prescribedby = @prescribedby,
-            response = @response,
-            adversereaction = @adversereaction,
-            adversereactiondetails = @adversereactiondetails,
+            route = @route,            
             updatedtime = @updatedtime,
             deviceid = @deviceid,
             syncstatus = @syncstatus,
@@ -138,18 +120,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@medicationname", item.MedicationName ?? "");
             cmd.Parameters.AddWithValue("@dose", item.Dose ?? "");
             cmd.Parameters.AddWithValue("@route", item.Route ?? "");
-            cmd.Parameters.AddWithValue("@administrationtime", item.AdministrationTime.ToString("O"));
-            cmd.Parameters.AddWithValue("@indication", item.Indication ?? "");
-            cmd.Parameters.AddWithValue("@prescribedby", item.PrescribedBy ?? "");
-            cmd.Parameters.AddWithValue("@response", item.Response ?? "");
-            cmd.Parameters.AddWithValue("@adversereaction", item.AdverseReaction ? 1 : 0);
-            cmd.Parameters.AddWithValue("@adversereactiondetails", item.AdverseReactionDetails ?? "");
+            //cmd.Parameters.AddWithValue("@administrationtime", item.AdministrationTime.ToString("O"));
+            //cmd.Parameters.AddWithValue("@indication", item.Indication ?? "");
+            //cmd.Parameters.AddWithValue("@prescribedby", item.PrescribedBy ?? "");
+            //cmd.Parameters.AddWithValue("@response", item.Response ?? "");
+            //cmd.Parameters.AddWithValue("@adversereaction", item.AdverseReaction ? 1 : 0);
+            //cmd.Parameters.AddWithValue("@adversereactiondetails", item.AdverseReactionDetails ?? "");
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
@@ -172,18 +154,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@medicationname", item.MedicationName ?? "");
             cmd.Parameters.AddWithValue("@dose", item.Dose ?? "");
             cmd.Parameters.AddWithValue("@route", item.Route ?? "");
-            cmd.Parameters.AddWithValue("@administrationtime", item.AdministrationTime.ToString("O"));
-            cmd.Parameters.AddWithValue("@indication", item.Indication ?? "");
-            cmd.Parameters.AddWithValue("@prescribedby", item.PrescribedBy ?? "");
-            cmd.Parameters.AddWithValue("@response", item.Response ?? "");
-            cmd.Parameters.AddWithValue("@adversereaction", item.AdverseReaction ? 1 : 0);
-            cmd.Parameters.AddWithValue("@adversereactiondetails", item.AdverseReactionDetails ?? "");
+            //cmd.Parameters.AddWithValue("@administrationtime", item.AdministrationTime.ToString("O"));
+            //cmd.Parameters.AddWithValue("@indication", item.Indication ?? "");
+            //cmd.Parameters.AddWithValue("@prescribedby", item.PrescribedBy ?? "");
+            //cmd.Parameters.AddWithValue("@response", item.Response ?? "");
+            //cmd.Parameters.AddWithValue("@adversereaction", item.AdverseReaction ? 1 : 0);
+            //cmd.Parameters.AddWithValue("@adversereactiondetails", item.AdverseReactionDetails ?? "");
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);

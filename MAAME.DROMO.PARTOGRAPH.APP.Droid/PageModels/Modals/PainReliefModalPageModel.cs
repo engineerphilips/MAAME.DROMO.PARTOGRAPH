@@ -11,7 +11,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
     public partial class PainReliefModalPageModel : ObservableObject, IQueryAttributable
     {
-        private Patient? _patient;
+        public Partograph? _patient;
         private readonly PainReliefRepository _painReliefRepository;
         private readonly ModalErrorHandler _errorHandler;
 
@@ -87,7 +87,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private async Task LoadPatient(Guid? patientId)
+        public async Task LoadPatient(Guid? patientId)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Time = RecordingTime,
                     PainRelief = PainReliefIndex == 0 ? 'N' : PainReliefIndex == 1 ? 'Y' : PainReliefIndex == 2 ? 'D' : null,
                     Notes = Notes,
-                    HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                     //PainRelief = PainLevel.ToString(),
                     //PainReliefMethod = PainReliefMethod,

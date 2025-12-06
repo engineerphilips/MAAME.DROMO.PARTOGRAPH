@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
@@ -6,55 +8,54 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class CervixDilatationModalPageModel : INotifyPropertyChanged
+    public partial class CervixDilatationModalPageModel : ObservableObject
     {
-        private readonly CervixDilatationRepository _repository;
-        private readonly ILogger<CervixDilatationModalPageModel> _logger;
-        private CervixDilatation _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly CervixDilatationRepository _cervixDilatationRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public CervixDilatationModalPageModel(CervixDilatationRepository repository, ILogger<CervixDilatationModalPageModel> logger)
+        public Action? ClosePopup { get; set; }
+
+        [ObservableProperty]
+        private string _patientName = string.Empty;
+
+        [ObservableProperty]
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
+        [ObservableProperty]
+        private int _dilatation;
+
+        [ObservableProperty]
+        private string _dilatationDisplay = string.Empty;
+
+        [ObservableProperty]
+        private string _notes = string.Empty;
+
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
+
+        [ObservableProperty]
+        private bool _isBusy;
+
+        public CervixDilatationModalPageModel(CervixDilatationRepository cervixDilatationRepository, ModalErrorHandler errorHandler)
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            _cervixDilatationRepository = cervixDilatationRepository;
+            _errorHandler = errorHandler;
+
+            // Set default recorded by from preferences
+            RecordedBy = Preferences.Get("StaffName", "Staff");
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
-        {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
-
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
-
-        private double _dilatation = 0;
-        public double Dilatation
-        {
-            get => _dilatation;
-            set
-            {
-                _dilatation = value;
-                OnPropertyChanged();
-                UpdateDilatationDisplay();
-                UpdateProgressMessage();
-            }
-        }
-
-        private string _dilatationDisplay = "0 cm";
-        public string DilatationDisplay
-        {
-            get => _dilatationDisplay;
-            set { _dilatationDisplay = value; OnPropertyChanged(); }
-        }
+        //public void ApplyQueryAttributes(IDictionary<string, object> query)
+        //{
+        //    if (query.ContainsKey("patientId"))
+        //    {
+        //        Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
+        //        LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
+        //    }
+        //}
 
         private string _stageDescription = "Labor not started";
         public string StageDescription
@@ -82,88 +83,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private double _effacement = 0;
-        public double Effacement
-        {
-            get => _effacement;
-            set
-            {
-                _effacement = value;
-                OnPropertyChanged();
-                UpdateEffacementDisplay();
-            }
-        }
-
-        private string _effacementDisplay = "0%";
-        public string EffacementDisplay
-        {
-            get => _effacementDisplay;
-            set { _effacementDisplay = value; OnPropertyChanged(); }
-        }
-
-        private bool _isFirm;
-        public bool IsFirm
-        {
-            get => _isFirm;
-            set { _isFirm = value; OnPropertyChanged(); }
-        }
-
-        private bool _isMedium = true;
-        public bool IsMedium
-        {
-            get => _isMedium;
-            set { _isMedium = value; OnPropertyChanged(); }
-        }
-
-        private bool _isSoft;
-        public bool IsSoft
-        {
-            get => _isSoft;
-            set { _isSoft = value; OnPropertyChanged(); }
-        }
-
-        private bool _isPosterior;
-        public bool IsPosterior
-        {
-            get => _isPosterior;
-            set { _isPosterior = value; OnPropertyChanged(); }
-        }
-
-        private bool _isMid = true;
-        public bool IsMid
-        {
-            get => _isMid;
-            set { _isMid = value; OnPropertyChanged(); }
-        }
-
-        private bool _isAnterior;
-        public bool IsAnterior
-        {
-            get => _isAnterior;
-            set { _isAnterior = value; OnPropertyChanged(); }
-        }
-
-        private bool _isWellApplied;
-        public bool IsWellApplied
-        {
-            get => _isWellApplied;
-            set { _isWellApplied = value; OnPropertyChanged(); }
-        }
-
-        private bool _isLooselyApplied;
-        public bool IsLooselyApplied
-        {
-            get => _isLooselyApplied;
-            set { _isLooselyApplied = value; OnPropertyChanged(); }
-        }
-
-        private bool _isNotApplied;
-        public bool IsNotApplied
-        {
-            get => _isNotApplied;
-            set { _isNotApplied = value; OnPropertyChanged(); }
-        }
-
         private Color _progressColor = Colors.Blue;
         public Color ProgressColor
         {
@@ -178,27 +97,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             set { _progressMessage = value; OnPropertyChanged(); }
         }
 
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
-
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
-
         private void InitializeData()
         {
             UpdateDilatationDisplay();
-            UpdateEffacementDisplay();
             UpdateProgressMessage();
         }
 
@@ -229,11 +130,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private void UpdateEffacementDisplay()
-        {
-            EffacementDisplay = $"{Effacement:F0}%";
-        }
-
         private void UpdateProgressMessage()
         {
             // Expected dilatation rate is 1cm/hour in active labor
@@ -259,43 +155,95 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private async Task SaveEntry()
+        public async Task LoadPatient(Guid? patientId)
         {
+
             try
             {
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
+
+                // Load last pain relief entry to prefill some values
+                var lastEntry = await _cervixDilatationRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
+                {
+                    Dilatation = lastEntry.DilatationCm;
+                }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            if (Dilatation < 0)
+            {
+                _errorHandler.HandleError(new Exception("Dilatation status is not set."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
                 var entry = new CervixDilatation
                 {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    DilatationCm = (int)Math.Round(Dilatation),
-                    Notes = Notes ?? string.Empty
+                    PartographID = _patient.ID,
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
+                    DilatationCm = Dilatation,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
                 };
 
-                if (_currentEntry != null)
+                if (await _cervixDilatationRepository.SaveItemAsync(entry) != null)
                 {
-                    entry.ID = _currentEntry.ID;
+                    await AppShell.DisplayToastAsync("Dilatation assessment saved successfully");
+
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
                 }
-
-                await _repository.SaveItemAsync(entry);
-                await Shell.Current.GoToAsync("..");
+                else
+                {
+                    await AppShell.DisplayToastAsync("Head descent assessment failed to save");
+                }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving cervix dilatation entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
-        private async Task Cancel()
+        [RelayCommand]
+        private void Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void ResetFields()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            Dilatation = -1;
+            Notes = string.Empty;
         }
     }
 }

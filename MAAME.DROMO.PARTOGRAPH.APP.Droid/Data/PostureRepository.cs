@@ -64,7 +64,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Time = DateTime.Parse(reader.GetString(2)),
                 HandlerName = reader.GetString(3),
                 Notes = reader.GetString(4),
-                Posture = reader.GetChar(5),
+                Posture = reader.GetString(5),
                 CreatedTime = reader.GetInt64(6),
                 UpdatedTime = reader.GetInt64(7),
                 DeletedTime = reader.IsDBNull(8) ? null : reader.GetInt64(8),

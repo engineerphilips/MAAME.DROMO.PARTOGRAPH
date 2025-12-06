@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -7,150 +9,102 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class FetalPositionModalPageModel : INotifyPropertyChanged
+    public partial class FetalPositionModalPageModel : ObservableObject
     {
-        private readonly FetalPositionRepository _repository;
-        private readonly ILogger<FetalPositionModalPageModel> _logger;
-        private FetalPosition _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly FetalPositionRepository _fetalPositionRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public FetalPositionModalPageModel(FetalPositionRepository repository, ILogger<FetalPositionModalPageModel> logger)
+        public FetalPositionModalPageModel(FetalPositionRepository repository, ModalErrorHandler errorHandler)
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            _fetalPositionRepository = repository;
+            _errorHandler = errorHandler;
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
-        {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _patientName = string.Empty;
 
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private DateTime _recordingTime = DateTime.Now;
 
-        public ObservableCollection<string> PositionOptions { get; } = new ObservableCollection<string>
-        {
-            "LOA", "ROA", "LOP", "ROP", "LOT", "ROT", "OA", "OP"
-        };
+        [ObservableProperty]
+        private int _positionIndex = -1;
 
-        private string _selectedPosition = "LOA";
-        public string SelectedPosition
-        {
-            get => _selectedPosition;
-            set
-            {
-                _selectedPosition = value;
-                OnPropertyChanged();
-                UpdatePositionStatus();
-            }
-        }
+        [ObservableProperty]
+        private string _positionDisplay = string.Empty;
 
-        private Color _positionColor = Colors.Green;
-        public Color PositionColor
-        {
-            get => _positionColor;
-            set { _positionColor = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _notes = string.Empty;
 
-        private string _positionStatus = "Favorable position";
-        public string PositionStatus
-        {
-            get => _positionStatus;
-            set { _positionStatus = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
 
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private bool _isBusy;
 
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
-
-        private void InitializeData()
-        {
-            UpdatePositionStatus();
-        }
-
-        private void UpdatePositionStatus()
-        {
-            if (SelectedPosition == "LOA" || SelectedPosition == "ROA" || SelectedPosition == "OA")
-            {
-                PositionColor = Colors.Green;
-                PositionStatus = "Favorable anterior position";
-            }
-            else if (SelectedPosition == "LOP" || SelectedPosition == "ROP" || SelectedPosition == "OP")
-            {
-                PositionColor = Colors.Orange;
-                PositionStatus = "Posterior position - May prolong labor";
-            }
-            else if (SelectedPosition == "LOT" || SelectedPosition == "ROT")
-            {
-                PositionColor = Colors.Blue;
-                PositionStatus = "Transverse position - Monitor rotation";
-            }
-            else
-            {
-                PositionColor = Colors.Gray;
-                PositionStatus = "Monitor fetal position";
-            }
-        }
-
-        private async Task SaveEntry()
+        internal async Task LoadPatient(Guid? patientId)
         {
             try
             {
-                var entry = new FetalPosition
-                {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    Position = SelectedPosition,
-                    Notes = Notes ?? string.Empty
-                };
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
 
-                if (_currentEntry != null)
+                // Load last pain relief entry to prefill some values
+                var lastEntry = await _fetalPositionRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
                 {
-                    entry.ID = _currentEntry.ID;
+                    PositionDisplay = lastEntry.PositionDisplay;
                 }
-
-                await _repository.SaveItemAsync(entry);
-                await Shell.Current.GoToAsync("..");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving fetal position entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
             }
         }
 
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
+                var entry = new FetalPosition
+                {
+                    PartographID = _patient.ID,
+                    Time = RecordingTime,
+                    Position = PositionIndex == 0 ? "N" : PositionIndex == 1 ? "Y" : PositionIndex == 2 ? "D" : string.Empty,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
+                };
+
+                await _fetalPositionRepository.SaveItemAsync(entry);
+
+                await Shell.Current.GoToAsync("..");
+                await AppShell.DisplayToastAsync("Posture assessment saved successfully");
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
         private async Task Cancel()
         {
             await Shell.Current.GoToAsync("..");
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

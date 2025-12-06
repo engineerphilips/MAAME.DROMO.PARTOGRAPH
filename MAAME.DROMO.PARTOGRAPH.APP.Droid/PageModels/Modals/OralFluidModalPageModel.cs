@@ -11,7 +11,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
     public partial class OralFluidModalPageModel : ObservableObject, IQueryAttributable
     {
-        private Patient? _patient;
+        public Partograph? _patient;
         private readonly OralFluidRepository _oralFluidRepository;
         private readonly ModalErrorHandler _errorHandler;
 
@@ -27,44 +27,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private DateTime _recordingTime = DateTime.Now;
 
-        //[ObservableProperty]
-        //private int _painLevel = 0;
-
-        //[ObservableProperty]
-        //private string _painReliefMethod = "None";
-
-        //[ObservableProperty]
-        //private TimeSpan _administrationTime = DateTime.Now.TimeOfDay;
-
-        //[ObservableProperty]
-        //private string _dose = string.Empty;
-
-        //[ObservableProperty]
-        //private bool _effectivenessPoor;
-
-        //[ObservableProperty]
-        //private bool _effectivenessFair;
-
-        //[ObservableProperty]
-        //private bool _effectivenessGood;
-
-        //[ObservableProperty]
-        //private bool _effectivenessExcellent;
-
-        //[ObservableProperty]
-        //private bool _sideEffects;
-
-        //[ObservableProperty]
-        //private string _sideEffectsDescription = string.Empty;
-
         [ObservableProperty]
         private string _notes = string.Empty;
 
         [ObservableProperty]
         private string _recordedBy = string.Empty;
-
-        //[ObservableProperty]
-        //private bool _showMedicationDetails;
 
         [ObservableProperty]
         private bool _isBusy;
@@ -87,7 +54,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private async Task LoadPatient(Guid? patientId)
+        public async Task LoadPatient(Guid? patientId)
         {
             try
             {
@@ -108,54 +75,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        //partial void OnPainReliefMethodChanged(string value)
-        //{
-        //    // Show medication details for pharmacological interventions
-        //    ShowMedicationDetails = value is "Paracetamol" or "Codeine" or "Pethidine injection"
-        //                                   or "Gas and air (Entonox)" or "Epidural" or "Spinal block"
-        //                                   or "Combined spinal-epidural";
-        //}
-
-        //partial void OnEffectivenessPoorChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessFair = false;
-        //        EffectivenessGood = false;
-        //        EffectivenessExcellent = false;
-        //    }
-        //}
-
-        //partial void OnEffectivenessFairChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessPoor = false;
-        //        EffectivenessGood = false;
-        //        EffectivenessExcellent = false;
-        //    }
-        //}
-
-        //partial void OnEffectivenessGoodChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessPoor = false;
-        //        EffectivenessFair = false;
-        //        EffectivenessExcellent = false;
-        //    }
-        //}
-
-        //partial void OnEffectivenessExcellentChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessPoor = false;
-        //        EffectivenessFair = false;
-        //        EffectivenessGood = false;
-        //    }
-        //}
-
         [RelayCommand]
         private async Task Save()
         {
@@ -175,7 +94,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Time = RecordingTime,
                     OralFluid = OralFluidIndex == 0 ? 'N' : OralFluidIndex == 1 ? 'Y' : OralFluidIndex == 2 ? 'D' : null,
                     Notes = Notes,
-                    HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 
@@ -199,14 +118,5 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             await Shell.Current.GoToAsync("..");
         }
-
-        //private string GetSelectedEffectiveness()
-        //{
-        //    if (EffectivenessPoor) return "Poor";
-        //    if (EffectivenessFair) return "Fair";
-        //    if (EffectivenessGood) return "Good";
-        //    if (EffectivenessExcellent) return "Excellent";
-        //    return "";
-        //}
     }
 }

@@ -11,7 +11,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
     public partial class CaputModalPageModel : ObservableObject, IQueryAttributable
     {
-        private Patient? _patient;
+        public Partograph? _patient;
         private readonly CaputRepository _caputRepository;
         private readonly ModalErrorHandler _errorHandler;
 
@@ -54,7 +54,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private async Task LoadPatient(Guid? patientId)
+        internal async Task LoadPatient(Guid? patientId)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Time = RecordingTime,
                     Degree = DegreeIndex == 0 ? "0" : DegreeIndex == 1 ? "+" : DegreeIndex == 2 ? "++" : DegreeIndex == 3 ? "+++" : null,
                     Notes = Notes,
-                    HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 

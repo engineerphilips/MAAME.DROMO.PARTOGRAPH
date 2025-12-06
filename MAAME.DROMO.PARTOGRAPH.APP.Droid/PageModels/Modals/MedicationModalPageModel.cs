@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -7,180 +9,109 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class MedicationModalPageModel : INotifyPropertyChanged
+    public partial class MedicationModalPageModel : ObservableObject
     {
-        private readonly MedicationEntryRepository _repository;
-        private readonly ILogger<MedicationModalPageModel> _logger;
-        private MedicationEntry _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly MedicationEntryRepository _medicationRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public MedicationModalPageModel(MedicationEntryRepository repository, ILogger<MedicationModalPageModel> logger)
+        public MedicationModalPageModel(MedicationEntryRepository repository, ModalErrorHandler errorHandler)
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            _medicationRepository = repository;
+            _errorHandler = errorHandler;
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
-        {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _patientName = string.Empty;
 
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private DateTime _recordingTime = DateTime.Now;
 
-        private string _medicationName = string.Empty;
-        public string MedicationName
-        {
-            get => _medicationName;
-            set { _medicationName = value; OnPropertyChanged(); }
-        }
-
+        [ObservableProperty]
         private string _dose = string.Empty;
-        public string Dose
-        {
-            get => _dose;
-            set { _dose = value; OnPropertyChanged(); }
-        }
 
-        public ObservableCollection<string> RouteOptions { get; } = new ObservableCollection<string>
-        {
-            "IV", "IM", "PO", "Sublingual", "SC", "PR", "Topical", "Inhaled"
-        };
+        [ObservableProperty]
+        private string _route = string.Empty;
 
-        private string _selectedRoute = "IV";
-        public string SelectedRoute
-        {
-            get => _selectedRoute;
-            set { _selectedRoute = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _medicationName = string.Empty;
 
-        private DateTime _administrationTime = DateTime.Now;
-        public DateTime AdministrationTime
-        {
-            get => _administrationTime;
-            set { _administrationTime = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _notes = string.Empty;
 
-        private string _indication = string.Empty;
-        public string Indication
-        {
-            get => _indication;
-            set { _indication = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
 
-        private string _prescribedBy = string.Empty;
-        public string PrescribedBy
-        {
-            get => _prescribedBy;
-            set { _prescribedBy = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private bool _isBusy;
 
-        private string _response = string.Empty;
-        public string Response
-        {
-            get => _response;
-            set { _response = value; OnPropertyChanged(); }
-        }
-
-        private bool _adverseReaction = false;
-        public bool AdverseReaction
-        {
-            get => _adverseReaction;
-            set
-            {
-                _adverseReaction = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _adverseReactionDetails = string.Empty;
-        public string AdverseReactionDetails
-        {
-            get => _adverseReactionDetails;
-            set { _adverseReactionDetails = value; OnPropertyChanged(); }
-        }
-
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
-
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
-
-        private void InitializeData()
-        {
-        }
-
-        private async Task SaveEntry()
+        internal async Task LoadPatient(Guid? patientId)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(MedicationName))
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
+
+                // Load last moulding entry to prefill some values
+                var lastEntry = await _medicationRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Validation", "Please enter medication name", "OK");
-                    return;
+                    Dose = lastEntry.Dose;
+                    MedicationName = lastEntry.MedicationName;
+                    Route = lastEntry.Route;
                 }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
 
                 var entry = new MedicationEntry
                 {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
+                    PartographID = _patient.ID,
+                    Time = RecordingTime,
                     MedicationName = MedicationName,
-                    Dose = Dose ?? string.Empty,
-                    Route = SelectedRoute,
-                    AdministrationTime = AdministrationTime,
-                    Indication = Indication ?? string.Empty,
-                    PrescribedBy = PrescribedBy ?? string.Empty,
-                    Response = Response ?? string.Empty,
-                    AdverseReaction = AdverseReaction,
-                    AdverseReactionDetails = AdverseReactionDetails ?? string.Empty,
-                    Notes = Notes ?? string.Empty
+                    Dose = Dose,
+                    Route = Route,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
                 };
 
-                if (_currentEntry != null)
-                {
-                    entry.ID = _currentEntry.ID;
-                }
+                await _medicationRepository.SaveItemAsync(entry);
 
-                await _repository.SaveItemAsync(entry);
                 await Shell.Current.GoToAsync("..");
+                await AppShell.DisplayToastAsync("Medication assessment saved successfully");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving medication entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
+        [RelayCommand]
         private async Task Cancel()
         {
             await Shell.Current.GoToAsync("..");
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
@@ -6,193 +8,141 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class HeadDescentModalPageModel : INotifyPropertyChanged
+    public partial class HeadDescentModalPageModel : ObservableObject
     {
-        private readonly HeadDescentRepository _repository;
-        private readonly ILogger<HeadDescentModalPageModel> _logger;
-        private HeadDescent _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly HeadDescentRepository _headDescentRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public HeadDescentModalPageModel(HeadDescentRepository repository, ILogger<HeadDescentModalPageModel> logger)
+        public Action? ClosePopup { get; set; }
+
+        [ObservableProperty]
+        private string _patientName = string.Empty;
+
+        [ObservableProperty]
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
+        [ObservableProperty]
+        private int _station = -1;
+
+        [ObservableProperty]
+        private string _notes = string.Empty;
+
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
+
+        [ObservableProperty]
+        private bool _isBusy;
+
+        public HeadDescentModalPageModel(HeadDescentRepository headDescentRepository, ModalErrorHandler errorHandler)
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            _headDescentRepository = headDescentRepository;
+            _errorHandler = errorHandler;
+
+            // Set default recorded by from preferences
+            RecordedBy = Preferences.Get("StaffName", "Staff");
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
+        //public void ApplyQueryAttributes(IDictionary<string, object> query)
+        //{
+        //    if (query.ContainsKey("patientId"))
+        //    {
+        //        Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
+        //        LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
+        //    }
+        //}
+
+        public async Task LoadPatient(Guid? patientId)
         {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
 
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
-
-        private double _station = 0;
-        public double Station
-        {
-            get => _station;
-            set
-            {
-                _station = value;
-                OnPropertyChanged();
-                UpdateStationDisplay();
-                UpdateProgressMessage();
-            }
-        }
-
-        private string _stationDisplay = "0";
-        public string StationDisplay
-        {
-            get => _stationDisplay;
-            set { _stationDisplay = value; OnPropertyChanged(); }
-        }
-
-        private Color _stationColor = Colors.Blue;
-        public Color StationColor
-        {
-            get => _stationColor;
-            set { _stationColor = value; OnPropertyChanged(); }
-        }
-
-        private Color _progressColor = Colors.Blue;
-        public Color ProgressColor
-        {
-            get => _progressColor;
-            set { _progressColor = value; OnPropertyChanged(); }
-        }
-
-        private string _progressMessage = "Monitor descent";
-        public string ProgressMessage
-        {
-            get => _progressMessage;
-            set { _progressMessage = value; OnPropertyChanged(); }
-        }
-
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
-
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
-
-        private void InitializeData()
-        {
-            UpdateStationDisplay();
-            UpdateProgressMessage();
-        }
-
-        private void UpdateStationDisplay()
-        {
-            int stationInt = (int)Math.Round(Station);
-            if (stationInt > 0)
-                StationDisplay = $"+{stationInt}";
-            else
-                StationDisplay = stationInt.ToString();
-
-            // Color coding based on station
-            if (Station >= 2)
-            {
-                StationColor = Colors.Green;
-            }
-            else if (Station >= 0)
-            {
-                StationColor = Colors.Orange;
-            }
-            else if (Station >= -2)
-            {
-                StationColor = Colors.Blue;
-            }
-            else
-            {
-                StationColor = Colors.Gray;
-            }
-        }
-
-        private void UpdateProgressMessage()
-        {
-            if (Station >= 3)
-            {
-                ProgressColor = Colors.Green;
-                ProgressMessage = "✓ Head delivered or crowning";
-            }
-            else if (Station >= 2)
-            {
-                ProgressColor = Colors.Green;
-                ProgressMessage = "Good descent - Visible at introitus";
-            }
-            else if (Station >= 0)
-            {
-                ProgressColor = Colors.Orange;
-                ProgressMessage = "Head at spines - Progressing well";
-            }
-            else if (Station >= -2)
-            {
-                ProgressColor = Colors.Blue;
-                ProgressMessage = "Head engaged - Monitor progress";
-            }
-            else
-            {
-                ProgressColor = Colors.Gray;
-                ProgressMessage = "Head not engaged";
-            }
-        }
-
-        private async Task SaveEntry()
-        {
             try
             {
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
+
+                // Load last pain relief entry to prefill some values
+                var lastEntry = await _headDescentRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
+                {
+                    Station = lastEntry.Station;
+                }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            if (Station < 0)
+            {
+                _errorHandler.HandleError(new Exception("Head descent status is not selected."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
                 var entry = new HeadDescent
                 {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    Station = (int)Math.Round(Station),
-                    Notes = Notes ?? string.Empty
+                    PartographID = _patient.ID,
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime), 
+                    Station = Station,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
                 };
 
-                if (_currentEntry != null)
+                if (await _headDescentRepository.SaveItemAsync(entry) != null)
                 {
-                    entry.ID = _currentEntry.ID;
+                    await AppShell.DisplayToastAsync("Head descent assessment saved successfully");
+
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
                 }
-
-                await _repository.SaveItemAsync(entry);
-                await Shell.Current.GoToAsync("..");
+                else
+                {
+                    await AppShell.DisplayToastAsync("Head descent assessment failed to save");
+                }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving head descent entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
-        private async Task Cancel()
+        [RelayCommand]
+        private void Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void ResetFields()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            Station = -1;
+            Notes = string.Empty;
         }
     }
 }

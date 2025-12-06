@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
@@ -6,50 +8,41 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class BPPulseModalPageModel : INotifyPropertyChanged
+    public partial class BPPulseModalPageModel : ObservableObject
     {
-        private readonly BPRepository _repository;
-        private readonly ILogger<BPPulseModalPageModel> _logger;
-        private BP _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly BPRepository _bPPulseRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public BPPulseModalPageModel(BPRepository repository, ILogger<BPPulseModalPageModel> logger)
+        public Action? ClosePopup { get; set; }
+
+        [ObservableProperty]
+        private string _patientName = string.Empty;
+
+        [ObservableProperty]
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
+        private void InitializeData()
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            UpdatePulseStatus();
+            UpdateBPStatus();
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
-        {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
-
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
-
-        private double _pulse = 80;
-        public double Pulse
+        private int? _pulse = 80;
+        public int? Pulse
         {
             get => _pulse;
             set
             {
                 _pulse = value;
-                OnPropertyChanged();
                 UpdatePulseStatus();
             }
         }
 
-        private double _systolic = 120;
-        public double Systolic
+        private int? _systolic = 120;
+        public int? Systolic
         {
             get => _systolic;
             set
@@ -60,8 +53,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private double _diastolic = 80;
-        public double Diastolic
+        private int? _diastolic = 80;
+        public int? Diastolic
         {
             get => _diastolic;
             set
@@ -90,37 +83,32 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         public Color BPColor
         {
             get => _bpColor;
-            set { _bpColor = value; OnPropertyChanged(); }
+            set { _bpColor = value; }
         }
 
         private string _bpStatus = "Normal";
         public string BPStatus
         {
             get => _bpStatus;
-            set { _bpStatus = value; OnPropertyChanged(); }
+            set { _bpStatus = value; }
         }
 
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _notes = string.Empty;
 
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
 
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
+        [ObservableProperty]
+        private bool _isBusy;
 
-        private void InitializeData()
+        public BPPulseModalPageModel(BPRepository bPRepository, ModalErrorHandler errorHandler)
         {
-            UpdatePulseStatus();
-            UpdateBPStatus();
+            _bPPulseRepository = bPRepository;
+            _errorHandler = errorHandler;
+
+            // Set default recorded by from preferences
+            RecordedBy = Preferences.Get("StaffName", "Staff");
         }
 
         private void UpdatePulseStatus()
@@ -175,45 +163,122 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private async Task SaveEntry()
+        //public void ApplyQueryAttributes(IDictionary<string, object> query)
+        //{
+        //    if (query.ContainsKey("patientId"))
+        //    {
+        //        Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
+        //        LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
+        //    }
+        //}
+
+        public async Task LoadPatient(Guid? patientId)
         {
+
             try
             {
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
+
+                // Load last pain relief entry to prefill some values
+                var lastEntry = await _bPPulseRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
+                {
+                    Pulse = lastEntry.Pulse;
+                    Systolic = lastEntry.Systolic;
+                    Systolic = lastEntry.Diastolic;
+                }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            if (Pulse < 0)
+            {
+                _errorHandler.HandleError(new Exception("Pulse is not set."));
+                return;
+            }
+
+            if (Systolic < 0)
+            {
+                _errorHandler.HandleError(new Exception("Systolic blood pressure is not set."));
+                return;
+            }
+
+            if (Diastolic < 0)
+            {
+                _errorHandler.HandleError(new Exception("Diastolic blood pressure is not set."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
                 var entry = new BP
                 {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    Pulse = (int)Math.Round(Pulse),
-                    Systolic = (int)Math.Round(Systolic),
-                    Diastolic = (int)Math.Round(Diastolic),
-                    Notes = Notes ?? string.Empty
+                    PartographID = _patient.ID,
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
+                    Pulse = Pulse,
+                    Systolic = Systolic,
+                    Diastolic = Diastolic,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
                 };
 
-                if (_currentEntry != null)
+                if (await _bPPulseRepository.SaveItemAsync(entry) != null)
                 {
-                    entry.ID = _currentEntry.ID;
+                    await AppShell.DisplayToastAsync("BP/Pulse assessment saved successfully");
+
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
                 }
-
-                await _repository.SaveItemAsync(entry);
-                await Shell.Current.GoToAsync("..");
+                else
+                {
+                    await AppShell.DisplayToastAsync("BP/Pulse assessment failed to save");
+                }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving BP/Pulse entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
-        private async Task Cancel()
+        [RelayCommand]
+        private void Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void ResetFields()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            Pulse = null;
+            Systolic = null;
+            Diastolic = null;
+            Notes = string.Empty;
         }
     }
 }

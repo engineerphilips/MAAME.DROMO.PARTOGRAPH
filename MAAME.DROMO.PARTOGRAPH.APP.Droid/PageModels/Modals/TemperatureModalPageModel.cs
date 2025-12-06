@@ -1,150 +1,107 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Security.AccessControl;
 using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class TemperatureModalPageModel : INotifyPropertyChanged
+    public partial class TemperatureModalPageModel : ObservableObject
     {
-        private readonly TemperatureRepository _repository;
-        private readonly ILogger<TemperatureModalPageModel> _logger;
-        private Temperature _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly TemperatureRepository _temperatureRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public TemperatureModalPageModel(TemperatureRepository repository, ILogger<TemperatureModalPageModel> logger)
+        public TemperatureModalPageModel(TemperatureRepository repository, ModalErrorHandler errorHandler)
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            _temperatureRepository = repository;
+            _errorHandler = errorHandler;
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
-        {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _patientName = string.Empty;
 
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private DateTime _recordingTime = DateTime.Now;
 
-        private double _temperature = 37.0;
-        public double Temperature
-        {
-            get => _temperature;
-            set
-            {
-                _temperature = value;
-                OnPropertyChanged();
-                UpdateTemperatureStatus();
-            }
-        }
+        [ObservableProperty]
+        private float? _rate;
 
-        private Color _temperatureColor = Colors.Green;
-        public Color TemperatureColor
-        {
-            get => _temperatureColor;
-            set { _temperatureColor = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _notes = string.Empty;
 
-        private string _temperatureStatus = "Normal";
-        public string TemperatureStatus
-        {
-            get => _temperatureStatus;
-            set { _temperatureStatus = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
 
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private bool _isBusy;
 
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
-
-        private void InitializeData()
-        {
-            UpdateTemperatureStatus();
-        }
-
-        private void UpdateTemperatureStatus()
-        {
-            if (Temperature < 36.0)
-            {
-                TemperatureColor = Colors.Blue;
-                TemperatureStatus = "Hypothermia - Monitor closely";
-            }
-            else if (Temperature >= 36.0 && Temperature <= 37.5)
-            {
-                TemperatureColor = Colors.Green;
-                TemperatureStatus = "Normal temperature";
-            }
-            else if (Temperature > 37.5 && Temperature <= 38.0)
-            {
-                TemperatureColor = Colors.Orange;
-                TemperatureStatus = "Mild pyrexia - Monitor";
-            }
-            else
-            {
-                TemperatureColor = Colors.Red;
-                TemperatureStatus = "⚠️ Fever - Requires attention";
-            }
-        }
-
-        private async Task SaveEntry()
+        internal async Task LoadPatient(Guid? patientId)
         {
             try
             {
-                var entry = new Temperature
-                {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    Rate = (float)Temperature,
-                    Notes = Notes ?? string.Empty
-                };
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
 
-                if (_currentEntry != null)
+                // Load last temperature entry to prefill some values
+                var lastEntry = await _temperatureRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
                 {
-                    entry.ID = _currentEntry.ID;
+                    Rate = lastEntry.Rate;
                 }
-
-                await _repository.SaveItemAsync(entry);
-                await Shell.Current.GoToAsync("..");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving temperature entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
             }
         }
 
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
+                var entry = new Temperature
+                {
+                    PartographID = _patient.ID,
+                    Time = RecordingTime,
+                    Rate = Rate,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
+                };
+
+                await _temperatureRepository.SaveItemAsync(entry);
+
+                await Shell.Current.GoToAsync("..");
+                await AppShell.DisplayToastAsync("Temperature assessment saved successfully");
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
         private async Task Cancel()
         {
             await Shell.Current.GoToAsync("..");
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

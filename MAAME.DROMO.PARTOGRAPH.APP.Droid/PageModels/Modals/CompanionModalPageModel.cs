@@ -153,7 +153,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
                     Companion = CompanionIndex == 0 ? "N" : CompanionIndex == 1 ? "Y" : CompanionIndex == 2 ? "D" : null,
                     Notes = Notes,
-                    HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 

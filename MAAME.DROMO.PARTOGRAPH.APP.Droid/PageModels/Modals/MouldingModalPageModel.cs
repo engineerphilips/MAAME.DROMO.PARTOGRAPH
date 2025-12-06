@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -7,153 +9,103 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class MouldingModalPageModel : INotifyPropertyChanged
+    public partial class MouldingModalPageModel : ObservableObject
     {
-        private readonly MouldingRepository _repository;
-        private readonly ILogger<MouldingModalPageModel> _logger;
-        private Moulding _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly MouldingRepository _mouldingRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public MouldingModalPageModel(MouldingRepository repository, ILogger<MouldingModalPageModel> logger)
+        public MouldingModalPageModel(MouldingRepository repository, ModalErrorHandler errorHandler)
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            _mouldingRepository = repository;
+            _errorHandler = errorHandler;
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
-        {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _patientName = string.Empty;
 
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private DateTime _recordingTime = DateTime.Now;
 
-        public ObservableCollection<string> DegreeOptions { get; } = new ObservableCollection<string>
-        {
-            "None", "+", "++", "+++"
-        };
+        [ObservableProperty]
+        private int _degreeIndex = -1;
 
-        private string _selectedDegree = "None";
-        public string SelectedDegree
-        {
-            get => _selectedDegree;
-            set
-            {
-                _selectedDegree = value;
-                OnPropertyChanged();
-                UpdateMouldingStatus();
-            }
-        }
+        [ObservableProperty]
+        private string _degreeDisplay = string.Empty;
 
-        private Color _mouldingColor = Colors.Green;
-        public Color MouldingColor
-        {
-            get => _mouldingColor;
-            set { _mouldingColor = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _notes = string.Empty;
 
-        private string _mouldingStatus = "No moulding";
-        public string MouldingStatus
-        {
-            get => _mouldingStatus;
-            set { _mouldingStatus = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
 
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private bool _isBusy;
 
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
-
-        private void InitializeData()
-        {
-            UpdateMouldingStatus();
-        }
-
-        private void UpdateMouldingStatus()
-        {
-            switch (SelectedDegree)
-            {
-                case "None":
-                    MouldingColor = Colors.Green;
-                    MouldingStatus = "No moulding - Normal";
-                    break;
-                case "+":
-                    MouldingColor = Colors.Green;
-                    MouldingStatus = "Mild moulding - Normal for labor";
-                    break;
-                case "++":
-                    MouldingColor = Colors.Orange;
-                    MouldingStatus = "Moderate moulding - Monitor progress";
-                    break;
-                case "+++":
-                    MouldingColor = Colors.Red;
-                    MouldingStatus = "⚠️ Severe moulding - Consider CPD";
-                    break;
-                default:
-                    MouldingColor = Colors.Gray;
-                    MouldingStatus = "Monitor moulding";
-                    break;
-            }
-        }
-
-        private async Task SaveEntry()
+        internal async Task LoadPatient(Guid? patientId)
         {
             try
             {
-                var entry = new Moulding
-                {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    Degree = SelectedDegree,
-                    Notes = Notes ?? string.Empty
-                };
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
 
-                if (_currentEntry != null)
+                // Load last moulding entry to prefill some values
+                var lastEntry = await _mouldingRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
                 {
-                    entry.ID = _currentEntry.ID;
+                    DegreeIndex = lastEntry.Degree;
+                    DegreeDisplay = lastEntry.DegreeDisplay;
                 }
-
-                await _repository.SaveItemAsync(entry);
-                await Shell.Current.GoToAsync("..");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving moulding entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
             }
         }
 
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
+                var entry = new Moulding
+                {
+                    PartographID = _patient.ID,
+                    Time = RecordingTime,
+                    Degree = DegreeIndex, 
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
+                };
+
+                await _mouldingRepository.SaveItemAsync(entry);
+
+                await Shell.Current.GoToAsync("..");
+                await AppShell.DisplayToastAsync("Moulding assessment saved successfully");
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
         private async Task Cancel()
         {
             await Shell.Current.GoToAsync("..");
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

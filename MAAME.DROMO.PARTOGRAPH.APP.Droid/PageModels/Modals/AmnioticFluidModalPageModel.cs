@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -7,154 +9,102 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class AmnioticFluidModalPageModel : INotifyPropertyChanged
+    public partial class AmnioticFluidModalPageModel : ObservableObject
     {
-        private readonly AmnioticFluidRepository _repository;
-        private readonly ILogger<AmnioticFluidModalPageModel> _logger;
-        private AmnioticFluid _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly AmnioticFluidRepository _amnioticFluidRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public AmnioticFluidModalPageModel(AmnioticFluidRepository repository, ILogger<AmnioticFluidModalPageModel> logger)
+        public AmnioticFluidModalPageModel(AmnioticFluidRepository repository, ModalErrorHandler errorHandler)
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            _amnioticFluidRepository = repository;
+            _errorHandler = errorHandler;
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
-        {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _patientName = string.Empty;
 
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private DateTime _recordingTime = DateTime.Now;
 
-        public ObservableCollection<string> ColorOptions { get; } = new ObservableCollection<string>
-        {
-            "Clear", "Straw", "Green", "Brown", "Blood-stained"
-        };
+        [ObservableProperty]
+        private int? _amnioticFluidIndex = null;
 
-        private string _selectedColor = "Clear";
-        public string SelectedColor
-        {
-            get => _selectedColor;
-            set
-            {
-                _selectedColor = value;
-                OnPropertyChanged();
-                UpdateFluidStatus();
-            }
-        }
+        [ObservableProperty]
+        private string _amnioticFluidDisplay = string.Empty;
 
-        private Color _fluidColor = Colors.Green;
-        public Color FluidColor
-        {
-            get => _fluidColor;
-            set { _fluidColor = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _notes = string.Empty;
 
-        private string _fluidStatus = "Normal";
-        public string FluidStatus
-        {
-            get => _fluidStatus;
-            set { _fluidStatus = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
 
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private bool _isBusy;
 
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
-
-        private void InitializeData()
-        {
-            UpdateFluidStatus();
-        }
-
-        private void UpdateFluidStatus()
-        {
-            switch (SelectedColor)
-            {
-                case "Clear":
-                case "Straw":
-                    FluidColor = Colors.Green;
-                    FluidStatus = "Normal amniotic fluid";
-                    break;
-                case "Green":
-                    FluidColor = Colors.Orange;
-                    FluidStatus = "⚠️ Meconium staining - Monitor fetal wellbeing";
-                    break;
-                case "Brown":
-                    FluidColor = Colors.Red;
-                    FluidStatus = "⚠️ Old meconium - Requires close monitoring";
-                    break;
-                case "Blood-stained":
-                    FluidColor = Colors.Red;
-                    FluidStatus = "⚠️ Blood-stained - Check for abruption";
-                    break;
-                default:
-                    FluidColor = Colors.Blue;
-                    FluidStatus = "Monitor";
-                    break;
-            }
-        }
-
-        private async Task SaveEntry()
+        internal async Task LoadPatient(Guid? patientId)
         {
             try
             {
-                var entry = new AmnioticFluid
-                {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    Color = SelectedColor,
-                    Notes = Notes ?? string.Empty
-                };
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
 
-                if (_currentEntry != null)
+                // Load last pain relief entry to prefill some values
+                var lastEntry = await _amnioticFluidRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
                 {
-                    entry.ID = _currentEntry.ID;
+                    AmnioticFluidDisplay = lastEntry.AmnioticFluidDisplay;
                 }
-
-                await _repository.SaveItemAsync(entry);
-                await Shell.Current.GoToAsync("..");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving amniotic fluid entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
             }
         }
 
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
+                var entry = new AmnioticFluid
+                {
+                    PartographID = _patient.ID,
+                    Time = RecordingTime,
+                    Color = AmnioticFluidIndex == 0 ? "N" : AmnioticFluidIndex == 1 ? "Y" : AmnioticFluidIndex == 2 ? "D" : string.Empty,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
+                };
+
+                await _amnioticFluidRepository.SaveItemAsync(entry);
+
+                await Shell.Current.GoToAsync("..");
+                await AppShell.DisplayToastAsync("Pain relief assessment saved successfully");
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
         private async Task Cancel()
         {
             await Shell.Current.GoToAsync("..");
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

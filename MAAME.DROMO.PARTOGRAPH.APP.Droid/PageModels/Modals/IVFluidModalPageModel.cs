@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -7,171 +9,109 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public class IVFluidModalPageModel : INotifyPropertyChanged
+    public partial class IVFluidModalPageModel : ObservableObject
     {
-        private readonly IVFluidEntryRepository _repository;
-        private readonly ILogger<IVFluidModalPageModel> _logger;
-        private IVFluidEntry _currentEntry;
-        private Guid? _patientId;
+        public Partograph? _patient;
+        private readonly IVFluidEntryRepository _ivFluidRepository;
+        private readonly ModalErrorHandler _errorHandler;
 
-        public IVFluidModalPageModel(IVFluidEntryRepository repository, ILogger<IVFluidModalPageModel> logger)
+        public IVFluidModalPageModel(IVFluidEntryRepository repository, ModalErrorHandler errorHandler)
         {
-            _repository = repository;
-            _logger = logger;
-            InitializeCommands();
-            InitializeData();
+            _ivFluidRepository = repository;
+            _errorHandler = errorHandler;
         }
 
-        // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
-        {
-            get => _recordingDate;
-            set { _recordingDate = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _patientName = string.Empty;
 
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
-        public TimeSpan RecordingTime
-        {
-            get => _recordingTime;
-            set { _recordingTime = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private DateTime _recordingTime = DateTime.Now;
 
-        public ObservableCollection<string> FluidTypeOptions { get; } = new ObservableCollection<string>
-        {
-            "Normal Saline 0.9%", "Hartmann's Solution", "Dextrose 5%", "Dextrose 10%",
-            "Ringer's Lactate", "Dextrose Saline"
-        };
+        [ObservableProperty]
+        private string _fluidType;
 
-        private string _selectedFluidType = "Normal Saline 0.9%";
-        public string SelectedFluidType
-        {
-            get => _selectedFluidType;
-            set { _selectedFluidType = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private int _volumeInfused;
 
-        private double _volumeInfused = 0;
-        public double VolumeInfused
-        {
-            get => _volumeInfused;
-            set
-            {
-                _volumeInfused = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private string _rate;
 
-        private string _rate = "125";
-        public string Rate
-        {
-            get => _rate;
-            set { _rate = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _notes = string.Empty;
 
-        private DateTime _startTime = DateTime.Now;
-        public DateTime StartTime
-        {
-            get => _startTime;
-            set { _startTime = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private string _recordedBy = string.Empty;
 
-        private string _additives = string.Empty;
-        public string Additives
-        {
-            get => _additives;
-            set { _additives = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
+        private bool _isBusy;
 
-        private string _ivSite = "Left hand";
-        public string IVSite
-        {
-            get => _ivSite;
-            set { _ivSite = value; OnPropertyChanged(); }
-        }
-
-        private bool _siteHealthy = true;
-        public bool SiteHealthy
-        {
-            get => _siteHealthy;
-            set
-            {
-                _siteHealthy = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _siteCondition = "Clean";
-        public string SiteCondition
-        {
-            get => _siteCondition;
-            set { _siteCondition = value; OnPropertyChanged(); }
-        }
-
-        private string _notes;
-        public string Notes
-        {
-            get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
-        }
-
-        // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-
-        private void InitializeCommands()
-        {
-            SaveCommand = new Command(async () => await SaveEntry());
-            CancelCommand = new Command(async () => await Cancel());
-        }
-
-        private void InitializeData()
-        {
-        }
-
-        private async Task SaveEntry()
+        internal async Task LoadPatient(Guid? patientId)
         {
             try
             {
-                var entry = new IVFluidEntry
-                {
-                    PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
-                    FluidType = SelectedFluidType,
-                    VolumeInfused = (int)Math.Round(VolumeInfused),
-                    Rate = Rate,
-                    StartTime = StartTime,
-                    Additives = Additives ?? string.Empty,
-                    IVSite = IVSite ?? string.Empty,
-                    SiteHealthy = SiteHealthy,
-                    SiteCondition = SiteCondition ?? string.Empty,
-                    Notes = Notes ?? string.Empty
-                };
+                // This would typically load from PatientRepository
+                // For now, we'll use the patient ID directly
+                PatientName = $"Patient ID: {patientId}";
 
-                if (_currentEntry != null)
+                // Load last temperature entry to prefill some values
+                var lastEntry = await _ivFluidRepository.GetLatestByPatientAsync(patientId);
+                if (lastEntry != null)
                 {
-                    entry.ID = _currentEntry.ID;
+                    Rate = lastEntry.Rate;
+                    FluidType = lastEntry.FluidType;
+                    VolumeInfused = lastEntry.VolumeInfused;
                 }
-
-                await _repository.SaveItemAsync(entry);
-                await Shell.Current.GoToAsync("..");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "Error saving IV fluid entry");
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to save entry", "OK");
+                _errorHandler.HandleError(e);
             }
         }
 
+        [RelayCommand]
+        private async Task Save()
+        {
+            if (_patient == null)
+            {
+                _errorHandler.HandleError(new Exception("Patient information not loaded."));
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
+                var entry = new IVFluidEntry
+                {
+                    PartographID = _patient.ID,
+                    Time = RecordingTime,
+                    FluidType = FluidType,
+                    VolumeInfused = VolumeInfused,
+                    Rate = Rate,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
+                };
+
+                await _ivFluidRepository.SaveItemAsync(entry);
+
+                await Shell.Current.GoToAsync("..");
+                await AppShell.DisplayToastAsync("IV Fluid assessment saved successfully");
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
         private async Task Cancel()
         {
             await Shell.Current.GoToAsync("..");
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

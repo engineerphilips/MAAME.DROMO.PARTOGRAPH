@@ -1122,7 +1122,7 @@
             </Grid>
             
             <sfPopup:SfPopup x:Name="sfPopupCompanion"
-                             IsOpen="{Binding IsCompanionPopupOpen}"
+                             IsOpen="{Binding IsCompanionPopupOpen, Mode=TwoWay}"
                              StaysOpen="True"
                              HeaderTitle="Companion"
                              ShowCloseButton="True"

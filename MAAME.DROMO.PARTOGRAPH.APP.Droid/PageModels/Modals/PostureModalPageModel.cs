@@ -9,11 +9,17 @@ using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public partial class PostureModalPageModel : ObservableObject, IQueryAttributable
+    public partial class PostureModalPageModel : ObservableObject
     {
-        private Patient? _patient;
+        public Partograph? _patient;
         private readonly PostureRepository _postureRepository;
         private readonly ModalErrorHandler _errorHandler;
+
+        public PostureModalPageModel(PostureRepository repository, ModalErrorHandler errorHandler)
+        {
+            _postureRepository = repository;
+            _errorHandler = errorHandler;
+        }
 
         [ObservableProperty]
         private string _patientName = string.Empty;
@@ -22,7 +28,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private DateTime _recordingTime = DateTime.Now;
 
         [ObservableProperty]
-        private int? _postureIndex = null;
+        private int _postureIndex = -1;
 
         [ObservableProperty]
         private string _postureDisplay = string.Empty;
@@ -36,25 +42,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
-        public PostureModalPageModel(PostureRepository postureRepository, ModalErrorHandler errorHandler)
-        {
-            _postureRepository = postureRepository;
-            _errorHandler = errorHandler;
-
-            // Set default recorded by from preferences
-            RecordedBy = Preferences.Get("StaffName", "Staff");
-        }
-
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
-        {
-            if (query.ContainsKey("patientId"))
-            {
-                Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
-                LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
-            }
-        }
-
-        private async Task LoadPatient(Guid? patientId)
+        internal async Task LoadPatient(Guid? patientId)
         {
             try
             {
@@ -92,16 +80,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = RecordingTime,
-                    Posture = PostureIndex == 0 ? 'N' : PostureIndex == 1 ? 'Y' : PostureIndex == 2 ? 'D' : null,
+                    Posture = PostureIndex == 0 ? "N" : PostureIndex == 1 ? "Y" : PostureIndex == 2 ? "D" : string.Empty,
                     Notes = Notes,
-                    HandlerName = Constants.Staff?.FacilityName ?? string.Empty,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 
                 await _postureRepository.SaveItemAsync(entry);
 
                 await Shell.Current.GoToAsync("..");
-                await AppShell.DisplayToastAsync("Pain relief assessment saved successfully");
+                await AppShell.DisplayToastAsync("Posture assessment saved successfully");
             }
             catch (Exception e)
             {
