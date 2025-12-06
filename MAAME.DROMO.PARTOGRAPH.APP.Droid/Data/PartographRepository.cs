@@ -22,7 +22,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
-            
+
             //    try
             //{
             //    var dropTableCmd = connection.CreateCommand();
@@ -48,6 +48,71 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             //    _logger.LogError(e, "Error dropping PartographEntry table");
             //    throw;
             //}
+
+            // Create Tbl_Patient first (required for JOIN queries)
+            try
+            {
+                var createPatientTableCmd = connection.CreateCommand();
+                createPatientTableCmd.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Tbl_Patient (
+                    ID TEXT PRIMARY KEY,
+                    time TEXT NOT NULL,
+                    firstName TEXT NOT NULL,
+                    lastName TEXT NOT NULL,
+                    hospitalNumber TEXT NOT NULL,
+                    dateofbirth TEXT NULL,
+                    age INTEGER NULL,
+                    bloodGroup TEXT,
+                    phoneNumber TEXT,
+                    emergencyContactName TEXT,
+                    emergencyContactRelationship TEXT,
+                    emergencyContactPhone TEXT,
+                    handler TEXT,
+                    createdtime INTEGER NOT NULL,
+                    updatedtime INTEGER NOT NULL,
+                    deletedtime INTEGER,
+                    deviceid TEXT NOT NULL,
+                    origindeviceid TEXT NOT NULL,
+                    syncstatus INTEGER DEFAULT 0,
+                    version INTEGER DEFAULT 1,
+                    serverversion INTEGER DEFAULT 0,
+                    deleted INTEGER DEFAULT 0,
+                    conflictdata TEXT,
+                    datahash TEXT
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_patient_sync ON Tbl_Patient(updatedtime, syncstatus);
+                CREATE INDEX IF NOT EXISTS idx_patient_server_version ON Tbl_Patient(serverversion);
+
+                DROP TRIGGER IF EXISTS trg_patient_insert;
+                CREATE TRIGGER trg_patient_insert
+                AFTER INSERT ON Tbl_Patient
+                WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
+                BEGIN
+                    UPDATE Tbl_Patient
+                    SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
+                        updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
+                    WHERE ID = NEW.ID;
+                END;
+
+                DROP TRIGGER IF EXISTS trg_patient_update;
+                CREATE TRIGGER trg_patient_update
+                AFTER UPDATE ON Tbl_Patient
+                WHEN NEW.updatedtime = OLD.updatedtime
+                BEGIN
+                    UPDATE Tbl_Patient
+                    SET updatedtime = (strftime('%s', 'now') * 1000),
+                        version = OLD.version + 1,
+                        syncstatus = 0
+                    WHERE ID = NEW.ID;
+                END;";
+                await createPatientTableCmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error creating Patient table");
+                throw;
+            }
 
             try
             {
