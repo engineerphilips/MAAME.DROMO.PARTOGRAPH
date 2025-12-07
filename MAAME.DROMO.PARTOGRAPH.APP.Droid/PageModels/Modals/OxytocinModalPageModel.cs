@@ -24,7 +24,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private string _patientName = string.Empty;
 
         [ObservableProperty]
-        private DateTime _recordingTime = DateTime.Now;
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
         private decimal _totalVolumeInfused;
@@ -81,18 +83,28 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var entry = new Oxytocin
                 {
                     PartographID = _patient.ID,
-                    Time = RecordingTime, 
-                    DoseMUnitsPerMin = DoseMUnitsPerMin, 
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
+                    DoseMUnitsPerMin = DoseMUnitsPerMin,
                     TotalVolumeInfused = TotalVolumeInfused,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 
-                await _oxytocinRepository.SaveItemAsync(entry);
+                if (await _oxytocinRepository.SaveItemAsync(entry) != null)
+                {
+                    await AppShell.DisplayToastAsync("Oxytocin assessment saved successfully");
 
-                await Shell.Current.GoToAsync("..");
-                await AppShell.DisplayToastAsync("Oxytocin assessment saved successfully");
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
+                }
+                else
+                {
+                    await AppShell.DisplayToastAsync("Oxytocin assessment failed to save");
+                }
             }
             catch (Exception e)
             {
@@ -105,9 +117,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         }
 
         [RelayCommand]
-        private async Task Cancel()
+        private void Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
+        }
+
+        private void ResetFields()
+        {
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            TotalVolumeInfused = 0;
+            DoseMUnitsPerMin = 0;
+            Notes = string.Empty;
         }
     }
 }

@@ -15,6 +15,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private Contraction _currentEntry;
         private Guid? _patientId;
 
+        public Action? ClosePopup { get; set; }
+
         public ContractionsModalPageModel(ContractionRepository repository, ILogger<ContractionsModalPageModel> logger)
         {
             _repository = repository;
@@ -24,14 +26,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         }
 
         // Properties
-        private DateTime _recordingDate = DateTime.Now;
-        public DateTime RecordingDate
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        public DateOnly RecordingDate
         {
             get => _recordingDate;
             set { _recordingDate = value; OnPropertyChanged(); }
         }
 
-        private TimeSpan _recordingTime = DateTime.Now.TimeOfDay;
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
         public TimeSpan RecordingTime
         {
             get => _recordingTime;
@@ -231,7 +233,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var entry = new Contraction
                 {
                     PartographID = _patientId,
-                    Time = RecordingDate.Date + RecordingTime,
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
                     HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
                     FrequencyPer10Min = FrequencyPer10Min,
                     DurationSeconds = DurationSeconds,
@@ -246,14 +248,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 if (_currentEntry != null)
                 {
                     entry.ID = _currentEntry.ID;
-                    await _repository.SaveItemAsync(entry);
+                }
+
+                if (await _repository.SaveItemAsync(entry) != null)
+                {
+                    await AppShell.DisplayToastAsync("Contraction assessment saved successfully");
+
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
                 }
                 else
                 {
-                    await _repository.SaveItemAsync(entry);
+                    await AppShell.DisplayToastAsync("Contraction assessment failed to save");
                 }
-
-                await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)
             {
@@ -264,7 +274,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         private async Task Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
+        }
+
+        private void ResetFields()
+        {
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            FrequencyPer10Min = 3;
+            DurationSeconds = 45;
+            IsMild = false;
+            IsModerate = true;
+            IsStrong = false;
+            IsRegular = true;
+            IsIrregular = false;
+            PalpableAtRest = false;
+            SelectedCervixEffect = "Moderate Effect";
+            Coordinated = true;
+            Notes = string.Empty;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -19,7 +19,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private string _patientName = string.Empty;
 
         [ObservableProperty]
-        private DateTime _recordingTime = DateTime.Now;
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
         private int? _degreeIndex = null;
@@ -93,17 +95,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var entry = new Caput
                 {
                     PartographID = _patient.ID,
-                    Time = RecordingTime,
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
                     Degree = DegreeIndex == 0 ? "0" : DegreeIndex == 1 ? "+" : DegreeIndex == 2 ? "++" : DegreeIndex == 3 ? "+++" : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 
-                await _caputRepository.SaveItemAsync(entry);
+                if (await _caputRepository.SaveItemAsync(entry) != null)
+                {
+                    await AppShell.DisplayToastAsync("Caput assessment saved successfully");
 
-                await Shell.Current.GoToAsync("..");
-                await AppShell.DisplayToastAsync("Caput assessment saved successfully");
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
+                }
+                else
+                {
+                    await AppShell.DisplayToastAsync("Caput assessment failed to save");
+                }
             }
             catch (Exception e)
             {
@@ -116,9 +128,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         }
 
         [RelayCommand]
-        private async Task Cancel()
+        private void Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
+        }
+
+        private void ResetFields()
+        {
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            DegreeIndex = null;
+            Notes = string.Empty;
         }
     }
 }

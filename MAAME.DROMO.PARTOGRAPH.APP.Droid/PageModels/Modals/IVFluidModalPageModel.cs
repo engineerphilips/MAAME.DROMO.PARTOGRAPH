@@ -25,7 +25,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private string _patientName = string.Empty;
 
         [ObservableProperty]
-        private DateTime _recordingTime = DateTime.Now;
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
         private string _fluidType;
@@ -86,7 +88,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var entry = new IVFluidEntry
                 {
                     PartographID = _patient.ID,
-                    Time = RecordingTime,
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
                     FluidType = FluidType,
                     VolumeInfused = VolumeInfused,
                     Rate = Rate,
@@ -95,10 +97,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Handler = Constants.Staff?.ID
                 };
 
-                await _ivFluidRepository.SaveItemAsync(entry);
+                if (await _ivFluidRepository.SaveItemAsync(entry) != null)
+                {
+                    await AppShell.DisplayToastAsync("IV Fluid assessment saved successfully");
 
-                await Shell.Current.GoToAsync("..");
-                await AppShell.DisplayToastAsync("IV Fluid assessment saved successfully");
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
+                }
+                else
+                {
+                    await AppShell.DisplayToastAsync("IV Fluid assessment failed to save");
+                }
             }
             catch (Exception e)
             {
@@ -111,9 +123,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         }
 
         [RelayCommand]
-        private async Task Cancel()
+        private void Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
+        }
+
+        private void ResetFields()
+        {
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            FluidType = string.Empty;
+            VolumeInfused = 0;
+            Rate = string.Empty;
+            Notes = string.Empty;
         }
     }
 }
