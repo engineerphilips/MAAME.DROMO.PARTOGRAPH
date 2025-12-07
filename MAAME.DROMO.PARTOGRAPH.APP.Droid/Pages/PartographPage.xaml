@@ -1175,39 +1175,23 @@
                 </sfPopup:SfPopup.ContentTemplate>
             </sfPopup:SfPopup>-->
 
-            <sfPopup:SfPopup x:Name="sfPopupOralFluid"
-                             IsOpen="{Binding IsOralFluidPopupOpen}"
+            <modals:OralFluidPopup x:Name="sfPopupOralFluid"
                              StaysOpen="True"
-                             HeaderTitle="Oral fluid"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70"
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:OralFluidModalView x:Name="OralFluidView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupPosture"     
-                             IsOpen="{Binding IsPosturePopupOpen}"
+            <modals:PosturePopup x:Name="sfPopupPosture"
                              StaysOpen="True"
-                             HeaderTitle="Posture"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:PostureModalView x:Name="PostureView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
             <sfPopup:SfPopup x:Name="sfPopupFHRDeceleration"     
                              IsOpen="{Binding IsFHRDecelerationPopupOpen}"
@@ -1226,73 +1210,41 @@
                 </sfPopup:SfPopup.ContentTemplate>
             </sfPopup:SfPopup>
 
-            <sfPopup:SfPopup x:Name="sfPopupAmnioticFluid"     
-                             IsOpen="{Binding IsAmnioticFluidPopupOpen}"
+            <modals:AmnioticFluidPopup x:Name="sfPopupAmnioticFluid"
                              StaysOpen="True"
-                             HeaderTitle="Amniotic Fluid"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="630"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:AmnioticFluidModalView x:Name="AmnioticFluidView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupFetalPosition"     
-                             IsOpen="{Binding IsFetalPositionPopupOpen}"
+            <modals:FetalPositionPopup x:Name="sfPopupFetalPosition"
                              StaysOpen="True"
-                             HeaderTitle="Fetal Position"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:FetalPositionModalView x:Name="FetalPositionView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupCaput"     
-                             IsOpen="{Binding IsCaputPopupOpen}"
+            <modals:CaputPopup x:Name="sfPopupCaput"
                              StaysOpen="True"
-                             HeaderTitle="Caput"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:CaputModalView x:Name="CaputView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupMoulding"     
-                             IsOpen="{Binding IsMouldingPopupOpen}"
+            <modals:MouldingPopup x:Name="sfPopupMoulding"
                              StaysOpen="True"
-                             HeaderTitle="Moulding"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="700"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:MouldingModalView x:Name="MouldingView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
             <sfPopup:SfPopup x:Name="sfPopupFHRContraction"     
                              IsOpen="{Binding IsFHRContractionPopupOpen}"
@@ -1311,141 +1263,77 @@
                 </sfPopup:SfPopup.ContentTemplate>
             </sfPopup:SfPopup>
 
-            <sfPopup:SfPopup x:Name="sfPopupUrine"     
-                             IsOpen="{Binding IsUrinePopupOpen}"
+            <modals:UrinePopup x:Name="sfPopupUrine"
                              StaysOpen="True"
-                             HeaderTitle="Urine"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="700"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:UrineModalView x:Name="UrineView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupTemperature"     
-                             IsOpen="{Binding IsTemperaturePopupOpen}"
+            <modals:TemperaturePopup x:Name="sfPopupTemperature"
                              StaysOpen="True"
-                             HeaderTitle="Temperature"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:TemperatureModalView x:Name="TemperatureView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupBpPulse"     
-                             IsOpen="{Binding IsBpPulsePopupOpen}"
+            <modals:BpPulsePopup x:Name="sfPopupBpPulse"
                              StaysOpen="True"
-                             HeaderTitle="BP &amp; Pulse"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:BPPulseModalView x:Name="BPPulseView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupCervixDilatation"     
-                             IsOpen="{Binding IsCervixDilatationPopupOpen}"
+            <modals:CervixDilatationPopup x:Name="sfPopupCervixDilatation"
                              StaysOpen="True"
-                             HeaderTitle="Cervix dilatation"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:CervixDilatationModalView x:Name="CervixDilatationView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupHeadDescent"     
-                             IsOpen="{Binding IsHeadDescentPopupOpen}"
+            <modals:HeadDescentPopup x:Name="sfPopupHeadDescent"
                              StaysOpen="True"
-                             HeaderTitle="Head descent"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:HeadDescentModalView x:Name="HeadDescentView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupOxytocin"     
-                             IsOpen="{Binding IsOxytocinPopupOpen}"
+            <modals:OxytocinPopup x:Name="sfPopupOxytocin"
                              StaysOpen="True"
-                             HeaderTitle="Oxytocin"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:OxytocinModalView x:Name="OxytocinView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupIVFluid"     
-                             IsOpen="{Binding IsIVFluidPopupOpen}"
+            <modals:IVFluidPopup x:Name="sfPopupIVFluid"
                              StaysOpen="True"
-                             HeaderTitle="IV Fluid"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:IVFluidModalView x:Name="IVFluidView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupMedication"     
-                             IsOpen="{Binding IsMedicationPopupOpen}"
+            <modals:MedicationPopup x:Name="sfPopupMedication"
                              StaysOpen="True"
-                             HeaderTitle="Medication"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="600"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:MedicationModalView x:Name="MedicationView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+                             Grid.RowSpan="5" />
 
             <!--<Grid Grid.Row="2" MinimumWidthRequest="800" ColumnDefinitions="50,10,*">
                 <Grid.RowDefinitions>
