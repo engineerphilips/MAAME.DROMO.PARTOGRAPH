@@ -30,9 +30,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX idx_cervix_dilatation_sync ON Tbl_CervixDilatation(updatedtime, syncstatus);
-            CREATE INDEX idx_cervix_dilatation_server_version ON Tbl_CervixDilatation(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_cervix_dilatation_sync ON Tbl_CervixDilatation(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_cervix_dilatation_server_version ON Tbl_CervixDilatation(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_cervix_dilatation_insert;
             CREATE TRIGGER trg_cervix_dilatation_insert 
             AFTER INSERT ON Tbl_CervixDilatation
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -43,6 +44,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_cervix_dilatation_update;
             CREATE TRIGGER trg_cervix_dilatation_update 
             AFTER UPDATE ON Tbl_CervixDilatation
             WHEN NEW.updatedtime = OLD.updatedtime

@@ -29,9 +29,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     datahash TEXT
                 );
             
-                CREATE INDEX idx_posture_sync ON Tbl_Posture(updatedtime, syncstatus);
-                CREATE INDEX idx_posture_server_version ON Tbl_Posture(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_posture_sync ON Tbl_Posture(updatedtime, syncstatus);
+                CREATE INDEX IF NOT EXISTS idx_posture_server_version ON Tbl_Posture(serverversion);
 
+                DROP TRIGGER IF EXISTS trg_posture_insert;
                 CREATE TRIGGER trg_posture_insert 
                 AFTER INSERT ON Tbl_Posture
                 WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -42,11 +43,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     WHERE ID = NEW.ID;
                 END;
 
+                DROP TRIGGER IF EXISTS trg_posture_update;
                 CREATE TRIGGER trg_posture_update 
                 AFTER UPDATE ON Tbl_Posture
                 WHEN NEW.updatedtime = OLD.updatedtime
                 BEGIN
-                    UPDATE Tbl_OralFluid 
+                    UPDATE Tbl_Posture 
                     SET updatedtime = (strftime('%s', 'now') * 1000),
                         version = OLD.version + 1,
                         syncstatus = 0

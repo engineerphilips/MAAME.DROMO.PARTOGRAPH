@@ -30,9 +30,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX idx_urine_sync ON Tbl_Urine(updatedtime, syncstatus);
-            CREATE INDEX idx_urine_server_version ON Tbl_Urine(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_urine_sync ON Tbl_Urine(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_urine_server_version ON Tbl_Urine(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_urine_insert;
             CREATE TRIGGER trg_urine_insert 
             AFTER INSERT ON Tbl_Urine
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -43,6 +44,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_urine_update;
             CREATE TRIGGER trg_urine_update 
             AFTER UPDATE ON Tbl_Urine
             WHEN NEW.updatedtime = OLD.updatedtime

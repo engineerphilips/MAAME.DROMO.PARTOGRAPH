@@ -31,9 +31,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
-            CREATE INDEX idx_medication_sync ON Tbl_MedicationEntry(updatedtime, syncstatus);
-            CREATE INDEX idx_medication_server_version ON Tbl_MedicationEntry(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_medication_sync ON Tbl_MedicationEntry(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_medication_server_version ON Tbl_MedicationEntry(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_medication_insert;
             CREATE TRIGGER trg_medication_insert
             AFTER INSERT ON Tbl_MedicationEntry
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -44,6 +45,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_medication_update;
             CREATE TRIGGER trg_medication_update
             AFTER UPDATE ON Tbl_MedicationEntry
             WHEN NEW.updatedtime = OLD.updatedtime

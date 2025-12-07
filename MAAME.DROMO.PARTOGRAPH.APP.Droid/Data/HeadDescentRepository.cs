@@ -7,7 +7,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
     // Baseline HeadDescent Repository
     public class HeadDescentRepository : BasePartographRepository<HeadDescent>
     {
-        protected override string TableName => "Tbl_FHR";
+        protected override string TableName => "Tbl_HeadDescent";
 
         protected override string CreateTableSql => @"
             CREATE TABLE IF NOT EXISTS Tbl_HeadDescent (
@@ -30,9 +30,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX idx_headdescent_sync ON Tbl_HeadDescent(updatedtime, syncstatus);
-            CREATE INDEX idx_headdescent_server_version ON Tbl_HeadDescent(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_headdescent_sync ON Tbl_HeadDescent(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_headdescent_server_version ON Tbl_HeadDescent(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_headdescent_insert;
             CREATE TRIGGER trg_headdescent_insert 
             AFTER INSERT ON Tbl_HeadDescent
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -43,6 +44,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_headdescent_update;
             CREATE TRIGGER trg_headdescent_update 
             AFTER UPDATE ON Tbl_HeadDescent
             WHEN NEW.updatedtime = OLD.updatedtime

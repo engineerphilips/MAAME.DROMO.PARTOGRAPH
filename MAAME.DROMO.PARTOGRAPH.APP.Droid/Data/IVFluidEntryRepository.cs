@@ -31,9 +31,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
-            CREATE INDEX idx_ivfluid_sync ON Tbl_IVFluid(updatedtime, syncstatus);
-            CREATE INDEX idx_ivfluid_server_version ON Tbl_IVFluid(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_ivfluid_sync ON Tbl_IVFluid(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_ivfluid_server_version ON Tbl_IVFluid(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_ivfluid_insert;
             CREATE TRIGGER trg_ivfluid_insert
             AFTER INSERT ON Tbl_IVFluid
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -44,6 +45,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_ivfluid_update;
             CREATE TRIGGER trg_ivfluid_update
             AFTER UPDATE ON Tbl_IVFluid
             WHEN NEW.updatedtime = OLD.updatedtime

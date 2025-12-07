@@ -33,9 +33,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     datahash TEXT
                 );
             
-                CREATE INDEX idx_oralfluid_sync ON Tbl_OralFluid(updatedtime, syncstatus);
-                CREATE INDEX idx_oralfluid_server_version ON Tbl_OralFluid(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_oralfluid_sync ON Tbl_OralFluid(updatedtime, syncstatus);
+                CREATE INDEX IF NOT EXISTS idx_oralfluid_server_version ON Tbl_OralFluid(serverversion);
 
+                DROP TRIGGER IF EXISTS trg_oralfluid_insert;
                 CREATE TRIGGER trg_oralfluid_insert 
                 AFTER INSERT ON Tbl_OralFluid
                 WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -46,6 +47,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     WHERE ID = NEW.ID;
                 END;
 
+                DROP TRIGGER IF EXISTS trg_oralfluid_update;
                 CREATE TRIGGER trg_oralfluid_update 
                 AFTER UPDATE ON Tbl_OralFluid
                 WHEN NEW.updatedtime = OLD.updatedtime

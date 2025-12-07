@@ -31,9 +31,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX idx_companion_sync ON Tbl_FetalPosition(updatedtime, syncstatus);
-            CREATE INDEX idx_companion_server_version ON Tbl_FetalPosition(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_companion_sync ON Tbl_FetalPosition(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_companion_server_version ON Tbl_FetalPosition(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_companion_insert;
             CREATE TRIGGER trg_companion_insert 
             AFTER INSERT ON Tbl_FetalPosition
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -44,6 +45,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_companion_update;
             CREATE TRIGGER trg_companion_update 
             AFTER UPDATE ON Tbl_FetalPosition
             WHEN NEW.updatedtime = OLD.updatedtime

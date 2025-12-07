@@ -30,9 +30,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX idx_temperature_sync ON Tbl_Temperature(updatedtime, syncstatus);
-            CREATE INDEX idx_temperature_server_version ON Tbl_Temperature(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_temperature_sync ON Tbl_Temperature(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_temperature_server_version ON Tbl_Temperature(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_temperature_insert;
             CREATE TRIGGER trg_temperature_insert 
             AFTER INSERT ON Tbl_Temperature
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -43,6 +44,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_temperature_update;
             CREATE TRIGGER trg_temperature_update 
             AFTER UPDATE ON Tbl_Temperature
             WHEN NEW.updatedtime = OLD.updatedtime

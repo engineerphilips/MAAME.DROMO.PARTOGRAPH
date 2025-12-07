@@ -32,9 +32,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX idx_moulding_sync ON Tbl_Moulding(updatedtime, syncstatus);
-            CREATE INDEX idx_moulding_server_version ON Tbl_Moulding(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_moulding_sync ON Tbl_Moulding(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_moulding_server_version ON Tbl_Moulding(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_moulding_insert;
             CREATE TRIGGER trg_moulding_insert 
             AFTER INSERT ON Tbl_Moulding
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -45,6 +46,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_moulding_update;
             CREATE TRIGGER trg_moulding_update 
             AFTER UPDATE ON Tbl_Moulding
             WHEN NEW.updatedtime = OLD.updatedtime

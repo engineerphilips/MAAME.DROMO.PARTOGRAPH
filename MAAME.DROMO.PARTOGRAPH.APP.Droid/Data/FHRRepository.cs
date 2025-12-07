@@ -30,9 +30,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX idx_fhr_sync ON Tbl_FHR(updatedtime, syncstatus);
-            CREATE INDEX idx_fhr_server_version ON Tbl_FHR(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_fhr_sync ON Tbl_FHR(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_fhr_server_version ON Tbl_FHR(serverversion);
 
+            DROP TRIGGER IF EXISTS trg_fhr_insert;
             CREATE TRIGGER trg_fhr_insert 
             AFTER INSERT ON Tbl_FHR
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -43,6 +44,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
+            DROP TRIGGER IF EXISTS trg_fhr_update;
             CREATE TRIGGER trg_fhr_update 
             AFTER UPDATE ON Tbl_FHR
             WHEN NEW.updatedtime = OLD.updatedtime
