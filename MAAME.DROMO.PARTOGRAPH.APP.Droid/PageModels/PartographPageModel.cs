@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
@@ -19,6 +20,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
         private readonly CompanionRepository _companionRepository;
+        private readonly PainReliefRepository _painReliefRepository;
+        private readonly OralFluidRepository _oralFluidRepository;
+        private readonly PostureRepository _postureRepository;
+        private readonly FHRRepository _fhrRepository;
 
         // Modal page models
         private readonly CompanionModalPageModel _companionModalPageModel;
@@ -104,6 +109,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public PartographPageModel(PatientRepository patientRepository,
             PartographRepository partographRepository,
             CompanionRepository companionRepository,
+            PainReliefRepository painReliefRepository,
+            OralFluidRepository oralFluidRepository,
+            PostureRepository postureRepository,
+            FHRRepository fhrRepository,
             ModalErrorHandler errorHandler,
             CompanionModalPageModel companionModalPageModel,
             PainReliefModalPageModel painReliefModalPageModel,
@@ -126,6 +135,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
             _companionRepository = companionRepository;
+            _painReliefRepository = painReliefRepository;
+            _oralFluidRepository = oralFluidRepository;
+            _postureRepository = postureRepository;
+            _fhrRepository = fhrRepository;
             _errorHandler = errorHandler;
             _companionModalPageModel = companionModalPageModel;
             _painReliefModalPageModel = painReliefModalPageModel;
@@ -223,6 +236,86 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         //    }
         //}
 
+        private async Task LoadMeasurablesFromDatabase()
+        {
+            if (_patient?.ID == null)
+                return;
+
+            try
+            {
+                // Retrieve all measurables from SQLite for the patient
+                var companionEntries = await _companionRepository.ListByPatientAsync(_patient.ID);
+                var painReliefEntries = await _painReliefRepository.ListByPatientAsync(_patient.ID);
+                var oralFluidEntries = await _oralFluidRepository.ListByPatientAsync(_patient.ID);
+                var postureEntries = await _postureRepository.ListByPatientAsync(_patient.ID);
+                var fhrEntries = await _fhrRepository.ListByPatientAsync(_patient.ID);
+
+                // Map measurables to TimeSlots based on their time
+                foreach (var timeSlot in TimeSlots)
+                {
+                    // Define the time window for this slot (current hour)
+                    var slotStartTime = new DateTime(timeSlot.Time.Year, timeSlot.Time.Month, timeSlot.Time.Day, timeSlot.Time.Hour, 0, 0);
+                    var slotEndTime = slotStartTime.AddHours(1);
+
+                    // Find companion entry for this time slot
+                    var companionEntry = companionEntries.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (companionEntry != null && !string.IsNullOrEmpty(companionEntry.Companion))
+                    {
+                        if (Enum.TryParse<CompanionType>(companionEntry.Companion, true, out var companionType))
+                        {
+                            timeSlot.Companion = companionType;
+                        }
+                    }
+
+                    // Find pain relief entry for this time slot
+                    var painReliefEntry = painReliefEntries.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (painReliefEntry != null && !string.IsNullOrEmpty(painReliefEntry.PainRelief))
+                    {
+                        if (Enum.TryParse<PainReliefType>(painReliefEntry.PainRelief, true, out var painReliefType))
+                        {
+                            timeSlot.PainRelief = painReliefType;
+                        }
+                    }
+
+                    // Find oral fluid entry for this time slot
+                    var oralFluidEntry = oralFluidEntries.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (oralFluidEntry != null && !string.IsNullOrEmpty(oralFluidEntry.OralFluid))
+                    {
+                        if (Enum.TryParse<OralFluidType>(oralFluidEntry.OralFluid, true, out var oralFluidType))
+                        {
+                            timeSlot.OralFluid = oralFluidType;
+                        }
+                    }
+
+                    // Find posture entry for this time slot
+                    var postureEntry = postureEntries.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (postureEntry != null && !string.IsNullOrEmpty(postureEntry.Posture))
+                    {
+                        if (Enum.TryParse<PostureType>(postureEntry.Posture, true, out var postureType))
+                        {
+                            timeSlot.Posture = postureType;
+                        }
+                    }
+
+                    // Find FHR entry for this time slot
+                    var fhrEntry = fhrEntries.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (fhrEntry != null && fhrEntry.Rate.HasValue)
+                    {
+                        timeSlot.BaselineFHR = fhrEntry.Rate.Value;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
         private async Task LoadData(Guid? patientId)
         {
             try
@@ -257,6 +350,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     var latestEntry = entries.OrderByDescending(e => e.Time).FirstOrDefault();
                     //CurrentDilation = latestEntry.CervicalDilation;
                 }
+
+                // Load measurables from database and populate TimeSlots
+                await LoadMeasurablesFromDatabase();
 
                 // Prepare chart data
                 PrepareChartData();
