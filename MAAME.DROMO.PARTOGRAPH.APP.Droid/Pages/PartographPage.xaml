@@ -215,6 +215,7 @@
                         TextColor="Black"
                         Command="{Binding OpenCompanionPopupCommand}" />
 
+                <!--Clicked="CompanionButton_Clicked"-->
                 <Label Grid.Row="3" Grid.Column="1" 
                        Text="N" 
                        BackgroundColor="LightGray"
@@ -1120,9 +1121,18 @@
                 </CollectionView>
 
             </Grid>
-            
-            <sfPopup:SfPopup x:Name="sfPopupCompanion"
-                             IsOpen="{Binding IsCompanionPopupOpen, Mode=TwoWay}"
+            <!--IsOpen="{Binding IsCompanionPopupOpen}"-->
+
+            <modals:CompanionPopup x:Name="sfPopupCompanion"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             HeaderHeight="50"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <!--<sfPopup:SfPopup x:Name="sfPopupCompanion"
                              StaysOpen="True"
                              HeaderTitle="Companion"
                              ShowCloseButton="True"
@@ -1136,9 +1146,19 @@
                         <modals:CompanionModalView x:Name="CompanionView" />
                     </DataTemplate>
                 </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+            </sfPopup:SfPopup>-->
 
-            <sfPopup:SfPopup x:Name="sfPopupPainRelief"
+            <modals:PainReliefPopup x:Name="sfPopupPainRelief"
+                             IsOpen="{Binding IsPainReliefPopupOpen}"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="70"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+            
+            <!--<sfPopup:SfPopup x:Name="sfPopupPainRelief"
                              IsOpen="{Binding IsPainReliefPopupOpen}"
                              StaysOpen="True"
                              HeaderTitle="Pain relief"
@@ -1153,7 +1173,7 @@
                         <modals:PainReliefModalView x:Name="PainReliefView" />
                     </DataTemplate>
                 </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
+            </sfPopup:SfPopup>-->
 
             <sfPopup:SfPopup x:Name="sfPopupOralFluid"
                              IsOpen="{Binding IsOralFluidPopupOpen}"

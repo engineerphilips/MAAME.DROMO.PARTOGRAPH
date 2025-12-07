@@ -29,9 +29,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     datahash TEXT
                 );
             
-                CREATE INDEX idx_painrelief_sync ON Tbl_PainRelief(updatedtime, syncstatus);
-                CREATE INDEX idx_painrelief_server_version ON Tbl_PainRelief(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_painrelief_sync ON Tbl_PainRelief(updatedtime, syncstatus);
+                CREATE INDEX IF NOT EXISTS idx_painrelief_server_version ON Tbl_PainRelief(serverversion);
 
+                DROP TRIGGER IF EXISTS trg_painrelief_insert;
                 CREATE TRIGGER trg_painrelief_insert 
                 AFTER INSERT ON Tbl_PainRelief
                 WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
@@ -42,6 +43,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     WHERE ID = NEW.ID;
                 END;
 
+                DROP TRIGGER IF EXISTS trg_painrelief_update;
                 CREATE TRIGGER trg_painrelief_update 
                 AFTER UPDATE ON Tbl_PainRelief
                 WHEN NEW.updatedtime = OLD.updatedtime

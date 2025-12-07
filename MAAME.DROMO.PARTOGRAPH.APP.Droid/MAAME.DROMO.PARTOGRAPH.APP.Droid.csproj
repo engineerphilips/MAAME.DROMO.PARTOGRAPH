@@ -192,6 +192,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Pages\Modals\CompanionPopup.xaml.cs">
+	    <DependentUpon>CompanionPopup.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\Modals\HeadDescentModalView.xaml.cs">
 	    <DependentUpon>HeadDescentModalView.xaml</DependentUpon>
 	  </Compile>
@@ -203,6 +206,9 @@
 	  </Compile>
 	  <Compile Update="Pages\Modals\CervixDilatationModalView.xaml.cs">
 	    <DependentUpon>CervixDilatationModalView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\Modals\PainReliefPopup.xaml.cs">
+	    <DependentUpon>PainReliefPopup.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Pages\Modals\TemperatureModalView.xaml.cs">
 	    <DependentUpon>TemperatureModalView.xaml</DependentUpon>
@@ -258,6 +264,9 @@
 	  <MauiXaml Update="Pages\Modals\CaputModalView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\Modals\CompanionPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\Modals\HeadDescentModalView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -268,6 +277,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Modals\CervixDilatationModalView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Modals\PainReliefPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Modals\TemperatureModalView.xaml">

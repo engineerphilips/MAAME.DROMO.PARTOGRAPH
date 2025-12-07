@@ -19,43 +19,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private string _patientName = string.Empty;
 
         [ObservableProperty]
-        private DateTime _recordingTime = DateTime.Now;
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
-        private int? _painReliefIndex = null;
+        private int? _painReliefIndex = -1;
 
         [ObservableProperty]
         private string _painReliefDisplay = string.Empty;
-
-        //[ObservableProperty]
-        //private int _painLevel = 0;
-
-        //[ObservableProperty]
-        //private string _painReliefMethod = "None";
-
-        //[ObservableProperty]
-        //private TimeSpan _administrationTime = DateTime.Now.TimeOfDay;
-
-        //[ObservableProperty]
-        //private string _dose = string.Empty;
-
-        //[ObservableProperty]
-        //private bool _effectivenessPoor;
-
-        //[ObservableProperty]
-        //private bool _effectivenessFair;
-
-        //[ObservableProperty]
-        //private bool _effectivenessGood;
-
-        //[ObservableProperty]
-        //private bool _effectivenessExcellent;
-
-        //[ObservableProperty]
-        //private bool _sideEffects;
-
-        //[ObservableProperty]
-        //private string _sideEffectsDescription = string.Empty;
 
         [ObservableProperty]
         private string _notes = string.Empty;
@@ -63,11 +35,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private string _recordedBy = string.Empty;
 
-        //[ObservableProperty]
-        //private bool _showMedicationDetails;
-
         [ObservableProperty]
         private bool _isBusy;
+
+        public Action? ClosePopup { get; set; }
 
         public PainReliefModalPageModel(PainReliefRepository painReliefRepository, ModalErrorHandler errorHandler)
         {
@@ -108,54 +79,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        //partial void OnPainReliefMethodChanged(string value)
-        //{
-        //    // Show medication details for pharmacological interventions
-        //    ShowMedicationDetails = value is "Paracetamol" or "Codeine" or "Pethidine injection"
-        //                                   or "Gas and air (Entonox)" or "Epidural" or "Spinal block"
-        //                                   or "Combined spinal-epidural";
-        //}
-
-        //partial void OnEffectivenessPoorChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessFair = false;
-        //        EffectivenessGood = false;
-        //        EffectivenessExcellent = false;
-        //    }
-        //}
-
-        //partial void OnEffectivenessFairChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessPoor = false;
-        //        EffectivenessGood = false;
-        //        EffectivenessExcellent = false;
-        //    }
-        //}
-
-        //partial void OnEffectivenessGoodChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessPoor = false;
-        //        EffectivenessFair = false;
-        //        EffectivenessExcellent = false;
-        //    }
-        //}
-
-        //partial void OnEffectivenessExcellentChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessPoor = false;
-        //        EffectivenessFair = false;
-        //        EffectivenessGood = false;
-        //    }
-        //}
-
         [RelayCommand]
         private async Task Save()
         {
@@ -172,26 +95,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var entry = new PainReliefEntry
                 {
                     PartographID = _patient.ID,
-                    Time = RecordingTime,
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
                     PainRelief = PainReliefIndex == 0 ? 'N' : PainReliefIndex == 1 ? 'Y' : PainReliefIndex == 2 ? 'D' : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
-                    //PainRelief = PainLevel.ToString(),
-                    //PainReliefMethod = PainReliefMethod,
-                    //AdministeredTime = ShowMedicationDetails ? DateTime.Today.Add(AdministrationTime) : null,
-                    //Dose = Dose,
-                    //Effectiveness = GetSelectedEffectiveness(),
-                    //SideEffects = SideEffects,
-                    //SideEffectsDescription = SideEffectsDescription,
-                    //Notes = Notes,
-                    //HandlerName = RecordedBy
                 };
 
-                await _painReliefRepository.SaveItemAsync(entry);
+                if (await _painReliefRepository.SaveItemAsync(entry) != null)
+                {
+                    await AppShell.DisplayToastAsync("Pain relief assessment saved successfully");
 
-                await Shell.Current.GoToAsync("..");
-                await AppShell.DisplayToastAsync("Pain relief assessment saved successfully");
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
+                }
+                else
+                {
+                    await AppShell.DisplayToastAsync("Pain relief assessment failed to save");
+                }
             }
             catch (Exception e)
             {
@@ -204,18 +128,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         }
 
         [RelayCommand]
-        private async Task Cancel()
+        private void Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
         }
 
-        //private string GetSelectedEffectiveness()
-        //{
-        //    if (EffectivenessPoor) return "Poor";
-        //    if (EffectivenessFair) return "Fair";
-        //    if (EffectivenessGood) return "Good";
-        //    if (EffectivenessExcellent) return "Excellent";
-        //    return "";
-        //}
+        private void ResetFields()
+        {
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            PainReliefIndex = -1;
+            Notes = string.Empty;
+        }
     }
 }

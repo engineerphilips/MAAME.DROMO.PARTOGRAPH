@@ -1,13 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MAAME.DROMO.PARTOGRAPH.MODEL;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
@@ -142,6 +143,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _bpPulseModalPageModel = bpPulseModalPageModel;
             Chartinghours = new ObservableCollection<TimeSlots>();
             TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
+
             GenerateInitialTimeSlots();
         }
 
@@ -369,8 +371,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         // Popup IsOpen properties
-        [ObservableProperty]
-        private bool _isCompanionPopupOpen;
+        //[ObservableProperty]
+        //private bool _isCompanionPopupOpen;
+
+        //public bool IsCompanionPopupOpen
+        //{
+        //    get => _isCompanionPopupOpen;
+        //    set
+        //    {
+        //        SetProperty(ref _isCompanionPopupOpen, value);
+        //        OnPropertyChanged(nameof(IsCompanionPopupOpen));
+        //    }
+        //}
+
+        public Action? CloseCompanionModalPopup { get; set; }
+        public Action? OpenCompanionModalPopup { get; set; }
+        public Action? ClosePainReliefModalPopup { get; set; }
+        public Action? OpenPainReliefModalPopup { get; set; }
 
         [ObservableProperty]
         private bool _isPainReliefPopupOpen;
@@ -425,25 +442,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         // Popup Open Commands
         [RelayCommand]
-        private async Task OpenCompanionPopup()
+        public async Task OpenCompanionPopup()
         {
+            //if (IsCompanionPopupOpen)
+            //    IsCompanionPopupOpen = false;
             if (_patient?.ID != null)
             {
-                _companionModalPageModel._patient = _patient;
-                _companionModalPageModel.ClosePopup = () => IsCompanionPopupOpen = false;
-                await _companionModalPageModel.LoadPatient(_patient.ID);
-                IsCompanionPopupOpen = true;
+                CompanionModalPageModel._patient = _patient;
+                CompanionModalPageModel.ClosePopup = () => CloseCompanionModalPopup?.Invoke();
+                await CompanionModalPageModel.LoadPatient(_patient.ID);
+
+                OpenCompanionModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenPainReliefPopup()
+        private async Task OpenPainReliefPopup()
         {
             if (_patient?.ID != null)
             {
                 _painReliefModalPageModel._patient = _patient;
-                _painReliefModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsPainReliefPopupOpen = true;
+
+                _painReliefModalPageModel.ClosePopup = () => ClosePainReliefModalPopup?.Invoke();
+                await _painReliefModalPageModel.LoadPatient(_patient.ID);
+                OpenPainReliefModalPopup?.Invoke();
+                //IsPainReliefPopupOpen = true;
             }
         }
 
