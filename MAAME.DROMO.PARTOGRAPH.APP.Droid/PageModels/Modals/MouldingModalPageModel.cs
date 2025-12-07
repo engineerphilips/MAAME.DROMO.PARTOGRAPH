@@ -25,7 +25,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private string _patientName = string.Empty;
 
         [ObservableProperty]
-        private DateTime _recordingTime = DateTime.Now;
+        private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
         private int _degreeIndex = -1;
@@ -82,17 +84,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var entry = new Moulding
                 {
                     PartographID = _patient.ID,
-                    Time = RecordingTime,
-                    Degree = DegreeIndex, 
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
+                    Degree = DegreeIndex,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 
-                await _mouldingRepository.SaveItemAsync(entry);
+                if (await _mouldingRepository.SaveItemAsync(entry) != null)
+                {
+                    await AppShell.DisplayToastAsync("Moulding assessment saved successfully");
 
-                await Shell.Current.GoToAsync("..");
-                await AppShell.DisplayToastAsync("Moulding assessment saved successfully");
+                    // Reset fields to default
+                    ResetFields();
+
+                    // Close the popup
+                    ClosePopup?.Invoke();
+                }
+                else
+                {
+                    await AppShell.DisplayToastAsync("Moulding assessment failed to save");
+                }
             }
             catch (Exception e)
             {
@@ -105,9 +117,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         }
 
         [RelayCommand]
-        private async Task Cancel()
+        private void Cancel()
         {
-            await Shell.Current.GoToAsync("..");
+            ResetFields();
+            ClosePopup?.Invoke();
+        }
+
+        private void ResetFields()
+        {
+            RecordingDate = DateOnly.FromDateTime(DateTime.Now);
+            RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            DegreeIndex = -1;
+            Notes = string.Empty;
         }
     }
 }
