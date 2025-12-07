@@ -388,54 +388,37 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Action? OpenCompanionModalPopup { get; set; }
         public Action? ClosePainReliefModalPopup { get; set; }
         public Action? OpenPainReliefModalPopup { get; set; }
-
-        [ObservableProperty]
-        private bool _isPainReliefPopupOpen;
-
-        [ObservableProperty]
-        private bool _isOralFluidPopupOpen;
-
-        [ObservableProperty]
-        private bool _isPosturePopupOpen;
-
-        [ObservableProperty]
-        private bool _isAmnioticFluidPopupOpen;
-
-        [ObservableProperty]
-        private bool _isFetalPositionPopupOpen;
-
-        [ObservableProperty]
-        private bool _isCaputPopupOpen;
+        public Action? CloseOralFluidModalPopup { get; set; }
+        public Action? OpenOralFluidModalPopup { get; set; }
+        public Action? ClosePostureModalPopup { get; set; }
+        public Action? OpenPostureModalPopup { get; set; }
+        public Action? CloseFetalPositionModalPopup { get; set; }
+        public Action? OpenFetalPositionModalPopup { get; set; }
+        public Action? CloseAmnioticFluidModalPopup { get; set; }
+        public Action? OpenAmnioticFluidModalPopup { get; set; }
+        public Action? CloseCaputModalPopup { get; set; }
+        public Action? OpenCaputModalPopup { get; set; }
+        public Action? CloseMouldingModalPopup { get; set; }
+        public Action? OpenMouldingModalPopup { get; set; }
+        public Action? CloseUrineModalPopup { get; set; }
+        public Action? OpenUrineModalPopup { get; set; }
+        public Action? CloseTemperatureModalPopup { get; set; }
+        public Action? OpenTemperatureModalPopup { get; set; }
+        public Action? CloseBpPulseModalPopup { get; set; }
+        public Action? OpenBpPulseModalPopup { get; set; }
+        public Action? CloseMedicationModalPopup { get; set; }
+        public Action? OpenMedicationModalPopup { get; set; }
+        public Action? CloseIVFluidModalPopup { get; set; }
+        public Action? OpenIVFluidModalPopup { get; set; }
+        public Action? CloseOxytocinModalPopup { get; set; }
+        public Action? OpenOxytocinModalPopup { get; set; }
+        public Action? CloseHeadDescentModalPopup { get; set; }
+        public Action? OpenHeadDescentModalPopup { get; set; }
+        public Action? CloseCervixDilatationModalPopup { get; set; }
+        public Action? OpenCervixDilatationModalPopup { get; set; }
 
         [ObservableProperty]
         private bool _isFHRContractionPopupOpen;
-
-        [ObservableProperty]
-        private bool _isUrinePopupOpen;
-
-        [ObservableProperty]
-        private bool _isTemperaturePopupOpen;
-
-        [ObservableProperty]
-        private bool _isBpPulsePopupOpen;
-
-        [ObservableProperty]
-        private bool _isMedicationPopupOpen;
-
-        [ObservableProperty]
-        private bool _isIVFluidPopupOpen;
-
-        [ObservableProperty]
-        private bool _isOxytocinPopupOpen;
-
-        [ObservableProperty]
-        private bool _isHeadDescentPopupOpen;
-
-        [ObservableProperty]
-        private bool _isCervixDilatationPopupOpen;
-
-        [ObservableProperty]
-        private bool _isMouldingPopupOpen;
 
         [ObservableProperty]
         private bool _isFHRDecelerationPopupOpen;
@@ -471,57 +454,62 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private void OpenOralFluidPopup()
+        private async Task OpenOralFluidPopup()
         {
             if (_patient?.ID != null)
             {
                 _oralFluidModalPageModel._patient = _patient;
-                _oralFluidModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsOralFluidPopupOpen = true;
+                _oralFluidModalPageModel.ClosePopup = () => CloseOralFluidModalPopup?.Invoke();
+                await _oralFluidModalPageModel.LoadPatient(_patient.ID);
+                OpenOralFluidModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenPosturePopup()
+        private async Task OpenPosturePopup()
         {
             if (_patient?.ID != null)
             {
                 _postureModalPageModel._patient = _patient;
-                _postureModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsPosturePopupOpen = true;
+                _postureModalPageModel.ClosePopup = () => ClosePostureModalPopup?.Invoke();
+                await _postureModalPageModel.LoadPatient(_patient.ID);
+                OpenPostureModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenAmnioticFluidPopup()
+        private async Task OpenAmnioticFluidPopup()
         {
             if (_patient?.ID != null)
             {
                 _amnioticFluidModalPageModel._patient = _patient;
-                _amnioticFluidModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsAmnioticFluidPopupOpen = true;
+                _amnioticFluidModalPageModel.ClosePopup = () => CloseAmnioticFluidModalPopup?.Invoke();
+                await _amnioticFluidModalPageModel.LoadPatient(_patient.ID);
+                OpenAmnioticFluidModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenFetalPositionPopup()
+        private async Task OpenFetalPositionPopup()
         {
             if (_patient?.ID != null)
             {
                 _fetalPositionModalPageModel._patient = _patient;
-                _fetalPositionModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsFetalPositionPopupOpen = true;
+                _fetalPositionModalPageModel.ClosePopup = () => CloseFetalPositionModalPopup?.Invoke();
+                await _fetalPositionModalPageModel.LoadPatient(_patient.ID);
+                OpenFetalPositionModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenCaputPopup()
+        private async Task OpenCaputPopup()
         {
             if (_patient?.ID != null)
             {
                 _caputModalPageModel._patient = _patient;
-                _caputModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsCaputPopupOpen = true;
+                _caputModalPageModel.ClosePopup = () => CloseCaputModalPopup?.Invoke();
+                await _caputModalPageModel.LoadPatient(_patient.ID);
+                OpenCaputModalPopup?.Invoke();
             }
         }
 
@@ -532,101 +520,110 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private void OpenUrinePopup()
+        private async Task OpenUrinePopup()
         {
             if (_patient?.ID != null)
             {
                 _urineModalPageModel._patient = _patient;
-                _urineModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsUrinePopupOpen = true;
+                _urineModalPageModel.ClosePopup = () => CloseUrineModalPopup?.Invoke();
+                await _urineModalPageModel.LoadPatient(_patient.ID);
+                OpenUrineModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenTemperaturePopup()
+        private async Task OpenTemperaturePopup()
         {
             if (_patient?.ID != null)
             {
                 _temperatureModalPageModel._patient = _patient;
-                _temperatureModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsTemperaturePopupOpen = true;
+                _temperatureModalPageModel.ClosePopup = () => CloseTemperatureModalPopup?.Invoke();
+                await _temperatureModalPageModel.LoadPatient(_patient.ID);
+                OpenTemperatureModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenBpPulsePopup()
+        private async Task OpenBpPulsePopup()
         {
             if (_patient?.ID != null)
             {
                 _bpPulseModalPageModel._patient = _patient;
-                _bpPulseModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsBpPulsePopupOpen = true;
+                _bpPulseModalPageModel.ClosePopup = () => CloseBpPulseModalPopup?.Invoke();
+                await _bpPulseModalPageModel.LoadPatient(_patient.ID);
+                OpenBpPulseModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenMedicationPopup()
+        private async Task OpenMedicationPopup()
         {
             if (_patient?.ID != null)
             {
                 _medicationModalPageModel._patient = _patient;
-                _medicationModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsMedicationPopupOpen = true;
+                _medicationModalPageModel.ClosePopup = () => CloseMedicationModalPopup?.Invoke();
+                await _medicationModalPageModel.LoadPatient(_patient.ID);
+                OpenMedicationModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenIVFluidPopup()
+        private async Task OpenIVFluidPopup()
         {
             if (_patient?.ID != null)
             {
                 _ivFluidModalPageModel._patient = _patient;
-                _ivFluidModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsIVFluidPopupOpen = true;
+                _ivFluidModalPageModel.ClosePopup = () => CloseIVFluidModalPopup?.Invoke();
+                await _ivFluidModalPageModel.LoadPatient(_patient.ID);
+                OpenIVFluidModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenOxytocinPopup()
+        private async Task OpenOxytocinPopup()
         {
             if (_patient?.ID != null)
             {
                 _oxytocinModalPageModel._patient = _patient;
-                _oxytocinModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsOxytocinPopupOpen = true;
+                _oxytocinModalPageModel.ClosePopup = () => CloseOxytocinModalPopup?.Invoke();
+                await _oxytocinModalPageModel.LoadPatient(_patient.ID);
+                OpenOxytocinModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenHeadDescentPopup()
+        private async Task OpenHeadDescentPopup()
         {
             if (_patient?.ID != null)
             {
                 _headDescentModalPageModel._patient = _patient;
-                _headDescentModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsHeadDescentPopupOpen = true;
+                _headDescentModalPageModel.ClosePopup = () => CloseHeadDescentModalPopup?.Invoke();
+                await _headDescentModalPageModel.LoadPatient(_patient.ID);
+                OpenHeadDescentModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenCervixDilatationPopup()
+        private async Task OpenCervixDilatationPopup()
         {
             if (_patient?.ID != null)
             {
                 _cervixDilatationModalPageModel._patient = _patient;
-                _cervixDilatationModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsCervixDilatationPopupOpen = true;
+                _cervixDilatationModalPageModel.ClosePopup = () => CloseCervixDilatationModalPopup?.Invoke();
+                await _cervixDilatationModalPageModel.LoadPatient(_patient.ID);
+                OpenCervixDilatationModalPopup?.Invoke();
             }
         }
 
         [RelayCommand]
-        private void OpenMouldingPopup()
+        private async Task OpenMouldingPopup()
         {
             if (_patient?.ID != null)
             {
                 _mouldingModalPageModel._patient = _patient;
-                _mouldingModalPageModel.LoadPatient(_patient.ID).FireAndForgetSafeAsync(_errorHandler);
-                IsMouldingPopupOpen = true;
+                _mouldingModalPageModel.ClosePopup = () => CloseMouldingModalPopup?.Invoke();
+                await _mouldingModalPageModel.LoadPatient(_patient.ID);
+                OpenMouldingModalPopup?.Invoke();
             }
         }
     }

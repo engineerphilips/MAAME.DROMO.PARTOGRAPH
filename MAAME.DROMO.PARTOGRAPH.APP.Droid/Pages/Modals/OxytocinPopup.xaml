@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<sfPopup:SfPopup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.OxytocinPopup">
+
+    <sfPopup:SfPopup.Resources>
+        <ResourceDictionary>
+            <!-- Input Styles -->
+            <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Outlined" />
+                <Setter Property="OutlineCornerRadius" Value="8" />
+            </Style>
+        </ResourceDictionary>
+    </sfPopup:SfPopup.Resources>
+    <sfPopup:SfPopup.HeaderTemplate>
+        <DataTemplate>
+            <StackLayout>
+                <Label Text="Oxytocin" VerticalOptions="Center" Margin="15,15,0,0" />
+            </StackLayout>
+        </DataTemplate>
+    </sfPopup:SfPopup.HeaderTemplate>
+    <sfPopup:SfPopup.ContentTemplate>
+        <DataTemplate>
+            <ScrollView>
+                <VerticalStackLayout Padding="15,10" Spacing="10">
+                    <core:SfTextInputLayout Hint="Date"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Recording time">
+                        <DatePicker Date="{Binding RecordingDate}" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Time"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Recording time">
+                        <TimePicker Time="{Binding RecordingTime}" />
+                    </core:SfTextInputLayout>
+
+                    <VerticalStackLayout Padding="10,0,0,0">
+                        <Label Text=" Is oxytocin currently being administered to the woman?" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+
+                    <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" VisibleSegmentsCount="2" SelectedIndex="{Binding OxytocinIndex, Mode=TwoWay}">
+                        <buttons:SfSegmentedControl.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>No</x:String>
+                                <x:String>Yes</x:String>
+                            </x:Array>
+                        </buttons:SfSegmentedControl.ItemsSource>
+                    </buttons:SfSegmentedControl>
+
+                    <core:SfTextInputLayout Hint="U/L and drops/min"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Administered dose...">
+                        <Entry Text="{Binding Notes}"
+                           Keyboard="Text"
+                           ReturnType="Next" />
+                    </core:SfTextInputLayout>
+
+                    <!-- Action Buttons -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,40">
+                        <Button Grid.Column="0"
+                            Text="Cancel"
+                            Command="{Binding CancelCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                            TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                            HeightRequest="50"
+                            CornerRadius="10" />
+
+                        <Button Grid.Column="1"
+                            Text="Save Assessment"
+                            Command="{Binding SaveCommand}"
+                            BackgroundColor="#4CAF50"
+                            TextColor="White"
+                            HeightRequest="50"
+                            CornerRadius="10" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </DataTemplate>
+    </sfPopup:SfPopup.ContentTemplate>
+
+</sfPopup:SfPopup>
