@@ -23,11 +23,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
 
-            //    try
+            //try
             //{
             //    var dropTableCmd = connection.CreateCommand();
             //    dropTableCmd.CommandText = @"
-            //    DELETE FROM Tbl_Companion;";
+            //    DROP TABLE Tbl_Urine;";
             //    await dropTableCmd.ExecuteNonQueryAsync();
             //}
             //catch (Exception e)

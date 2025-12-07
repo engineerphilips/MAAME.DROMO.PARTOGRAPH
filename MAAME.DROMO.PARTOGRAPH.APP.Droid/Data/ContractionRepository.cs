@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
-    // Continue with more repositories...
     // Contractions Repository
     public class ContractionRepository : BasePartographRepository<Contraction>
     {
@@ -79,13 +78,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Version = reader.GetInt32(13),
                 ServerVersion = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
                 Deleted = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
-                ConflictData = reader.GetString(16),
-                DataHash = reader.GetString(17)
+                ConflictData = reader.IsDBNull(16) ? string.Empty : reader.GetString(16),
+                DataHash = reader.IsDBNull(17) ? string.Empty : reader.GetString(17)
             };
         }
 
-        protected override string GetInsertSql() => @"INSERT INTO Tbl_Contraction (ID, partographID, time, handler, notes, frequencyPer10Min, durationSeconds, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-        VALUES (@id, @partographId, @time, @handler, @notes, @rate, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
+        protected override string GetInsertSql() => @"INSERT INTO Tbl_Contraction (ID, partographID, time, handler, notes, frequencyPer10Min, durationSeconds, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
+        VALUES (@id, @partographId, @time, @handler, @notes, @frequencyPer10Min, @durationSeconds, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
 
         protected override string GetUpdateSql() => @"
             UPDATE Tbl_FHR
@@ -96,9 +95,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             frequencyPer10Min = @frequencyPer10Min,
             durationSeconds = @durationSeconds,
             updatedtime = @updatedtime,
+            deletedtime = @deletedtime, 
             deviceid = @deviceid,
             syncstatus = @syncstatus,
-            version = @version
+            version = @version,
+            datahash = @datahash
         WHERE ID = @id";
 
         protected override void AddInsertParameters(SqliteCommand cmd, Contraction item)
@@ -125,12 +126,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@durationSeconds", item.DurationSeconds);
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
             cmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
             cmd.Parameters.AddWithValue("@deleted", item.Deleted);
+            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
 
         protected override void AddUpdateParameters(SqliteCommand cmd, Contraction item)
@@ -151,9 +155,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@frequencyPer10Min", item.FrequencyPer10Min);
             cmd.Parameters.AddWithValue("@durationSeconds", item.DurationSeconds);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
     }
 }

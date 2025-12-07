@@ -32,11 +32,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
             
-            CREATE INDEX IF NOT EXISTS idx_temperature_sync ON Tbl_BP(updatedtime, syncstatus);
-            CREATE INDEX IF NOT EXISTS idx_temperature_server_version ON Tbl_BP(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_bp_sync ON Tbl_BP(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_bp_server_version ON Tbl_BP(serverversion);
 
-            DROP TRIGGER IF EXISTS trg_temperature_insert;
-            CREATE TRIGGER trg_temperature_insert 
+            DROP TRIGGER IF EXISTS trg_bp_insert;
+            CREATE TRIGGER trg_bp_insert 
             AFTER INSERT ON Tbl_BP
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
             BEGIN
@@ -46,8 +46,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
 
-            DROP TRIGGER IF EXISTS trg_temperature_insert;
-            CREATE TRIGGER trg_temperature_update 
+            DROP TRIGGER IF EXISTS trg_bp_update;
+            CREATE TRIGGER trg_bp_update 
             AFTER UPDATE ON Tbl_BP
             WHEN NEW.updatedtime = OLD.updatedtime
             BEGIN
@@ -70,9 +70,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Time = reader.GetDateTime(2),
                 Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
                 Notes = reader.GetString(4),
-                Systolic = reader.IsDBNull(5) ? null : reader.GetInt32(5),
-                Diastolic = reader.IsDBNull(6) ? null : reader.GetInt32(6),
-                Pulse = reader.IsDBNull(7) ? null : reader.GetInt32(7),
+                Systolic = reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
+                Diastolic = reader.IsDBNull(6) ? 0 : reader.GetInt32(6),
+                Pulse = reader.IsDBNull(7) ? 0 : reader.GetInt32(7),
                 CreatedTime = reader.GetInt64(8),
                 UpdatedTime = reader.GetInt64(9),
                 DeletedTime = reader.IsDBNull(10) ? null : reader.GetInt64(10),
@@ -88,8 +88,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_BP (ID, partographID, time, handler, notes, systolic, diastolic, pulse, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-        VALUES (@id, @partographId, @time, @handler, @notes, @systolic, @diastolic, @pulse, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
+        INSERT INTO Tbl_BP (ID, partographID, time, handler, notes, systolic, diastolic, pulse, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
+        VALUES (@id, @partographId, @time, @handler, @notes, @systolic, @diastolic, @pulse, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
 
         protected override string GetUpdateSql() => @"
         UPDATE Tbl_BP
@@ -101,9 +101,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             diastolic = @diastolic, 
             pulse = @pulse,
             updatedtime = @updatedtime,
+            deletedtime = @deletedtime, 
             deviceid = @deviceid,
             syncstatus = @syncstatus,
-            version = @version
+            version = @version,
+            datahash = @datahash
         WHERE ID = @id";
 
         protected override void AddInsertParameters(SqliteCommand cmd, BP item)
@@ -123,7 +125,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@systolic", item.Systolic);
@@ -131,14 +133,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@pulse", item.Pulse);
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
             cmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
             cmd.Parameters.AddWithValue("@deleted", item.Deleted);
-            //cmd.Parameters.AddWithValue("@conflictdata", item.Deleted);
-            //cmd.Parameters.AddWithValue("@datahash", item.Deleted);
+            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
 
         protected override void AddUpdateParameters(SqliteCommand cmd, BP item)
@@ -153,17 +156,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@systolic", item.Systolic);
             cmd.Parameters.AddWithValue("@diastolic", item.Diastolic);
             cmd.Parameters.AddWithValue("@pulse", item.Pulse);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
-            //cmd.Parameters.AddWithValue("@datahash", item.Deleted);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
     }
 }

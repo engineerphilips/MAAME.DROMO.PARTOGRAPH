@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
@@ -9,17 +9,15 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
-    public partial class AmnioticFluidModalPageModel : ObservableObject
+    // ContractionsModalPageModel
+    public partial class FHRContractionModalPageModel : ObservableObject, IQueryAttributable
     {
+        private readonly ContractionRepository _contractionRepository;
+        private readonly FHRRepository _fHRRepository;
+        private readonly ILogger<FHRContractionModalPageModel> _logger;
         public Partograph? _patient;
-        private readonly AmnioticFluidRepository _amnioticFluidRepository;
-        private readonly ModalErrorHandler _errorHandler;
 
-        public AmnioticFluidModalPageModel(AmnioticFluidRepository repository, ModalErrorHandler errorHandler)
-        {
-            _amnioticFluidRepository = repository;
-            _errorHandler = errorHandler;
-        }
+        private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
         private string _patientName = string.Empty;
@@ -28,12 +26,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
         [ObservableProperty]
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+        [ObservableProperty]
+        private int _frequencyPer10Min; 
+        [ObservableProperty]
+        private int _durationSeconds;
+        [ObservableProperty]
+        private int _rate;
 
         [ObservableProperty]
-        private int _amnioticFluidIndex = -1;
-
-        [ObservableProperty]
-        private string _amnioticFluidDisplay = string.Empty;
+        private string _contractionDisplay = string.Empty;
 
         [ObservableProperty]
         private string _notes = string.Empty;
@@ -46,6 +47,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         public Action? ClosePopup { get; set; }
 
+        public FHRContractionModalPageModel(ContractionRepository contractionRepository, FHRRepository fHRRepository, ModalErrorHandler errorHandler)
+        {
+            _contractionRepository = contractionRepository;
+            _fHRRepository = fHRRepository;
+            _errorHandler = errorHandler;
+
+            // Set default recorded by from preferences
+            RecordedBy = Preferences.Get("StaffName", "Staff");
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.ContainsKey("patientId"))
+            {
+                Guid? patientId = Guid.Parse(query["patientId"].ToString());
+                LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
+            }
+        }
+
         internal async Task LoadPatient(Guid? patientId)
         {
             try
@@ -55,10 +75,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 PatientName = $"Patient ID: {patientId}";
 
                 // Load last pain relief entry to prefill some values
-                var lastEntry = await _amnioticFluidRepository.GetLatestByPatientAsync(patientId);
-                if (lastEntry != null)
+                var lastContractionEntry = await _contractionRepository.GetLatestByPatientAsync(patientId);
+                if (lastContractionEntry != null)
                 {
-                    AmnioticFluidDisplay = lastEntry.AmnioticFluidDisplay;
+                    //ContractionDisplay = lastContractionEntry.FrequencyPer10Min;
                 }
             }
             catch (Exception e)
@@ -80,19 +100,33 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             {
                 IsBusy = true;
 
-                var entry = new AmnioticFluid
+                var contractionEntry = new Contraction
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    Color = AmnioticFluidIndex == 0 ? "N" : AmnioticFluidIndex == 1 ? "Y" : AmnioticFluidIndex == 2 ? "D" : string.Empty,
+                    FrequencyPer10Min = FrequencyPer10Min,
+                    DurationSeconds = DurationSeconds,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
 
-                if (await _amnioticFluidRepository.SaveItemAsync(entry) != null)
+                var fhrEntry = new FHR
                 {
-                    await AppShell.DisplayToastAsync("Amniotic fluid assessment saved successfully");
+                    PartographID = _patient.ID,
+                    Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
+                    Rate = Rate,
+                    Notes = Notes,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID
+                };
+
+                var contraction = await _contractionRepository.SaveItemAsync(contractionEntry) != null;
+                var fhr = await _fHRRepository.SaveItemAsync(fhrEntry) != null;
+
+                if (contraction || fhr)
+                {
+                    await AppShell.DisplayToastAsync($"{(contraction && fhr ? "Contraction & FHR" : contraction ? "Contraction" : "FHR")} assessment saved successfully");
 
                     // Reset fields to default
                     ResetFields();
@@ -102,7 +136,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 }
                 else
                 {
-                    await AppShell.DisplayToastAsync("Amniotic fluid assessment failed to save");
+                    await AppShell.DisplayToastAsync("Assessment failed to save");
                 }
             }
             catch (Exception e)
@@ -126,7 +160,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             RecordingDate = DateOnly.FromDateTime(DateTime.Now);
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-            AmnioticFluidIndex = -1;
+            Rate = 0;
+            FrequencyPer10Min = 0;
+            DurationSeconds = 0;
             Notes = string.Empty;
         }
     }

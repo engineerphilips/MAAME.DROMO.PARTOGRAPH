@@ -81,14 +81,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Version = reader.GetInt32(14),
                 ServerVersion = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
                 Deleted = reader.IsDBNull(16) ? 0 : reader.GetInt32(16),
-                ConflictData = reader.GetString(17),
-                DataHash = reader.GetString(18)
+                ConflictData = reader.IsDBNull(17) ? string.Empty : reader.GetString(17),
+                DataHash = reader.IsDBNull(18) ? string.Empty : reader.GetString(18)
             };
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_Medication (ID, partographID, time, handler, notes, medicationname, dose, route, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-        VALUES (@id, @partographId, @time, @handler, @notes, @medicationname, @dose, @route, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
+        INSERT INTO Tbl_Medication (ID, partographID, time, handler, notes, medicationname, dose, route, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
+        VALUES (@id, @partographId, @time, @handler, @notes, @medicationname, @dose, @route, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
 
         protected override string GetUpdateSql() => @"
         UPDATE Tbl_Medication
@@ -100,9 +100,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             dose = @dose,
             route = @route,            
             updatedtime = @updatedtime,
+            deletedtime = @deletedtime,
             deviceid = @deviceid,
             syncstatus = @syncstatus,
-            version = @version
+            version = @version,
+            datahash = @datahash
         WHERE ID = @id";
 
         protected override void AddInsertParameters(SqliteCommand cmd, MedicationEntry item)
@@ -136,12 +138,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             //cmd.Parameters.AddWithValue("@adversereactiondetails", item.AdverseReactionDetails ?? "");
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
             cmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
             cmd.Parameters.AddWithValue("@deleted", item.Deleted);
+            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
 
         protected override void AddUpdateParameters(SqliteCommand cmd, MedicationEntry item)
@@ -169,9 +174,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             //cmd.Parameters.AddWithValue("@adversereaction", item.AdverseReaction ? 1 : 0);
             //cmd.Parameters.AddWithValue("@adversereactiondetails", item.AdverseReactionDetails ?? "");
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
+            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
     }
 }

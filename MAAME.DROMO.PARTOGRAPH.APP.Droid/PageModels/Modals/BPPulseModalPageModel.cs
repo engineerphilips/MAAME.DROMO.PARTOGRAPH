@@ -185,9 +185,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var lastEntry = await _bPPulseRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
-                    Pulse = lastEntry.Pulse;
-                    Systolic = lastEntry.Systolic;
-                    Systolic = lastEntry.Diastolic;
+                    Pulse = lastEntry.Pulse != 0 ? lastEntry.Pulse : null;
+                    Systolic = lastEntry.Pulse != 0 ? lastEntry.Systolic : null;
+                    Systolic = lastEntry.Pulse != 0 ? lastEntry.Diastolic : null;
                 }
             }
             catch (Exception e)
@@ -231,9 +231,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    Pulse = Pulse,
-                    Systolic = Systolic,
-                    Diastolic = Diastolic,
+                    Pulse = Pulse ?? 0,
+                    Systolic = Systolic ?? 0,
+                    Diastolic = Diastolic ?? 0,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID

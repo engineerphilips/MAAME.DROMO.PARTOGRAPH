@@ -91,9 +91,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             notes = @notes,
             posture = @posture,
             updatedtime = @updatedtime,
+            deletedtime = @deletedtime,
             deviceid = @deviceid,
             syncstatus = @syncstatus,
-            version = @version
+            version = @version,
+            datahash = @datahash
         WHERE ID = @id";
 
         protected override void AddInsertParameters(SqliteCommand cmd, PostureEntry item)
@@ -113,19 +115,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
+            cmd.Parameters.AddWithValue("@posture", item.Posture);
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
             cmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
             cmd.Parameters.AddWithValue("@deleted", item.Deleted);
-            cmd.Parameters.AddWithValue("@conflictdata", item.Deleted);
-            cmd.Parameters.AddWithValue("@datahash", item.Deleted);
+            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
 
         protected override void AddUpdateParameters(SqliteCommand cmd, PostureEntry item)
@@ -138,9 +142,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@posture", item.Posture);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
+            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
     }
 }

@@ -3,7 +3,7 @@
     // Oral Fluid Intake
     public class OralFluidEntry : BasePartographMeasurement
     {
-        public char? OralFluid { get; set; }
+        public string? OralFluid { get; set; }
         public string? OralFluidDisplay => OralFluid != null ? OralFluid.ToString() : string.Empty;
 
         //public string FluidType { get; set; } = string.Empty; // Water, Ice chips, Energy drink, etc.

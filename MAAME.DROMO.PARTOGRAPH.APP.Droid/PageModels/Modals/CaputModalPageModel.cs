@@ -24,7 +24,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
-        private int? _degreeIndex = null;
+        private int _degreeIndex = -1;
 
         [ObservableProperty]
         private string _caputDisplay = string.Empty;
@@ -138,7 +138,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             RecordingDate = DateOnly.FromDateTime(DateTime.Now);
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-            DegreeIndex = null;
+            DegreeIndex = -1;
             Notes = string.Empty;
         }
     }

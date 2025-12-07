@@ -81,7 +81,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    Rate = Rate,
+                    Rate = Rate ?? 0,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID

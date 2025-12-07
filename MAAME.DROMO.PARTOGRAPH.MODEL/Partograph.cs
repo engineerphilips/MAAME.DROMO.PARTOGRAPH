@@ -136,7 +136,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
 
         public string CalculateHash()
         {
-            var data = $"{AdmissionDate}|{Handler}";
+            var data = $"{ID}|{Handler}";
             using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));

@@ -30,10 +30,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
-        private string _protein;
+        private int _proteinIndex = -1;
 
         [ObservableProperty]
-        private string _acetone;
+        private int _acetoneIndex = -1;
+
+        [ObservableProperty]
+        private string _proteinDisplay = string.Empty;
+
+        [ObservableProperty]
+        private string _acetoneDisplay = string.Empty;
 
         [ObservableProperty]
         private string _notes = string.Empty;
@@ -58,8 +64,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var lastEntry = await _urineRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
-                    Acetone = lastEntry.Acetone;
-                    Protein = lastEntry.Protein;
+                    AcetoneDisplay = lastEntry.Acetone;
+                    ProteinDisplay = lastEntry.Protein;
                 }
             }
             catch (Exception e)
@@ -85,8 +91,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    Protein = Protein,
-                    Acetone = Acetone,
+                    Protein = ProteinIndex == 0 ? "P-" : ProteinIndex == 1 ? "P" : ProteinIndex == 2 ? "P1+" : ProteinIndex == 3 ? "P2+" : ProteinIndex == 4 ? "P3+" : null,
+                    Acetone = AcetoneIndex == 0 ? "P-" : AcetoneIndex == 1 ? "P" : AcetoneIndex == 2 ? "P1+" : AcetoneIndex == 3 ? "P2+" : AcetoneIndex == 4 ? "P3+" : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
@@ -128,8 +134,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             RecordingDate = DateOnly.FromDateTime(DateTime.Now);
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-            Protein = string.Empty;
-            Acetone = string.Empty;
+            ProteinIndex = -1;
+            AcetoneIndex = -1;
             Notes = string.Empty;
         }
     }

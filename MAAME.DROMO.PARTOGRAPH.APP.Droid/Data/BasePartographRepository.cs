@@ -98,22 +98,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         public virtual async Task<Guid?> SaveItemAsync(T item)
         {
             await Init();
-            await using var connection = new SqliteConnection(Constants.DatabasePath);
-            await connection.OpenAsync();
+            try
+            {
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
 
-            var saveCmd = connection.CreateCommand();
-            if (item.ID == null)
-            {
-                saveCmd.CommandText = GetInsertSql();
-                AddInsertParameters(saveCmd, item);
-                await saveCmd.ExecuteScalarAsync();
-                //item.ID = Guid.Parse(Convert.ToString(result));
+                var saveCmd = connection.CreateCommand();
+                if (item.ID == null)
+                {
+                    saveCmd.CommandText = GetInsertSql();
+                    AddInsertParameters(saveCmd, item);
+                    await saveCmd.ExecuteNonQueryAsync();
+                    //item.ID = Guid.Parse(Convert.ToString(result));
+                }
+                else
+                {
+                    saveCmd.CommandText = GetUpdateSql();
+                    AddUpdateParameters(saveCmd, item);
+                    await saveCmd.ExecuteNonQueryAsync();
+                }
             }
-            else
+            catch (Exception e)
             {
-                saveCmd.CommandText = GetUpdateSql();
-                AddUpdateParameters(saveCmd, item);
-                await saveCmd.ExecuteNonQueryAsync();
+                throw new Exception(e.Message);
             }
 
             return item.ID;

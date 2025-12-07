@@ -37,7 +37,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly HeadDescentModalPageModel _headDescentModalPageModel;
         private readonly CervixDilatationModalPageModel _cervixDilatationModalPageModel;
         private readonly BPPulseModalPageModel _bpPulseModalPageModel;
-
+        private readonly FHRContractionModalPageModel _fHRContractionModalPageModel;
         public CompanionModalPageModel CompanionModalPageModel => _companionModalPageModel;
         public PainReliefModalPageModel PainReliefModalPageModel => _painReliefModalPageModel;
         public OralFluidModalPageModel OralFluidModalPageModel => _oralFluidModalPageModel;
@@ -54,7 +54,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public HeadDescentModalPageModel HeadDescentModalPageModel => _headDescentModalPageModel;
         public CervixDilatationModalPageModel CervixDilatationModalPageModel => _cervixDilatationModalPageModel;
         public BPPulseModalPageModel BPPulseModalPageModel => _bpPulseModalPageModel;
-
+        public FHRContractionModalPageModel FHRContractionModalPageModel => _fHRContractionModalPageModel;
+        
         [ObservableProperty]
         private ObservableCollection<EnhancedTimeSlotViewModel> _timeSlots = new ();
 
@@ -119,7 +120,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             IVFluidModalPageModel ivFluidModalPageModel,
             HeadDescentModalPageModel headDescentModalPageModel,
             CervixDilatationModalPageModel cervixDilatationModalPageModel,
-            BPPulseModalPageModel bpPulseModalPageModel)
+            BPPulseModalPageModel bpPulseModalPageModel,
+            FHRContractionModalPageModel fHRContractionModalPageModel)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
@@ -141,6 +143,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _headDescentModalPageModel = headDescentModalPageModel;
             _cervixDilatationModalPageModel = cervixDilatationModalPageModel;
             _bpPulseModalPageModel = bpPulseModalPageModel;
+            _fHRContractionModalPageModel = fHRContractionModalPageModel;
             Chartinghours = new ObservableCollection<TimeSlots>();
             TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
 
@@ -416,12 +419,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Action? OpenHeadDescentModalPopup { get; set; }
         public Action? CloseCervixDilatationModalPopup { get; set; }
         public Action? OpenCervixDilatationModalPopup { get; set; }
-
-        [ObservableProperty]
-        private bool _isFHRContractionPopupOpen;
-
-        [ObservableProperty]
-        private bool _isFHRDecelerationPopupOpen;
+        public Action? OpenFHRContractionModalPopup { get; set; }
+        public Action? CloseFHRContractionModalPopup { get; set; }
 
         // Popup Open Commands
         [RelayCommand]
@@ -514,9 +513,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private void OpenFHRContractionPopup()
+        private async Task OpenFHRContractionPopup()
         {
-            IsFHRContractionPopupOpen = true;
+            if (_patient?.ID != null)
+            {
+                _fHRContractionModalPageModel._patient = _patient;
+                _fHRContractionModalPageModel.ClosePopup = () => CloseFHRContractionModalPopup?.Invoke();
+                await _fHRContractionModalPageModel.LoadPatient(_patient.ID);
+                OpenFHRContractionModalPopup?.Invoke();
+            }
         }
 
         [RelayCommand]

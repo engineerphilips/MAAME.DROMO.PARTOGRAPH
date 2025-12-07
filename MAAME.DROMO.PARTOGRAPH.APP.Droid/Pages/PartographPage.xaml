@@ -698,13 +698,23 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <Label Grid.Row="13" Grid.Column="0" 
+                <!--<Label Grid.Row="13" Grid.Column="0" 
        Text="Moulding" 
        BackgroundColor="LightGray"
        HorizontalTextAlignment="Center"
        VerticalTextAlignment="Center"
        Padding="4,2"
-       FontSize="9" Margin="0,0,1,1" />
+       FontSize="9" Margin="0,0,1,1" />-->
+
+                <Button Grid.Row="13" Grid.Column="0" 
+                       Text="Moulding" 
+                       BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro" 
+                       Margin="0,0,1,1" 
+                        CornerRadius="0" 
+                        TextColor="Black"
+                        Command="{Binding OpenMouldingPopupCommand}" />
 
                 <Label Grid.Row="13" Grid.Column="1" 
        Text="+++" 
@@ -1246,23 +1256,15 @@
                              Grid.Row="0"
                              Grid.RowSpan="5" />
 
-            <sfPopup:SfPopup x:Name="sfPopupFHRContraction"     
-                             IsOpen="{Binding IsFHRContractionPopupOpen}"
+            <modals:FHRContractionPopup x:Name="sfPopupFHRContraction"
                              StaysOpen="True"
-                             HeaderTitle="FHR &amp; Contraction"
                              ShowCloseButton="True"
                              WidthRequest="312"
                              HeightRequest="700"
-                             HeaderHeight="70" 
+                             HeaderHeight="50"
                              Grid.Row="0"
-                             Grid.RowSpan="5">
-                <sfPopup:SfPopup.ContentTemplate>
-                    <DataTemplate>
-                        <modals:FHRContractionModalView x:Name="FHRContractionView" />
-                    </DataTemplate>
-                </sfPopup:SfPopup.ContentTemplate>
-            </sfPopup:SfPopup>
-
+                             Grid.RowSpan="5" />
+            
             <modals:UrinePopup x:Name="sfPopupUrine"
                              StaysOpen="True"
                              ShowCloseButton="True"

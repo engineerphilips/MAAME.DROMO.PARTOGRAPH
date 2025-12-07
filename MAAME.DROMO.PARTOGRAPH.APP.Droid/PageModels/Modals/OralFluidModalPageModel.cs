@@ -24,7 +24,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
-        private int? _oralFluidIndex = null;
+        private int _oralFluidIndex = -1;
 
         [ObservableProperty]
         private string _oralFluidDisplay = string.Empty;
@@ -96,7 +96,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    OralFluid = OralFluidIndex == 0 ? 'N' : OralFluidIndex == 1 ? 'Y' : OralFluidIndex == 2 ? 'D' : null,
+                    OralFluid = OralFluidIndex == 0 ? "N" : OralFluidIndex == 1 ? "Y" : OralFluidIndex == 2 ? "D" : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
@@ -138,7 +138,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             RecordingDate = DateOnly.FromDateTime(DateTime.Now);
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-            OralFluidIndex = null;
+            OralFluidIndex = -1;
             Notes = string.Empty;
         }
     }

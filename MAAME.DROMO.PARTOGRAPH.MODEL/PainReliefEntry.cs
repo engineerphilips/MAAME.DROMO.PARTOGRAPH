@@ -2,7 +2,7 @@
 {
     public class PainReliefEntry : BasePartographMeasurement
     {
-        public char? PainRelief { get; set; }
+        public string? PainRelief { get; set; }
         public string? PainReliefDisplay => PainRelief != null ? PainRelief.ToString() : string.Empty;
 
         //public string PainReliefMethod { get; set; } = string.Empty; // None, Epidural, Pethidine, Gas & Air, etc.

@@ -15,7 +15,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 time TEXT NOT NULL,
                 handler TEXT,
                 notes TEXT NOT NULL,
-                protien TEXT,
+                protein TEXT,
                 acetone TEXT,                    
                 createdtime INTEGER NOT NULL,
                 updatedtime INTEGER NOT NULL,
@@ -79,14 +79,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Version = reader.GetInt32(13),
                 ServerVersion = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
                 Deleted = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
-                ConflictData = reader.GetString(16),
-                DataHash = reader.GetString(17)
+                ConflictData = reader.IsDBNull(16) ? string.Empty : reader.GetString(16),
+                DataHash = reader.IsDBNull(17) ? string.Empty : reader.GetString(17)
             };
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_Urine (ID, partographID, time, handler, notes, protein, acetone, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-        VALUES (@id, @partographId, @time, @handler, @notes, @protein, @acetone, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
+        INSERT INTO Tbl_Urine (ID, partographID, time, handler, notes, protein, acetone, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
+        VALUES (@id, @partographId, @time, @handler, @notes, @protein, @acetone, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
 
         protected override string GetUpdateSql() => @"
         UPDATE Tbl_Urine
@@ -97,9 +97,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             protein = @protein,
             acetone = @acetone,
             updatedtime = @updatedtime,
+            deletedtime = @deletedtime,
             deviceid = @deviceid,
             syncstatus = @syncstatus,
-            version = @version
+            version = @version,
+            datahash = @datahash
         WHERE ID = @id";
 
         protected override void AddInsertParameters(SqliteCommand cmd, Urine item)
@@ -119,21 +121,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@protein", item.Protein);
             cmd.Parameters.AddWithValue("@acetone", item.Acetone); 
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
             cmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
             cmd.Parameters.AddWithValue("@deleted", item.Deleted);
-            //cmd.Parameters.AddWithValue("@conflictdata", item.Deleted);
-            //cmd.Parameters.AddWithValue("@datahash", item.Deleted);
+            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
 
         protected override void AddUpdateParameters(SqliteCommand cmd, Urine item)
@@ -154,10 +157,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@protein", item.Protein);
             cmd.Parameters.AddWithValue("@acetone", item.Acetone);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
-            //cmd.Parameters.AddWithValue("@datahash", item.Deleted);
+            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
     }
 }

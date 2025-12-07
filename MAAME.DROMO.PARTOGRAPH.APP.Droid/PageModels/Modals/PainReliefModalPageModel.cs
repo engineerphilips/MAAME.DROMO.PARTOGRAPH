@@ -24,7 +24,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
-        private int? _painReliefIndex = -1;
+        private int _painReliefIndex = -1;
 
         [ObservableProperty]
         private string _painReliefDisplay = string.Empty;
@@ -96,7 +96,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    PainRelief = PainReliefIndex == 0 ? 'N' : PainReliefIndex == 1 ? 'Y' : PainReliefIndex == 2 ? 'D' : null,
+                    PainRelief = PainReliefIndex == 0 ? "N" : PainReliefIndex == 1 ? "Y" : PainReliefIndex == 2 ? "D" : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID

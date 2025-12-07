@@ -6,7 +6,7 @@ using System;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
-    // Companion Repository
+    // Moulding Repository
     public class MouldingRepository : BasePartographRepository<Moulding>
     {
         protected override string TableName => "Tbl_Moulding";
@@ -80,14 +80,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Version = reader.GetInt32(12),
                 ServerVersion = reader.IsDBNull(13) ? 0 : reader.GetInt32(13),
                 Deleted = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
-                ConflictData = reader.GetString(15),
-                DataHash = reader.GetString(16)
+                ConflictData = reader.IsDBNull(15) ? string.Empty : reader.GetString(15),
+                DataHash = reader.IsDBNull(16) ? string.Empty : reader.GetString(16)
             };
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_Moulding (ID, partographID, time, handler, notes, degree, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-        VALUES (@id, @partographId, @time, @handler, @notes, @degree, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
+        INSERT INTO Tbl_Moulding (ID, partographID, time, handler, notes, degree, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
+        VALUES (@id, @partographId, @time, @handler, @notes, @degree, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
 
         protected override string GetUpdateSql() => @"
         UPDATE Tbl_Moulding
@@ -97,9 +97,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             notes = @notes,
             degree = @degree,
             updatedtime = @updatedtime,
+            deletedtime = @deletedtime,
             deviceid = @deviceid,
             syncstatus = @syncstatus,
-            version = @version
+            version = @version,
+            datahash = @datahash
         WHERE ID = @id";
 
         protected override void AddInsertParameters(SqliteCommand cmd, Moulding item)
@@ -119,20 +121,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@degree", item.Degree);
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
             cmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
             cmd.Parameters.AddWithValue("@deleted", item.Deleted);
-            //cmd.Parameters.AddWithValue("@conflictdata", item.Deleted);
-            //cmd.Parameters.AddWithValue("@datahash", item.Deleted);
+            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
 
         protected override void AddUpdateParameters(SqliteCommand cmd, Moulding item)
@@ -147,7 +150,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
+            cmd.Parameters.AddWithValue("@time", item.Time.ToString());
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@degree", item.Degree);
@@ -155,7 +158,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
-            //cmd.Parameters.AddWithValue("@datahash", item.Deleted);
+            cmd.Parameters.AddWithValue("@datahash", item.DataHash);
         }
     }
 }
