@@ -41,6 +41,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        public Action? ClosePopup { get; set; }
+
         internal async Task LoadPatient(Guid? patientId)
         {
             try
