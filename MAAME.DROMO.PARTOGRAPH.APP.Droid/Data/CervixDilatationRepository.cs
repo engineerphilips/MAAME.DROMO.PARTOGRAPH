@@ -7,7 +7,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
     // Baseline HeadDescent Repository
     public class CervixDilatationRepository : BasePartographRepository<CervixDilatation>
     {
-        protected override string TableName => "Tbl_FHR";
+        protected override string TableName => "Tbl_CervixDilatation";
 
         protected override string CreateTableSql => @"
             CREATE TABLE IF NOT EXISTS Tbl_CervixDilatation (
@@ -66,7 +66,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ID = Guid.Parse(reader.GetString(0)),
                 PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
                 Time = reader.GetDateTime(2),
-                Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
+                //Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
+                HandlerName = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
                 Notes = reader.GetString(4),
                 DilatationCm = reader.IsDBNull(5) ? 5 : reader.GetInt32(5),
                 CreatedTime = reader.GetInt64(6),

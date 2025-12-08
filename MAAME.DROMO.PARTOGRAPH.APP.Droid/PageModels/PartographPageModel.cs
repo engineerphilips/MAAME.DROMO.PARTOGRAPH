@@ -78,7 +78,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private ObservableCollection<EnhancedTimeSlotViewModel> _timeSlots = new ();
 
         [ObservableProperty]
-        private DateTime _startTime = DateTime.Today.AddHours(6);
+        private DateTime _startTime; // = DateTime.Today.AddHours(6);
 
         [ObservableProperty]
         private string _patientName = string.Empty;
@@ -199,7 +199,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             Chartinghours = new ObservableCollection<TimeSlots>();
             TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
 
-            GenerateInitialTimeSlots();
+            var tasks = new Task[1];
+            tasks[0] = GenerateInitialTimeSlots();
+            Task.WhenAny(tasks);
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -211,13 +213,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private void GenerateInitialTimeSlots()
+        private async Task GenerateInitialTimeSlots()
         {
             TimeSlots.Clear();
             Chartinghours.Clear();
             DateTime date;
-            date = new DateTime (StartTime.Year, StartTime.Month, StartTime.Day, StartTime.Hour, 0, 0);
+            StartTime = await GetEarliestMeasurableTimeAsync() ?? DateTime.Today;
 
+            date = new DateTime (StartTime.Year, StartTime.Month, StartTime.Day, StartTime.Hour, 0, 0);
+            
             for (int i = 0; i < 12; i++)
             {
                 var currentTime = StartTime.AddHours(i);
@@ -240,7 +244,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             //if (TimeSlots.Any())
             //    RegenerateTimeSlots();
         }
-        
+
         //private void RegenerateTimeSlots()
         //{
         //    foreach (var time in TimeSlots)
@@ -276,6 +280,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         //    }
         //}
 
+        //[ObservableProperty]
+        //private List<Partograph> _companions = new();
+        //[ObservableProperty]
+        //private List<Partograph> _painReliefs = new();
+        //[ObservableProperty]
+        //private List<Partograph> _oralFluids = new();
+        //[ObservableProperty]
+        //private List<Partograph> _postures = new();
+        //[ObservableProperty]
+        //private List<Partograph> _fhrs = new();
+        //[ObservableProperty]
+        //private List<Partograph> _temperatures = new();
+        //[ObservableProperty]
+        //private List<Partograph> _urines = new();
+        //[ObservableProperty]
+        //private List<Partograph> _bps = new();
+        //[ObservableProperty]
+        //private List<Partograph> _oxytocins = new();
+        //[ObservableProperty]
+        //private List<Partograph> _ivfluids = new();
+        //[ObservableProperty]
+        //private List<Partograph> _cervixDilatations = new();
+        //[ObservableProperty]
+        //private List<Partograph> _contractions = new();
+        //[ObservableProperty]
+        //private List<Partograph> _headDescents = new();
+        //[ObservableProperty]
+        //private List<Partograph> _cervixDilatation = new();
+
         private async Task<DateTime?> GetEarliestMeasurableTimeAsync()
         {
             if (_patient?.ID == null)
@@ -286,77 +319,77 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 // Retrieve all measurables and collect their times
-                var companionEntries = await _companionRepository.ListByPatientAsync(_patient.ID);
-                if (companionEntries.Any())
-                    earliestTimes.Add(companionEntries.Min(e => e.Time));
+                _patient.Companions = await _companionRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Companions.Any())
+                    earliestTimes.Add(_patient.Companions.Min(e => e.Time));
 
-                var painReliefEntries = await _painReliefRepository.ListByPatientAsync(_patient.ID);
-                if (painReliefEntries.Any())
-                    earliestTimes.Add(painReliefEntries.Min(e => e.Time));
+                _patient.PainReliefs = await _painReliefRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.PainReliefs.Any())
+                    earliestTimes.Add(_patient.PainReliefs.Min(e => e.Time));
 
-                var oralFluidEntries = await _oralFluidRepository.ListByPatientAsync(_patient.ID);
-                if (oralFluidEntries.Any())
-                    earliestTimes.Add(oralFluidEntries.Min(e => e.Time));
+                _patient.OralFluids = await _oralFluidRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.OralFluids.Any())
+                    earliestTimes.Add(_patient.OralFluids.Min(e => e.Time));
 
-                var postureEntries = await _postureRepository.ListByPatientAsync(_patient.ID);
-                if (postureEntries.Any())
-                    earliestTimes.Add(postureEntries.Min(e => e.Time));
+                _patient.Postures = await _postureRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Postures.Any())
+                    earliestTimes.Add(_patient.Postures.Min(e => e.Time));
 
-                var fhrEntries = await _fhrRepository.ListByPatientAsync(_patient.ID);
-                if (fhrEntries.Any())
-                    earliestTimes.Add(fhrEntries.Min(e => e.Time));
+                _patient.Fhrs = await _fhrRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Fhrs.Any())
+                    earliestTimes.Add(_patient.Fhrs.Min(e => e.Time));
 
-                var temperatureEntries = await _temperatureRepository.ListByPatientAsync(_patient.ID);
-                if (temperatureEntries.Any())
-                    earliestTimes.Add(temperatureEntries.Min(e => e.Time));
+                _patient.Temperatures = await _temperatureRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Temperatures.Any())
+                    earliestTimes.Add(_patient.Temperatures.Min(e => e.Time));
 
-                var urineEntries = await _urineRepository.ListByPatientAsync(_patient.ID);
-                if (urineEntries.Any())
-                    earliestTimes.Add(urineEntries.Min(e => e.Time));
+                _patient.Urines = await _urineRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Urines.Any())
+                    earliestTimes.Add(_patient.Urines.Min(e => e.Time));
 
-                var oxytocinEntries = await _oxytocinRepository.ListByPatientAsync(_patient.ID);
-                if (oxytocinEntries.Any())
-                    earliestTimes.Add(oxytocinEntries.Min(e => e.Time));
+                _patient.Oxytocins = await _oxytocinRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Oxytocins.Any())
+                    earliestTimes.Add(_patient.Oxytocins.Min(e => e.Time));
 
-                var medicationEntries = await _medicationEntryRepository.ListByPatientAsync(_patient.ID);
-                if (medicationEntries.Any())
-                    earliestTimes.Add(medicationEntries.Min(e => e.Time));
+                //var medicationEntries = await _medicationEntryRepository.ListByPatientAsync(_patient.ID);
+                //if (medicationEntries.Any())
+                //    earliestTimes.Add(medicationEntries.Min(e => e.Time));
 
-                var ivFluidEntries = await _ivFluidEntryRepository.ListByPatientAsync(_patient.ID);
-                if (ivFluidEntries.Any())
-                    earliestTimes.Add(ivFluidEntries.Min(e => e.Time));
+                _patient.IVFluids = await _ivFluidEntryRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.IVFluids.Any())
+                    earliestTimes.Add(_patient.IVFluids.Min(e => e.Time));
 
-                var cervixDilatationEntries = await _cervixDilatationRepository.ListByPatientAsync(_patient.ID);
-                if (cervixDilatationEntries.Any())
-                    earliestTimes.Add(cervixDilatationEntries.Min(e => e.Time));
+                _patient.Dilatations = await _cervixDilatationRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Dilatations.Any())
+                    earliestTimes.Add(_patient.Dilatations.Min(e => e.Time));
 
-                var contractionEntries = await _contractionRepository.ListByPatientAsync(_patient.ID);
-                if (contractionEntries.Any())
-                    earliestTimes.Add(contractionEntries.Min(e => e.Time));
+                _patient.Contractions = await _contractionRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Contractions.Any())
+                    earliestTimes.Add(_patient.Contractions.Min(e => e.Time));
 
-                var headDescentEntries = await _headDescentRepository.ListByPatientAsync(_patient.ID);
-                if (headDescentEntries.Any())
-                    earliestTimes.Add(headDescentEntries.Min(e => e.Time));
+                _patient.HeadDescents = await _headDescentRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.HeadDescents.Any())
+                    earliestTimes.Add(_patient.HeadDescents.Min(e => e.Time));
 
-                var fetalPositionEntries = await _fetalPositionRepository.ListByPatientAsync(_patient.ID);
-                if (fetalPositionEntries.Any())
-                    earliestTimes.Add(fetalPositionEntries.Min(e => e.Time));
+                _patient.FetalPositions = await _fetalPositionRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.FetalPositions.Any())
+                    earliestTimes.Add(_patient.FetalPositions.Min(e => e.Time));
 
-                var amnioticFluidEntries = await _amnioticFluidRepository.ListByPatientAsync(_patient.ID);
-                if (amnioticFluidEntries.Any())
-                    earliestTimes.Add(amnioticFluidEntries.Min(e => e.Time));
+                _patient.AmnioticFluids = await _amnioticFluidRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.AmnioticFluids.Any())
+                    earliestTimes.Add(_patient.AmnioticFluids.Min(e => e.Time));
 
-                var caputEntries = await _caputRepository.ListByPatientAsync(_patient.ID);
-                if (caputEntries.Any())
-                    earliestTimes.Add(caputEntries.Min(e => e.Time));
+                _patient.Caputs = await _caputRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Caputs.Any())
+                    earliestTimes.Add(_patient.Caputs.Min(e => e.Time));
 
-                var mouldingEntries = await _mouldingRepository.ListByPatientAsync(_patient.ID);
-                if (mouldingEntries.Any())
-                    earliestTimes.Add(mouldingEntries.Min(e => e.Time));
+                _patient.Mouldings = await _mouldingRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Mouldings.Any())
+                    earliestTimes.Add(_patient.Mouldings.Min(e => e.Time));
 
-                var bpEntries = await _bpRepository.ListByPatientAsync(_patient.ID);
-                if (bpEntries.Any())
-                    earliestTimes.Add(bpEntries.Min(e => e.Time));
+                _patient.BPs = await _bpRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.BPs.Any())
+                    earliestTimes.Add(_patient.BPs.Min(e => e.Time));
 
                 // Return the earliest time among all measurables
                 if (earliestTimes.Any())
@@ -370,20 +403,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             return null;
         }
 
-        private async Task LoadMeasurablesFromDatabase()
+        private void LoadMeasurablesFromDatabase()
         {
             if (_patient?.ID == null)
                 return;
 
             try
             {
-                // Retrieve all measurables from SQLite for the patient
-                var companionEntries = await _companionRepository.ListByPatientAsync(_patient.ID);
-                var painReliefEntries = await _painReliefRepository.ListByPatientAsync(_patient.ID);
-                var oralFluidEntries = await _oralFluidRepository.ListByPatientAsync(_patient.ID);
-                var postureEntries = await _postureRepository.ListByPatientAsync(_patient.ID);
-                var fhrEntries = await _fhrRepository.ListByPatientAsync(_patient.ID);
-
                 // Map measurables to TimeSlots based on their time
                 foreach (var timeSlot in TimeSlots)
                 {
@@ -392,7 +418,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     var slotEndTime = slotStartTime.AddHours(1);
 
                     // Find companion entry for this time slot
-                    var companionEntry = companionEntries.FirstOrDefault(e =>
+                    var companionEntry = _patient.Companions?.FirstOrDefault(e =>
                         e.Time >= slotStartTime && e.Time < slotEndTime);
                     if (companionEntry != null && !string.IsNullOrEmpty(companionEntry.CompanionDisplay))
                     {
@@ -403,40 +429,40 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     }
 
                     // Find pain relief entry for this time slot
-                    var painReliefEntry = painReliefEntries.FirstOrDefault(e =>
+                    var painReliefEntry = _patient.PainReliefs?.FirstOrDefault(e =>
                         e.Time >= slotStartTime && e.Time < slotEndTime);
-                    if (painReliefEntry != null && !string.IsNullOrEmpty(painReliefEntry.PainRelief))
+                    if (painReliefEntry != null && !string.IsNullOrEmpty(painReliefEntry.PainReliefDisplay))
                     {
-                        if (Enum.TryParse<PainReliefType>(painReliefEntry.PainRelief, true, out var painReliefType))
+                        if (Enum.TryParse<PainReliefType>(painReliefEntry.PainReliefDisplay, true, out var painReliefType))
                         {
                             timeSlot.PainRelief = painReliefType;
                         }
                     }
 
                     // Find oral fluid entry for this time slot
-                    var oralFluidEntry = oralFluidEntries.FirstOrDefault(e =>
+                    var oralFluidEntry = _patient.OralFluids?.FirstOrDefault(e =>
                         e.Time >= slotStartTime && e.Time < slotEndTime);
-                    if (oralFluidEntry != null && !string.IsNullOrEmpty(oralFluidEntry.OralFluid))
+                    if (oralFluidEntry != null && !string.IsNullOrEmpty(oralFluidEntry.OralFluidDisplay))
                     {
-                        if (Enum.TryParse<OralFluidType>(oralFluidEntry.OralFluid, true, out var oralFluidType))
+                        if (Enum.TryParse<OralFluidType>(oralFluidEntry.OralFluidDisplay, true, out var oralFluidType))
                         {
                             timeSlot.OralFluid = oralFluidType;
                         }
                     }
 
                     // Find posture entry for this time slot
-                    var postureEntry = postureEntries.FirstOrDefault(e =>
+                    var postureEntry = _patient.Postures?.FirstOrDefault(e =>
                         e.Time >= slotStartTime && e.Time < slotEndTime);
-                    if (postureEntry != null && !string.IsNullOrEmpty(postureEntry.Posture))
+                    if (postureEntry != null && !string.IsNullOrEmpty(postureEntry.PostureDisplay))
                     {
-                        if (Enum.TryParse<PostureType>(postureEntry.Posture, true, out var postureType))
+                        if (Enum.TryParse<PostureType>(postureEntry.PostureDisplay, true, out var postureType))
                         {
                             timeSlot.Posture = postureType;
                         }
                     }
 
                     // Find FHR entry for this time slot
-                    var fhrEntry = fhrEntries.FirstOrDefault(e =>
+                    var fhrEntry = _patient.Fhrs?.FirstOrDefault(e =>
                         e.Time >= slotStartTime && e.Time < slotEndTime);
                     if (fhrEntry != null && fhrEntry.Rate.HasValue)
                     {
@@ -495,20 +521,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     GenerateInitialTimeSlots();
                 }
 
-                var companions = await _companionRepository.ListByPatientAsync(patientId);
-                // Load partograph entries
-                var entries = await _partographRepository.ListByPatientAsync(patientId);
-                PartographEntries = new ObservableCollection<Partograph>(entries.OrderBy(e => e.Time));
+                //var companions = await _companionRepository.ListByPatientAsync(patientId);
+                //// Load partograph entries
+                //var entries = await _partographRepository.ListByPatientAsync(patientId);
+                //PartographEntries = new ObservableCollection<Partograph>(entries.OrderBy(e => e.Time));
 
-                if (entries.Any())
-                {
-                    LastRecordedTime = entries.Max(e => e.Time);
-                    var latestEntry = entries.OrderByDescending(e => e.Time).FirstOrDefault();
-                    //CurrentDilation = latestEntry.CervicalDilation;
-                }
+                //if (entries.Any())
+                //{
+                //    LastRecordedTime = entries.Max(e => e.Time);
+                //    var latestEntry = entries.OrderByDescending(e => e.Time).FirstOrDefault();
+                //    //CurrentDilation = latestEntry.CervicalDilation;
+                //}
 
                 // Load measurables from database and populate TimeSlots
-                await LoadMeasurablesFromDatabase();
+                LoadMeasurablesFromDatabase();
 
                 // Prepare chart data
                 PrepareChartData();

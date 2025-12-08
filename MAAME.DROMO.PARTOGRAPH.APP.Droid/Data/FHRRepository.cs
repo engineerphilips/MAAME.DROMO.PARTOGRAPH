@@ -67,6 +67,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
                 Time = reader.GetDateTime(2),
                 //Handler = reader.IsDBNull(3) && !string.IsNullOrWhiteSpace(reader.GetString(3)) ? null : Guid.Parse(reader.GetString(3)),
+                HandlerName = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
                 Notes = reader.GetString(4),
                 Rate = reader.IsDBNull(5) ? null : reader.GetInt32(5),
                 CreatedTime = reader.GetInt64(6),

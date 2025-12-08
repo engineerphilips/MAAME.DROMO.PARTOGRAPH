@@ -68,7 +68,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ID = Guid.Parse(reader.GetString(0)),
                 PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
                 Time = reader.GetDateTime(2),
-                Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
+                //Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
+                HandlerName = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
                 Notes = reader.GetString(4),
                 Systolic = reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
                 Diastolic = reader.IsDBNull(6) ? 0 : reader.GetInt32(6),
@@ -82,8 +83,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Version = reader.GetInt32(14),
                 ServerVersion = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
                 Deleted = reader.IsDBNull(16) ? 0 : reader.GetInt32(14),
-                ConflictData = reader.GetString(17),
-                DataHash = reader.GetString(18)
+                ConflictData = reader.IsDBNull(17) ? string.Empty : reader.GetString(17),
+                DataHash = reader.IsDBNull(18) ? string.Empty : reader.GetString(18)
             };
         }
 

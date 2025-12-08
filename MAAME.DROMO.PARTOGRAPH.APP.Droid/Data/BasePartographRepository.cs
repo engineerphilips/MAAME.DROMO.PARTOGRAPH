@@ -31,6 +31,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 createTableCmd.CommandText = CreateTableSql;
                 await createTableCmd.ExecuteNonQueryAsync();
             }
+            catch (SqliteException e)
+            {
+                throw new Exception(e.Message);
+            }
             catch (Exception e)
             {
                 _logger.LogError(e, $"Error creating {TableName} table");
@@ -60,6 +64,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     entries.Add(MapFromReader(reader));
                 }
             }
+            catch (SqliteException e)
+            {
+                throw new Exception(e.Message);
+            }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
@@ -86,7 +94,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     return MapFromReader(reader);
                 }
-
+            }
+            catch (SqliteException e)
+            {
+                throw new Exception(e.Message);
             }
             catch (Exception e)
             {
@@ -117,6 +128,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     AddUpdateParameters(saveCmd, item);
                     await saveCmd.ExecuteNonQueryAsync();
                 }
+            }
+            catch (SqliteException e)
+            {
+                throw new Exception(e.Message);
             }
             catch (Exception e)
             {

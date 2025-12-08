@@ -58,7 +58,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             END;
             ";
 
-        public FetalPositionRepository(ILogger<CompanionRepository> logger) : base(logger) { }
+        public FetalPositionRepository(ILogger<FetalPositionRepository> logger) : base(logger) { }
 
         protected override FetalPosition MapFromReader(SqliteDataReader reader)
         {
@@ -67,7 +67,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ID = Guid.Parse(reader.GetString(0)),
                 PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
                 Time = reader.GetDateTime(2),
-                Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
+                //Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
+                HandlerName = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
                 Notes = reader.GetString(4),
                 Position = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
                 CreatedTime = reader.GetInt64(6),
