@@ -19,6 +19,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private float? _baselineFHR = null;
         private bool _isHighlighted = false;
 
+        // Additional measurables
+        private float? _temperature = null;
+        private string _urineProtein = string.Empty;
+        private string _urineAcetone = string.Empty;
+        private decimal? _oxytocinDose = null;
+        private decimal? _oxytocinVolume = null;
+        private string _ivFluidType = string.Empty;
+        private int? _ivFluidVolume = null;
+        private string _ivFluidRate = string.Empty;
+        private int? _cervixDilatation = null;
+        private int? _contractionFrequency = null;
+        private int? _contractionDuration = null;
+        private int? _headDescentStation = null;
+        private string _fetalPosition = string.Empty;
+        private string _amnioticFluidColor = string.Empty;
+        private string _caputDegree = string.Empty;
+        private int? _mouldingDegree = null;
+        private int? _bpSystolic = null;
+        private int? _bpDiastolic = null;
+        private int? _pulse = null;
+
         public DateTime Time { get; }
         public int HourNumber { get; }
         public string TimeDisplay => Time.ToString("H:mm");
@@ -107,6 +128,216 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(BackgroundColor));
                 OnPropertyChanged(nameof(TextColor));
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        // Additional measurable properties
+        public float? Temperature
+        {
+            get => _temperature;
+            set
+            {
+                _temperature = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public string UrineProtein
+        {
+            get => _urineProtein;
+            set
+            {
+                _urineProtein = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public string UrineAcetone
+        {
+            get => _urineAcetone;
+            set
+            {
+                _urineAcetone = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public decimal? OxytocinDose
+        {
+            get => _oxytocinDose;
+            set
+            {
+                _oxytocinDose = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public decimal? OxytocinVolume
+        {
+            get => _oxytocinVolume;
+            set
+            {
+                _oxytocinVolume = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public string IVFluidType
+        {
+            get => _ivFluidType;
+            set
+            {
+                _ivFluidType = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public int? IVFluidVolume
+        {
+            get => _ivFluidVolume;
+            set
+            {
+                _ivFluidVolume = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public string IVFluidRate
+        {
+            get => _ivFluidRate;
+            set
+            {
+                _ivFluidRate = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public int? CervixDilatation
+        {
+            get => _cervixDilatation;
+            set
+            {
+                _cervixDilatation = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public int? ContractionFrequency
+        {
+            get => _contractionFrequency;
+            set
+            {
+                _contractionFrequency = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public int? ContractionDuration
+        {
+            get => _contractionDuration;
+            set
+            {
+                _contractionDuration = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public int? HeadDescentStation
+        {
+            get => _headDescentStation;
+            set
+            {
+                _headDescentStation = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public string FetalPosition
+        {
+            get => _fetalPosition;
+            set
+            {
+                _fetalPosition = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public string AmnioticFluidColor
+        {
+            get => _amnioticFluidColor;
+            set
+            {
+                _amnioticFluidColor = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public string CaputDegree
+        {
+            get => _caputDegree;
+            set
+            {
+                _caputDegree = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public int? MouldingDegree
+        {
+            get => _mouldingDegree;
+            set
+            {
+                _mouldingDegree = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public int? BPSystolic
+        {
+            get => _bpSystolic;
+            set
+            {
+                _bpSystolic = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public int? BPDiastolic
+        {
+            get => _bpDiastolic;
+            set
+            {
+                _bpDiastolic = value;
+                OnPropertyChanged();
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public int? Pulse
+        {
+            get => _pulse;
+            set
+            {
+                _pulse = value;
+                OnPropertyChanged();
                 DataChanged?.Invoke(this, EventArgs.Empty);
             }
         }

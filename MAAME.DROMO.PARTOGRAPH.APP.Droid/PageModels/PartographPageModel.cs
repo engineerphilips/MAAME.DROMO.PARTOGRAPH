@@ -468,6 +468,121 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     {
                         timeSlot.BaselineFHR = fhrEntry.Rate.Value;
                     }
+
+                    // Find temperature entry for this time slot
+                    var temperatureEntry = _patient.Temperatures?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (temperatureEntry != null)
+                    {
+                        timeSlot.Temperature = temperatureEntry.Rate;
+                    }
+
+                    // Find urine entry for this time slot
+                    var urineEntry = _patient.Urines?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (urineEntry != null)
+                    {
+                        if (!string.IsNullOrEmpty(urineEntry.Protein))
+                        {
+                            timeSlot.UrineProtein = urineEntry.Protein;
+                        }
+                        if (!string.IsNullOrEmpty(urineEntry.Acetone))
+                        {
+                            timeSlot.UrineAcetone = urineEntry.Acetone;
+                        }
+                    }
+
+                    // Find oxytocin entry for this time slot
+                    var oxytocinEntry = _patient.Oxytocins?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (oxytocinEntry != null)
+                    {
+                        timeSlot.OxytocinDose = oxytocinEntry.DoseMUnitsPerMin;
+                        timeSlot.OxytocinVolume = oxytocinEntry.TotalVolumeInfused;
+                    }
+
+                    // Find IV fluid entry for this time slot
+                    var ivFluidEntry = _patient.IVFluids?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (ivFluidEntry != null)
+                    {
+                        if (!string.IsNullOrEmpty(ivFluidEntry.FluidType))
+                        {
+                            timeSlot.IVFluidType = ivFluidEntry.FluidType;
+                        }
+                        timeSlot.IVFluidVolume = ivFluidEntry.VolumeInfused;
+                        if (!string.IsNullOrEmpty(ivFluidEntry.Rate))
+                        {
+                            timeSlot.IVFluidRate = ivFluidEntry.Rate;
+                        }
+                    }
+
+                    // Find cervix dilatation entry for this time slot
+                    var dilatationEntry = _patient.Dilatations?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (dilatationEntry != null)
+                    {
+                        timeSlot.CervixDilatation = dilatationEntry.DilatationCm;
+                    }
+
+                    // Find contraction entry for this time slot
+                    var contractionEntry = _patient.Contractions?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (contractionEntry != null)
+                    {
+                        timeSlot.ContractionFrequency = contractionEntry.FrequencyPer10Min;
+                        timeSlot.ContractionDuration = contractionEntry.DurationSeconds;
+                    }
+
+                    // Find head descent entry for this time slot
+                    var headDescentEntry = _patient.HeadDescents?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (headDescentEntry != null)
+                    {
+                        timeSlot.HeadDescentStation = headDescentEntry.Station;
+                    }
+
+                    // Find fetal position entry for this time slot
+                    var fetalPositionEntry = _patient.FetalPositions?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (fetalPositionEntry != null && !string.IsNullOrEmpty(fetalPositionEntry.Position))
+                    {
+                        timeSlot.FetalPosition = fetalPositionEntry.Position;
+                    }
+
+                    // Find amniotic fluid entry for this time slot
+                    var amnioticFluidEntry = _patient.AmnioticFluids?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (amnioticFluidEntry != null && !string.IsNullOrEmpty(amnioticFluidEntry.Color))
+                    {
+                        timeSlot.AmnioticFluidColor = amnioticFluidEntry.Color;
+                    }
+
+                    // Find caput entry for this time slot
+                    var caputEntry = _patient.Caputs?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (caputEntry != null && !string.IsNullOrEmpty(caputEntry.Degree))
+                    {
+                        timeSlot.CaputDegree = caputEntry.Degree;
+                    }
+
+                    // Find moulding entry for this time slot
+                    var mouldingEntry = _patient.Mouldings?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (mouldingEntry != null)
+                    {
+                        timeSlot.MouldingDegree = mouldingEntry.Degree;
+                    }
+
+                    // Find BP entry for this time slot
+                    var bpEntry = _patient.BPs?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (bpEntry != null)
+                    {
+                        timeSlot.BPSystolic = bpEntry.Systolic;
+                        timeSlot.BPDiastolic = bpEntry.Diastolic;
+                        timeSlot.Pulse = bpEntry.Pulse;
+                    }
                 }
             }
             catch (Exception e)
