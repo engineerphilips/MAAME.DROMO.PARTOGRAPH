@@ -187,7 +187,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     Companion = CompanionType.None,
                     OralFluid = OralFluidType.None,
                     PainRelief = PainReliefType.None,
-                    Posture = PostureType.None
+                    Posture = PostureType.None, 
+
                 };
 
                 //timeSlot.DataChanged += OnTimeSlotDataChanged;
@@ -197,24 +198,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             //var x = Chartinghours?.Count ?? 0;
 
-            if (TimeSlots.Any())
-                RegenerateTimeSlots();
+            //if (TimeSlots.Any())
+            //    RegenerateTimeSlots();
         }
         
-        private void RegenerateTimeSlots()
-        {
-            foreach (var time in TimeSlots)
-            {
-                var x = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0);
-                var y = x.AddHours(1);
-                if (time.Time >= x && time.Time < y)
-                {
-                    time.Companion = CompanionType.Yes;
-                }
-                else
-                    time.Companion = CompanionType.None;
-            }
-        }
+        //private void RegenerateTimeSlots()
+        //{
+        //    foreach (var time in TimeSlots)
+        //    {
+        //        var x = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0);
+        //        var y = x.AddHours(1);
+        //        if (time.Time >= x && time.Time < y)
+        //        {
+        //            time.Companion = CompanionType.Yes;
+        //        }
+        //        else
+        //            time.Companion = CompanionType.None;
+        //    }
+        //}
 
         //private void RegenerateTimeSlots()
         //{
@@ -260,9 +261,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     // Find companion entry for this time slot
                     var companionEntry = companionEntries.FirstOrDefault(e =>
                         e.Time >= slotStartTime && e.Time < slotEndTime);
-                    if (companionEntry != null && !string.IsNullOrEmpty(companionEntry.Companion))
+                    if (companionEntry != null && !string.IsNullOrEmpty(companionEntry.CompanionDisplay))
                     {
-                        if (Enum.TryParse<CompanionType>(companionEntry.Companion, true, out var companionType))
+                        if (Enum.TryParse<CompanionType>(companionEntry.CompanionDisplay, true, out var companionType))
                         {
                             timeSlot.Companion = companionType;
                         }

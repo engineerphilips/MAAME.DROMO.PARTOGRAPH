@@ -1,10 +1,11 @@
-﻿namespace MAAME.DROMO.PARTOGRAPH.MODEL
+﻿using System;
+
+namespace MAAME.DROMO.PARTOGRAPH.MODEL
 {
     public class PainReliefEntry : BasePartographMeasurement
     {
         public string? PainRelief { get; set; }
-        public string? PainReliefDisplay => PainRelief != null ? PainRelief.ToString() : string.Empty;
-
+        public string? PainReliefDisplay => PainRelief != null ? (PainRelief == "Y" ? "Yes" : PainRelief == "N" ? "No" : PainRelief == "D" ? "Declined" : string.Empty) : string.Empty;        
         //public string PainReliefMethod { get; set; } = string.Empty; // None, Epidural, Pethidine, Gas & Air, etc.
         //public DateTime? AdministeredTime { get; set; }
         //public string Dose { get; set; } = string.Empty;

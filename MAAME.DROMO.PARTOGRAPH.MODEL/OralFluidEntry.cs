@@ -4,7 +4,7 @@
     public class OralFluidEntry : BasePartographMeasurement
     {
         public string? OralFluid { get; set; }
-        public string? OralFluidDisplay => OralFluid != null ? OralFluid.ToString() : string.Empty;
+        public string? OralFluidDisplay => OralFluid != null ? (OralFluid == "Y" ? "Yes" : OralFluid == "N" ? "No" : OralFluid == "D" ? "Declined" : string.Empty) : string.Empty;
 
         //public string FluidType { get; set; } = string.Empty; // Water, Ice chips, Energy drink, etc.
         //public int AmountMl { get; set; }
