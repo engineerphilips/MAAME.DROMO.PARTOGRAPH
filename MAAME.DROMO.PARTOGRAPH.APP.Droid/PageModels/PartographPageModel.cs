@@ -24,6 +24,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly OralFluidRepository _oralFluidRepository;
         private readonly PostureRepository _postureRepository;
         private readonly FHRRepository _fhrRepository;
+        private readonly TemperatureRepository _temperatureRepository;
+        private readonly UrineRepository _urineRepository;
+        private readonly OxytocinRepository _oxytocinRepository;
+        private readonly MedicationEntryRepository _medicationEntryRepository;
+        private readonly IVFluidEntryRepository _ivFluidEntryRepository;
+        private readonly CervixDilatationRepository _cervixDilatationRepository;
+        private readonly ContractionRepository _contractionRepository;
+        private readonly HeadDescentRepository _headDescentRepository;
+        private readonly FetalPositionRepository _fetalPositionRepository;
+        private readonly AmnioticFluidRepository _amnioticFluidRepository;
+        private readonly CaputRepository _caputRepository;
+        private readonly MouldingRepository _mouldingRepository;
+        private readonly BPRepository _bpRepository;
 
         // Modal page models
         private readonly CompanionModalPageModel _companionModalPageModel;
@@ -113,6 +126,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             OralFluidRepository oralFluidRepository,
             PostureRepository postureRepository,
             FHRRepository fhrRepository,
+            TemperatureRepository temperatureRepository,
+            UrineRepository urineRepository,
+            OxytocinRepository oxytocinRepository,
+            MedicationEntryRepository medicationEntryRepository,
+            IVFluidEntryRepository ivFluidEntryRepository,
+            CervixDilatationRepository cervixDilatationRepository,
+            ContractionRepository contractionRepository,
+            HeadDescentRepository headDescentRepository,
+            FetalPositionRepository fetalPositionRepository,
+            AmnioticFluidRepository amnioticFluidRepository,
+            CaputRepository caputRepository,
+            MouldingRepository mouldingRepository,
+            BPRepository bpRepository,
             ModalErrorHandler errorHandler,
             CompanionModalPageModel companionModalPageModel,
             PainReliefModalPageModel painReliefModalPageModel,
@@ -139,6 +165,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _oralFluidRepository = oralFluidRepository;
             _postureRepository = postureRepository;
             _fhrRepository = fhrRepository;
+            _temperatureRepository = temperatureRepository;
+            _urineRepository = urineRepository;
+            _oxytocinRepository = oxytocinRepository;
+            _medicationEntryRepository = medicationEntryRepository;
+            _ivFluidEntryRepository = ivFluidEntryRepository;
+            _cervixDilatationRepository = cervixDilatationRepository;
+            _contractionRepository = contractionRepository;
+            _headDescentRepository = headDescentRepository;
+            _fetalPositionRepository = fetalPositionRepository;
+            _amnioticFluidRepository = amnioticFluidRepository;
+            _caputRepository = caputRepository;
+            _mouldingRepository = mouldingRepository;
+            _bpRepository = bpRepository;
             _errorHandler = errorHandler;
             _companionModalPageModel = companionModalPageModel;
             _painReliefModalPageModel = painReliefModalPageModel;
@@ -236,6 +275,100 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         //        TimeSlots.Add(timeSlot);
         //    }
         //}
+
+        private async Task<DateTime?> GetEarliestMeasurableTimeAsync()
+        {
+            if (_patient?.ID == null)
+                return null;
+
+            var earliestTimes = new List<DateTime>();
+
+            try
+            {
+                // Retrieve all measurables and collect their times
+                var companionEntries = await _companionRepository.ListByPatientAsync(_patient.ID);
+                if (companionEntries.Any())
+                    earliestTimes.Add(companionEntries.Min(e => e.Time));
+
+                var painReliefEntries = await _painReliefRepository.ListByPatientAsync(_patient.ID);
+                if (painReliefEntries.Any())
+                    earliestTimes.Add(painReliefEntries.Min(e => e.Time));
+
+                var oralFluidEntries = await _oralFluidRepository.ListByPatientAsync(_patient.ID);
+                if (oralFluidEntries.Any())
+                    earliestTimes.Add(oralFluidEntries.Min(e => e.Time));
+
+                var postureEntries = await _postureRepository.ListByPatientAsync(_patient.ID);
+                if (postureEntries.Any())
+                    earliestTimes.Add(postureEntries.Min(e => e.Time));
+
+                var fhrEntries = await _fhrRepository.ListByPatientAsync(_patient.ID);
+                if (fhrEntries.Any())
+                    earliestTimes.Add(fhrEntries.Min(e => e.Time));
+
+                var temperatureEntries = await _temperatureRepository.ListByPatientAsync(_patient.ID);
+                if (temperatureEntries.Any())
+                    earliestTimes.Add(temperatureEntries.Min(e => e.Time));
+
+                var urineEntries = await _urineRepository.ListByPatientAsync(_patient.ID);
+                if (urineEntries.Any())
+                    earliestTimes.Add(urineEntries.Min(e => e.Time));
+
+                var oxytocinEntries = await _oxytocinRepository.ListByPatientAsync(_patient.ID);
+                if (oxytocinEntries.Any())
+                    earliestTimes.Add(oxytocinEntries.Min(e => e.Time));
+
+                var medicationEntries = await _medicationEntryRepository.ListByPatientAsync(_patient.ID);
+                if (medicationEntries.Any())
+                    earliestTimes.Add(medicationEntries.Min(e => e.Time));
+
+                var ivFluidEntries = await _ivFluidEntryRepository.ListByPatientAsync(_patient.ID);
+                if (ivFluidEntries.Any())
+                    earliestTimes.Add(ivFluidEntries.Min(e => e.Time));
+
+                var cervixDilatationEntries = await _cervixDilatationRepository.ListByPatientAsync(_patient.ID);
+                if (cervixDilatationEntries.Any())
+                    earliestTimes.Add(cervixDilatationEntries.Min(e => e.Time));
+
+                var contractionEntries = await _contractionRepository.ListByPatientAsync(_patient.ID);
+                if (contractionEntries.Any())
+                    earliestTimes.Add(contractionEntries.Min(e => e.Time));
+
+                var headDescentEntries = await _headDescentRepository.ListByPatientAsync(_patient.ID);
+                if (headDescentEntries.Any())
+                    earliestTimes.Add(headDescentEntries.Min(e => e.Time));
+
+                var fetalPositionEntries = await _fetalPositionRepository.ListByPatientAsync(_patient.ID);
+                if (fetalPositionEntries.Any())
+                    earliestTimes.Add(fetalPositionEntries.Min(e => e.Time));
+
+                var amnioticFluidEntries = await _amnioticFluidRepository.ListByPatientAsync(_patient.ID);
+                if (amnioticFluidEntries.Any())
+                    earliestTimes.Add(amnioticFluidEntries.Min(e => e.Time));
+
+                var caputEntries = await _caputRepository.ListByPatientAsync(_patient.ID);
+                if (caputEntries.Any())
+                    earliestTimes.Add(caputEntries.Min(e => e.Time));
+
+                var mouldingEntries = await _mouldingRepository.ListByPatientAsync(_patient.ID);
+                if (mouldingEntries.Any())
+                    earliestTimes.Add(mouldingEntries.Min(e => e.Time));
+
+                var bpEntries = await _bpRepository.ListByPatientAsync(_patient.ID);
+                if (bpEntries.Any())
+                    earliestTimes.Add(bpEntries.Min(e => e.Time));
+
+                // Return the earliest time among all measurables
+                if (earliestTimes.Any())
+                    return earliestTimes.Min();
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+
+            return null;
+        }
 
         private async Task LoadMeasurablesFromDatabase()
         {
@@ -338,6 +471,28 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     var duration = DateTime.Now - _patient.LaborStartTime.Value;
                     LaborDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
+                }
+
+                // Get the earliest measurable time to set as start time
+                var earliestMeasurableTime = await GetEarliestMeasurableTimeAsync();
+
+                // Set StartTime to the earliest of: LaborStartTime or earliest measurable
+                DateTime? newStartTime = null;
+                if (_patient.LaborStartTime.HasValue)
+                {
+                    newStartTime = _patient.LaborStartTime.Value;
+                }
+                else if (earliestMeasurableTime.HasValue)
+                {
+                    newStartTime = earliestMeasurableTime.Value;
+                }
+
+                // If we have a new start time, floor it to the hour and regenerate time slots
+                if (newStartTime.HasValue)
+                {
+                    StartTime = new DateTime(newStartTime.Value.Year, newStartTime.Value.Month,
+                        newStartTime.Value.Day, newStartTime.Value.Hour, 0, 0);
+                    GenerateInitialTimeSlots();
                 }
 
                 var companions = await _companionRepository.ListByPatientAsync(patientId);
