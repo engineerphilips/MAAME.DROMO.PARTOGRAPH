@@ -21,8 +21,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public DateTime AdmissionDate { get; set; } = DateTime.Now;
         public DateOnly? ExpectedDeliveryDate { get; set; }
         public DateOnly? LastMenstrualDate { get; set; }
-        
-        public string GestationalAge { get; set; } = string.Empty;
+
+        public string GestationalAge => ExpectedDeliveryDate != null ? new EMPEROR.COMMON.GestationalAge().Age(DateTime.Now, new DateTime(ExpectedDeliveryDate.Value.Year, ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day), true) : LastMenstrualDate != null ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(LastMenstrualDate.Value.Year, LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day), DateTime.Now, false) : string.Empty;
 
         // Labour Information
         public LaborStatus Status { get; set; } = LaborStatus.Pending;
@@ -36,7 +36,10 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string LiquorStatus { get; set; } = "Clear";
 
         // Risk Factors
-        public string RiskFactors { get; set; } = string.Empty;
+        public IEnumerable<PartographDiagnosis> Diagnoses { get; set; } = Enumerable.Empty<PartographDiagnosis>();
+
+        // Risk Factors
+        public IEnumerable<PartographRiskFactor> RiskFactors { get; set; } = Enumerable.Empty<PartographRiskFactor>();
         public string Complications { get; set; } = string.Empty;
 
         // Partographs
@@ -44,6 +47,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public IEnumerable<Contraction> Contractions { get; set; }
         public IEnumerable<Caput> Caputs { get; set; }
         public IEnumerable<BP> BPs { get; set; }
+        public IEnumerable<Assessment> Assessments { get; set; }
+        public IEnumerable<Plan> Plans { get; set; }
         public IEnumerable<Moulding> Mouldings { get; set; }
         public IEnumerable<FetalPosition> FetalPositions { get; set; }
         public IEnumerable<CervixDilatation> Dilatations { get; set; }
@@ -108,7 +113,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         };
 
         [JsonIgnore]
-        public string DisplayInfo => $"G{Gravida}P{Parity} • {Patient?.Age}yrs • {GestationalAge}";
+        public string DisplayInfo => $"G{Gravida}P{Parity} • {GestationalAge} • {Patient?.Age}yrs";
         [JsonIgnore]
         public string Name => Patient?.Name;
         [JsonIgnore]

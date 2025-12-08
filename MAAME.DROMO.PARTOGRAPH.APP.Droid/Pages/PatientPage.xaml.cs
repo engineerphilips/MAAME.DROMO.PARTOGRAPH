@@ -10,6 +10,18 @@ public partial class PatientPage : ContentPage
 		BindingContext = pageModel;
     }
 
+    private void RiskFactorsEntry_Completed(object sender, EventArgs e)
+    {
+        if (sender is InputView entry && this.BindingContext is PatientPageModel viewModel)
+        {
+            if (!string.IsNullOrWhiteSpace(entry.Text))
+            {
+                viewModel.RiskFactors.Add(new Diagnosis() { Name = entry.Text });
+                entry.Text = "";
+            }
+        }
+    }
+
     private void Entry_Completed(object sender, EventArgs e)
     {
         if (sender is InputView entry && this.BindingContext is PatientPageModel viewModel)

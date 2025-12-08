@@ -117,6 +117,9 @@
                     <RowDefinition Height="5" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
 
                 <!-- Time Header Row -->
@@ -584,7 +587,7 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding AmnioticFluidDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding AmnioticFluidColor}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -638,7 +641,7 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding FetalPositionDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding FetalPosition}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -692,7 +695,7 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding CaputDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding CaputDegree}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -746,7 +749,7 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding MouldingDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding MouldingDegree}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -800,7 +803,7 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding PulseDispaly}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding Pulse}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -854,7 +857,7 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding SystolicBPDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding BPSystolic}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -908,7 +911,7 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding DiastolicBPDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding BPDiastolic}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -962,7 +965,7 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding TemperatureDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding Temperature,Mode=OneWay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -1070,19 +1073,11 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding ContractionsDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding ContractionFrequency}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
-                <!--<Label Grid.Row="22" Grid.Column="0" 
-       Text="Duration of contractions" 
-       BackgroundColor="LightGray"
-       HorizontalTextAlignment="Center"
-       VerticalTextAlignment="Center"
-       Padding="4,2"
-       FontSize="9" Margin="0,0,1,1" />-->
 
                 <Button Grid.Row="22" Grid.Column="0" 
                        Text="Duration of contractions" 
@@ -1124,12 +1119,201 @@
                                     <RoundRectangle CornerRadius="0" />
                                 </Border.StrokeShape>
 
-                                <Label Text="{Binding DurationOfContractionsDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                                <Label Text="{Binding ContractionDuration}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
+                <Button Grid.Row="24" Grid.Column="0" Grid.ColumnSpan="2"
+                       Text="Oxytocin (U/L, drop/min)" 
+                       BackgroundColor="LightGray"
+                       Padding="0"
+                       FontSize="Micro"
+                       Margin="0,0,1,1" 
+                        CornerRadius="0" 
+                        TextColor="Black"
+                        Command="{Binding OpenOxytocinPopupCommand}" />
+
+                <CollectionView  Grid.Row="24" Grid.Column="2" ItemsSource="{Binding TimeSlots}" ItemsLayout="HorizontalList" SelectionMode="None" HeightRequest="40" Margin="0,0,0,2">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" >
+                            <Label Text="&#xE8B6;" 
+   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+   FontSize="64"
+   TextColor="{AppThemeBinding Light=#CCC, Dark=#666}"
+   HorizontalOptions="Center" />
+                            <Label Text="No Active Patients"
+   FontSize="18"
+   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="pagemodels:EnhancedTimeSlotViewModel">
+                            <Border StrokeThickness="1" Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" Margin="0,4" Padding="5" WidthRequest="40">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="0" />
+                                </Border.StrokeShape>
+
+                                <Label Text="{Binding OxytocinDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Grid.Row="25" Grid.Column="0" Grid.ColumnSpan="2"
+                       Text="Medicine" 
+                       BackgroundColor="LightGray"
+                       Padding="0"
+                       FontSize="Micro"
+                       Margin="0,0,1,1" 
+                        CornerRadius="0" 
+                        TextColor="Black"
+                        Command="{Binding OpenMedicinePopupCommand}" />
+
+                <CollectionView  Grid.Row="25" Grid.Column="2" ItemsSource="{Binding TimeSlots}" ItemsLayout="HorizontalList" SelectionMode="None" HeightRequest="40" Margin="0,0,0,2">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" >
+                            <Label Text="&#xE8B6;" 
+   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+   FontSize="64"
+   TextColor="{AppThemeBinding Light=#CCC, Dark=#666}"
+   HorizontalOptions="Center" />
+                            <Label Text="No Active Patients"
+   FontSize="18"
+   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="pagemodels:EnhancedTimeSlotViewModel">
+                            <Border StrokeThickness="1" Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" Margin="0,4" Padding="5" WidthRequest="40">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="0" />
+                                </Border.StrokeShape>
+
+                                <Label Text="{Binding MedicineDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Grid.Row="26" Grid.Column="0" Grid.ColumnSpan="2"
+                       Text="IV Fluids" 
+                       BackgroundColor="LightGray"
+                       Padding="0"
+                       FontSize="Micro"
+                       Margin="0,0,1,1" 
+                        CornerRadius="0" 
+                        TextColor="Black"
+                        Command="{Binding OpenIVFluidsPopupCommand}" />
+
+                <CollectionView  Grid.Row="26" Grid.Column="2" ItemsSource="{Binding TimeSlots}" ItemsLayout="HorizontalList" SelectionMode="None" HeightRequest="40" Margin="0,0,0,2">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" >
+                            <Label Text="&#xE8B6;" 
+   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+   FontSize="64"
+   TextColor="{AppThemeBinding Light=#CCC, Dark=#666}"
+   HorizontalOptions="Center" />
+                            <Label Text="No Active Patients"
+   FontSize="18"
+   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="pagemodels:EnhancedTimeSlotViewModel">
+                            <Border StrokeThickness="1" Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" Margin="0,4" Padding="5" WidthRequest="40">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="0" />
+                                </Border.StrokeShape>
+
+                                <Label Text="{Binding IVFluidsDisplay}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Grid.Row="27" Grid.Column="0" Grid.ColumnSpan="2"
+                       Text="Assessment" 
+                       BackgroundColor="LightGray"
+                       Padding="0"
+                       FontSize="Micro"
+                       Margin="0,0,1,1" 
+                        CornerRadius="0" 
+                        TextColor="Black"
+                        Command="{Binding OpenAssessmentPopupCommand}" />
+
+                <CollectionView  Grid.Row="27" Grid.Column="2" ItemsSource="{Binding TimeSlots}" ItemsLayout="HorizontalList" SelectionMode="None" HeightRequest="40" Margin="0,0,0,2">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" >
+                            <Label Text="&#xE8B6;" 
+   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+   FontSize="64"
+   TextColor="{AppThemeBinding Light=#CCC, Dark=#666}"
+   HorizontalOptions="Center" />
+                            <Label Text="No Active Patients"
+   FontSize="18"
+   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="pagemodels:EnhancedTimeSlotViewModel">
+                            <Border StrokeThickness="1" Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" Margin="0,4" Padding="5" WidthRequest="40">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="0" />
+                                </Border.StrokeShape>
+
+                                <Label Text="{Binding Assessment}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Grid.Row="28" Grid.Column="0" Grid.ColumnSpan="2"
+                       Text="Plan" 
+                       BackgroundColor="LightGray"
+                       Padding="0"
+                       FontSize="Micro"
+                       Margin="0,0,1,1" 
+                        CornerRadius="0" 
+                        TextColor="Black"
+                        Command="{Binding OpenPlanPopupCommand}" />
+
+                <CollectionView  Grid.Row="28" Grid.Column="2" ItemsSource="{Binding TimeSlots}" ItemsLayout="HorizontalList" SelectionMode="None" HeightRequest="40" Margin="0,0,0,2">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" >
+                            <Label Text="&#xE8B6;" 
+   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+   FontSize="64"
+   TextColor="{AppThemeBinding Light=#CCC, Dark=#666}"
+   HorizontalOptions="Center" />
+                            <Label Text="No Active Patients"
+   FontSize="18"
+   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="pagemodels:EnhancedTimeSlotViewModel">
+                            <Border StrokeThickness="1" Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" Margin="0,4" Padding="5" WidthRequest="40">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="0" />
+                                </Border.StrokeShape>
+
+                                <Label Text="{Binding Plan}" FontSize="Micro" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" VerticalOptions="Center" HorizontalOptions="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </Grid>
             <!--IsOpen="{Binding IsCompanionPopupOpen}"-->
 
@@ -1329,6 +1513,24 @@
                              Grid.RowSpan="5" />
 
             <modals:MedicationPopup x:Name="sfPopupMedication"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:AssessmentPopup x:Name="sfPopupAssessment"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:PlanPopup x:Name="sfPopupPlan"
                              StaysOpen="True"
                              ShowCloseButton="True"
                              WidthRequest="312"

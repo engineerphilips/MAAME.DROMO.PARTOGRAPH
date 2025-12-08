@@ -112,6 +112,7 @@
 	<ItemGroup>
 	  <Compile Remove="Data\CategoryRepository.cs" />
 	  <Compile Remove="Data\JsonContext.cs" />
+	  <Compile Remove="Data\MedicalNoteRepository.cs" />
 	  <Compile Remove="Data\ProjectRepository.cs" />
 	  <Compile Remove="Data\SeedDataService - Copy.cs" />
 	  <Compile Remove="Data\TagRepository.cs" />
@@ -135,6 +136,7 @@
 	  <Compile Remove="Pages\Modals\CompanionModalPage.xaml.cs" />
 	  <Compile Remove="Pages\Modals\ContractionsModalPage.xaml.cs" />
 	  <Compile Remove="Pages\Modals\PainReliefModalPage.xaml.cs" />
+	  <Compile Remove="Pages\PartographPage1.xaml.cs" />
 	  <Compile Remove="Pages\ProjectDetailPage.xaml.cs" />
 	  <Compile Remove="Pages\ProjectListPage.xaml.cs" />
 	  <Compile Remove="Pages\TaskDetailPage.xaml.cs" />
@@ -152,6 +154,7 @@
 	  <MauiXaml Remove="Pages\Modals\CompanionModalPage.xaml" />
 	  <MauiXaml Remove="Pages\Modals\ContractionsModalPage.xaml" />
 	  <MauiXaml Remove="Pages\Modals\PainReliefModalPage.xaml" />
+	  <MauiXaml Remove="Pages\PartographPage1.xaml" />
 	  <MauiXaml Remove="Pages\ProjectDetailPage.xaml" />
 	  <MauiXaml Remove="Pages\ProjectListPage.xaml" />
 	  <MauiXaml Remove="Pages\TaskDetailPage.xaml" />
@@ -192,6 +195,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Pages\Modals\PlanPopup.xaml.cs">
+	    <DependentUpon>PlanPopup.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\Modals\AssessmentPopup.xaml.cs">
+	    <DependentUpon>AssessmentPopup.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\Modals\CompanionPopup.xaml.cs">
 	    <DependentUpon>CompanionPopup.xaml</DependentUpon>
 	  </Compile>
@@ -228,9 +237,6 @@
 	  <Compile Update="Pages\Modals\CompanionModalView.xaml.cs">
 	    <DependentUpon>CompanionModalView.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\PartographPage1.xaml.cs">
-	    <DependentUpon>PartographPage1.xaml</DependentUpon>
-	  </Compile>
 	  <Compile Update="Pages\PatientPage.xaml.cs">
 	    <DependentUpon>PatientPage.xaml</DependentUpon>
 	  </Compile>
@@ -261,10 +267,16 @@
 	  <MauiXaml Update="Pages\Modals\AssessmentPlanModalPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\Modals\PlanPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\Modals\BaselineFHRModalPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Modals\CaputModalView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Modals\AssessmentPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Modals\CompanionPopup.xaml">
@@ -334,9 +346,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\PartographEntryPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\PartographPage1.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\PartographPage.xaml">

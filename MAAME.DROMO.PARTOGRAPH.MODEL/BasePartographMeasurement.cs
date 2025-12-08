@@ -78,7 +78,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
             { typeof(Urine), TimeSpan.FromHours(1) },
             { typeof(CervixDilatation), TimeSpan.FromHours(4) }, // Or as needed
             { typeof(HeadDescent), TimeSpan.FromHours(4) }, // Or as needed
-            { typeof(AssessmentPlanEntry), TimeSpan.FromHours(4) }
+            { typeof(Assessment), TimeSpan.FromHours(4) }
         };
 
         public static bool IsDue(Type measurementType, DateTime lastRecorded)

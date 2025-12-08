@@ -50,7 +50,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<PatientRepository>();
             builder.Services.AddSingleton<PartographRepository>();
             //builder.Services.AddSingleton<VitalSignRepository>();
-            builder.Services.AddSingleton<MedicalNoteRepository>();
+            //builder.Services.AddSingleton<MedicalNoteRepository>();
             builder.Services.AddSingleton<StaffRepository>();
             builder.Services.AddSingleton<CompanionRepository>();
             builder.Services.AddSingleton<PainReliefRepository>();
@@ -70,8 +70,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<IVFluidEntryRepository>();
             builder.Services.AddSingleton<MedicationEntryRepository>();
             builder.Services.AddSingleton<OxytocinRepository>();
-            builder.Services.AddSingleton<AssessmentPlanRepository>();
-
+            builder.Services.AddSingleton<AssessmentRepository>();
+            builder.Services.AddSingleton<PlanRepository>();
+            builder.Services.AddSingleton<PartographDiagnosisRepository>();
+            builder.Services.AddSingleton<PartographRiskFactorRepository>();
             // Keep existing repositories for compatibility during migration
             //builder.Services.AddSingleton<ProjectRepository>();
             //builder.Services.AddSingleton<TaskRepository>();
@@ -123,7 +125,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<ContractionsModalPageModel>();
             builder.Services.AddSingleton<BaselineFHRModalPageModel>();
             builder.Services.AddSingleton<CaputModalPageModel>();
-            builder.Services.AddSingleton<AssessmentPlanModalPageModel>();
+            builder.Services.AddSingleton<AssessmentModalPageModel>();
+            builder.Services.AddSingleton<PlanModalPageModel>();
             builder.Services.AddSingleton<FHRContractionModalPageModel>();
             
             // Register Pages and PageModels with routes

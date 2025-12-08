@@ -34,7 +34,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
         public DbSet<MedicationEntry> Medications { get; set; }
         public DbSet<Oxytocin> Oxytocins { get; set; }
         public DbSet<CompanionEntry> Companions { get; set; }
-        public DbSet<AssessmentPlanEntry> AssessmentPlans { get; set; }
+        public DbSet<Assessment> AssessmentPlans { get; set; }
         public DbSet<MedicalNote> MedicalNotes { get; set; }
 
         // Supporting Entities
@@ -133,7 +133,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             ConfigureMeasurement<MedicationEntry>(modelBuilder);
             ConfigureMeasurement<Oxytocin>(modelBuilder);
             ConfigureMeasurement<CompanionEntry>(modelBuilder);
-            ConfigureMeasurement<AssessmentPlanEntry>(modelBuilder);
+            ConfigureMeasurement<Assessment>(modelBuilder);
             ConfigureMeasurement<MedicalNote>(modelBuilder);
 
             // Configure VitalSign

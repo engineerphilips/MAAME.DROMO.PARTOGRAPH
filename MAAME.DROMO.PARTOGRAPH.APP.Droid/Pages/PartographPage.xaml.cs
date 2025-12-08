@@ -31,6 +31,8 @@ public partial class PartographPage : ContentPage
         sfPopupCervixDilatation.BindingContext = pageModel.CervixDilatationModalPageModel;
         sfPopupBpPulse.BindingContext = pageModel.BPPulseModalPageModel;
         sfPopupFHRContraction.BindingContext = pageModel.FHRContractionModalPageModel;
+        sfPopupAssessment.BindingContext = pageModel.AssessmentModalPageModel;
+        sfPopupPlan.BindingContext = pageModel.PlanModalPageModel;
 
         Loaded += (s, e) =>
         {
@@ -70,6 +72,10 @@ public partial class PartographPage : ContentPage
                 pageModel.OpenCervixDilatationModalPopup += () => sfPopupCervixDilatation.IsOpen = true;
                 pageModel.CloseFHRContractionModalPopup += () => sfPopupFHRContraction.IsOpen = false;
                 pageModel.OpenFHRContractionModalPopup += () => sfPopupFHRContraction.IsOpen = true;
+                pageModel.CloseAssessmentModalPopup += () => sfPopupAssessment.IsOpen = false;
+                pageModel.OpenAssessmentModalPopup += () => sfPopupAssessment.IsOpen = true;
+                pageModel.ClosePlanModalPopup += () => sfPopupPlan.IsOpen = false;
+                pageModel.OpenPlanModalPopup += () => sfPopupPlan.IsOpen = true;
             }
         };
     }

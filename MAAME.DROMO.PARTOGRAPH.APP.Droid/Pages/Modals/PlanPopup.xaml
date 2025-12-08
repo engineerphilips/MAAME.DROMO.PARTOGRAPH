@@ -4,7 +4,7 @@
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
-             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.MedicationPopup">
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.PlanPopup">
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
@@ -18,7 +18,7 @@
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
             <StackLayout>
-                <Label Text="Medication" VerticalOptions="Center" Margin="15,15,0,0" />
+                <Label Text="Plan" VerticalOptions="Center" Margin="15,15,0,0" />
             </StackLayout>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>
@@ -38,46 +38,9 @@
                         <TimePicker Time="{Binding RecordingTime}" />
                     </core:SfTextInputLayout>
 
-                    <VerticalStackLayout Padding="10,0,0,0">
-                        <Label Text="Is the woman receiving any other medication?" FontAttributes="Bold"/>
-                    </VerticalStackLayout>
-
-                    <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" VisibleSegmentsCount="2" SelectedIndex="{Binding MedicationIndex, Mode=TwoWay}">
-                        <buttons:SfSegmentedControl.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>No</x:String>
-                                <x:String>Yes</x:String>
-                            </x:Array>
-                        </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>
-
-                    <core:SfTextInputLayout Hint="Medication name"
+                    <core:SfTextInputLayout Hint="Assessment"
                                         Style="{StaticResource PatientInput}"
-                                        HelperText="Administered medication name...">
-                        <Entry Text="{Binding Medicationname}"
-                           Keyboard="Text"
-                           ReturnType="Next" />
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Hint="Dose"
-                                        Style="{StaticResource PatientInput}"
-                                        HelperText="Administered dose...">
-                        <Entry Text="{Binding Dose}"
-                           Keyboard="Text"
-                           ReturnType="Next" />
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Hint="Route"
-                                        Style="{StaticResource PatientInput}"
-                                        HelperText="Route of administration...">
-                        <Entry Text="{Binding Route}"
-                           Keyboard="Text"
-                           ReturnType="Next" />
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Hint="Medication name, dose and route of administration"
-                                        Style="{StaticResource PatientInput}"
-                                        HelperText="Any other notes...">
+                                        HelperText="Any observations...">
                         <Entry Text="{Binding Notes}"
                            Keyboard="Text"
                            ReturnType="Next" />

@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Windows.Input; 
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
@@ -37,6 +37,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly CaputRepository _caputRepository;
         private readonly MouldingRepository _mouldingRepository;
         private readonly BPRepository _bpRepository;
+        private readonly AssessmentRepository _assessmentRepository;
+        private readonly PlanRepository _planRepository;
 
         // Modal page models
         private readonly CompanionModalPageModel _companionModalPageModel;
@@ -56,6 +58,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly CervixDilatationModalPageModel _cervixDilatationModalPageModel;
         private readonly BPPulseModalPageModel _bpPulseModalPageModel;
         private readonly FHRContractionModalPageModel _fHRContractionModalPageModel;
+        private readonly PlanModalPageModel _planModalPageModel;
+        private readonly AssessmentModalPageModel _assessmentModalPageModel;
+
         public CompanionModalPageModel CompanionModalPageModel => _companionModalPageModel;
         public PainReliefModalPageModel PainReliefModalPageModel => _painReliefModalPageModel;
         public OralFluidModalPageModel OralFluidModalPageModel => _oralFluidModalPageModel;
@@ -73,6 +78,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public CervixDilatationModalPageModel CervixDilatationModalPageModel => _cervixDilatationModalPageModel;
         public BPPulseModalPageModel BPPulseModalPageModel => _bpPulseModalPageModel;
         public FHRContractionModalPageModel FHRContractionModalPageModel => _fHRContractionModalPageModel;
+        public PlanModalPageModel PlanModalPageModel => _planModalPageModel;
+        public AssessmentModalPageModel AssessmentModalPageModel => _assessmentModalPageModel;
         
         [ObservableProperty]
         private ObservableCollection<EnhancedTimeSlotViewModel> _timeSlots = new ();
@@ -139,6 +146,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             CaputRepository caputRepository,
             MouldingRepository mouldingRepository,
             BPRepository bpRepository,
+            AssessmentRepository assessmentRepository,
+            PlanRepository planRepository,
             ModalErrorHandler errorHandler,
             CompanionModalPageModel companionModalPageModel,
             PainReliefModalPageModel painReliefModalPageModel,
@@ -156,7 +165,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             HeadDescentModalPageModel headDescentModalPageModel,
             CervixDilatationModalPageModel cervixDilatationModalPageModel,
             BPPulseModalPageModel bpPulseModalPageModel,
-            FHRContractionModalPageModel fHRContractionModalPageModel)
+            FHRContractionModalPageModel fHRContractionModalPageModel,
+            AssessmentModalPageModel assessmentModalPageModel,
+            PlanModalPageModel planModalPageModel)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
@@ -178,6 +189,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _caputRepository = caputRepository;
             _mouldingRepository = mouldingRepository;
             _bpRepository = bpRepository;
+            _assessmentRepository = assessmentRepository;
+            _planRepository = planRepository;
             _errorHandler = errorHandler;
             _companionModalPageModel = companionModalPageModel;
             _painReliefModalPageModel = painReliefModalPageModel;
@@ -196,6 +209,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _cervixDilatationModalPageModel = cervixDilatationModalPageModel;
             _bpPulseModalPageModel = bpPulseModalPageModel;
             _fHRContractionModalPageModel = fHRContractionModalPageModel;
+            _assessmentModalPageModel = assessmentModalPageModel;  
+            _planModalPageModel = planModalPageModel;
+
             Chartinghours = new ObservableCollection<TimeSlots>();
             TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
 
@@ -315,41 +331,66 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 return null;
 
             var earliestTimes = new List<DateTime>();
+            var latestTimes = new List<DateTime>();
 
             try
             {
                 // Retrieve all measurables and collect their times
                 _patient.Companions = await _companionRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Companions.Any())
+                {
                     earliestTimes.Add(_patient.Companions.Min(e => e.Time));
+                    latestTimes.Add(_patient.Companions.Max(e => e.Time));
+                }
 
                 _patient.PainReliefs = await _painReliefRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.PainReliefs.Any())
+                {
                     earliestTimes.Add(_patient.PainReliefs.Min(e => e.Time));
+                    latestTimes.Add(_patient.PainReliefs.Max(e => e.Time));
+                }
 
                 _patient.OralFluids = await _oralFluidRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.OralFluids.Any())
+                    { 
                     earliestTimes.Add(_patient.OralFluids.Min(e => e.Time));
+                    latestTimes.Add(_patient.OralFluids.Max(e => e.Time));
+                }
 
                 _patient.Postures = await _postureRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Postures.Any())
+                {
                     earliestTimes.Add(_patient.Postures.Min(e => e.Time));
+                    latestTimes.Add(_patient.Postures.Max(e => e.Time));
+                }
 
                 _patient.Fhrs = await _fhrRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Fhrs.Any())
+                {
                     earliestTimes.Add(_patient.Fhrs.Min(e => e.Time));
+                    latestTimes.Add(_patient.Fhrs.Max(e => e.Time));
+                }
 
                 _patient.Temperatures = await _temperatureRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Temperatures.Any())
+                {
                     earliestTimes.Add(_patient.Temperatures.Min(e => e.Time));
+                    latestTimes.Add(_patient.Temperatures.Max(e => e.Time));
+                }
 
                 _patient.Urines = await _urineRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Urines.Any())
+                {
                     earliestTimes.Add(_patient.Urines.Min(e => e.Time));
+                    latestTimes.Add(_patient.Urines.Max(e => e.Time));
+                }
 
                 _patient.Oxytocins = await _oxytocinRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Oxytocins.Any())
+                {
                     earliestTimes.Add(_patient.Oxytocins.Min(e => e.Time));
+                    latestTimes.Add(_patient.Oxytocins.Max(e => e.Time));
+                }
 
                 //var medicationEntries = await _medicationEntryRepository.ListByPatientAsync(_patient.ID);
                 //if (medicationEntries.Any())
@@ -357,15 +398,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 _patient.IVFluids = await _ivFluidEntryRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.IVFluids.Any())
+                {
                     earliestTimes.Add(_patient.IVFluids.Min(e => e.Time));
+                    latestTimes.Add(_patient.IVFluids.Max(e => e.Time));
+                }
 
                 _patient.Dilatations = await _cervixDilatationRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Dilatations.Any())
+                {
                     earliestTimes.Add(_patient.Dilatations.Min(e => e.Time));
+                    latestTimes.Add(_patient.Dilatations.Max(e => e.Time));
+                }
 
                 _patient.Contractions = await _contractionRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Contractions.Any())
+                {
                     earliestTimes.Add(_patient.Contractions.Min(e => e.Time));
+                    latestTimes.Add(_patient.Contractions.Max(e => e.Time));
+                }
 
                 _patient.HeadDescents = await _headDescentRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.HeadDescents.Any())
@@ -373,23 +423,55 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 _patient.FetalPositions = await _fetalPositionRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.FetalPositions.Any())
+                {
                     earliestTimes.Add(_patient.FetalPositions.Min(e => e.Time));
+                    latestTimes.Add(_patient.FetalPositions.Max(e => e.Time));
+                }
 
                 _patient.AmnioticFluids = await _amnioticFluidRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.AmnioticFluids.Any())
+                {
                     earliestTimes.Add(_patient.AmnioticFluids.Min(e => e.Time));
+                    latestTimes.Add(_patient.AmnioticFluids.Max(e => e.Time));
+                }
 
                 _patient.Caputs = await _caputRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Caputs.Any())
+                {
                     earliestTimes.Add(_patient.Caputs.Min(e => e.Time));
+                    latestTimes.Add(_patient.Caputs.Max(e => e.Time));
+                }
 
                 _patient.Mouldings = await _mouldingRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.Mouldings.Any())
+                {
                     earliestTimes.Add(_patient.Mouldings.Min(e => e.Time));
+                    latestTimes.Add(_patient.Mouldings.Max(e => e.Time));
+                }
 
                 _patient.BPs = await _bpRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.BPs.Any())
+                {
                     earliestTimes.Add(_patient.BPs.Min(e => e.Time));
+                    latestTimes.Add(_patient.BPs.Max(e => e.Time));
+                }
+
+                _patient.Assessments = await _assessmentRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Assessments.Any())
+                {
+                    earliestTimes.Add(_patient.Assessments.Min(e => e.Time));
+                    latestTimes.Add(_patient.Assessments.Max(e => e.Time));
+                }
+
+                _patient.Plans = await _planRepository.ListByPatientAsync(_patient.ID);
+                if (_patient.Plans.Any())
+                {
+                    earliestTimes.Add(_patient.Plans.Min(e => e.Time));
+                    latestTimes.Add(_patient.Plans.Max(e => e.Time));
+                }
+
+                if (latestTimes.Any())
+                    LastRecordedTime = latestTimes.Max();
 
                 // Return the earliest time among all measurables
                 if (earliestTimes.Any())
@@ -400,7 +482,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 _errorHandler.HandleError(e);
             }
 
-            return null;
+            return DateTime.Now;
         }
 
         private void LoadMeasurablesFromDatabase()
@@ -633,7 +715,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     StartTime = new DateTime(newStartTime.Value.Year, newStartTime.Value.Month,
                         newStartTime.Value.Day, newStartTime.Value.Hour, 0, 0);
-                    GenerateInitialTimeSlots();
+
+                    await GenerateInitialTimeSlots();
                 }
 
                 //var companions = await _companionRepository.ListByPatientAsync(patientId);
@@ -814,6 +897,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Action? OpenCervixDilatationModalPopup { get; set; }
         public Action? OpenFHRContractionModalPopup { get; set; }
         public Action? CloseFHRContractionModalPopup { get; set; }
+        public Action? OpenAssessmentModalPopup { get; set; }
+        public Action? CloseAssessmentModalPopup { get; set; }
+        public Action? OpenPlanModalPopup { get; set; }
+        public Action? ClosePlanModalPopup { get; set; }
 
         // Popup Open Commands
         [RelayCommand]
@@ -1022,6 +1109,54 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 _mouldingModalPageModel.ClosePopup = () => CloseMouldingModalPopup?.Invoke();
                 await _mouldingModalPageModel.LoadPatient(_patient.ID);
                 OpenMouldingModalPopup?.Invoke();
+            }
+        }
+
+        [RelayCommand]
+        private async Task OpenMedicinePopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _medicationModalPageModel._patient = _patient;
+                _medicationModalPageModel.ClosePopup = () => CloseMedicationModalPopup?.Invoke();
+                await _medicationModalPageModel.LoadPatient(_patient.ID);
+                OpenMedicationModalPopup?.Invoke();
+            }
+        }
+
+        [RelayCommand]
+        private async Task OpenIVFluidsPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _ivFluidModalPageModel._patient = _patient;
+                _ivFluidModalPageModel.ClosePopup = () => CloseIVFluidModalPopup?.Invoke();
+                await _ivFluidModalPageModel.LoadPatient(_patient.ID);
+                OpenIVFluidModalPopup?.Invoke();
+            }
+        }
+
+        [RelayCommand]
+        private async Task OpenAssessmentPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _assessmentModalPageModel._patient = _patient;
+                _assessmentModalPageModel.ClosePopup = () => CloseAssessmentModalPopup?.Invoke();
+                await _assessmentModalPageModel.LoadPatient(_patient.ID);
+                OpenAssessmentModalPopup?.Invoke();
+            }
+        }
+
+        [RelayCommand]
+        private async Task OpenPlanPopup()
+        {
+            if (_patient?.ID != null)
+            {
+                _planModalPageModel._patient = _patient;
+                _planModalPageModel.ClosePopup = () => ClosePlanModalPopup?.Invoke();
+                await _planModalPageModel.LoadPatient(_patient.ID);
+                OpenPlanModalPopup?.Invoke();
             }
         }
     }

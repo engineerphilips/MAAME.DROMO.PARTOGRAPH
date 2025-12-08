@@ -301,10 +301,21 @@
 
             <StackLayout Padding="20" Spacing="0">
                 <!-- Risk Factors -->
-                <core:SfTextInputLayout Hint="Risk Factors"
+                <!--<core:SfTextInputLayout Hint="Risk Factors"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="High-risk conditions or complications">
                     <Entry Text="{Binding RiskFactors, Mode=TwoWay}" ReturnType="Next" />
+                </core:SfTextInputLayout>-->
+
+                <chip:SfChipGroup ItemsSource="{Binding RiskFactors}" 
+                  DisplayMemberPath="Name" Margin="0,8,16,8" FlowDirection="MatchParent"  />
+
+                <core:SfTextInputLayout Hint="Risk Factors"
+                            Style="{StaticResource PatientInput}"
+                            HelperText="Clinical assessment of risk factors" >
+                    <!--<Entry ReturnType="Next" />-->
+                    <Entry Completed="RiskFactorsEntry_Completed" Unfocused="RiskFactorsEntry_Completed"
+                                   ReturnType="Next" />
                 </core:SfTextInputLayout>
             </StackLayout>
 
@@ -312,7 +323,6 @@
             <Label Text="⏱️ Labour Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
             <StackLayout Padding="20" Spacing="0">
-
                 <!-- Labour Onset -->
                 <Label Text="Labour Onset Date &amp; Time" 
                            FontSize="14" 
@@ -324,8 +334,7 @@
                     <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Date"
                                                 Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding LaborStartDate, Mode=TwoWay}"
-                                       Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
+                        <DatePicker Date="{Binding LaborStartDate, Mode=TwoWay}" Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                         <!--<picker:SfDateTimePicker SelectedDate="{Binding LabourOnsetDate}" DateFormat="dd_MM_yyyy" TimeFormat="HH_mm" />-->
                     </core:SfTextInputLayout>
 

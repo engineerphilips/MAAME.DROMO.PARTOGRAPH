@@ -16,7 +16,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
         //private readonly VitalSignRepository _vitalSignRepository;
-        private readonly AssessmentPlanRepository _assessmentPlanRepository;
+        private readonly AssessmentRepository _assessmentPlanRepository;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
@@ -101,7 +101,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public EnhancedPartographPageModel(
             PatientRepository patientRepository,
             PartographRepository partographRepository,
-            AssessmentPlanRepository assessmentPlanRepository,
+            AssessmentRepository assessmentPlanRepository,
             ModalErrorHandler errorHandler)
         {
             _patientRepository = patientRepository;

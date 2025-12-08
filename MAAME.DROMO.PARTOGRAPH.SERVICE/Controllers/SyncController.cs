@@ -161,7 +161,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     "medicationentries" => await PullGenericMeasurements<MedicationEntry>(_context.Medications, request, maxRecords),
                     "oxytocins" => await PullGenericMeasurements<Oxytocin>(_context.Oxytocins, request, maxRecords),
                     "companionentries" => await PullGenericMeasurements<CompanionEntry>(_context.Companions, request, maxRecords),
-                    "assessmentplanentries" => await PullGenericMeasurements<AssessmentPlanEntry>(_context.AssessmentPlans, request, maxRecords),
+                    "assessmentplanentries" => await PullGenericMeasurements<Assessment>(_context.AssessmentPlans, request, maxRecords),
                     "medicalnotes" => await PullGenericMeasurements<MedicalNote>(_context.MedicalNotes, request, maxRecords),
                     _ => null,
                 };
@@ -423,7 +423,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     "medicationentries" => await PushGenericMeasurements<MedicationEntry>(_context.Medications, request),
                     "oxytocins" => await PushGenericMeasurements<Oxytocin>(_context.Oxytocins, request),
                     "companionentries" => await PushGenericMeasurements<CompanionEntry>(_context.Companions, request),
-                    "assessmentplanentries" => await PushGenericMeasurements<AssessmentPlanEntry>(_context.AssessmentPlans, request),
+                    "assessmentplanentries" => await PushGenericMeasurements<Assessment>(_context.AssessmentPlans, request),
                     "medicalnotes" => await PushGenericMeasurements<MedicalNote>(_context.MedicalNotes, request),
                     _ => null
                 };

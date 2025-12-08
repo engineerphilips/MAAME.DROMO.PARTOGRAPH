@@ -234,7 +234,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patientId,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID,
                     FrequencyPer10Min = FrequencyPer10Min,
                     DurationSeconds = DurationSeconds,
                     //Strength = GetStrength(),

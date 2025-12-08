@@ -11,6 +11,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private Patient? _patient;
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
+        private readonly CervixDilatationRepository _cervixDilatationRepository;
+        private readonly PartographDiagnosisRepository _partographDiagnosisRepository;
+        private readonly PartographRiskFactorRepository _partographRiskFactorRepository;
         //private readonly VitalSignRepository _vitalSignRepository;
         private readonly ModalErrorHandler _errorHandler;
 
@@ -153,8 +156,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private int? _cervicalDilationOnAdmission;
 
-        [ObservableProperty]
-        private string _riskFactors = string.Empty;
+        //[ObservableProperty]
+        //private string _riskFactors = string.Empty;
+
+        private ObservableCollection<Diagnosis> _riskFactors = new ObservableCollection<Diagnosis>();
+
+        public ObservableCollection<Diagnosis> RiskFactors
+        {
+            get { return _riskFactors; }
+            set
+            {
+                SetProperty(ref _riskFactors, value);
+                OnPropertyChanged(nameof(RiskFactors));
+            }
+        }
 
         [ObservableProperty]
         private string _complications = string.Empty;
@@ -191,11 +206,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         //VitalSignRepository vitalSignRepository,
         public PatientPageModel(PatientRepository patientRepository,
             PartographRepository partographRepository,
+            CervixDilatationRepository cervixDilatationRepository,
+            PartographDiagnosisRepository partographDiagnosisRepository,
+            PartographRiskFactorRepository partographRiskFactorRepository,
             ModalErrorHandler errorHandler)
         {
             //_vitalSignRepository = vitalSignRepository;
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
+            _cervixDilatationRepository = cervixDilatationRepository;
+            _partographDiagnosisRepository = partographDiagnosisRepository;
+            _partographRiskFactorRepository = partographRiskFactorRepository;
             _errorHandler = errorHandler;
         }
 
@@ -316,30 +337,72 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     LaborStartTime = LaborStartDate != null && LaborStartTime != null ? new DateTime(LaborStartDate.Value.Year, LaborStartDate.Value.Month, LaborStartDate.Value.Day).Add(LaborStartTime.Value) : null,
                     LiquorStatus = LiquorStatus,
                     MembraneStatus = MembraneStatus,
-                    RiskFactors = RiskFactors,
                     ExpectedDeliveryDate = ExpectedDeliveryDate != null ? DateOnly.FromDateTime(ExpectedDeliveryDate.Value) : null,
                     LastMenstrualDate = LastMenstrualDate != null ? DateOnly.FromDateTime(LastMenstrualDate.Value) : null,
-                    RupturedMembraneTime = RupturedMembraneDate != null && RupturedMembraneTime != null ? new DateTime(RupturedMembraneDate.Value.Year, RupturedMembraneDate.Value.Month, RupturedMembraneDate.Value.Day).Add(RupturedMembraneTime.Value) : null
+                    RupturedMembraneTime = RupturedMembraneDate != null && RupturedMembraneTime != null ? new DateTime(RupturedMembraneDate.Value.Year, RupturedMembraneDate.Value.Month, RupturedMembraneDate.Value.Day).Add(RupturedMembraneTime.Value) : null,
+                    Status = CervicalDilationOnAdmission > 4 ? LaborStatus.Active : LaborStatus.Pending
                 });
                 //LaborStartDate.Value.ToDateTime(LaborStartTime.Value)
 
+                //RiskFactors = string.Empty,
                 if (partographId != null)
                 {
                     //if (IsNewPatient)
                     //{
                     //}
 
+                    if (Diagnoses != null && Diagnoses.Count > 0)
+                    {
+                        foreach (var diagnosis in Diagnoses)
+                        {
+                            await _partographDiagnosisRepository.SaveItemAsync(new PartographDiagnosis
+                            {
+                                PartographID = partographId.Value,
+                                Time = DateTime.Now,
+                                Name = diagnosis.Name,
+                                HandlerName = Constants.Staff?.Name ?? string.Empty,
+                                Handler = Constants.Staff?.ID
+                            });
+                        }
+                    }
+
+                    if (RiskFactors != null && RiskFactors.Count > 0)
+                    {
+                        foreach (var riskFactor  in RiskFactors)
+                        {
+                            await _partographRiskFactorRepository.SaveItemAsync(new PartographRiskFactor
+                            {
+                                PartographID = partographId.Value,
+                                Time = DateTime.Now,
+                                Name = riskFactor.Name,
+                                HandlerName = Constants.Staff?.Name ?? string.Empty,
+                                Handler = Constants.Staff?.ID
+                            });
+                        }
+                    }
+
+                    if (CervicalDilationOnAdmission > 4)
+                    {
+                        await _cervixDilatationRepository.SaveItemAsync(new CervixDilatation
+                        {
+                            PartographID = partographId.Value,
+                            Time = DateTime.Now,
+                            DilatationCm = CervicalDilationOnAdmission ?? 0,
+                            HandlerName = Constants.Staff?.Name ?? string.Empty,
+                            Handler = Constants.Staff?.ID
+                        });
+                    }
+
                     await AppShell.DisplayToastAsync("Patient registered successfully");
                     //await Shell.Current.GoToAsync("..");
                     await Shell.Current.GoToAsync($"//partograph?patientId={partographId}");
                 }
+                else
+                {
+                    IsEditMode = false;
+                    await AppShell.DisplayToastAsync("Patient information updated");
+                }
             }
-            else
-            {
-                IsEditMode = false;
-                await AppShell.DisplayToastAsync("Patient information updated");
-            }
-            ;
         }
 
         [RelayCommand]

@@ -166,6 +166,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
+        public string UrineDisplay => $"{UrineProtein}/{UrineAcetone}";
+
         public decimal? OxytocinDose
         {
             get => _oxytocinDose;
