@@ -133,9 +133,32 @@
 	  <Compile Remove="Pages\Controls\TaskView.xaml.cs" />
 	  <Compile Remove="Pages\MainPage.xaml.cs" />
 	  <Compile Remove="Pages\ManageMetaPage.xaml.cs" />
+	  <Compile Remove="Pages\Modals\AmnioticFluidModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\AssessmentPlanModalPage.xaml.cs" />
+	  <Compile Remove="Pages\Modals\BaselineFHRModalPage.xaml.cs" />
+	  <Compile Remove="Pages\Modals\BPPulseModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\CaputModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\CervixDilatationModalPage.xaml.cs" />
+	  <Compile Remove="Pages\Modals\CervixDilatationModalView.xaml.cs" />
 	  <Compile Remove="Pages\Modals\CompanionModalPage.xaml.cs" />
+	  <Compile Remove="Pages\Modals\CompanionModalView.xaml.cs" />
 	  <Compile Remove="Pages\Modals\ContractionsModalPage.xaml.cs" />
+	  <Compile Remove="Pages\Modals\FetalPositionModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\FHRContractionModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\FHRDecelerationModalPage.xaml.cs" />
+	  <Compile Remove="Pages\Modals\FHRDecelerationModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\FHRModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\HeadDescentModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\IVFluidModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\MedicationModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\MouldingModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\OralFluidModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\OxytocinModalView.xaml.cs" />
 	  <Compile Remove="Pages\Modals\PainReliefModalPage.xaml.cs" />
+	  <Compile Remove="Pages\Modals\PainReliefModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\PostureModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\TemperatureModalView.xaml.cs" />
+	  <Compile Remove="Pages\Modals\UrineModalView.xaml.cs" />
 	  <Compile Remove="Pages\PartographPage1.xaml.cs" />
 	  <Compile Remove="Pages\ProjectDetailPage.xaml.cs" />
 	  <Compile Remove="Pages\ProjectListPage.xaml.cs" />
@@ -151,9 +174,32 @@
 	  <MauiXaml Remove="Pages\Controls\TaskView.xaml" />
 	  <MauiXaml Remove="Pages\MainPage.xaml" />
 	  <MauiXaml Remove="Pages\ManageMetaPage.xaml" />
+	  <MauiXaml Remove="Pages\Modals\AmnioticFluidModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\AssessmentPlanModalPage.xaml" />
+	  <MauiXaml Remove="Pages\Modals\BaselineFHRModalPage.xaml" />
+	  <MauiXaml Remove="Pages\Modals\BPPulseModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\CaputModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\CervixDilatationModalPage.xaml" />
+	  <MauiXaml Remove="Pages\Modals\CervixDilatationModalView.xaml" />
 	  <MauiXaml Remove="Pages\Modals\CompanionModalPage.xaml" />
+	  <MauiXaml Remove="Pages\Modals\CompanionModalView.xaml" />
 	  <MauiXaml Remove="Pages\Modals\ContractionsModalPage.xaml" />
+	  <MauiXaml Remove="Pages\Modals\FetalPositionModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\FHRContractionModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\FHRDecelerationModalPage.xaml" />
+	  <MauiXaml Remove="Pages\Modals\FHRDecelerationModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\FHRModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\HeadDescentModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\IVFluidModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\MedicationModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\MouldingModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\OralFluidModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\OxytocinModalView.xaml" />
 	  <MauiXaml Remove="Pages\Modals\PainReliefModalPage.xaml" />
+	  <MauiXaml Remove="Pages\Modals\PainReliefModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\PostureModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\TemperatureModalView.xaml" />
+	  <MauiXaml Remove="Pages\Modals\UrineModalView.xaml" />
 	  <MauiXaml Remove="Pages\PartographPage1.xaml" />
 	  <MauiXaml Remove="Pages\ProjectDetailPage.xaml" />
 	  <MauiXaml Remove="Pages\ProjectListPage.xaml" />
@@ -207,35 +253,11 @@
 	  <Compile Update="Pages\Modals\FHRContractionPopup.xaml.cs">
 	    <DependentUpon>FHRContractionPopup.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\Modals\HeadDescentModalView.xaml.cs">
-	    <DependentUpon>HeadDescentModalView.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Pages\Modals\FHRContractionModalView.xaml.cs">
-	    <DependentUpon>FHRContractionModalView.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Pages\Modals\BPPulseModalView.xaml.cs">
-	    <DependentUpon>BPPulseModalView.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Pages\Modals\CervixDilatationModalView.xaml.cs">
-	    <DependentUpon>CervixDilatationModalView.xaml</DependentUpon>
-	  </Compile>
 	  <Compile Update="Pages\Modals\PainReliefPopup.xaml.cs">
 	    <DependentUpon>PainReliefPopup.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\Modals\TemperatureModalView.xaml.cs">
-	    <DependentUpon>TemperatureModalView.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Pages\Modals\MedicationModalView.xaml.cs">
-	    <DependentUpon>MedicationModalView.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Pages\Modals\IVFluidModalView.xaml.cs">
-	    <DependentUpon>IVFluidModalView.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Pages\Modals\UrineModalView.xaml.cs">
-	    <DependentUpon>UrineModalView.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Pages\Modals\CompanionModalView.xaml.cs">
-	    <DependentUpon>CompanionModalView.xaml</DependentUpon>
+	  <Compile Update="Pages\PartographReportPage.xaml.cs">
+	    <DependentUpon>PartographReportPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Pages\PatientPage.xaml.cs">
 	    <DependentUpon>PatientPage.xaml</DependentUpon>
@@ -261,19 +283,7 @@
 	  <MauiXaml Update="Pages\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\AmnioticFluidModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\AssessmentPlanModalPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Pages\Modals\PlanPopup.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\BaselineFHRModalPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\CaputModalView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Modals\AssessmentPopup.xaml">
@@ -285,67 +295,13 @@
 	  <MauiXaml Update="Pages\Modals\FHRContractionPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\HeadDescentModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\FHRContractionModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\BPPulseModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\CervixDilatationModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Pages\Modals\PainReliefPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\TemperatureModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\FHRModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\MedicationModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\IVFluidModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\MouldingModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\OxytocinModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\UrineModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\CervixDilatationModalPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\CompanionModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\FetalPositionModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\FHRDecelerationModalPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\FHRDecelerationModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\OralFluidModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\PainReliefModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Modals\PostureModalView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Pages\PartographEntryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\PartographReportPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\PartographPage.xaml">

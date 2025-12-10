@@ -62,7 +62,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public IEnumerable<OralFluidEntry> OralFluids { get; set; }
         public IEnumerable<Oxytocin> Oxytocins { get; set; }
         public IEnumerable<IVFluidEntry> IVFluids { get; set; }
-
+        public IEnumerable<MedicationEntry> Medications { get; set; }
+        
         //// Cervical Progress
         //public int CervicalDilation { get; set; } // 0-10 cm
         //public string DescentOfHead { get; set; } = string.Empty; // Station -3 to +3

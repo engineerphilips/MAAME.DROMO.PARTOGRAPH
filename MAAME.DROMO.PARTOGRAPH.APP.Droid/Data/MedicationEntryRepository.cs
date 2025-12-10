@@ -31,15 +31,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
-            CREATE INDEX IF NOT EXISTS idx_medication_sync ON Tbl_MedicationEntry(updatedtime, syncstatus);
-            CREATE INDEX IF NOT EXISTS idx_medication_server_version ON Tbl_MedicationEntry(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_medication_sync ON Tbl_Medication(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_medication_server_version ON Tbl_Medication(serverversion);
 
             DROP TRIGGER IF EXISTS trg_medication_insert;
             CREATE TRIGGER trg_medication_insert
-            AFTER INSERT ON Tbl_MedicationEntry
+            AFTER INSERT ON Tbl_Medication
             WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
             BEGIN
-                UPDATE Tbl_MedicationEntry
+                UPDATE Tbl_Medication
                 SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
                     updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
                 WHERE ID = NEW.ID;
@@ -47,10 +47,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             DROP TRIGGER IF EXISTS trg_medication_update;
             CREATE TRIGGER trg_medication_update
-            AFTER UPDATE ON Tbl_MedicationEntry
+            AFTER UPDATE ON Tbl_Medication
             WHEN NEW.updatedtime = OLD.updatedtime
             BEGIN
-                UPDATE Tbl_MedicationEntry
+                UPDATE Tbl_Medication
                 SET updatedtime = (strftime('%s', 'now') * 1000),
                     version = OLD.version + 1,
                     syncstatus = 0

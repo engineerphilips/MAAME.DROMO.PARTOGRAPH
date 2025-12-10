@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
-    public partial class PartographPageModel : ObservableObject, IQueryAttributable
+    public partial class PartographPageModel1 : ObservableObject, IQueryAttributable
     {
         public Partograph? _patient;
         private readonly PatientRepository _patientRepository;
@@ -81,8 +81,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public PlanModalPageModel PlanModalPageModel => _planModalPageModel;
         public AssessmentModalPageModel AssessmentModalPageModel => _assessmentModalPageModel;
         
-        //[ObservableProperty]
-        //private ObservableCollection<EnhancedTimeSlotViewModel> _timeSlots = new ();
+        [ObservableProperty]
+        private ObservableCollection<EnhancedTimeSlotViewModel> _timeSlots = new ();
 
         [ObservableProperty]
         private DateTime _startTime; // = DateTime.Today.AddHours(6);
@@ -102,31 +102,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private int _currentDilation;
 
-        //[ObservableProperty]
-        //private ObservableCollection<Partograph> _partographEntries = new();
+        [ObservableProperty]
+        private ObservableCollection<Partograph> _partographEntries = new();
 
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _cervicalDilationData = new();
+        [ObservableProperty]
+        private ObservableCollection<ChartDataPoint> _cervicalDilationData = new();
 
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _fetalHeartRateData = new();
+        [ObservableProperty]
+        private ObservableCollection<ChartDataPoint> _fetalHeartRateData = new();
 
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _contractionsData = new();
+        [ObservableProperty]
+        private ObservableCollection<ChartDataPoint> _contractionsData = new();
 
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _alertLineData = new();
+        [ObservableProperty]
+        private ObservableCollection<ChartDataPoint> _alertLineData = new();
 
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _actionLineData = new();
+        [ObservableProperty]
+        private ObservableCollection<ChartDataPoint> _actionLineData = new();
 
         [ObservableProperty]
         bool _isBusy;
 
-        //[ObservableProperty]
-        //private ObservableCollection<TimeSlots> _chartinghours;
+        [ObservableProperty]
+        private ObservableCollection<TimeSlots> _chartinghours;
 
-        public PartographPageModel(PatientRepository patientRepository,
+        public PartographPageModel1(PatientRepository patientRepository,
             PartographRepository partographRepository,
             CompanionRepository companionRepository,
             PainReliefRepository painReliefRepository,
@@ -212,8 +212,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _assessmentModalPageModel = assessmentModalPageModel;  
             _planModalPageModel = planModalPageModel;
 
-            //Chartinghours = new ObservableCollection<TimeSlots>();
-            //TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
+            Chartinghours = new ObservableCollection<TimeSlots>();
+            TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
 
             var tasks = new Task[1];
             tasks[0] = GenerateInitialTimeSlots();
@@ -231,40 +231,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private async Task GenerateInitialTimeSlots()
         {
+            TimeSlots.Clear();
+            Chartinghours.Clear();
+            DateTime date;
             StartTime = await GetEarliestMeasurableTimeAsync() ?? DateTime.Today;
+
+            date = new DateTime (StartTime.Year, StartTime.Month, StartTime.Day, StartTime.Hour, 0, 0);
+            
+            for (int i = 0; i < 12; i++)
+            {
+                var currentTime = StartTime.AddHours(i);
+                var timeSlot = new EnhancedTimeSlotViewModel(currentTime, i + 1)
+                {
+                    Companion = CompanionType.None,
+                    OralFluid = OralFluidType.None,
+                    PainRelief = PainReliefType.None,
+                    Posture = PostureType.None, 
+
+                };
+
+                //timeSlot.DataChanged += OnTimeSlotDataChanged;
+                TimeSlots.Add(timeSlot);
+                Chartinghours.Add(new TimeSlots() { Id = i, Slot = date.AddHours(i) });
+            }
+
+            //var x = Chartinghours?.Count ?? 0;
+
+            //if (TimeSlots.Any())
+            //    RegenerateTimeSlots();
         }
-
-        //private async Task GenerateInitialTimeSlots()
-        //{
-        //    TimeSlots.Clear();
-        //    Chartinghours.Clear();
-        //    DateTime date;
-        //    StartTime = await GetEarliestMeasurableTimeAsync() ?? DateTime.Today;
-
-        //    date = new DateTime (StartTime.Year, StartTime.Month, StartTime.Day, StartTime.Hour, 0, 0);
-
-        //    for (int i = 0; i < 12; i++)
-        //    {
-        //        var currentTime = StartTime.AddHours(i);
-        //        var timeSlot = new EnhancedTimeSlotViewModel(currentTime, i + 1)
-        //        {
-        //            Companion = CompanionType.None,
-        //            OralFluid = OralFluidType.None,
-        //            PainRelief = PainReliefType.None,
-        //            Posture = PostureType.None, 
-
-        //        };
-
-        //        //timeSlot.DataChanged += OnTimeSlotDataChanged;
-        //        TimeSlots.Add(timeSlot);
-        //        Chartinghours.Add(new TimeSlots() { Id = i, Slot = date.AddHours(i) });
-        //    }
-
-        //    //var x = Chartinghours?.Count ?? 0;
-
-        //    //if (TimeSlots.Any())
-        //    //    RegenerateTimeSlots();
-        //}
 
         //private void RegenerateTimeSlots()
         //{
@@ -397,12 +392,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     latestTimes.Add(_patient.Oxytocins.Max(e => e.Time));
                 }
 
-                _patient.Medications = await _medicationEntryRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Medications.Any())
-                {
-                    earliestTimes.Add(_patient.Medications.Min(e => e.Time));
-                    latestTimes.Add(_patient.Medications.Max(e => e.Time));
-                }
+                //var medicationEntries = await _medicationEntryRepository.ListByPatientAsync(_patient.ID);
+                //if (medicationEntries.Any())
+                //    earliestTimes.Add(medicationEntries.Min(e => e.Time));
 
                 _patient.IVFluids = await _ivFluidEntryRepository.ListByPatientAsync(_patient.ID);
                 if (_patient.IVFluids.Any())
@@ -493,193 +485,193 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             return DateTime.Now;
         }
 
-        //private void LoadMeasurablesFromDatabase()
-        //{
-        //    if (_patient?.ID == null)
-        //        return;
+        private void LoadMeasurablesFromDatabase()
+        {
+            if (_patient?.ID == null)
+                return;
 
-        //    try
-        //    {
-        //        // Map measurables to TimeSlots based on their time
-        //        foreach (var timeSlot in TimeSlots)
-        //        {
-        //            // Define the time window for this slot (current hour)
-        //            var slotStartTime = new DateTime(timeSlot.Time.Year, timeSlot.Time.Month, timeSlot.Time.Day, timeSlot.Time.Hour, 0, 0);
-        //            var slotEndTime = slotStartTime.AddHours(1);
+            try
+            {
+                // Map measurables to TimeSlots based on their time
+                foreach (var timeSlot in TimeSlots)
+                {
+                    // Define the time window for this slot (current hour)
+                    var slotStartTime = new DateTime(timeSlot.Time.Year, timeSlot.Time.Month, timeSlot.Time.Day, timeSlot.Time.Hour, 0, 0);
+                    var slotEndTime = slotStartTime.AddHours(1);
 
-        //            // Find companion entry for this time slot
-        //            var companionEntry = _patient.Companions?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (companionEntry != null && !string.IsNullOrEmpty(companionEntry.CompanionDisplay))
-        //            {
-        //                if (Enum.TryParse<CompanionType>(companionEntry.CompanionDisplay, true, out var companionType))
-        //                {
-        //                    timeSlot.Companion = companionType;
-        //                }
-        //            }
+                    // Find companion entry for this time slot
+                    var companionEntry = _patient.Companions?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (companionEntry != null && !string.IsNullOrEmpty(companionEntry.CompanionDisplay))
+                    {
+                        if (Enum.TryParse<CompanionType>(companionEntry.CompanionDisplay, true, out var companionType))
+                        {
+                            timeSlot.Companion = companionType;
+                        }
+                    }
 
-        //            // Find pain relief entry for this time slot
-        //            var painReliefEntry = _patient.PainReliefs?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (painReliefEntry != null && !string.IsNullOrEmpty(painReliefEntry.PainReliefDisplay))
-        //            {
-        //                if (Enum.TryParse<PainReliefType>(painReliefEntry.PainReliefDisplay, true, out var painReliefType))
-        //                {
-        //                    timeSlot.PainRelief = painReliefType;
-        //                }
-        //            }
+                    // Find pain relief entry for this time slot
+                    var painReliefEntry = _patient.PainReliefs?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (painReliefEntry != null && !string.IsNullOrEmpty(painReliefEntry.PainReliefDisplay))
+                    {
+                        if (Enum.TryParse<PainReliefType>(painReliefEntry.PainReliefDisplay, true, out var painReliefType))
+                        {
+                            timeSlot.PainRelief = painReliefType;
+                        }
+                    }
 
-        //            // Find oral fluid entry for this time slot
-        //            var oralFluidEntry = _patient.OralFluids?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (oralFluidEntry != null && !string.IsNullOrEmpty(oralFluidEntry.OralFluidDisplay))
-        //            {
-        //                if (Enum.TryParse<OralFluidType>(oralFluidEntry.OralFluidDisplay, true, out var oralFluidType))
-        //                {
-        //                    timeSlot.OralFluid = oralFluidType;
-        //                }
-        //            }
+                    // Find oral fluid entry for this time slot
+                    var oralFluidEntry = _patient.OralFluids?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (oralFluidEntry != null && !string.IsNullOrEmpty(oralFluidEntry.OralFluidDisplay))
+                    {
+                        if (Enum.TryParse<OralFluidType>(oralFluidEntry.OralFluidDisplay, true, out var oralFluidType))
+                        {
+                            timeSlot.OralFluid = oralFluidType;
+                        }
+                    }
 
-        //            // Find posture entry for this time slot
-        //            var postureEntry = _patient.Postures?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (postureEntry != null && !string.IsNullOrEmpty(postureEntry.PostureDisplay))
-        //            {
-        //                if (Enum.TryParse<PostureType>(postureEntry.PostureDisplay, true, out var postureType))
-        //                {
-        //                    timeSlot.Posture = postureType;
-        //                }
-        //            }
+                    // Find posture entry for this time slot
+                    var postureEntry = _patient.Postures?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (postureEntry != null && !string.IsNullOrEmpty(postureEntry.PostureDisplay))
+                    {
+                        if (Enum.TryParse<PostureType>(postureEntry.PostureDisplay, true, out var postureType))
+                        {
+                            timeSlot.Posture = postureType;
+                        }
+                    }
 
-        //            // Find FHR entry for this time slot
-        //            var fhrEntry = _patient.Fhrs?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (fhrEntry != null && fhrEntry.Rate.HasValue)
-        //            {
-        //                timeSlot.BaselineFHR = fhrEntry.Rate.Value;
-        //            }
+                    // Find FHR entry for this time slot
+                    var fhrEntry = _patient.Fhrs?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (fhrEntry != null && fhrEntry.Rate.HasValue)
+                    {
+                        timeSlot.BaselineFHR = fhrEntry.Rate.Value;
+                    }
 
-        //            // Find temperature entry for this time slot
-        //            var temperatureEntry = _patient.Temperatures?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (temperatureEntry != null)
-        //            {
-        //                timeSlot.Temperature = temperatureEntry.Rate;
-        //            }
+                    // Find temperature entry for this time slot
+                    var temperatureEntry = _patient.Temperatures?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (temperatureEntry != null)
+                    {
+                        timeSlot.Temperature = temperatureEntry.Rate;
+                    }
 
-        //            // Find urine entry for this time slot
-        //            var urineEntry = _patient.Urines?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (urineEntry != null)
-        //            {
-        //                if (!string.IsNullOrEmpty(urineEntry.Protein))
-        //                {
-        //                    timeSlot.UrineProtein = urineEntry.Protein;
-        //                }
-        //                if (!string.IsNullOrEmpty(urineEntry.Acetone))
-        //                {
-        //                    timeSlot.UrineAcetone = urineEntry.Acetone;
-        //                }
-        //            }
+                    // Find urine entry for this time slot
+                    var urineEntry = _patient.Urines?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (urineEntry != null)
+                    {
+                        if (!string.IsNullOrEmpty(urineEntry.Protein))
+                        {
+                            timeSlot.UrineProtein = urineEntry.Protein;
+                        }
+                        if (!string.IsNullOrEmpty(urineEntry.Acetone))
+                        {
+                            timeSlot.UrineAcetone = urineEntry.Acetone;
+                        }
+                    }
 
-        //            // Find oxytocin entry for this time slot
-        //            var oxytocinEntry = _patient.Oxytocins?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (oxytocinEntry != null)
-        //            {
-        //                timeSlot.OxytocinDose = oxytocinEntry.DoseMUnitsPerMin;
-        //                timeSlot.OxytocinVolume = oxytocinEntry.TotalVolumeInfused;
-        //            }
+                    // Find oxytocin entry for this time slot
+                    var oxytocinEntry = _patient.Oxytocins?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (oxytocinEntry != null)
+                    {
+                        timeSlot.OxytocinDose = oxytocinEntry.DoseMUnitsPerMin;
+                        timeSlot.OxytocinVolume = oxytocinEntry.TotalVolumeInfused;
+                    }
 
-        //            // Find IV fluid entry for this time slot
-        //            var ivFluidEntry = _patient.IVFluids?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (ivFluidEntry != null)
-        //            {
-        //                if (!string.IsNullOrEmpty(ivFluidEntry.FluidType))
-        //                {
-        //                    timeSlot.IVFluidType = ivFluidEntry.FluidType;
-        //                }
-        //                timeSlot.IVFluidVolume = ivFluidEntry.VolumeInfused;
-        //                if (!string.IsNullOrEmpty(ivFluidEntry.Rate))
-        //                {
-        //                    timeSlot.IVFluidRate = ivFluidEntry.Rate;
-        //                }
-        //            }
+                    // Find IV fluid entry for this time slot
+                    var ivFluidEntry = _patient.IVFluids?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (ivFluidEntry != null)
+                    {
+                        if (!string.IsNullOrEmpty(ivFluidEntry.FluidType))
+                        {
+                            timeSlot.IVFluidType = ivFluidEntry.FluidType;
+                        }
+                        timeSlot.IVFluidVolume = ivFluidEntry.VolumeInfused;
+                        if (!string.IsNullOrEmpty(ivFluidEntry.Rate))
+                        {
+                            timeSlot.IVFluidRate = ivFluidEntry.Rate;
+                        }
+                    }
 
-        //            // Find cervix dilatation entry for this time slot
-        //            var dilatationEntry = _patient.Dilatations?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (dilatationEntry != null)
-        //            {
-        //                timeSlot.CervixDilatation = dilatationEntry.DilatationCm;
-        //            }
+                    // Find cervix dilatation entry for this time slot
+                    var dilatationEntry = _patient.Dilatations?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (dilatationEntry != null)
+                    {
+                        timeSlot.CervixDilatation = dilatationEntry.DilatationCm;
+                    }
 
-        //            // Find contraction entry for this time slot
-        //            var contractionEntry = _patient.Contractions?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (contractionEntry != null)
-        //            {
-        //                timeSlot.ContractionFrequency = contractionEntry.FrequencyPer10Min;
-        //                timeSlot.ContractionDuration = contractionEntry.DurationSeconds;
-        //            }
+                    // Find contraction entry for this time slot
+                    var contractionEntry = _patient.Contractions?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (contractionEntry != null)
+                    {
+                        timeSlot.ContractionFrequency = contractionEntry.FrequencyPer10Min;
+                        timeSlot.ContractionDuration = contractionEntry.DurationSeconds;
+                    }
 
-        //            // Find head descent entry for this time slot
-        //            var headDescentEntry = _patient.HeadDescents?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (headDescentEntry != null)
-        //            {
-        //                timeSlot.HeadDescentStation = headDescentEntry.Station;
-        //            }
+                    // Find head descent entry for this time slot
+                    var headDescentEntry = _patient.HeadDescents?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (headDescentEntry != null)
+                    {
+                        timeSlot.HeadDescentStation = headDescentEntry.Station;
+                    }
 
-        //            // Find fetal position entry for this time slot
-        //            var fetalPositionEntry = _patient.FetalPositions?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (fetalPositionEntry != null && !string.IsNullOrEmpty(fetalPositionEntry.Position))
-        //            {
-        //                timeSlot.FetalPosition = fetalPositionEntry.Position;
-        //            }
+                    // Find fetal position entry for this time slot
+                    var fetalPositionEntry = _patient.FetalPositions?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (fetalPositionEntry != null && !string.IsNullOrEmpty(fetalPositionEntry.Position))
+                    {
+                        timeSlot.FetalPosition = fetalPositionEntry.Position;
+                    }
 
-        //            // Find amniotic fluid entry for this time slot
-        //            var amnioticFluidEntry = _patient.AmnioticFluids?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (amnioticFluidEntry != null && !string.IsNullOrEmpty(amnioticFluidEntry.Color))
-        //            {
-        //                timeSlot.AmnioticFluidColor = amnioticFluidEntry.Color;
-        //            }
+                    // Find amniotic fluid entry for this time slot
+                    var amnioticFluidEntry = _patient.AmnioticFluids?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (amnioticFluidEntry != null && !string.IsNullOrEmpty(amnioticFluidEntry.Color))
+                    {
+                        timeSlot.AmnioticFluidColor = amnioticFluidEntry.Color;
+                    }
 
-        //            // Find caput entry for this time slot
-        //            var caputEntry = _patient.Caputs?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (caputEntry != null && !string.IsNullOrEmpty(caputEntry.Degree))
-        //            {
-        //                timeSlot.CaputDegree = caputEntry.Degree;
-        //            }
+                    // Find caput entry for this time slot
+                    var caputEntry = _patient.Caputs?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (caputEntry != null && !string.IsNullOrEmpty(caputEntry.Degree))
+                    {
+                        timeSlot.CaputDegree = caputEntry.Degree;
+                    }
 
-        //            // Find moulding entry for this time slot
-        //            var mouldingEntry = _patient.Mouldings?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (mouldingEntry != null)
-        //            {
-        //                timeSlot.MouldingDegree = mouldingEntry.Degree;
-        //            }
+                    // Find moulding entry for this time slot
+                    var mouldingEntry = _patient.Mouldings?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (mouldingEntry != null)
+                    {
+                        timeSlot.MouldingDegree = mouldingEntry.Degree;
+                    }
 
-        //            // Find BP entry for this time slot
-        //            var bpEntry = _patient.BPs?.FirstOrDefault(e =>
-        //                e.Time >= slotStartTime && e.Time < slotEndTime);
-        //            if (bpEntry != null)
-        //            {
-        //                timeSlot.BPSystolic = bpEntry.Systolic;
-        //                timeSlot.BPDiastolic = bpEntry.Diastolic;
-        //                timeSlot.Pulse = bpEntry.Pulse;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _errorHandler.HandleError(e);
-        //    }
-        //}
+                    // Find BP entry for this time slot
+                    var bpEntry = _patient.BPs?.FirstOrDefault(e =>
+                        e.Time >= slotStartTime && e.Time < slotEndTime);
+                    if (bpEntry != null)
+                    {
+                        timeSlot.BPSystolic = bpEntry.Systolic;
+                        timeSlot.BPDiastolic = bpEntry.Diastolic;
+                        timeSlot.Pulse = bpEntry.Pulse;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
 
         private async Task LoadData(Guid? patientId)
         {
@@ -744,17 +736,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 else
                     CurrentDilation = 0;
 
-                if (_patient.Companions.Any())
-                    CompanionDescription = _patient.Companions?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.CompanionDisplay ?? string.Empty;
-                else
-                    CompanionDescription = string.Empty;                
-
-                //// Load measurables from database and populate TimeSlots
-                //LoadMeasurablesFromDatabase();
+                // Load measurables from database and populate TimeSlots
+                LoadMeasurablesFromDatabase();
 
                 // Prepare chart data
-                //PrepareChartData();
-                //CalculateAlertActionLines();
+                PrepareChartData();
+                CalculateAlertActionLines();
             }
             catch (Exception e)
             {
@@ -766,89 +753,89 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        //private void PrepareChartData()
-        //{
-        //    if (!PartographEntries.Any()) return;
+        private void PrepareChartData()
+        {
+            if (!PartographEntries.Any()) return;
 
-        //    var baseTime = _patient?.LaborStartTime ?? PartographEntries.First().Time;
+            var baseTime = _patient?.LaborStartTime ?? PartographEntries.First().Time;
 
-        //    //// Cervical Dilation Data
-        //    //var dilationData = new ObservableCollection<ChartDataPoint>();
-        //    //foreach (var entry in PartographEntries)
-        //    //{
-        //    //    dilationData.Add(new ChartDataPoint
-        //    //    {
-        //    //        Time = entry.Time,
-        //    //        Value = entry.CervicalDilation
-        //    //    });
-        //    //}
+            //// Cervical Dilation Data
+            //var dilationData = new ObservableCollection<ChartDataPoint>();
+            //foreach (var entry in PartographEntries)
+            //{
+            //    dilationData.Add(new ChartDataPoint
+            //    {
+            //        Time = entry.Time,
+            //        Value = entry.CervicalDilation
+            //    });
+            //}
 
-        //    //CervicalDilationData = dilationData;
+            //CervicalDilationData = dilationData;
 
-        //    //// Fetal Heart Rate Data
-        //    //var fhrData = new ObservableCollection<ChartDataPoint>();
-        //    //foreach (var entry in PartographEntries.Where(e => e.FetalHeartRate > 0))
-        //    //{
-        //    //    fhrData.Add(new ChartDataPoint
-        //    //    {
-        //    //        Time = entry.RecordedTime,
-        //    //        Value = entry.FetalHeartRate
-        //    //    });
-        //    //}
-        //    //FetalHeartRateData = fhrData;
+            //// Fetal Heart Rate Data
+            //var fhrData = new ObservableCollection<ChartDataPoint>();
+            //foreach (var entry in PartographEntries.Where(e => e.FetalHeartRate > 0))
+            //{
+            //    fhrData.Add(new ChartDataPoint
+            //    {
+            //        Time = entry.RecordedTime,
+            //        Value = entry.FetalHeartRate
+            //    });
+            //}
+            //FetalHeartRateData = fhrData;
 
-        //    //// Contractions Data
-        //    //var contractionsData = new ObservableCollection<ChartDataPoint>();
-        //    //foreach (var entry in PartographEntries)
-        //    //{
-        //    //    contractionsData.Add(new ChartDataPoint
-        //    //    {
-        //    //        Time = entry.Time,
-        //    //        Value = entry.ContractionsPerTenMinutes
-        //    //    });
-        //    //}
-        //    //ContractionsData = contractionsData;
-        //}
+            //// Contractions Data
+            //var contractionsData = new ObservableCollection<ChartDataPoint>();
+            //foreach (var entry in PartographEntries)
+            //{
+            //    contractionsData.Add(new ChartDataPoint
+            //    {
+            //        Time = entry.Time,
+            //        Value = entry.ContractionsPerTenMinutes
+            //    });
+            //}
+            //ContractionsData = contractionsData;
+        }
 
-        //private void CalculateAlertActionLines()
-        //{
-        //    if (_patient?.LaborStartTime == null) return;
+        private void CalculateAlertActionLines()
+        {
+            if (_patient?.LaborStartTime == null) return;
 
-        //    var startTime = _patient.LaborStartTime.Value;
-        //    var alertLine = new ObservableCollection<ChartDataPoint>();
-        //    var actionLine = new ObservableCollection<ChartDataPoint>();
+            var startTime = _patient.LaborStartTime.Value;
+            var alertLine = new ObservableCollection<ChartDataPoint>();
+            var actionLine = new ObservableCollection<ChartDataPoint>();
 
-        //    //// Alert line: Expected progress of 1cm/hour from 4cm
-        //    //// Starting from when patient reached 4cm dilation
-        //    //var fourCmEntry = PartographEntries.FirstOrDefault(e => e.CervicalDilation >= 4);
-        //    //if (fourCmEntry != null)
-        //    //{
-        //    //    var fourCmTime = fourCmEntry.RecordedTime;
+            //// Alert line: Expected progress of 1cm/hour from 4cm
+            //// Starting from when patient reached 4cm dilation
+            //var fourCmEntry = PartographEntries.FirstOrDefault(e => e.CervicalDilation >= 4);
+            //if (fourCmEntry != null)
+            //{
+            //    var fourCmTime = fourCmEntry.RecordedTime;
 
-        //    //    // Alert line - normal progress
-        //    //    for (int i = 4; i <= 10; i++)
-        //    //    {
-        //    //        alertLine.Add(new ChartDataPoint
-        //    //        {
-        //    //            Time = fourCmTime.AddHours(i - 4),
-        //    //            Value = i
-        //    //        });
-        //    //    }
+            //    // Alert line - normal progress
+            //    for (int i = 4; i <= 10; i++)
+            //    {
+            //        alertLine.Add(new ChartDataPoint
+            //        {
+            //            Time = fourCmTime.AddHours(i - 4),
+            //            Value = i
+            //        });
+            //    }
 
-        //    //    // Action line - 2 hours behind alert line
-        //    //    for (int i = 4; i <= 10; i++)
-        //    //    {
-        //    //        actionLine.Add(new ChartDataPoint
-        //    //        {
-        //    //            Time = fourCmTime.AddHours(i - 4 + 2),
-        //    //            Value = i
-        //    //        });
-        //    //    }
-        //    //}
+            //    // Action line - 2 hours behind alert line
+            //    for (int i = 4; i <= 10; i++)
+            //    {
+            //        actionLine.Add(new ChartDataPoint
+            //        {
+            //            Time = fourCmTime.AddHours(i - 4 + 2),
+            //            Value = i
+            //        });
+            //    }
+            //}
 
-        //    //AlertLineData = alertLine;
-        //    //ActionLineData = actionLine;
-        //}
+            //AlertLineData = alertLine;
+            //ActionLineData = actionLine;
+        }
 
         [RelayCommand]
         private Task AddEntry()
@@ -936,10 +923,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        [ObservableProperty]
-        private string _companionDescription;
-
-         [RelayCommand]
+        [RelayCommand]
         private async Task OpenPainReliefPopup()
         {
             if (_patient?.ID != null)
@@ -1180,11 +1164,5 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 OpenPlanModalPopup?.Invoke();
             }
         }
-    }
-
-    public class ChartDataPoint
-    {
-        public DateTime Time { get; set; }
-        public double Value { get; set; }
     }
 }
