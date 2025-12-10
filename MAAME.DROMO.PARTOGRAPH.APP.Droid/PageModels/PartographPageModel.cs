@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Helpers;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly BPRepository _bpRepository;
         private readonly AssessmentRepository _assessmentRepository;
         private readonly PlanRepository _planRepository;
+
+        // Alert and Validation Services
+        private readonly AlertEngine _alertEngine;
+        private readonly MeasurementValidationService _validationService;
 
         // Modal page models
         private readonly CompanionModalPageModel _companionModalPageModel;
@@ -269,6 +274,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _planStatusText = string.Empty;
 
+        // Alert Properties
+        [ObservableProperty]
+        private ObservableCollection<ClinicalAlert> _activeAlerts = new ObservableCollection<ClinicalAlert>();
+
+        [ObservableProperty]
+        private bool _hasAlerts = false;
+
+        [ObservableProperty]
+        private int _criticalAlertCount = 0;
+
+        [ObservableProperty]
+        private int _warningAlertCount = 0;
+
+        [ObservableProperty]
+        private string _alertSummary = string.Empty;
+
         //[ObservableProperty]
         //private ObservableCollection<TimeSlots> _chartinghours;
 
@@ -355,8 +376,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _cervixDilatationModalPageModel = cervixDilatationModalPageModel;
             _bpPulseModalPageModel = bpPulseModalPageModel;
             _fHRContractionModalPageModel = fHRContractionModalPageModel;
-            _assessmentModalPageModel = assessmentModalPageModel;  
+            _assessmentModalPageModel = assessmentModalPageModel;
             _planModalPageModel = planModalPageModel;
+
+            // Initialize alert engine and validation service
+            _alertEngine = new AlertEngine();
+            _validationService = new MeasurementValidationService();
+
+            // Subscribe to alert events
+            _alertEngine.AlertTriggered += OnAlertTriggered;
+            _alertEngine.AlertCleared += OnAlertCleared;
 
             //Chartinghours = new ObservableCollection<TimeSlots>();
             //TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
@@ -364,6 +393,116 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             var tasks = new Task[1];
             tasks[0] = GenerateInitialTimeSlots();
             Task.WhenAny(tasks);
+        }
+
+        /// <summary>
+        /// Event handler for when an alert is triggered
+        /// </summary>
+        private void OnAlertTriggered(object? sender, ClinicalAlert alert)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                ActiveAlerts.Add(alert);
+                UpdateAlertSummary();
+            });
+        }
+
+        /// <summary>
+        /// Event handler for when an alert is cleared
+        /// </summary>
+        private void OnAlertCleared(object? sender, Guid alertId)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var alert = ActiveAlerts.FirstOrDefault(a => a.Id == alertId);
+                if (alert != null)
+                {
+                    ActiveAlerts.Remove(alert);
+                    UpdateAlertSummary();
+                }
+            });
+        }
+
+        /// <summary>
+        /// Updates alert summary counts and text
+        /// </summary>
+        private void UpdateAlertSummary()
+        {
+            HasAlerts = ActiveAlerts.Any();
+            CriticalAlertCount = ActiveAlerts.Count(a => a.Severity == AlertSeverity.Critical);
+            WarningAlertCount = ActiveAlerts.Count(a => a.Severity == AlertSeverity.Warning);
+
+            if (!HasAlerts)
+            {
+                AlertSummary = "No active alerts";
+            }
+            else
+            {
+                var parts = new List<string>();
+                if (CriticalAlertCount > 0)
+                    parts.Add($"{CriticalAlertCount} critical");
+                if (WarningAlertCount > 0)
+                    parts.Add($"{WarningAlertCount} warning");
+
+                AlertSummary = string.Join(", ", parts);
+            }
+        }
+
+        /// <summary>
+        /// Analyzes patient data and generates clinical alerts
+        /// </summary>
+        private void AnalyzeAndGenerateAlerts()
+        {
+            if (Patient == null)
+                return;
+
+            try
+            {
+                // Analyze patient and get alerts
+                var alerts = _alertEngine.AnalyzePatient(Patient);
+
+                // Update UI
+                ActiveAlerts.Clear();
+                foreach (var alert in alerts)
+                {
+                    ActiveAlerts.Add(alert);
+                }
+
+                UpdateAlertSummary();
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
+        /// <summary>
+        /// Acknowledges an alert
+        /// </summary>
+        [RelayCommand]
+        private void AcknowledgeAlert(ClinicalAlert alert)
+        {
+            if (alert != null)
+            {
+                _alertEngine.AcknowledgeAlert(alert.Id, "User"); // TODO: Use actual user name
+                alert.IsAcknowledged = true;
+                OnPropertyChanged(nameof(ActiveAlerts));
+            }
+        }
+
+        /// <summary>
+        /// Clears all acknowledged alerts
+        /// </summary>
+        [RelayCommand]
+        private void ClearAcknowledgedAlerts()
+        {
+            _alertEngine.ClearAcknowledgedAlerts();
+            var acknowledgedAlerts = ActiveAlerts.Where(a => a.IsAcknowledged).ToList();
+            foreach (var alert in acknowledgedAlerts)
+            {
+                ActiveAlerts.Remove(alert);
+            }
+            UpdateAlertSummary();
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -1057,6 +1196,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 // Update all measurement statuses with latest values and due times
                 UpdateMeasurementStatuses();
+
+                // Analyze patient data and generate clinical alerts
+                AnalyzeAndGenerateAlerts();
             }
             catch (Exception e)
             {
@@ -1161,6 +1303,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             await AppShell.DisplayToastAsync("Partograph printing feature coming soon");
         }
+
+        [RelayCommand]
+        private Task ViewCharts()
+            => Shell.Current.GoToAsync($"partographchart?patientId={Patient?.ID}");
 
         [RelayCommand]
         private async Task Refresh()
