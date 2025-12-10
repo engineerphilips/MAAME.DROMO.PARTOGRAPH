@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PartographChartPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             Title="Partograph Charts">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh"
+                     Command="{Binding RefreshCommand}"
+                     IconImageSource="refresh.png" />
+        <ToolbarItem Text="Export"
+                     Command="{Binding ExportChartCommand}"
+                     IconImageSource="export.png" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="20">
+
+            <!-- Patient Header Card -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding PatientName}" FontSize="18" FontAttributes="Bold" />
+                        <Label Text="{Binding PatientInfo}" FontSize="12" Opacity="0.8" />
+                        <Label Text="{Binding LaborDuration, StringFormat='Labor Duration: {0}'}" FontSize="11" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="{Binding CurrentDilation, StringFormat='{0} cm'}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+                        <Label Text="Current Dilation"
+                               FontSize="9"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Cervical Dilatation Chart with Alert/Action Lines -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Cervical Dilatation Progress"
+                           FontSize="16"
+                           FontAttributes="Bold" />
+
+                    <sf:SfCartesianChart HeightRequest="300">
+                        <sf:SfCartesianChart.Title>
+                            <Label Text="WHO Partograph - Labor Progress"
+                                   FontSize="14"
+                                   HorizontalOptions="Center" />
+                        </sf:SfCartesianChart.Title>
+
+                        <sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis Title="Time (Hours)"
+                                             ShowMajorGridLines="True"
+                                             LabelStyle-LabelFormat="HH:mm"/>
+                        </sf:SfCartesianChart.XAxes>
+
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Title="Cervical Dilatation (cm)"
+                                              Minimum="0"
+                                              Maximum="10"
+                                              Interval="1"
+                                              ShowMajorGridLines="True"/>
+                        </sf:SfCartesianChart.YAxes>
+
+                        <sf:SfCartesianChart.Series>
+                            <!-- Actual Progress Line -->
+                            <sf:LineSeries ItemsSource="{Binding CervicalDilationData}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Actual Progress"
+                                           Fill="#2196F3"
+                                           StrokeWidth="3"
+                                           ShowMarkers="True">
+                                <sf:LineSeries.MarkerSettings>
+                                    <sf:ChartMarkerSettings Type="Circle"
+                                                            Fill="#2196F3"
+                                                            Width="10"
+                                                            Height="10"/>
+                                </sf:LineSeries.MarkerSettings>
+                            </sf:LineSeries>
+
+                            <!-- Alert Line -->
+                            <sf:LineSeries ItemsSource="{Binding AlertLineData}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Alert Line"
+                                           Fill="#FFA726"
+                                           StrokeWidth="2"
+                                           StrokeDashArray="5,2"/>
+
+                            <!-- Action Line -->
+                            <sf:LineSeries ItemsSource="{Binding ActionLineData}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Action Line"
+                                           Fill="#EF5350"
+                                           StrokeWidth="2"
+                                           StrokeDashArray="5,2"/>
+                        </sf:SfCartesianChart.Series>
+
+                        <sf:SfCartesianChart.Legend>
+                            <sf:ChartLegend Placement="Top" />
+                        </sf:SfCartesianChart.Legend>
+                    </sf:SfCartesianChart>
+
+                    <!-- Legend -->
+                    <Grid ColumnDefinitions="*,*,*" Margin="0,10,0,0">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="8">
+                            <BoxView WidthRequest="20" HeightRequest="3" Color="#2196F3" />
+                            <Label Text="Actual" FontSize="11" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Grid.Column="1" Spacing="8" HorizontalOptions="Center">
+                            <BoxView WidthRequest="20" HeightRequest="3" Color="#FFA726" />
+                            <Label Text="Alert" FontSize="11" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Grid.Column="2" Spacing="8" HorizontalOptions="End">
+                            <BoxView WidthRequest="20" HeightRequest="3" Color="#EF5350" />
+                            <Label Text="Action" FontSize="11" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Fetal Heart Rate Chart -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Fetal Heart Rate Monitoring"
+                           FontSize="16"
+                           FontAttributes="Bold" />
+
+                    <sf:SfCartesianChart HeightRequest="250">
+                        <sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis ShowMajorGridLines="True"
+                                             LabelStyle-LabelFormat="HH:mm"/>
+                        </sf:SfCartesianChart.XAxes>
+
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Title="FHR (bpm)"
+                                              Minimum="100"
+                                              Maximum="180"
+                                              Interval="10"
+                                              ShowMajorGridLines="True"/>
+                        </sf:SfCartesianChart.YAxes>
+
+                        <sf:SfCartesianChart.Series>
+                            <!-- FHR Baseline -->
+                            <sf:LineSeries ItemsSource="{Binding FetalHeartRateData}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="FHR"
+                                           Fill="#4CAF50"
+                                           StrokeWidth="2"
+                                           ShowMarkers="True">
+                                <sf:LineSeries.MarkerSettings>
+                                    <sf:ChartMarkerSettings Type="Diamond"
+                                                            Fill="#4CAF50"
+                                                            Width="8"
+                                                            Height="8"/>
+                                </sf:LineSeries.MarkerSettings>
+                            </sf:LineSeries>
+
+                            <!-- Normal Range Upper Limit -->
+                            <sf:LineSeries ItemsSource="{Binding FHRUpperLimit}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Upper Normal (160)"
+                                           Fill="#FF9800"
+                                           StrokeWidth="1"
+                                           StrokeDashArray="3,3"/>
+
+                            <!-- Normal Range Lower Limit -->
+                            <sf:LineSeries ItemsSource="{Binding FHRLowerLimit}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Lower Normal (110)"
+                                           Fill="#FF9800"
+                                           StrokeWidth="1"
+                                           StrokeDashArray="3,3"/>
+                        </sf:SfCartesianChart.Series>
+
+                        <sf:SfCartesianChart.Legend>
+                            <sf:ChartLegend Placement="Bottom" />
+                        </sf:SfCartesianChart.Legend>
+                    </sf:SfCartesianChart>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Contractions Chart -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Contraction Frequency"
+                           FontSize="16"
+                           FontAttributes="Bold" />
+
+                    <sf:SfCartesianChart HeightRequest="200">
+                        <sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis ShowMajorGridLines="True"
+                                             LabelStyle-LabelFormat="HH:mm"/>
+                        </sf:SfCartesianChart.XAxes>
+
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Title="Contractions per 10 min"
+                                              Minimum="0"
+                                              Maximum="7"
+                                              Interval="1"
+                                              ShowMajorGridLines="True"/>
+                        </sf:SfCartesianChart.YAxes>
+
+                        <sf:SfCartesianChart.Series>
+                            <sf:ColumnSeries ItemsSource="{Binding ContractionsData}"
+                                             XBindingPath="Time"
+                                             YBindingPath="Value"
+                                             Label="Frequency"
+                                             Fill="#9C27B0"/>
+
+                            <!-- Optimal Range -->
+                            <sf:LineSeries ItemsSource="{Binding OptimalContractionRange}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Optimal (3-5)"
+                                           Fill="#4CAF50"
+                                           StrokeWidth="1"
+                                           StrokeDashArray="5,2"/>
+                        </sf:SfCartesianChart.Series>
+                    </sf:SfCartesianChart>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Maternal Vital Signs Chart -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Maternal Vital Signs"
+                           FontSize="16"
+                           FontAttributes="Bold" />
+
+                    <sf:SfCartesianChart HeightRequest="250">
+                        <sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis ShowMajorGridLines="True"
+                                             LabelStyle-LabelFormat="HH:mm"/>
+                        </sf:SfCartesianChart.XAxes>
+
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Title="mmHg / bpm"
+                                              Minimum="40"
+                                              Maximum="160"
+                                              Interval="20"
+                                              ShowMajorGridLines="True"/>
+                        </sf:SfCartesianChart.YAxes>
+
+                        <sf:SfCartesianChart.Series>
+                            <!-- Systolic BP -->
+                            <sf:LineSeries ItemsSource="{Binding SystolicBPData}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Systolic BP"
+                                           Fill="#FF5722"
+                                           StrokeWidth="2"/>
+
+                            <!-- Diastolic BP -->
+                            <sf:LineSeries ItemsSource="{Binding DiastolicBPData}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Diastolic BP"
+                                           Fill="#FF9800"
+                                           StrokeWidth="2"/>
+
+                            <!-- Pulse -->
+                            <sf:LineSeries ItemsSource="{Binding PulseData}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Pulse"
+                                           Fill="#2196F3"
+                                           StrokeWidth="2"/>
+                        </sf:SfCartesianChart.Series>
+
+                        <sf:SfCartesianChart.Legend>
+                            <sf:ChartLegend Placement="Bottom" />
+                        </sf:SfCartesianChart.Legend>
+                    </sf:SfCartesianChart>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Temperature Chart -->
+            <Border StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Maternal Temperature"
+                           FontSize="16"
+                           FontAttributes="Bold" />
+
+                    <sf:SfCartesianChart HeightRequest="180">
+                        <sf:SfCartesianChart.XAxes>
+                            <sf:DateTimeAxis ShowMajorGridLines="True"
+                                             LabelStyle-LabelFormat="HH:mm"/>
+                        </sf:SfCartesianChart.XAxes>
+
+                        <sf:SfCartesianChart.YAxes>
+                            <sf:NumericalAxis Title="Temperature (°C)"
+                                              Minimum="35"
+                                              Maximum="40"
+                                              Interval="0.5"
+                                              ShowMajorGridLines="True"/>
+                        </sf:SfCartesianChart.YAxes>
+
+                        <sf:SfCartesianChart.Series>
+                            <sf:LineSeries ItemsSource="{Binding TemperatureData}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Temperature"
+                                           Fill="#E91E63"
+                                           StrokeWidth="2"
+                                           ShowMarkers="True">
+                                <sf:LineSeries.MarkerSettings>
+                                    <sf:ChartMarkerSettings Type="Square"
+                                                            Fill="#E91E63"
+                                                            Width="8"
+                                                            Height="8"/>
+                                </sf:LineSeries.MarkerSettings>
+                            </sf:LineSeries>
+
+                            <!-- Normal range indicators -->
+                            <sf:LineSeries ItemsSource="{Binding TempUpperNormal}"
+                                           XBindingPath="Time"
+                                           YBindingPath="Value"
+                                           Label="Upper Normal"
+                                           Fill="#FF9800"
+                                           StrokeWidth="1"
+                                           StrokeDashArray="3,3"/>
+                        </sf:SfCartesianChart.Series>
+                    </sf:SfCartesianChart>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

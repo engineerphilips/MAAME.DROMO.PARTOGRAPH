@@ -8,6 +8,7 @@
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              xmlns:modals="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals"
+             xmlns:Services="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Services"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
@@ -87,10 +88,13 @@
     </ContentPage.Resources>
     
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add Entry" 
+        <ToolbarItem Text="Add Entry"
                      Command="{Binding AddEntryCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.add_16_regular}" />
-        <ToolbarItem Text="Print" 
+        <ToolbarItem Text="Charts"
+                     Command="{Binding ViewChartsCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.chart_multiple_16_regular}" />
+        <ToolbarItem Text="Print"
                      Command="{Binding PrintCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.print_16_regular}" />
     </ContentPage.ToolbarItems>
@@ -127,8 +131,134 @@
                 </Grid>
             </Border>
 
+            <!-- Clinical Alerts Panel -->
+            <Border Grid.Row="1"
+                    StrokeThickness="2"
+                    Stroke="{Binding CriticalAlertCount, Converter={toolkit:ComparisonConverter ComparisonOperator=GreaterThan, TrueObject='#EF5350', FalseObject='#FF9800', ComparisonValue=0}}"
+                    BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3E2723}"
+                    Padding="15"
+                    Margin="0,0,0,10"
+                    IsVisible="{Binding HasAlerts}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <!-- Alert Header -->
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="10">
+                            <Label Text="{Binding CriticalAlertCount, Converter={toolkit:ComparisonConverter ComparisonOperator=GreaterThan, TrueObject='🚨', FalseObject='⚠️', ComparisonValue=0}}"
+                                   FontSize="20" />
+                            <Label Text="Clinical Alerts"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="{Binding CriticalAlertCount, Converter={toolkit:ComparisonConverter ComparisonOperator=GreaterThan, TrueObject='#EF5350', FalseObject='#FF9800', ComparisonValue=0}}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <Label Grid.Column="1"
+                               Text="{Binding AlertSummary}"
+                               FontSize="12"
+                               VerticalOptions="Center"
+                               Margin="10,0,0,0" />
+
+                        <Button Grid.Column="2"
+                                Text="Clear Acknowledged"
+                                Command="{Binding ClearAcknowledgedAlertsCommand}"
+                                BackgroundColor="LightGray"
+                                TextColor="Black"
+                                FontSize="10"
+                                Padding="8,4"
+                                CornerRadius="5" />
+                    </Grid>
+
+                    <!-- Alert List -->
+                    <CollectionView ItemsSource="{Binding ActiveAlerts}"
+                                    MaximumHeightRequest="300">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="Services:ClinicalAlert">
+                                <Border StrokeThickness="1"
+                                        Stroke="{Binding SeverityColor}"
+                                        BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                                        Padding="12"
+                                        Margin="0,4">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*,Auto">
+                                        <!-- Icon and Title -->
+                                        <Label Grid.Row="0" Grid.Column="0"
+                                               Text="{Binding CategoryIcon}"
+                                               FontSize="16"
+                                               VerticalOptions="Start" />
+
+                                        <Label Grid.Row="0" Grid.Column="1"
+                                               Text="{Binding Title}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="{Binding SeverityColor}"
+                                               Margin="10,0,0,0" />
+
+                                        <Button Grid.Row="0" Grid.Column="2"
+                                                Text="✓"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:PartographPageModel}}, Path=AcknowledgeAlertCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="{Binding SeverityColor}"
+                                                TextColor="White"
+                                                FontSize="12"
+                                                Padding="8,4"
+                                                CornerRadius="4"
+                                                IsVisible="{Binding IsAcknowledged, Converter={toolkit:InvertedBoolConverter}}" />
+
+                                        <!-- Message -->
+                                        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                               Text="{Binding Message}"
+                                               FontSize="12"
+                                               Margin="0,8,0,0" />
+
+                                        <!-- Measurement Info -->
+                                        <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                                                               Spacing="10"
+                                                               Margin="0,8,0,0"
+                                                               IsVisible="{Binding MeasurementType, Converter={toolkit:IsNotNullConverter}}">
+                                            <Label Text="{Binding MeasurementType, StringFormat='Type: {0}'}"
+                                                   FontSize="11"
+                                                   Opacity="0.8" />
+                                            <Label Text="{Binding CurrentValue, StringFormat='Value: {0}'}"
+                                                   FontSize="11"
+                                                   FontAttributes="Bold" />
+                                            <Label Text="{Binding ExpectedRange, StringFormat='Expected: {0}'}"
+                                                   FontSize="11"
+                                                   Opacity="0.7" />
+                                        </HorizontalStackLayout>
+
+                                        <!-- Recommended Actions -->
+                                        <VerticalStackLayout Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
+                                                             Margin="0,8,0,0"
+                                                             IsVisible="{Binding RecommendedActions.Count, Converter={toolkit:ComparisonConverter ComparisonOperator=GreaterThan, ComparisonValue=0}}">
+                                            <Label Text="Recommended Actions:"
+                                                   FontSize="11"
+                                                   FontAttributes="Bold"
+                                                   Margin="0,0,0,4" />
+                                            <CollectionView ItemsSource="{Binding RecommendedActions}">
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate x:DataType="x:String">
+                                                        <Label Text="{Binding ., StringFormat='• {0}'}"
+                                                               FontSize="11"
+                                                               Margin="10,0,0,2" />
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
             <!-- Alert/Action Line Legend -->
-            
+
             <!--<Grid Grid.Row="1" ColumnDefinitions="*,*,*" Margin="0,0,0,20">
                 <HorizontalStackLayout Grid.Column="0" Spacing="10">
                     <BoxView WidthRequest="30" HeightRequest="3" Color="#FFA726" />
