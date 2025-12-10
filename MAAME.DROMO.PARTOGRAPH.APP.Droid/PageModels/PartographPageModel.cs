@@ -15,7 +15,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public partial class PartographPageModel : ObservableObject, IQueryAttributable
     {
-        public Partograph? _patient;
+        public Partograph? Patient { get; set; }
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
@@ -332,7 +332,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private async Task<DateTime?> GetEarliestMeasurableTimeAsync()
         {
-            if (_patient?.ID == null)
+            if (Patient?.ID == null)
                 return null;
 
             var earliestTimes = new List<DateTime>();
@@ -341,141 +341,141 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 // Retrieve all measurables and collect their times
-                _patient.Companions = await _companionRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Companions.Any())
+                Patient.Companions = await _companionRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Companions.Any())
                 {
-                    earliestTimes.Add(_patient.Companions.Min(e => e.Time));
-                    latestTimes.Add(_patient.Companions.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Companions.Min(e => e.Time));
+                    latestTimes.Add(Patient.Companions.Max(e => e.Time));
                 }
 
-                _patient.PainReliefs = await _painReliefRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.PainReliefs.Any())
+                Patient.PainReliefs = await _painReliefRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.PainReliefs.Any())
                 {
-                    earliestTimes.Add(_patient.PainReliefs.Min(e => e.Time));
-                    latestTimes.Add(_patient.PainReliefs.Max(e => e.Time));
+                    earliestTimes.Add(Patient.PainReliefs.Min(e => e.Time));
+                    latestTimes.Add(Patient.PainReliefs.Max(e => e.Time));
                 }
 
-                _patient.OralFluids = await _oralFluidRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.OralFluids.Any())
+                Patient.OralFluids = await _oralFluidRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.OralFluids.Any())
                     { 
-                    earliestTimes.Add(_patient.OralFluids.Min(e => e.Time));
-                    latestTimes.Add(_patient.OralFluids.Max(e => e.Time));
+                    earliestTimes.Add(Patient.OralFluids.Min(e => e.Time));
+                    latestTimes.Add(Patient.OralFluids.Max(e => e.Time));
                 }
 
-                _patient.Postures = await _postureRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Postures.Any())
+                Patient.Postures = await _postureRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Postures.Any())
                 {
-                    earliestTimes.Add(_patient.Postures.Min(e => e.Time));
-                    latestTimes.Add(_patient.Postures.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Postures.Min(e => e.Time));
+                    latestTimes.Add(Patient.Postures.Max(e => e.Time));
                 }
 
-                _patient.Fhrs = await _fhrRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Fhrs.Any())
+                Patient.Fhrs = await _fhrRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Fhrs.Any())
                 {
-                    earliestTimes.Add(_patient.Fhrs.Min(e => e.Time));
-                    latestTimes.Add(_patient.Fhrs.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Fhrs.Min(e => e.Time));
+                    latestTimes.Add(Patient.Fhrs.Max(e => e.Time));
                 }
 
-                _patient.Temperatures = await _temperatureRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Temperatures.Any())
+                Patient.Temperatures = await _temperatureRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Temperatures.Any())
                 {
-                    earliestTimes.Add(_patient.Temperatures.Min(e => e.Time));
-                    latestTimes.Add(_patient.Temperatures.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Temperatures.Min(e => e.Time));
+                    latestTimes.Add(Patient.Temperatures.Max(e => e.Time));
                 }
 
-                _patient.Urines = await _urineRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Urines.Any())
+                Patient.Urines = await _urineRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Urines.Any())
                 {
-                    earliestTimes.Add(_patient.Urines.Min(e => e.Time));
-                    latestTimes.Add(_patient.Urines.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Urines.Min(e => e.Time));
+                    latestTimes.Add(Patient.Urines.Max(e => e.Time));
                 }
 
-                _patient.Oxytocins = await _oxytocinRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Oxytocins.Any())
+                Patient.Oxytocins = await _oxytocinRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Oxytocins.Any())
                 {
-                    earliestTimes.Add(_patient.Oxytocins.Min(e => e.Time));
-                    latestTimes.Add(_patient.Oxytocins.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Oxytocins.Min(e => e.Time));
+                    latestTimes.Add(Patient.Oxytocins.Max(e => e.Time));
                 }
 
-                _patient.Medications = await _medicationEntryRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Medications.Any())
+                Patient.Medications = await _medicationEntryRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Medications.Any())
                 {
-                    earliestTimes.Add(_patient.Medications.Min(e => e.Time));
-                    latestTimes.Add(_patient.Medications.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Medications.Min(e => e.Time));
+                    latestTimes.Add(Patient.Medications.Max(e => e.Time));
                 }
 
-                _patient.IVFluids = await _ivFluidEntryRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.IVFluids.Any())
+                Patient.IVFluids = await _ivFluidEntryRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.IVFluids.Any())
                 {
-                    earliestTimes.Add(_patient.IVFluids.Min(e => e.Time));
-                    latestTimes.Add(_patient.IVFluids.Max(e => e.Time));
+                    earliestTimes.Add(Patient.IVFluids.Min(e => e.Time));
+                    latestTimes.Add(Patient.IVFluids.Max(e => e.Time));
                 }
 
-                _patient.Dilatations = await _cervixDilatationRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Dilatations.Any())
+                Patient.Dilatations = await _cervixDilatationRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Dilatations.Any())
                 {
-                    earliestTimes.Add(_patient.Dilatations.Min(e => e.Time));
-                    latestTimes.Add(_patient.Dilatations.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Dilatations.Min(e => e.Time));
+                    latestTimes.Add(Patient.Dilatations.Max(e => e.Time));
                 }
 
-                _patient.Contractions = await _contractionRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Contractions.Any())
+                Patient.Contractions = await _contractionRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Contractions.Any())
                 {
-                    earliestTimes.Add(_patient.Contractions.Min(e => e.Time));
-                    latestTimes.Add(_patient.Contractions.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Contractions.Min(e => e.Time));
+                    latestTimes.Add(Patient.Contractions.Max(e => e.Time));
                 }
 
-                _patient.HeadDescents = await _headDescentRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.HeadDescents.Any())
-                    earliestTimes.Add(_patient.HeadDescents.Min(e => e.Time));
+                Patient.HeadDescents = await _headDescentRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.HeadDescents.Any())
+                    earliestTimes.Add(Patient.HeadDescents.Min(e => e.Time));
 
-                _patient.FetalPositions = await _fetalPositionRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.FetalPositions.Any())
+                Patient.FetalPositions = await _fetalPositionRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.FetalPositions.Any())
                 {
-                    earliestTimes.Add(_patient.FetalPositions.Min(e => e.Time));
-                    latestTimes.Add(_patient.FetalPositions.Max(e => e.Time));
+                    earliestTimes.Add(Patient.FetalPositions.Min(e => e.Time));
+                    latestTimes.Add(Patient.FetalPositions.Max(e => e.Time));
                 }
 
-                _patient.AmnioticFluids = await _amnioticFluidRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.AmnioticFluids.Any())
+                Patient.AmnioticFluids = await _amnioticFluidRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.AmnioticFluids.Any())
                 {
-                    earliestTimes.Add(_patient.AmnioticFluids.Min(e => e.Time));
-                    latestTimes.Add(_patient.AmnioticFluids.Max(e => e.Time));
+                    earliestTimes.Add(Patient.AmnioticFluids.Min(e => e.Time));
+                    latestTimes.Add(Patient.AmnioticFluids.Max(e => e.Time));
                 }
 
-                _patient.Caputs = await _caputRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Caputs.Any())
+                Patient.Caputs = await _caputRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Caputs.Any())
                 {
-                    earliestTimes.Add(_patient.Caputs.Min(e => e.Time));
-                    latestTimes.Add(_patient.Caputs.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Caputs.Min(e => e.Time));
+                    latestTimes.Add(Patient.Caputs.Max(e => e.Time));
                 }
 
-                _patient.Mouldings = await _mouldingRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Mouldings.Any())
+                Patient.Mouldings = await _mouldingRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Mouldings.Any())
                 {
-                    earliestTimes.Add(_patient.Mouldings.Min(e => e.Time));
-                    latestTimes.Add(_patient.Mouldings.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Mouldings.Min(e => e.Time));
+                    latestTimes.Add(Patient.Mouldings.Max(e => e.Time));
                 }
 
-                _patient.BPs = await _bpRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.BPs.Any())
+                Patient.BPs = await _bpRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.BPs.Any())
                 {
-                    earliestTimes.Add(_patient.BPs.Min(e => e.Time));
-                    latestTimes.Add(_patient.BPs.Max(e => e.Time));
+                    earliestTimes.Add(Patient.BPs.Min(e => e.Time));
+                    latestTimes.Add(Patient.BPs.Max(e => e.Time));
                 }
 
-                _patient.Assessments = await _assessmentRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Assessments.Any())
+                Patient.Assessments = await _assessmentRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Assessments.Any())
                 {
-                    earliestTimes.Add(_patient.Assessments.Min(e => e.Time));
-                    latestTimes.Add(_patient.Assessments.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Assessments.Min(e => e.Time));
+                    latestTimes.Add(Patient.Assessments.Max(e => e.Time));
                 }
 
-                _patient.Plans = await _planRepository.ListByPatientAsync(_patient.ID);
-                if (_patient.Plans.Any())
+                Patient.Plans = await _planRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.Plans.Any())
                 {
-                    earliestTimes.Add(_patient.Plans.Min(e => e.Time));
-                    latestTimes.Add(_patient.Plans.Max(e => e.Time));
+                    earliestTimes.Add(Patient.Plans.Min(e => e.Time));
+                    latestTimes.Add(Patient.Plans.Max(e => e.Time));
                 }
 
                 if (latestTimes.Any())
@@ -687,20 +687,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 IsBusy = true;
 
-                _patient = await _partographRepository.GetAsync(patientId);
-                if (_patient == null)
+                Patient = await _partographRepository.GetAsync(patientId);
+                if (Patient == null)
                 {
                     _errorHandler.HandleError(new Exception($"Patient with id {patientId} not found."));
                     return;
                 }
 
-                PatientName = _patient.Name;
-                PatientInfo = _patient.DisplayInfo;
+                PatientName = Patient.Name;
+                PatientInfo = Patient.DisplayInfo;
 
                 // Calculate labor duration
-                if (_patient.LaborStartTime.HasValue)
+                if (Patient.LaborStartTime.HasValue)
                 {
-                    var duration = DateTime.Now - _patient.LaborStartTime.Value;
+                    var duration = DateTime.Now - Patient.LaborStartTime.Value;
                     LaborDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
                 }
 
@@ -709,9 +709,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 // Set StartTime to the earliest of: LaborStartTime or earliest measurable
                 DateTime? newStartTime = null;
-                if (_patient.LaborStartTime.HasValue)
+                if (Patient.LaborStartTime.HasValue)
                 {
-                    newStartTime = _patient.LaborStartTime.Value;
+                    newStartTime = Patient.LaborStartTime.Value;
                 }
                 else if (earliestMeasurableTime.HasValue)
                 {
@@ -739,15 +739,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 //    //CurrentDilation = latestEntry.CervicalDilation;
                 //}
 
-                if (_patient.Dilatations.Any())
-                    CurrentDilation = _patient.Dilatations?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.DilatationCm ?? 0;
+                if (Patient.Dilatations.Any())
+                    CurrentDilation = Patient.Dilatations?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.DilatationCm ?? 0;
                 else
                     CurrentDilation = 0;
 
-                if (_patient.Companions.Any())
-                    CompanionDescription = _patient.Companions?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.CompanionDisplay ?? string.Empty;
-                else
-                    CompanionDescription = string.Empty;                
+                //if (_patient.Companions.Any())
+                //    CompanionDescription = _patient.Companions?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.CompanionDisplay ?? string.Empty;
+                //else
+                //    CompanionDescription = string.Empty;                
 
                 //// Load measurables from database and populate TimeSlots
                 //LoadMeasurablesFromDatabase();
@@ -755,6 +755,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 // Prepare chart data
                 //PrepareChartData();
                 //CalculateAlertActionLines();
+
+                CompanionCurrentIndex = 0;
+                CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
             }
             catch (Exception e)
             {
@@ -852,7 +855,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [RelayCommand]
         private Task AddEntry()
-            => Shell.Current.GoToAsync($"partographentry?patientId={_patient?.ID}");
+            => Shell.Current.GoToAsync($"partographentry?patientId={Patient?.ID}");
 
         [RelayCommand]
         private async Task Print()
@@ -863,8 +866,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task Refresh()
         {
-            if (_patient != null)
-                await LoadData(_patient.ID);
+            if (Patient != null)
+                await LoadData(Patient.ID);
         }
 
         // Popup IsOpen properties
@@ -926,28 +929,42 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             //if (IsCompanionPopupOpen)
             //    IsCompanionPopupOpen = false;
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                CompanionModalPageModel._patient = _patient;
+                CompanionModalPageModel._patient = Patient;
                 CompanionModalPageModel.ClosePopup = () => CloseCompanionModalPopup?.Invoke();
-                await CompanionModalPageModel.LoadPatient(_patient.ID);
-
+                await CompanionModalPageModel.LoadPatient(Patient.ID);
+                
                 OpenCompanionModalPopup?.Invoke();
             }
         }
 
         [ObservableProperty]
-        private string _companionDescription;
+        private string _companionText;
 
-         [RelayCommand]
+        [ObservableProperty]
+        private int _companionCurrentIndex = 0;
+        //private readonly List<string> _companionInfoList;
+        //_patient.Companions?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.CompanionDisplay ?? string.Empty
+
+        [RelayCommand]
+        private void OnCompanionCycle()
+        {
+            CompanionCurrentIndex = (CompanionCurrentIndex + 1) % Patient?.Companions.Count ?? 0;
+            //_companionCurrentIndex = (_companionCurrentIndex + 1) % _companionInfoList.Count;
+            //CompanionText = _companionInfoList[_companionCurrentIndex];
+            CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
+        }
+
+        [RelayCommand]
         private async Task OpenPainReliefPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _painReliefModalPageModel._patient = _patient;
+                _painReliefModalPageModel._patient = Patient;
 
                 _painReliefModalPageModel.ClosePopup = () => ClosePainReliefModalPopup?.Invoke();
-                await _painReliefModalPageModel.LoadPatient(_patient.ID);
+                await _painReliefModalPageModel.LoadPatient(Patient.ID);
                 OpenPainReliefModalPopup?.Invoke();
                 //IsPainReliefPopupOpen = true;
             }
@@ -956,11 +973,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenOralFluidPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _oralFluidModalPageModel._patient = _patient;
+                _oralFluidModalPageModel._patient = Patient;
                 _oralFluidModalPageModel.ClosePopup = () => CloseOralFluidModalPopup?.Invoke();
-                await _oralFluidModalPageModel.LoadPatient(_patient.ID);
+                await _oralFluidModalPageModel.LoadPatient(Patient.ID);
                 OpenOralFluidModalPopup?.Invoke();
             }
         }
@@ -968,11 +985,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenPosturePopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _postureModalPageModel._patient = _patient;
+                _postureModalPageModel._patient = Patient;
                 _postureModalPageModel.ClosePopup = () => ClosePostureModalPopup?.Invoke();
-                await _postureModalPageModel.LoadPatient(_patient.ID);
+                await _postureModalPageModel.LoadPatient(Patient.ID);
                 OpenPostureModalPopup?.Invoke();
             }
         }
@@ -980,11 +997,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenAmnioticFluidPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _amnioticFluidModalPageModel._patient = _patient;
+                _amnioticFluidModalPageModel._patient = Patient;
                 _amnioticFluidModalPageModel.ClosePopup = () => CloseAmnioticFluidModalPopup?.Invoke();
-                await _amnioticFluidModalPageModel.LoadPatient(_patient.ID);
+                await _amnioticFluidModalPageModel.LoadPatient(Patient.ID);
                 OpenAmnioticFluidModalPopup?.Invoke();
             }
         }
@@ -992,11 +1009,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenFetalPositionPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _fetalPositionModalPageModel._patient = _patient;
+                _fetalPositionModalPageModel._patient = Patient;
                 _fetalPositionModalPageModel.ClosePopup = () => CloseFetalPositionModalPopup?.Invoke();
-                await _fetalPositionModalPageModel.LoadPatient(_patient.ID);
+                await _fetalPositionModalPageModel.LoadPatient(Patient.ID);
                 OpenFetalPositionModalPopup?.Invoke();
             }
         }
@@ -1004,11 +1021,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenCaputPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _caputModalPageModel._patient = _patient;
+                _caputModalPageModel._patient = Patient;
                 _caputModalPageModel.ClosePopup = () => CloseCaputModalPopup?.Invoke();
-                await _caputModalPageModel.LoadPatient(_patient.ID);
+                await _caputModalPageModel.LoadPatient(Patient.ID);
                 OpenCaputModalPopup?.Invoke();
             }
         }
@@ -1016,11 +1033,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenFHRContractionPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _fHRContractionModalPageModel._patient = _patient;
+                _fHRContractionModalPageModel._patient = Patient;
                 _fHRContractionModalPageModel.ClosePopup = () => CloseFHRContractionModalPopup?.Invoke();
-                await _fHRContractionModalPageModel.LoadPatient(_patient.ID);
+                await _fHRContractionModalPageModel.LoadPatient(Patient.ID);
                 OpenFHRContractionModalPopup?.Invoke();
             }
         }
@@ -1028,11 +1045,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenUrinePopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _urineModalPageModel._patient = _patient;
+                _urineModalPageModel._patient = Patient;
                 _urineModalPageModel.ClosePopup = () => CloseUrineModalPopup?.Invoke();
-                await _urineModalPageModel.LoadPatient(_patient.ID);
+                await _urineModalPageModel.LoadPatient(Patient.ID);
                 OpenUrineModalPopup?.Invoke();
             }
         }
@@ -1040,11 +1057,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenTemperaturePopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _temperatureModalPageModel._patient = _patient;
+                _temperatureModalPageModel._patient = Patient;
                 _temperatureModalPageModel.ClosePopup = () => CloseTemperatureModalPopup?.Invoke();
-                await _temperatureModalPageModel.LoadPatient(_patient.ID);
+                await _temperatureModalPageModel.LoadPatient(Patient.ID);
                 OpenTemperatureModalPopup?.Invoke();
             }
         }
@@ -1052,11 +1069,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenBpPulsePopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _bpPulseModalPageModel._patient = _patient;
+                _bpPulseModalPageModel._patient = Patient;
                 _bpPulseModalPageModel.ClosePopup = () => CloseBpPulseModalPopup?.Invoke();
-                await _bpPulseModalPageModel.LoadPatient(_patient.ID);
+                await _bpPulseModalPageModel.LoadPatient(Patient.ID);
                 OpenBpPulseModalPopup?.Invoke();
             }
         }
@@ -1064,11 +1081,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenMedicationPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _medicationModalPageModel._patient = _patient;
+                _medicationModalPageModel._patient = Patient;
                 _medicationModalPageModel.ClosePopup = () => CloseMedicationModalPopup?.Invoke();
-                await _medicationModalPageModel.LoadPatient(_patient.ID);
+                await _medicationModalPageModel.LoadPatient(Patient.ID);
                 OpenMedicationModalPopup?.Invoke();
             }
         }
@@ -1076,11 +1093,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenIVFluidPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _ivFluidModalPageModel._patient = _patient;
+                _ivFluidModalPageModel._patient = Patient;
                 _ivFluidModalPageModel.ClosePopup = () => CloseIVFluidModalPopup?.Invoke();
-                await _ivFluidModalPageModel.LoadPatient(_patient.ID);
+                await _ivFluidModalPageModel.LoadPatient(Patient.ID);
                 OpenIVFluidModalPopup?.Invoke();
             }
         }
@@ -1088,11 +1105,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenOxytocinPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _oxytocinModalPageModel._patient = _patient;
+                _oxytocinModalPageModel._patient = Patient;
                 _oxytocinModalPageModel.ClosePopup = () => CloseOxytocinModalPopup?.Invoke();
-                await _oxytocinModalPageModel.LoadPatient(_patient.ID);
+                await _oxytocinModalPageModel.LoadPatient(Patient.ID);
                 OpenOxytocinModalPopup?.Invoke();
             }
         }
@@ -1100,11 +1117,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenHeadDescentPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _headDescentModalPageModel._patient = _patient;
+                _headDescentModalPageModel._patient = Patient;
                 _headDescentModalPageModel.ClosePopup = () => CloseHeadDescentModalPopup?.Invoke();
-                await _headDescentModalPageModel.LoadPatient(_patient.ID);
+                await _headDescentModalPageModel.LoadPatient(Patient.ID);
                 OpenHeadDescentModalPopup?.Invoke();
             }
         }
@@ -1112,11 +1129,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenCervixDilatationPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _cervixDilatationModalPageModel._patient = _patient;
+                _cervixDilatationModalPageModel._patient = Patient;
                 _cervixDilatationModalPageModel.ClosePopup = () => CloseCervixDilatationModalPopup?.Invoke();
-                await _cervixDilatationModalPageModel.LoadPatient(_patient.ID);
+                await _cervixDilatationModalPageModel.LoadPatient(Patient.ID);
                 OpenCervixDilatationModalPopup?.Invoke();
             }
         }
@@ -1124,11 +1141,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenMouldingPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _mouldingModalPageModel._patient = _patient;
+                _mouldingModalPageModel._patient = Patient;
                 _mouldingModalPageModel.ClosePopup = () => CloseMouldingModalPopup?.Invoke();
-                await _mouldingModalPageModel.LoadPatient(_patient.ID);
+                await _mouldingModalPageModel.LoadPatient(Patient.ID);
                 OpenMouldingModalPopup?.Invoke();
             }
         }
@@ -1136,11 +1153,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenMedicinePopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _medicationModalPageModel._patient = _patient;
+                _medicationModalPageModel._patient = Patient;
                 _medicationModalPageModel.ClosePopup = () => CloseMedicationModalPopup?.Invoke();
-                await _medicationModalPageModel.LoadPatient(_patient.ID);
+                await _medicationModalPageModel.LoadPatient(Patient.ID);
                 OpenMedicationModalPopup?.Invoke();
             }
         }
@@ -1148,11 +1165,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenIVFluidsPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _ivFluidModalPageModel._patient = _patient;
+                _ivFluidModalPageModel._patient = Patient;
                 _ivFluidModalPageModel.ClosePopup = () => CloseIVFluidModalPopup?.Invoke();
-                await _ivFluidModalPageModel.LoadPatient(_patient.ID);
+                await _ivFluidModalPageModel.LoadPatient(Patient.ID);
                 OpenIVFluidModalPopup?.Invoke();
             }
         }
@@ -1160,11 +1177,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenAssessmentPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _assessmentModalPageModel._patient = _patient;
+                _assessmentModalPageModel._patient = Patient;
                 _assessmentModalPageModel.ClosePopup = () => CloseAssessmentModalPopup?.Invoke();
-                await _assessmentModalPageModel.LoadPatient(_patient.ID);
+                await _assessmentModalPageModel.LoadPatient(Patient.ID);
                 OpenAssessmentModalPopup?.Invoke();
             }
         }
@@ -1172,11 +1189,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task OpenPlanPopup()
         {
-            if (_patient?.ID != null)
+            if (Patient?.ID != null)
             {
-                _planModalPageModel._patient = _patient;
+                _planModalPageModel._patient = Patient;
                 _planModalPageModel.ClosePopup = () => ClosePlanModalPopup?.Invoke();
-                await _planModalPageModel.LoadPatient(_patient.ID);
+                await _planModalPageModel.LoadPatient(Patient.ID);
                 OpenPlanModalPopup?.Invoke();
             }
         }

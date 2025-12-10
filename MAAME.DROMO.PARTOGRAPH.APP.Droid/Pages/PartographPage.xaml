@@ -228,16 +228,36 @@
                        FontSize="Micro" 
                        Margin="0,0,1,1" />
 
-
-                <Label Grid.Row="3" Grid.Column="3" 
-                       Text="{Binding CompanionDescription}" 
-                       BackgroundColor="LightGray"
-                       HorizontalTextAlignment="Center"
-                       VerticalTextAlignment="Center"
+                <buttons:SfButton Grid.Row="3" Grid.Column="3" BackgroundColor="LightGray" 
                        Padding="5"
-                       FontSize="Micro" 
-                       Margin="0,0,0,1" />
-
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0" 
+                        Command="{Binding OnCompanionCycleCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="65, *" RowDefinitions="*,*">
+                                <Label Text = "{Binding CompanionText, Mode=OneWay}" VerticalOptions="Center" Grid.RowSpan="2" HorizontalOptions="StartAndExpand" />
+                            </Grid>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+                
+                <!--<Button Grid.Row="3" Grid.Column="3" 
+                       BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        TextColor="Black"
+                        Command="{Binding OnCompanionCycleCommand}">
+                    <Button.Content>
+                        <HorizontalStackLayout Spacing="10">
+                            <Image Source="icon.png" WidthRequest="24" HeightRequest="24"/>
+                            <Label Text="Click Me" FontSize="18" TextColor="White"/>
+                        </HorizontalStackLayout>
+                    </Button.Content>
+                </Button>-->
 
                 <Button Grid.Row="4" Grid.Column="1"
                        Text="Pain relief"

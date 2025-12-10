@@ -43,7 +43,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Complications { get; set; } = string.Empty;
 
         // Partographs
-        public IEnumerable<CompanionEntry> Companions { get; set; }
+        public List<CompanionEntry> Companions { get; set; }
         public IEnumerable<Contraction> Contractions { get; set; }
         public IEnumerable<Caput> Caputs { get; set; }
         public IEnumerable<BP> BPs { get; set; }
