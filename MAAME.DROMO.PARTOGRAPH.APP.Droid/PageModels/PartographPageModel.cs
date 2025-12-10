@@ -394,10 +394,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         //        var currentTime = StartTime.AddHours(i);
         //        var timeSlot = new EnhancedTimeSlotViewModel(currentTime, i + 1)
         //        {
-        //            Companion = CompanionType.None,
-        //            OralFluid = OralFluidType.None,
-        //            PainRelief = PainReliefType.None,
-        //            Posture = PostureType.None, 
+        //            Companion = CompanionType.,
+        //            OralFluid = OralFluidType.,
+        //            PainRelief = PainReliefType.,
+        //            Posture = PostureType., 
 
         //        };
 
@@ -423,7 +423,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         //            time.Companion = CompanionType.Yes;
         //        }
         //        else
-        //            time.Companion = CompanionType.None;
+        //            time.Companion = CompanionType.;
         //    }
         //}
 
@@ -685,12 +685,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             // Urine Status
             var latestUrine = Patient.Urines?.OrderByDescending(e => e.Time).FirstOrDefault();
-            var urineStatus = MeasurementStatusHelper.CalculateStatus<Urine>(
+            if (latestUrine != null)
+            {
+                var urineStatus = MeasurementStatusHelper.CalculateStatus<Urine>(
                 latestUrine?.Time,
                 latestUrine != null ? $"P:{latestUrine.Protein}, A:{latestUrine.Acetone}" : "");
-            UrineLatestValue = urineStatus.LatestValue;
-            UrineStatusText = urineStatus.DueStatusText;
-            UrineButtonColor = urineStatus.ButtonColor;
+                UrineLatestValue = urineStatus.LatestValue;
+                UrineStatusText = urineStatus.DueStatusText;
+                UrineButtonColor = urineStatus.ButtonColor;
+            }
+            else
+            {
+                UrineLatestValue = string.Empty;
+                UrineStatusText = string.Empty;
+                UrineButtonColor = string.Empty;
+            }
 
             // Cervix Dilatation Status
             var latestDilatation = Patient.Dilatations?.OrderByDescending(e => e.Time).FirstOrDefault();
@@ -714,70 +723,70 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             var latestAssessment = Patient.Assessments?.OrderByDescending(e => e.Time).FirstOrDefault();
             var assessmentStatus = MeasurementStatusHelper.CalculateStatus<Assessment>(
                 latestAssessment?.Time,
-                latestAssessment != null ? latestAssessment.Category : "");
+                latestAssessment != null ? latestAssessment.Notes : "");
             AssessmentLatestValue = assessmentStatus.LatestValue;
             AssessmentStatusText = assessmentStatus.DueStatusText;
             AssessmentButtonColor = assessmentStatus.ButtonColor;
 
             // Companion (not scheduled, just latest)
             var latestCompanion = Patient.Companions?.OrderByDescending(e => e.Time).FirstOrDefault();
-            CompanionLatestValue = latestCompanion?.CompanionDisplay ?? "None";
-            CompanionStatusText = latestCompanion != null ? $"Last: {latestCompanion.Time:HH:mm}" : "No record";
+            CompanionLatestValue = latestCompanion?.CompanionDisplay ?? "";
+            CompanionStatusText = latestCompanion != null ? $"Last: {latestCompanion.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestCompanion.Time - DateTime.Now)}" : "";
 
             // Pain Relief (not scheduled, just latest)
             var latestPainRelief = Patient.PainReliefs?.OrderByDescending(e => e.Time).FirstOrDefault();
-            PainReliefLatestValue = latestPainRelief?.PainReliefDisplay ?? "None";
-            PainReliefStatusText = latestPainRelief != null ? $"Last: {latestPainRelief.Time:HH:mm}" : "No record";
+            PainReliefLatestValue = latestPainRelief?.PainReliefDisplay ?? "";
+            PainReliefStatusText = latestPainRelief != null ? $"Last: {latestPainRelief.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPainRelief.Time - DateTime.Now)}" : "";
 
             // Oral Fluid (not scheduled, just latest)
             var latestOralFluid = Patient.OralFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
-            OralFluidLatestValue = latestOralFluid?.OralFluidDisplay ?? "None";
-            OralFluidStatusText = latestOralFluid != null ? $"Last: {latestOralFluid.Time:HH:mm}" : "No record";
+            OralFluidLatestValue = latestOralFluid?.OralFluidDisplay ?? "";
+            OralFluidStatusText = latestOralFluid != null ? $"Last: {latestOralFluid.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestOralFluid.Time - DateTime.Now)}" : "";
 
             // Posture (not scheduled, just latest)
             var latestPosture = Patient.Postures?.OrderByDescending(e => e.Time).FirstOrDefault();
-            PostureLatestValue = latestPosture?.PostureDisplay ?? "None";
-            PostureStatusText = latestPosture != null ? $"Last: {latestPosture.Time:HH:mm}" : "No record";
+            PostureLatestValue = latestPosture?.PostureDisplay ?? "";
+            PostureStatusText = latestPosture != null ? $"Last: {latestPosture.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPosture.Time - DateTime.Now)}" : "";
 
             // Amniotic Fluid (not scheduled, just latest)
             var latestAmnioticFluid = Patient.AmnioticFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
-            AmnioticFluidLatestValue = latestAmnioticFluid?.Color ?? "None";
-            AmnioticFluidStatusText = latestAmnioticFluid != null ? $"Last: {latestAmnioticFluid.Time:HH:mm}" : "No record";
+            AmnioticFluidLatestValue = latestAmnioticFluid?.Color ?? "";
+            AmnioticFluidStatusText = latestAmnioticFluid != null ? $"Last: {latestAmnioticFluid.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestAmnioticFluid.Time - DateTime.Now)}" : "";
 
             // Fetal Position (not scheduled, just latest)
             var latestFetalPosition = Patient.FetalPositions?.OrderByDescending(e => e.Time).FirstOrDefault();
-            FetalPositionLatestValue = latestFetalPosition?.Position ?? "None";
-            FetalPositionStatusText = latestFetalPosition != null ? $"Last: {latestFetalPosition.Time:HH:mm}" : "No record";
+            FetalPositionLatestValue = latestFetalPosition?.Position ?? "";
+            FetalPositionStatusText = latestFetalPosition != null ? $"Last: {latestFetalPosition.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestFetalPosition.Time - DateTime.Now)}" : "";
 
             // Caput (not scheduled, just latest)
             var latestCaput = Patient.Caputs?.OrderByDescending(e => e.Time).FirstOrDefault();
-            CaputLatestValue = latestCaput?.Degree ?? "None";
-            CaputStatusText = latestCaput != null ? $"Last: {latestCaput.Time:HH:mm}" : "No record";
+            CaputLatestValue = latestCaput?.Degree ?? "";
+            CaputStatusText = latestCaput != null ? $"Last: {latestCaput.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestCaput.Time - DateTime.Now)}" : "";
 
             // Moulding (not scheduled, just latest)
             var latestMoulding = Patient.Mouldings?.OrderByDescending(e => e.Time).FirstOrDefault();
-            MouldingLatestValue = latestMoulding?.Degree ?? "None";
-            MouldingStatusText = latestMoulding != null ? $"Last: {latestMoulding.Time:HH:mm}" : "No record";
+            MouldingLatestValue = latestMoulding?.DegreeDisplay ?? "";
+            MouldingStatusText = latestMoulding != null ? $"Last: {latestMoulding.Time:HH:mm}" : "";
 
             // Oxytocin (not scheduled, just latest)
             var latestOxytocin = Patient.Oxytocins?.OrderByDescending(e => e.Time).FirstOrDefault();
-            OxytocinLatestValue = latestOxytocin != null ? $"{latestOxytocin.DoseMUnitsPerMin} mU/min" : "None";
-            OxytocinStatusText = latestOxytocin != null ? $"Last: {latestOxytocin.Time:HH:mm}" : "No record";
+            OxytocinLatestValue = latestOxytocin != null ? $"{latestOxytocin.DoseMUnitsPerMin} mU/min" : "";
+            OxytocinStatusText = latestOxytocin != null ? $"Last: {latestOxytocin.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestOxytocin.Time - DateTime.Now)}" : "";
 
             // Medication (not scheduled, just latest)
             var latestMedication = Patient.Medications?.OrderByDescending(e => e.Time).FirstOrDefault();
-            MedicationLatestValue = latestMedication?.MedicineName ?? "None";
-            MedicationStatusText = latestMedication != null ? $"Last: {latestMedication.Time:HH:mm}" : "No record";
+            MedicationLatestValue = latestMedication?.MedicationName ?? "";
+            MedicationStatusText = latestMedication != null ? $"Last: {latestMedication.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestMedication.Time - DateTime.Now)}" : "";
 
             // IV Fluid (not scheduled, just latest)
             var latestIVFluid = Patient.IVFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
-            IvFluidLatestValue = latestIVFluid != null ? $"{latestIVFluid.FluidType}, {latestIVFluid.VolumeInfused}ml" : "None";
-            IvFluidStatusText = latestIVFluid != null ? $"Last: {latestIVFluid.Time:HH:mm}" : "No record";
+            IvFluidLatestValue = latestIVFluid != null ? $"{latestIVFluid.FluidType}, {latestIVFluid.VolumeInfused}ml" : "";
+            IvFluidStatusText = latestIVFluid != null ? $"Last: {latestIVFluid.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestIVFluid.Time - DateTime.Now)}" : "";
 
             // Plan (not scheduled, just latest)
             var latestPlan = Patient.Plans?.OrderByDescending(e => e.Time).FirstOrDefault();
-            PlanLatestValue = latestPlan?.Category ?? "None";
-            PlanStatusText = latestPlan != null ? $"Last: {latestPlan.Time:HH:mm}" : "No record";
+            PlanLatestValue = latestPlan?.Notes ?? "";
+            PlanStatusText = latestPlan != null ? $"Last: {latestPlan.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPlan.Time - DateTime.Now)}" : "";
         }
 
         //private void LoadMeasurablesFromDatabase()

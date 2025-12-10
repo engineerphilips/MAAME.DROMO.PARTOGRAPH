@@ -78,14 +78,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Helpers
                 else
                 {
                     // No schedule for this measurement type
-                    status.DueStatusText = $"Last: {lastRecordedTime.Value:HH:mm}";
+                    status.DueStatusText = $"Last: {lastRecordedTime.Value:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(lastRecordedTime.Value - DateTime.Now)}";
                     status.ButtonColor = "LightGray";
                 }
             }
             else
             {
                 // No record yet
-                status.DueStatusText = "No record";
+                status.DueStatusText = "";
                 status.TimeSinceLastRecord = "Never";
                 status.ButtonColor = "#E0E0E0"; // Gray
             }
@@ -96,7 +96,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Helpers
         /// <summary>
         /// Formats a time span into a human-readable string
         /// </summary>
-        private static string FormatTimeSince(TimeSpan timeSpan)
+        public static string FormatTimeSince(TimeSpan timeSpan)
         {
             if (timeSpan.TotalMinutes < 1)
                 return "just now";

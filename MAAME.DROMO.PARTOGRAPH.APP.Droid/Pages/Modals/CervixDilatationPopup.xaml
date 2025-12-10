@@ -41,7 +41,7 @@
                     <core:SfTextInputLayout Hint="Cervix dilatation"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording dilatation">
-                        <editors:SfNumericEntry Value="{Binding Temperature}" />
+                        <editors:SfNumericEntry Value="{Binding Dilatation}" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Additional Notes"
