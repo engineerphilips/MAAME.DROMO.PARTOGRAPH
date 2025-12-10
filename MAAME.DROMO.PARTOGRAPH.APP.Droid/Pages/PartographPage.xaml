@@ -292,6 +292,22 @@
                        FontSize="Micro"
                        Margin="0,0,0,1" />
 
+                <buttons:SfButton Grid.Row="4" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenPainReliefPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding PainReliefLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding PainReliefStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
                 <Button Grid.Row="5" Grid.Column="1"
                        BackgroundColor="LightGray"
                        Padding="2"
@@ -318,6 +334,22 @@
                        FontSize="Micro"
                        Margin="0,0,0,1" />
 
+                <buttons:SfButton Grid.Row="5" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenOralFluidPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding OralFluidLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding OralFluidStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
                 <Button Grid.Row="6" Grid.Column="1"
                        BackgroundColor="LightGray"
                        Padding="2"
@@ -335,14 +367,30 @@
                     </Button.Content>
                 </Button>
 
-                <Label Grid.Row="6" Grid.Column="2" 
-                       Text="N" 
+                <Label Grid.Row="6" Grid.Column="2"
+                       Text="N"
                        BackgroundColor="LightGray"
                        HorizontalTextAlignment="Center"
                        VerticalTextAlignment="Center"
                        Padding="5"
                        FontSize="Micro"
                        Margin="0,0,0,1" />
+
+                <buttons:SfButton Grid.Row="6" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenPosturePopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding PostureLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding PostureStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
 
 
                 <Label Grid.Column="0" Grid.Row="8" Grid.RowSpan="6" Text="B
@@ -367,14 +415,30 @@
                     </Button.Content>
                 </Button>
 
-                <Label Grid.Row="8" Grid.Column="2" 
-       Text="&gt;110, ≥160" 
+                <Label Grid.Row="8" Grid.Column="2"
+       Text="&gt;110, ≥160"
        BackgroundColor="LightGray"
        HorizontalTextAlignment="Center"
        VerticalTextAlignment="Center"
        Padding="0,5"
        FontSize="7" Margin="0,0,0,1" />
-                
+
+                <buttons:SfButton Grid.Row="8" Grid.Column="3" BackgroundColor="{Binding FhrButtonColor}"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenFHRContractionPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding FhrLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding FhrStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
                 <Button Grid.Row="9" Grid.Column="1" 
                        Text="FHR deceleration" 
                        BackgroundColor="LightGray"
@@ -385,15 +449,31 @@
                         TextColor="Black"
                         Command="{Binding OpenFHRContractionPopupCommand}" />
 
-                <Label Grid.Row="9" Grid.Column="2" 
-       Text="L" 
+                <Label Grid.Row="9" Grid.Column="2"
+       Text="L"
        BackgroundColor="LightGray"
        HorizontalTextAlignment="Center"
        VerticalTextAlignment="Center"
        Padding="5"
        FontSize="Micro"
                        Margin="0,0,0,1" />
-               
+
+                <buttons:SfButton Grid.Row="9" Grid.Column="3" BackgroundColor="{Binding FhrButtonColor}"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenFHRContractionPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding FhrLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="Deceleration" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
 
                 <Button Grid.Row="10" Grid.Column="1"
                        BackgroundColor="LightGray"
@@ -420,6 +500,22 @@
        Padding="0,5"
        FontSize="9" Margin="0,0,0,1" />
 
+                <buttons:SfButton Grid.Row="10" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenAmnioticFluidPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding AmnioticFluidLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding AmnioticFluidStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
 
                 <Button Grid.Row="11" Grid.Column="1"
                        BackgroundColor="LightGray"
@@ -438,15 +534,31 @@
                     </Button.Content>
                 </Button>
 
-                <Label Grid.Row="11" Grid.Column="2" 
-       Text="P, T" 
+                <Label Grid.Row="11" Grid.Column="2"
+       Text="P, T"
        BackgroundColor="LightGray"
        HorizontalTextAlignment="Center"
        VerticalTextAlignment="Center"
        Padding="0,5"
        FontSize="Micro" Margin="0,0,0,1" />
 
-                
+                <buttons:SfButton Grid.Row="11" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenFetalPositionPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding FetalPositionLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding FetalPositionStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
+
                 <Button Grid.Row="12" Grid.Column="1" 
                        Text="Caput" 
                        BackgroundColor="LightGray"
@@ -457,15 +569,31 @@
                         TextColor="Black"
                         Command="{Binding OpenCaputPopupCommand}" />
 
-                <Label Grid.Row="12" Grid.Column="2" 
-       Text="+++" 
+                <Label Grid.Row="12" Grid.Column="2"
+       Text="+++"
        BackgroundColor="LightGray"
        HorizontalTextAlignment="Center"
        VerticalTextAlignment="Center"
        Padding="0,5"
        FontSize="Micro" Margin="0,0,0,1" />
 
-                
+                <buttons:SfButton Grid.Row="12" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenCaputPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding CaputLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding CaputStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
+
 
                 <Button Grid.Row="13" Grid.Column="1" 
                        Text="Moulding" 
@@ -477,13 +605,29 @@
                         TextColor="Black"
                         Command="{Binding OpenMouldingPopupCommand}" />
 
-                <Label Grid.Row="13" Grid.Column="2" 
-       Text="+++" 
+                <Label Grid.Row="13" Grid.Column="2"
+       Text="+++"
        BackgroundColor="LightGray"
        HorizontalTextAlignment="Center"
        VerticalTextAlignment="Center"
        Padding="0,5"
        FontSize="Micro" Margin="0,0,0,1" />
+
+                <buttons:SfButton Grid.Row="13" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenMouldingPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding MouldingLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding MouldingStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
 
 
                 <Label Grid.Column="0" Grid.Row="15" Grid.RowSpan="5" Text="W
@@ -516,6 +660,22 @@
        VerticalTextAlignment="Center"
        Padding="0,5"
        FontSize="8" Margin="0,0,0,1" />
+
+                <buttons:SfButton Grid.Row="15" Grid.Column="3" Grid.RowSpan="3" BackgroundColor="{Binding BpButtonColor}"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenBpPulsePopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="{Binding BpLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding BpStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
 
 
 
@@ -598,6 +758,22 @@
        Padding="0,4"
        FontSize="8" Margin="0,0,0,1" />
 
+                <buttons:SfButton Grid.Row="18" Grid.Column="3" BackgroundColor="{Binding TemperatureButtonColor}"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenTemperaturePopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding TemperatureLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding TemperatureStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
 
 
                 <Button Grid.Row="19" Grid.Column="1"
@@ -617,13 +793,29 @@
                     </Button.Content>
                 </Button>
 
-                <Label Grid.Row="19" Grid.Column="2" 
-       Text="P++, A++" 
+                <Label Grid.Row="19" Grid.Column="2"
+       Text="P++, A++"
        BackgroundColor="LightGray"
        HorizontalTextAlignment="Center"
        VerticalTextAlignment="Center"
        Padding="0,4"
        FontSize="8" Margin="0,0,0,1" />
+
+                <buttons:SfButton Grid.Row="19" Grid.Column="3" BackgroundColor="{Binding UrineButtonColor}"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenUrinePopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding UrineLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding UrineStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
 
 
 
@@ -669,6 +861,22 @@
        VerticalTextAlignment="Center"
        Padding="0,4"
        FontSize="8" Margin="0,0,0,1" />
+
+                <buttons:SfButton Grid.Row="21" Grid.Column="3" Grid.RowSpan="2" BackgroundColor="{Binding ContractionButtonColor}"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenFHRContractionPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="{Binding ContractionLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding ContractionStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
 
 
                 <Button Grid.Row="22" Grid.Column="1"
@@ -755,15 +963,29 @@
        Padding="0,4"
        FontSize="8" Margin="0,0,0,1" />
 
-                <Label Grid.Row="29" Grid.Column="2" 
-       Text="≥ 6h" 
+                <Label Grid.Row="29" Grid.Column="2"
+       Text="≥ 6h"
        BackgroundColor="LightGray"
        HorizontalTextAlignment="Center"
        VerticalTextAlignment="Center"
        Padding="0,4"
        FontSize="8" Margin="0,0,0,1" />
 
-                
+                <buttons:SfButton Grid.Row="24" Grid.Column="3" Grid.RowSpan="6" BackgroundColor="{Binding CervixDilatationButtonColor}"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenCervixDilatationPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="{Binding CervixDilatationLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding CervixDilatationStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
 
 
                 <Button Grid.Row="31" Grid.Column="1" Grid.RowSpan="6"
@@ -824,14 +1046,29 @@
        Padding="0,4"
        FontSize="8" Margin="0,0,0,1" />
 
-                <Label Grid.Row="36" Grid.Column="2" 
-       Text="" 
+                <Label Grid.Row="36" Grid.Column="2"
+       Text=""
        BackgroundColor="LightGray"
        HorizontalTextAlignment="Center"
        VerticalTextAlignment="Center"
        Padding="0,4"
        FontSize="8" Margin="0,0,0,1" />
 
+                <buttons:SfButton Grid.Row="31" Grid.Column="3" Grid.RowSpan="6" BackgroundColor="{Binding HeadDescentButtonColor}"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenHeadDescentPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="{Binding HeadDescentLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding HeadDescentStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
 
 
                 <Label Grid.Column="0" Grid.Row="38" Grid.RowSpan="3" Text="M
@@ -847,38 +1084,86 @@
 
 
                 <Button Grid.Row="38" Grid.Column="1" Grid.ColumnSpan="2"
-                       Text="Oxytocin (U/L, drop/min)" 
+                       Text="Oxytocin (U/L, drop/min)"
                        BackgroundColor="LightGray"
                        Padding="0"
                        FontSize="Micro"
-                       Margin="0,0,1,1" 
-                        CornerRadius="0" 
+                       Margin="0,0,1,1"
+                        CornerRadius="0"
                         TextColor="Black"
                         Command="{Binding OpenOxytocinPopupCommand}" />
 
-                
+                <buttons:SfButton Grid.Row="38" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenOxytocinPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding OxytocinLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding OxytocinStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
+
 
                 <Button Grid.Row="39" Grid.Column="1" Grid.ColumnSpan="2"
-                       Text="Medicine" 
+                       Text="Medicine"
                        BackgroundColor="LightGray"
                        Padding="0"
                        FontSize="Micro"
-                       Margin="0,0,1,1" 
-                        CornerRadius="0" 
+                       Margin="0,0,1,1"
+                        CornerRadius="0"
                         TextColor="Black"
                         Command="{Binding OpenMedicinePopupCommand}" />
 
-                
+                <buttons:SfButton Grid.Row="39" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenMedicinePopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding MedicationLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding MedicationStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
+
 
                 <Button Grid.Row="40" Grid.Column="1" Grid.ColumnSpan="2"
-                       Text="IV Fluids" 
+                       Text="IV Fluids"
                        BackgroundColor="LightGray"
                        Padding="0"
                        FontSize="Micro"
-                       Margin="0,0,1,1" 
-                        CornerRadius="0" 
+                       Margin="0,0,1,1"
+                        CornerRadius="0"
                         TextColor="Black"
                         Command="{Binding OpenIVFluidsPopupCommand}" />
+
+                <buttons:SfButton Grid.Row="40" Grid.Column="3" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenIVFluidsPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding IvFluidLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding IvFluidStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
 
 
                 <Label Grid.Column="0" Grid.Row="42" Grid.RowSpan="4" Text="                       
@@ -909,7 +1194,23 @@
                     </Button.Content>
                 </Button>
 
-                
+                <buttons:SfButton Grid.Row="42" Grid.Column="3" Grid.RowSpan="2" BackgroundColor="{Binding AssessmentButtonColor}"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenAssessmentPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="{Binding AssessmentLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding AssessmentStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
+
+
 
                 <Button Grid.Row="44" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2"
                        BackgroundColor="LightGray"
@@ -927,6 +1228,22 @@
                         </VerticalStackLayout>
                     </Button.Content>
                 </Button>
+
+                <buttons:SfButton Grid.Row="44" Grid.Column="3" Grid.RowSpan="2" BackgroundColor="LightGray"
+                       Padding="5"
+                       FontSize="Micro"
+                       Margin="0,0,0,1"
+                        CornerRadius="0"
+                        Command="{Binding OpenPlanPopupCommand}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="{Binding PlanLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding PlanStatusText, Mode=OneWay}" FontSize="8" Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
 
                 
             </Grid>
