@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Helpers;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
@@ -122,6 +123,151 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         bool _isBusy;
+
+        // Measurement Status Properties
+        [ObservableProperty]
+        private string _fhrLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _fhrStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _fhrButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _contractionLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _contractionStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _contractionButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _bpLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _bpStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _bpButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _temperatureLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _temperatureStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _temperatureButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _urineLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _urineStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _urineButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _cervixDilatationLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _cervixDilatationStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _cervixDilatationButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _headDescentLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _headDescentStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _headDescentButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _assessmentLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _assessmentStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _assessmentButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _companionLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _companionStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _painReliefLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _painReliefStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _oralFluidLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _oralFluidStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _postureLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _postureStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _amnioticFluidLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _amnioticFluidStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _fetalPositionLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _fetalPositionStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _caputLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _caputStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _mouldingLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _mouldingStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _oxytocinLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _oxytocinStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _medicationLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _medicationStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _ivFluidLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _ivFluidStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _planLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _planStatusText = string.Empty;
 
         //[ObservableProperty]
         //private ObservableCollection<TimeSlots> _chartinghours;
@@ -493,6 +639,147 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             return DateTime.Now;
         }
 
+        /// <summary>
+        /// Updates the status of all measurables with latest values and due times
+        /// </summary>
+        private void UpdateMeasurementStatuses()
+        {
+            if (Patient == null)
+                return;
+
+            // FHR Status
+            var latestFHR = Patient.Fhrs?.OrderByDescending(e => e.Time).FirstOrDefault();
+            var fhrStatus = MeasurementStatusHelper.CalculateStatus<FHR>(
+                latestFHR?.Time,
+                latestFHR != null ? $"{latestFHR.Rate} bpm" : "");
+            FhrLatestValue = fhrStatus.LatestValue;
+            FhrStatusText = fhrStatus.DueStatusText;
+            FhrButtonColor = fhrStatus.ButtonColor;
+
+            // Contraction Status
+            var latestContraction = Patient.Contractions?.OrderByDescending(e => e.Time).FirstOrDefault();
+            var contractionStatus = MeasurementStatusHelper.CalculateStatus<Contraction>(
+                latestContraction?.Time,
+                latestContraction != null ? $"{latestContraction.FrequencyPer10Min}/10min, {latestContraction.DurationSeconds}s" : "");
+            ContractionLatestValue = contractionStatus.LatestValue;
+            ContractionStatusText = contractionStatus.DueStatusText;
+            ContractionButtonColor = contractionStatus.ButtonColor;
+
+            // BP/Pulse Status
+            var latestBP = Patient.BPs?.OrderByDescending(e => e.Time).FirstOrDefault();
+            var bpStatus = MeasurementStatusHelper.CalculateStatus<BP>(
+                latestBP?.Time,
+                latestBP != null ? $"{latestBP.Systolic}/{latestBP.Diastolic}, P:{latestBP.Pulse}" : "");
+            BpLatestValue = bpStatus.LatestValue;
+            BpStatusText = bpStatus.DueStatusText;
+            BpButtonColor = bpStatus.ButtonColor;
+
+            // Temperature Status
+            var latestTemp = Patient.Temperatures?.OrderByDescending(e => e.Time).FirstOrDefault();
+            var tempStatus = MeasurementStatusHelper.CalculateStatus<Temperature>(
+                latestTemp?.Time,
+                latestTemp != null ? $"{latestTemp.Rate:F1}°C" : "");
+            TemperatureLatestValue = tempStatus.LatestValue;
+            TemperatureStatusText = tempStatus.DueStatusText;
+            TemperatureButtonColor = tempStatus.ButtonColor;
+
+            // Urine Status
+            var latestUrine = Patient.Urines?.OrderByDescending(e => e.Time).FirstOrDefault();
+            var urineStatus = MeasurementStatusHelper.CalculateStatus<Urine>(
+                latestUrine?.Time,
+                latestUrine != null ? $"P:{latestUrine.Protein}, A:{latestUrine.Acetone}" : "");
+            UrineLatestValue = urineStatus.LatestValue;
+            UrineStatusText = urineStatus.DueStatusText;
+            UrineButtonColor = urineStatus.ButtonColor;
+
+            // Cervix Dilatation Status
+            var latestDilatation = Patient.Dilatations?.OrderByDescending(e => e.Time).FirstOrDefault();
+            var dilatationStatus = MeasurementStatusHelper.CalculateStatus<CervixDilatation>(
+                latestDilatation?.Time,
+                latestDilatation != null ? $"{latestDilatation.DilatationCm} cm" : "");
+            CervixDilatationLatestValue = dilatationStatus.LatestValue;
+            CervixDilatationStatusText = dilatationStatus.DueStatusText;
+            CervixDilatationButtonColor = dilatationStatus.ButtonColor;
+
+            // Head Descent Status
+            var latestHeadDescent = Patient.HeadDescents?.OrderByDescending(e => e.Time).FirstOrDefault();
+            var headDescentStatus = MeasurementStatusHelper.CalculateStatus<HeadDescent>(
+                latestHeadDescent?.Time,
+                latestHeadDescent != null ? $"Station {latestHeadDescent.Station}" : "");
+            HeadDescentLatestValue = headDescentStatus.LatestValue;
+            HeadDescentStatusText = headDescentStatus.DueStatusText;
+            HeadDescentButtonColor = headDescentStatus.ButtonColor;
+
+            // Assessment Status
+            var latestAssessment = Patient.Assessments?.OrderByDescending(e => e.Time).FirstOrDefault();
+            var assessmentStatus = MeasurementStatusHelper.CalculateStatus<Assessment>(
+                latestAssessment?.Time,
+                latestAssessment != null ? latestAssessment.Category : "");
+            AssessmentLatestValue = assessmentStatus.LatestValue;
+            AssessmentStatusText = assessmentStatus.DueStatusText;
+            AssessmentButtonColor = assessmentStatus.ButtonColor;
+
+            // Companion (not scheduled, just latest)
+            var latestCompanion = Patient.Companions?.OrderByDescending(e => e.Time).FirstOrDefault();
+            CompanionLatestValue = latestCompanion?.CompanionDisplay ?? "None";
+            CompanionStatusText = latestCompanion != null ? $"Last: {latestCompanion.Time:HH:mm}" : "No record";
+
+            // Pain Relief (not scheduled, just latest)
+            var latestPainRelief = Patient.PainReliefs?.OrderByDescending(e => e.Time).FirstOrDefault();
+            PainReliefLatestValue = latestPainRelief?.PainReliefDisplay ?? "None";
+            PainReliefStatusText = latestPainRelief != null ? $"Last: {latestPainRelief.Time:HH:mm}" : "No record";
+
+            // Oral Fluid (not scheduled, just latest)
+            var latestOralFluid = Patient.OralFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
+            OralFluidLatestValue = latestOralFluid?.OralFluidDisplay ?? "None";
+            OralFluidStatusText = latestOralFluid != null ? $"Last: {latestOralFluid.Time:HH:mm}" : "No record";
+
+            // Posture (not scheduled, just latest)
+            var latestPosture = Patient.Postures?.OrderByDescending(e => e.Time).FirstOrDefault();
+            PostureLatestValue = latestPosture?.PostureDisplay ?? "None";
+            PostureStatusText = latestPosture != null ? $"Last: {latestPosture.Time:HH:mm}" : "No record";
+
+            // Amniotic Fluid (not scheduled, just latest)
+            var latestAmnioticFluid = Patient.AmnioticFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
+            AmnioticFluidLatestValue = latestAmnioticFluid?.Color ?? "None";
+            AmnioticFluidStatusText = latestAmnioticFluid != null ? $"Last: {latestAmnioticFluid.Time:HH:mm}" : "No record";
+
+            // Fetal Position (not scheduled, just latest)
+            var latestFetalPosition = Patient.FetalPositions?.OrderByDescending(e => e.Time).FirstOrDefault();
+            FetalPositionLatestValue = latestFetalPosition?.Position ?? "None";
+            FetalPositionStatusText = latestFetalPosition != null ? $"Last: {latestFetalPosition.Time:HH:mm}" : "No record";
+
+            // Caput (not scheduled, just latest)
+            var latestCaput = Patient.Caputs?.OrderByDescending(e => e.Time).FirstOrDefault();
+            CaputLatestValue = latestCaput?.Degree ?? "None";
+            CaputStatusText = latestCaput != null ? $"Last: {latestCaput.Time:HH:mm}" : "No record";
+
+            // Moulding (not scheduled, just latest)
+            var latestMoulding = Patient.Mouldings?.OrderByDescending(e => e.Time).FirstOrDefault();
+            MouldingLatestValue = latestMoulding?.Degree ?? "None";
+            MouldingStatusText = latestMoulding != null ? $"Last: {latestMoulding.Time:HH:mm}" : "No record";
+
+            // Oxytocin (not scheduled, just latest)
+            var latestOxytocin = Patient.Oxytocins?.OrderByDescending(e => e.Time).FirstOrDefault();
+            OxytocinLatestValue = latestOxytocin != null ? $"{latestOxytocin.DoseMUnitsPerMin} mU/min" : "None";
+            OxytocinStatusText = latestOxytocin != null ? $"Last: {latestOxytocin.Time:HH:mm}" : "No record";
+
+            // Medication (not scheduled, just latest)
+            var latestMedication = Patient.Medications?.OrderByDescending(e => e.Time).FirstOrDefault();
+            MedicationLatestValue = latestMedication?.MedicineName ?? "None";
+            MedicationStatusText = latestMedication != null ? $"Last: {latestMedication.Time:HH:mm}" : "No record";
+
+            // IV Fluid (not scheduled, just latest)
+            var latestIVFluid = Patient.IVFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
+            IvFluidLatestValue = latestIVFluid != null ? $"{latestIVFluid.FluidType}, {latestIVFluid.VolumeInfused}ml" : "None";
+            IvFluidStatusText = latestIVFluid != null ? $"Last: {latestIVFluid.Time:HH:mm}" : "No record";
+
+            // Plan (not scheduled, just latest)
+            var latestPlan = Patient.Plans?.OrderByDescending(e => e.Time).FirstOrDefault();
+            PlanLatestValue = latestPlan?.Category ?? "None";
+            PlanStatusText = latestPlan != null ? $"Last: {latestPlan.Time:HH:mm}" : "No record";
+        }
+
         //private void LoadMeasurablesFromDatabase()
         //{
         //    if (_patient?.ID == null)
@@ -758,6 +1045,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 CompanionCurrentIndex = 0;
                 CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
+
+                // Update all measurement statuses with latest values and due times
+                UpdateMeasurementStatuses();
             }
             catch (Exception e)
             {
