@@ -33,10 +33,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _staffName = "Dr. Phil"; // From authentication
 
+        [ObservableProperty]
+        private string _searchQuery = string.Empty;
+
+        [ObservableProperty]
+        private bool _hasAlerts;
+
+        [ObservableProperty]
+        private bool _hasCriticalPatients;
+
         public HomePageModel(PartographRepository partographRepository, ModalErrorHandler errorHandler)
         {
             _partographRepository = partographRepository;
             _errorHandler = errorHandler;
+        }
+
+        partial void OnDashboardStatsChanged(DashboardStats value)
+        {
+            HasAlerts = value.ActiveAlerts.Any();
+            HasCriticalPatients = value.CriticalPatients.Any();
         }
 
         private static string GetCurrentShift()
@@ -120,6 +135,61 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             //await _patientRepository.SaveItemAsync(patient);
             await AppShell.DisplaySnackbarAsync($"Emergency alert sent for {patient.Name}");
             await Refresh();
+        }
+
+        [RelayCommand]
+        private async Task NavigateToEmergencyPatients()
+        {
+            // Navigate to filtered view showing only emergency patients
+            await Shell.Current.GoToAsync("activepatients?filter=emergency");
+        }
+
+        [RelayCommand]
+        private async Task NavigateToCriticalPatient(CriticalPatientInfo patient)
+        {
+            if (patient?.PatientId != null)
+            {
+                await Shell.Current.GoToAsync($"partograph?id={patient.PatientId}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task NavigateToAlertPatient(PatientAlert alert)
+        {
+            if (alert?.PatientId != null)
+            {
+                await Shell.Current.GoToAsync($"partograph?id={alert.PatientId}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task PerformQuickSearch()
+        {
+            if (string.IsNullOrWhiteSpace(SearchQuery))
+                return;
+
+            try
+            {
+                // Navigate to active patients with search query
+                await Shell.Current.GoToAsync($"activepatients?search={Uri.EscapeDataString(SearchQuery)}");
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+            }
+        }
+
+        [RelayCommand]
+        private async Task NavigatedTo()
+        {
+            try
+            {
+                await LoadData();
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
         }
     }
 }

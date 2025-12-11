@@ -496,8 +496,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 // Get counts by status
                 var countCmd = connection.CreateCommand();
                 countCmd.CommandText = @"
-                SELECT status, COUNT(*) FROM Tbl_Partograph GROUP BY status;
-                SELECT COUNT(*) FROM Tbl_Partograph WHERE DATE(deliveryTime) = DATE('now');";
+                SELECT status, COUNT(*) FROM Tbl_Partograph WHERE deleted = 0 GROUP BY status;
+                SELECT COUNT(*) FROM Tbl_Partograph WHERE DATE(deliveryTime) = DATE('now') AND deleted = 0;";
 
                 await using var reader = await countCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -524,6 +524,94 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     stats.CompletedToday = reader.GetInt32(0);
                 }
+
+                // Get average delivery time for completed cases today
+                var avgDeliveryCmd = connection.CreateCommand();
+                avgDeliveryCmd.CommandText = @"
+                SELECT AVG(JULIANDAY(deliveryTime) - JULIANDAY(laborStartTime)) * 24
+                FROM Tbl_Partograph
+                WHERE deliveryTime IS NOT NULL
+                  AND laborStartTime IS NOT NULL
+                  AND DATE(deliveryTime) = DATE('now')
+                  AND deleted = 0";
+                var avgDelivery = await avgDeliveryCmd.ExecuteScalarAsync();
+                stats.AvgDeliveryTime = avgDelivery != DBNull.Value && avgDelivery != null
+                    ? Math.Round(Convert.ToDouble(avgDelivery), 1) : 0;
+
+                // Get average active labor time
+                var avgActiveCmd = connection.CreateCommand();
+                avgActiveCmd.CommandText = @"
+                SELECT AVG(JULIANDAY(COALESCE(deliveryTime, DATETIME('now'))) - JULIANDAY(laborStartTime)) * 24
+                FROM Tbl_Partograph
+                WHERE laborStartTime IS NOT NULL
+                  AND status IN (@active, @completed)
+                  AND deleted = 0";
+                avgActiveCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                avgActiveCmd.Parameters.AddWithValue("@completed", (int)LaborStatus.Completed);
+                var avgActive = await avgActiveCmd.ExecuteScalarAsync();
+                stats.AvgActiveLaborTime = avgActive != DBNull.Value && avgActive != null
+                    ? Math.Round(Convert.ToDouble(avgActive), 1) : 0;
+
+                // Get admissions count
+                var admissionsCmd = connection.CreateCommand();
+                admissionsCmd.CommandText = @"
+                SELECT COUNT(*) FROM Tbl_Partograph
+                WHERE DATE(admissionDate) = DATE('now') AND deleted = 0";
+                var admToday = await admissionsCmd.ExecuteScalarAsync();
+                stats.AdmissionsToday = admToday != null ? Convert.ToInt32(admToday) : 0;
+
+                // Get shift-based admissions (assuming shifts: Morning 7-15, Evening 15-23, Night 23-7)
+                var currentHour = DateTime.Now.Hour;
+                string shiftStart, shiftEnd;
+                if (currentHour >= 7 && currentHour < 15)
+                {
+                    shiftStart = "07:00:00";
+                    shiftEnd = "15:00:00";
+                }
+                else if (currentHour >= 15 && currentHour < 23)
+                {
+                    shiftStart = "15:00:00";
+                    shiftEnd = "23:00:00";
+                }
+                else
+                {
+                    shiftStart = "23:00:00";
+                    shiftEnd = "07:00:00";
+                }
+
+                var shiftAdmCmd = connection.CreateCommand();
+                if (currentHour >= 23 || currentHour < 7) // Night shift crosses midnight
+                {
+                    shiftAdmCmd.CommandText = @"
+                    SELECT COUNT(*) FROM Tbl_Partograph
+                    WHERE deleted = 0
+                      AND ((DATE(admissionDate) = DATE('now', '-1 day') AND TIME(admissionDate) >= @shiftStart)
+                           OR (DATE(admissionDate) = DATE('now') AND TIME(admissionDate) < @shiftEnd))";
+                }
+                else
+                {
+                    shiftAdmCmd.CommandText = @"
+                    SELECT COUNT(*) FROM Tbl_Partograph
+                    WHERE DATE(admissionDate) = DATE('now')
+                      AND TIME(admissionDate) >= @shiftStart
+                      AND TIME(admissionDate) < @shiftEnd
+                      AND deleted = 0";
+                }
+                shiftAdmCmd.Parameters.AddWithValue("@shiftStart", shiftStart);
+                shiftAdmCmd.Parameters.AddWithValue("@shiftEnd", shiftEnd);
+                var shiftAdm = await shiftAdmCmd.ExecuteScalarAsync();
+                stats.AdmissionsThisShift = shiftAdm != null ? Convert.ToInt32(shiftAdm) : 0;
+
+                // Get critical patients
+                stats.CriticalPatients = await GetCriticalPatientsAsync(connection);
+
+                // Get active alerts
+                stats.ActiveAlerts = await GetActiveAlertsAsync(connection);
+
+                // Count special categories
+                stats.ProlongedLaborCount = stats.CriticalPatients.Count(c => c.HoursInLabor > 12);
+                stats.HighRiskCount = stats.CriticalPatients.Count(c => c.Severity >= AlertSeverity.Critical);
+                stats.OverdueChecksCount = stats.CriticalPatients.Count(c => c.IsOverdueCheck);
             }
             catch (Exception e)
             {
@@ -531,6 +619,235 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
 
             return stats;
+        }
+
+        private async Task<List<CriticalPatientInfo>> GetCriticalPatientsAsync(SqliteConnection connection)
+        {
+            var criticalPatients = new List<CriticalPatientInfo>();
+
+            try
+            {
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = @"
+                SELECT
+                    p.ID,
+                    pt.firstName || ' ' || pt.lastName as PatientName,
+                    pt.hospitalNumber,
+                    p.laborStartTime,
+                    p.cervicalDilationOnAdmission,
+                    p.status,
+                    MAX(fhr.time) as LastFHRTime,
+                    (SELECT f.value FROM Tbl_FHR f WHERE f.partographID = p.ID ORDER BY f.time DESC LIMIT 1) as LastFHR
+                FROM Tbl_Partograph p
+                INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
+                LEFT JOIN Tbl_FHR fhr ON fhr.partographID = p.ID
+                WHERE p.status IN (@active, @emergency)
+                  AND p.deleted = 0
+                  AND pt.deleted = 0
+                GROUP BY p.ID, pt.firstName, pt.lastName, pt.hospitalNumber, p.laborStartTime, p.cervicalDilationOnAdmission, p.status
+                ORDER BY
+                    CASE WHEN p.status = @emergency THEN 0 ELSE 1 END,
+                    JULIANDAY(DATETIME('now')) - JULIANDAY(p.laborStartTime) DESC
+                LIMIT 5";
+
+                cmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                cmd.Parameters.AddWithValue("@emergency", (int)LaborStatus.Emergency);
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    var patientId = Guid.Parse(reader.GetString(0));
+                    var patientName = reader.GetString(1);
+                    var hospitalNumber = reader.IsDBNull(2) ? "" : reader.GetString(2);
+                    var laborStart = reader.IsDBNull(3) ? (DateTime?)null : reader.GetDateTime(3);
+                    var dilation = reader.IsDBNull(4) ? (int?)null : reader.GetInt32(4);
+                    var status = (LaborStatus)reader.GetInt32(5);
+                    var lastFHRTime = reader.IsDBNull(6) ? (DateTime?)null : reader.GetDateTime(6);
+                    var lastFHR = reader.IsDBNull(7) ? (int?)null : reader.GetInt32(7);
+
+                    var hoursInLabor = laborStart.HasValue
+                        ? (int)(DateTime.Now - laborStart.Value).TotalHours
+                        : 0;
+
+                    var timeSinceLastCheck = lastFHRTime.HasValue
+                        ? (DateTime.Now - lastFHRTime.Value).TotalHours
+                        : 999;
+
+                    string reason = "";
+                    var severity = AlertSeverity.Info;
+
+                    if (status == LaborStatus.Emergency)
+                    {
+                        reason = "Emergency Status";
+                        severity = AlertSeverity.Emergency;
+                    }
+                    else if (hoursInLabor > 18)
+                    {
+                        reason = $"Prolonged labor ({hoursInLabor}h)";
+                        severity = AlertSeverity.Critical;
+                    }
+                    else if (hoursInLabor > 12)
+                    {
+                        reason = $"Extended labor ({hoursInLabor}h)";
+                        severity = AlertSeverity.Warning;
+                    }
+                    else if (timeSinceLastCheck > 1)
+                    {
+                        reason = "Overdue for assessment";
+                        severity = AlertSeverity.Warning;
+                    }
+                    else if (lastFHR.HasValue && (lastFHR < 110 || lastFHR > 160))
+                    {
+                        reason = $"Abnormal FHR ({lastFHR} bpm)";
+                        severity = AlertSeverity.Critical;
+                    }
+                    else
+                    {
+                        reason = "Active monitoring";
+                        severity = AlertSeverity.Info;
+                    }
+
+                    criticalPatients.Add(new CriticalPatientInfo
+                    {
+                        PatientId = patientId,
+                        PatientName = patientName,
+                        HospitalNumber = hospitalNumber,
+                        ReasonForConcern = reason,
+                        Severity = severity,
+                        HoursInLabor = hoursInLabor,
+                        CurrentDilation = dilation,
+                        LastFetalHeartRate = lastFHR,
+                        LastCheckTime = lastFHRTime ?? DateTime.Now,
+                        TimeInLabor = laborStart.HasValue ? Helper.ElapseTimeCalc.PeriodElapseTimeLower(laborStart.Value, DateTime.Now) : "",
+                        IsOverdueCheck = timeSinceLastCheck > 1,
+                        Status = status
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting critical patients");
+            }
+
+            return criticalPatients;
+        }
+
+        private async Task<List<PatientAlert>> GetActiveAlertsAsync(SqliteConnection connection)
+        {
+            var alerts = new List<PatientAlert>();
+
+            try
+            {
+                // Get patients with abnormal FHR
+                var fhrCmd = connection.CreateCommand();
+                fhrCmd.CommandText = @"
+                SELECT
+                    p.ID,
+                    pt.firstName || ' ' || pt.lastName as PatientName,
+                    fhr.value,
+                    fhr.time
+                FROM Tbl_Partograph p
+                INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
+                INNER JOIN Tbl_FHR fhr ON fhr.partographID = p.ID
+                WHERE p.status IN (@active, @emergency)
+                  AND p.deleted = 0
+                  AND pt.deleted = 0
+                  AND (fhr.value < 110 OR fhr.value > 160)
+                  AND fhr.time IN (
+                      SELECT MAX(f2.time)
+                      FROM Tbl_FHR f2
+                      WHERE f2.partographID = p.ID
+                  )
+                ORDER BY fhr.time DESC
+                LIMIT 10";
+
+                fhrCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                fhrCmd.Parameters.AddWithValue("@emergency", (int)LaborStatus.Emergency);
+
+                await using var fhrReader = await fhrCmd.ExecuteReaderAsync();
+                while (await fhrReader.ReadAsync())
+                {
+                    var patientId = Guid.Parse(fhrReader.GetString(0));
+                    var patientName = fhrReader.GetString(1);
+                    var fhrValue = fhrReader.GetInt32(2);
+                    var alertTime = fhrReader.GetDateTime(3);
+
+                    var severity = fhrValue < 100 || fhrValue > 180
+                        ? AlertSeverity.Emergency
+                        : AlertSeverity.Critical;
+
+                    alerts.Add(new PatientAlert
+                    {
+                        AlertId = Guid.NewGuid(),
+                        PatientId = patientId,
+                        PatientName = patientName,
+                        AlertMessage = $"Abnormal fetal heart rate: {fhrValue} bpm",
+                        Type = AlertType.FetalHeartRate,
+                        Severity = severity,
+                        AlertTime = alertTime,
+                        TimeAgo = Helper.ElapseTimeCalc.PeriodElapseTimeLower(alertTime, DateTime.Now)
+                    });
+                }
+
+                // Get prolonged labor alerts
+                var prolongedCmd = connection.CreateCommand();
+                prolongedCmd.CommandText = @"
+                SELECT
+                    p.ID,
+                    pt.firstName || ' ' || pt.lastName as PatientName,
+                    p.laborStartTime
+                FROM Tbl_Partograph p
+                INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
+                WHERE p.status = @active
+                  AND p.deleted = 0
+                  AND pt.deleted = 0
+                  AND p.laborStartTime IS NOT NULL
+                  AND JULIANDAY(DATETIME('now')) - JULIANDAY(p.laborStartTime) > 0.5
+                ORDER BY p.laborStartTime ASC
+                LIMIT 10";
+
+                prolongedCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+
+                await using var prolongedReader = await prolongedCmd.ExecuteReaderAsync();
+                while (await prolongedReader.ReadAsync())
+                {
+                    var patientId = Guid.Parse(prolongedReader.GetString(0));
+                    var patientName = prolongedReader.GetString(1);
+                    var laborStart = prolongedReader.GetDateTime(2);
+                    var hoursInLabor = (int)(DateTime.Now - laborStart).TotalHours;
+
+                    var severity = hoursInLabor > 18
+                        ? AlertSeverity.Critical
+                        : hoursInLabor > 12
+                            ? AlertSeverity.Warning
+                            : AlertSeverity.Info;
+
+                    alerts.Add(new PatientAlert
+                    {
+                        AlertId = Guid.NewGuid(),
+                        PatientId = patientId,
+                        PatientName = patientName,
+                        AlertMessage = $"Labor duration: {hoursInLabor} hours",
+                        Type = AlertType.ProlongedLabor,
+                        Severity = severity,
+                        AlertTime = laborStart,
+                        TimeAgo = Helper.ElapseTimeCalc.PeriodElapseTimeLower(laborStart, DateTime.Now)
+                    });
+                }
+
+                // Sort by severity and time
+                alerts = alerts
+                    .OrderByDescending(a => a.Severity)
+                    .ThenByDescending(a => a.AlertTime)
+                    .Take(10)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting active alerts");
+            }
+
+            return alerts;
         }
 
         /// <summary>
