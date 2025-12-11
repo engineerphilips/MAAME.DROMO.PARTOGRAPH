@@ -109,8 +109,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     feedbackdetails TEXT,
                     referralletterpath TEXT,
                     referralformgenerated INTEGER NOT NULL DEFAULT 0,
-                    formgenerationtime TEXT,
-                    handlername TEXT,
+                    formgenerationtime TEXT, 
                     handler TEXT,
                     notes TEXT,
                     createdtime INTEGER NOT NULL,
@@ -263,7 +262,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 partographsent, ivlineinsitu, catheterinsitu, oxygenprovided, equipmentsent,
                 status, acceptedtime, completedtime, outcomenotes, feedbackreceived,
                 feedbackdetails, referralletterpath, referralformgenerated, formgenerationtime,
-                handlername, handler, notes, createdtime, updatedtime, deviceid, origindeviceid,
+                handler, notes, createdtime, updatedtime, deviceid, origindeviceid,
                 syncstatus, version, serverversion, deleted, datahash
             ) VALUES (
                 @id, @partographid, @referraltime, @referraltype, @urgency, @referringfacilityname,
@@ -287,7 +286,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 @partographsent, @ivlineinsitu, @catheterinsitu, @oxygenprovided, @equipmentsent,
                 @status, @acceptedtime, @completedtime, @outcomenotes, @feedbackreceived,
                 @feedbackdetails, @referralletterpath, @referralformgenerated, @formgenerationtime,
-                @handlername, @handler, @notes, @createdtime, @updatedtime, @deviceid, @origindeviceid,
+                @handler, @notes, @createdtime, @updatedtime, @deviceid, @origindeviceid,
                 @syncstatus, @version, @serverversion, @deleted, @datahash
             )";
         }
@@ -335,8 +334,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 completedtime = @completedtime, outcomenotes = @outcomenotes,
                 feedbackreceived = @feedbackreceived, feedbackdetails = @feedbackdetails,
                 referralletterpath = @referralletterpath, referralformgenerated = @referralformgenerated,
-                formgenerationtime = @formgenerationtime, handlername = @handlername,
-                handler = @handler, notes = @notes, updatedtime = @updatedtime,
+                formgenerationtime = @formgenerationtime, handler = @handler, notes = @notes, updatedtime = @updatedtime,
                 syncstatus = 0, version = @version, datahash = @datahash
             WHERE ID = @id";
         }
@@ -426,7 +424,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@referralletterpath", item.ReferralLetterPath ?? string.Empty);
             cmd.Parameters.AddWithValue("@referralformgenerated", item.ReferralFormGenerated ? 1 : 0);
             cmd.Parameters.AddWithValue("@formgenerationtime", item.FormGenerationTime?.ToString("o") ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@handlername", item.HandlerName ?? string.Empty);
             cmd.Parameters.AddWithValue("@handler", item.Handler?.ToString() ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? string.Empty);
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
@@ -527,7 +524,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ReferralLetterPath = reader["referralletterpath"]?.ToString() ?? string.Empty,
                 ReferralFormGenerated = Convert.ToBoolean(reader["referralformgenerated"]),
                 FormGenerationTime = reader["formgenerationtime"] == DBNull.Value ? null : DateTime.Parse(reader["formgenerationtime"].ToString()),
-                HandlerName = reader["handlername"]?.ToString() ?? string.Empty,
                 Handler = reader["handler"] == DBNull.Value ? null : Guid.Parse(reader["handler"].ToString()),
                 Notes = reader["notes"]?.ToString() ?? string.Empty,
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),

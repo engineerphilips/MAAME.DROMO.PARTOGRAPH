@@ -26,7 +26,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
-                CREATE TABLE IF NOT EXISTS Tbl_BabyDetails (
+                CREATE TABLE IF NOT EXISTS Tbl_Baby (
                     ID TEXT PRIMARY KEY,
                     partographid TEXT NOT NULL,
                     birthoutcomeid TEXT,
@@ -84,8 +84,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     jaundice INTEGER NOT NULL DEFAULT 0,
                     hypothermia INTEGER NOT NULL DEFAULT 0,
                     hypoglycemia INTEGER NOT NULL DEFAULT 0,
-                    othercomplications TEXT,
-                    handlername TEXT,
+                    othercomplications TEXT, 
                     handler TEXT,
                     notes TEXT,
                     createdtime INTEGER NOT NULL,
@@ -103,9 +102,32 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     FOREIGN KEY (birthoutcomeid) REFERENCES Tbl_BirthOutcome(ID)
                 );
 
-                CREATE INDEX IF NOT EXISTS idx_babydetails_partographid ON Tbl_BabyDetails(partographid);
-                CREATE INDEX IF NOT EXISTS idx_babydetails_birthoutcomeid ON Tbl_BabyDetails(birthoutcomeid);
-                CREATE INDEX IF NOT EXISTS idx_babydetails_sync ON Tbl_BabyDetails(updatedtime, syncstatus);
+                CREATE INDEX IF NOT EXISTS idx_babydetails_partographid ON Tbl_Baby(partographid);
+                CREATE INDEX IF NOT EXISTS idx_babydetails_birthoutcomeid ON Tbl_Baby(birthoutcomeid);
+                CREATE INDEX IF NOT EXISTS idx_babydetails_sync ON Tbl_Baby(updatedtime, syncstatus);
+
+                DROP TRIGGER IF EXISTS trg_baby_insert;
+                CREATE TRIGGER trg_baby_insert 
+                AFTER INSERT ON Tbl_Baby
+                WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
+                BEGIN
+                    UPDATE Tbl_Baby 
+                    SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
+                        updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
+                    WHERE ID = NEW.ID;
+                END;
+
+                DROP TRIGGER IF EXISTS trg_baby_update;
+                CREATE TRIGGER trg_baby_update 
+                AFTER UPDATE ON Tbl_Baby
+                WHEN NEW.updatedtime = OLD.updatedtime
+                BEGIN
+                    UPDATE Tbl_Baby 
+                    SET updatedtime = (strftime('%s', 'now') * 1000),
+                        version = OLD.version + 1,
+                        syncstatus = 0
+                    WHERE ID = NEW.ID;
+                END;
                 ";
                 await createTableCmd.ExecuteNonQueryAsync();
             }
@@ -128,7 +150,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT * FROM Tbl_BabyDetails WHERE partographid = @partographid AND deleted = 0 ORDER BY babynumber";
+                selectCmd.CommandText = "SELECT * FROM Tbl_Baby WHERE partographid = @partographid AND deleted = 0 ORDER BY babynumber";
                 selectCmd.Parameters.AddWithValue("@partographid", partographId.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -157,7 +179,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT * FROM Tbl_BabyDetails WHERE birthoutcomeid = @birthoutcomeid AND deleted = 0 ORDER BY babynumber";
+                selectCmd.CommandText = "SELECT * FROM Tbl_Baby WHERE birthoutcomeid = @birthoutcomeid AND deleted = 0 ORDER BY babynumber";
                 selectCmd.Parameters.AddWithValue("@birthoutcomeid", birthOutcomeId.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -231,7 +253,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 breathing, crying, goodmuscletone, skincolor, requiresspecialcare, specialcarereason,
                 admittedtonicu, nicuadmissiontime, feedingmethod, feedingnotes, asphyxianeonatorum,
                 respiratorydistresssyndrome, sepsis, jaundice, hypothermia, hypoglycemia,
-                othercomplications, handlername, handler, notes, createdtime, updatedtime,
+                othercomplications, handler, notes, createdtime, updatedtime,
                 deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash
             ) VALUES (
                 @id, @partographid, @birthoutcomeid, @babynumber, @babytag, @birthtime, @sex, @vitalstatus,
@@ -246,7 +268,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 @breathing, @crying, @goodmuscletone, @skincolor, @requiresspecialcare, @specialcarereason,
                 @admittedtonicu, @nicuadmissiontime, @feedingmethod, @feedingnotes, @asphyxianeonatorum,
                 @respiratorydistresssyndrome, @sepsis, @jaundice, @hypothermia, @hypoglycemia,
-                @othercomplications, @handlername, @handler, @notes, @createdtime, @updatedtime,
+                @othercomplications, @handler, @notes, @createdtime, @updatedtime,
                 @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash
             )";
         }
@@ -254,7 +276,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         private string GetUpdateSql()
         {
             return @"
-            UPDATE Tbl_BabyDetails SET
+            UPDATE Tbl_Baby SET
                 babynumber = @babynumber, babytag = @babytag, birthtime = @birthtime, sex = @sex,
                 vitalstatus = @vitalstatus, deathtime = @deathtime, deathcause = @deathcause,
                 stillbirthmacerated = @stillbirthmacerated, birthweight = @birthweight, length = @length,
@@ -280,7 +302,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 feedingnotes = @feedingnotes, asphyxianeonatorum = @asphyxianeonatorum,
                 respiratorydistresssyndrome = @respiratorydistresssyndrome, sepsis = @sepsis,
                 jaundice = @jaundice, hypothermia = @hypothermia, hypoglycemia = @hypoglycemia,
-                othercomplications = @othercomplications, handlername = @handlername, handler = @handler,
+                othercomplications = @othercomplications, handler = @handler,
                 notes = @notes, updatedtime = @updatedtime, syncstatus = 0, version = @version,
                 datahash = @datahash
             WHERE ID = @id";
@@ -345,8 +367,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@jaundice", item.Jaundice ? 1 : 0);
             cmd.Parameters.AddWithValue("@hypothermia", item.Hypothermia ? 1 : 0);
             cmd.Parameters.AddWithValue("@hypoglycemia", item.Hypoglycemia ? 1 : 0);
-            cmd.Parameters.AddWithValue("@othercomplications", item.OtherComplications ?? string.Empty);
-            cmd.Parameters.AddWithValue("@handlername", item.HandlerName ?? string.Empty);
+            cmd.Parameters.AddWithValue("@othercomplications", item.OtherComplications ?? string.Empty); 
             cmd.Parameters.AddWithValue("@handler", item.Handler?.ToString() ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? string.Empty);
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
@@ -422,7 +443,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Hypothermia = Convert.ToBoolean(reader["hypothermia"]),
                 Hypoglycemia = Convert.ToBoolean(reader["hypoglycemia"]),
                 OtherComplications = reader["othercomplications"]?.ToString() ?? string.Empty,
-                HandlerName = reader["handlername"]?.ToString() ?? string.Empty,
                 Handler = reader["handler"] == DBNull.Value ? null : Guid.Parse(reader["handler"].ToString()),
                 Notes = reader["notes"]?.ToString() ?? string.Empty,
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),

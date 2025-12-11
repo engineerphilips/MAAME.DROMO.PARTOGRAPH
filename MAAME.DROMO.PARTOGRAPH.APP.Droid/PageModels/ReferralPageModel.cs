@@ -252,19 +252,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 IsBusy = true;
 
-                Partograph = await _partographRepository.GetItemAsync(PartographId);
+                Partograph = await _partographRepository.GetCurrentPartographAsync(PartographId);
                 if (Partograph == null)
                 {
                     await AppShell.DisplayToastAsync("Failed to load partograph");
                     return;
                 }
 
-                Patient = await _patientRepository.GetItemAsync(Partograph.PatientID);
+                //Patient = await _patientRepository.GetItemAsync(Partograph.PatientID);
 
                 // Pre-fill referring facility from staff info
                 ReferringFacilityName = Constants.Staff?.FacilityName ?? string.Empty;
                 ReferringPhysician = Constants.Staff?.Name ?? string.Empty;
-                ReferringPhysicianContact = Constants.Staff?.PhoneNumber ?? string.Empty;
+                //ReferringPhysicianContact = Constants.Staff?.PhoneNumber ?? string.Empty;
 
                 // Pre-fill some maternal condition from latest readings
                 await PreFillMaternalConditionAsync();
@@ -302,7 +302,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 var latestTemp = await tempRepo.GetLatestByPatientAsync(Partograph.ID);
                 if (latestTemp != null)
                 {
-                    MaternalTemperature = latestTemp.Value;
+                    MaternalTemperature = (decimal) (latestTemp?.Rate ?? 0);
                 }
 
                 var latestFHR = await fhrRepo.GetLatestByPatientAsync(Partograph.ID);
@@ -314,7 +314,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 var latestDilation = await dilationRepo.GetLatestByPatientAsync(Partograph.ID);
                 if (latestDilation != null)
                 {
-                    CervicalDilationAtReferral = latestDilation.Dilation;
+                    CervicalDilationAtReferral = latestDilation.DilatationCm;
                 }
 
                 MembranesRuptured = Partograph.MembraneStatus == "Ruptured";
@@ -443,8 +443,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 HandlerName = Constants.Staff?.Name ?? string.Empty,
                 Handler = Constants.Staff?.ID,
                 Notes = Notes,
-                DeviceId = Constants.DeviceId,
-                OriginDeviceId = Constants.DeviceId
+                DeviceId = DeviceIdentity.GetOrCreateDeviceId(),
+                OriginDeviceId = DeviceIdentity.GetOrCreateDeviceId()
             };
         }
 

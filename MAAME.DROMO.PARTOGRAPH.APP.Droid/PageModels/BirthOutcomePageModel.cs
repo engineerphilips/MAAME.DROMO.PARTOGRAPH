@@ -35,8 +35,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private Partograph? _partograph;
 
-        [ObservableProperty]
-        private Patient? _patient;
+        //[ObservableProperty]
+        //private Patient? _patient;
 
         [ObservableProperty]
         private BirthOutcome? _birthOutcome;
@@ -134,15 +134,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
 
                 // Load partograph
-                Partograph = await _partographRepository.GetItemAsync(partographId);
+                Partograph = await _partographRepository.GetCurrentPartographAsync(partographId);
                 if (Partograph == null)
                 {
                     await AppShell.DisplayToastAsync("Failed to load partograph");
                     return;
                 }
 
-                // Load patient
-                Patient = await _patientRepository.GetItemAsync(Partograph.PatientID);
+                //// Load patient
+                //Patient = await _patientRepository.GetItemAsync(Partograph.PatientID);
 
                 // Check if birth outcome already exists
                 var existingOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(partographId);
@@ -247,8 +247,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID,
                     Notes = Notes,
-                    DeviceId = Constants.DeviceId,
-                    OriginDeviceId = Constants.DeviceId
+                    DeviceId = DeviceIdentity.GetOrCreateDeviceId(),
+                    OriginDeviceId = DeviceIdentity.GetOrCreateDeviceId()
                 };
 
                 var result = await _birthOutcomeRepository.SaveItemAsync(outcome);

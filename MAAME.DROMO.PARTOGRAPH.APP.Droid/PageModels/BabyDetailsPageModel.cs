@@ -203,7 +203,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private DateTime? _nicuAdmissionTime;
-
+        
         [ObservableProperty]
         private FeedingMethod _feedingMethod = FeedingMethod.Breastfeeding;
 
@@ -231,7 +231,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
 
                 BirthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(PartographId);
-                Partograph = await _partographRepository.GetItemAsync(PartographId);
+                Partograph = await _partographRepository.GetCurrentPartographAsync(PartographId);
 
                 IsMultipleBirth = NumberOfBabies > 1;
 
@@ -393,7 +393,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             RequiresSpecialCare = baby.RequiresSpecialCare;
             SpecialCareReason = baby.SpecialCareReason ?? string.Empty;
             AdmittedToNICU = baby.AdmittedToNICU;
-            NICUAdmissionTime = baby.NICUAdmissionTime;
+            NicuAdmissionTime = baby.NICUAdmissionTime;
             FeedingMethod = baby.FeedingMethod;
             Notes = baby.Notes ?? string.Empty;
         }
@@ -450,13 +450,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 RequiresSpecialCare = RequiresSpecialCare,
                 SpecialCareReason = SpecialCareReason,
                 AdmittedToNICU = AdmittedToNICU,
-                NICUAdmissionTime = NICUAdmissionTime,
+                NICUAdmissionTime = NicuAdmissionTime,
                 FeedingMethod = FeedingMethod,
                 HandlerName = Constants.Staff?.Name ?? string.Empty,
                 Handler = Constants.Staff?.ID,
                 Notes = Notes,
-                DeviceId = Constants.DeviceId,
-                OriginDeviceId = Constants.DeviceId
+                DeviceId = DeviceIdentity.GetOrCreateDeviceId(),
+                OriginDeviceId = DeviceIdentity.GetOrCreateDeviceId()
             };
 
             return baby;
