@@ -51,8 +51,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     ruptureduterus INTEGER NOT NULL DEFAULT 0,
                     oxytocingiven INTEGER NOT NULL DEFAULT 1,
                     antibioticsgiven INTEGER NOT NULL DEFAULT 0,
-                    bloodtransfusiongiven INTEGER NOT NULL DEFAULT 0,
-                    handlername TEXT,
+                    bloodtransfusiongiven INTEGER NOT NULL DEFAULT 0, 
                     handler TEXT,
                     notes TEXT,
                     createdtime INTEGER NOT NULL,
@@ -71,7 +70,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 CREATE INDEX IF NOT EXISTS idx_birthoutcome_partographid ON Tbl_BirthOutcome(partographid);
                 CREATE INDEX IF NOT EXISTS idx_birthoutcome_sync ON Tbl_BirthOutcome(updatedtime, syncstatus);
-                ";
+                
+                DROP TRIGGER IF EXISTS trg_birthoutcome_insert;
+                CREATE TRIGGER trg_birthoutcome_insert
+                AFTER INSERT ON Tbl_BirthOutcome
+                WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
+                BEGIN
+                    UPDATE Tbl_BirthOutcome 
+                    SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
+                        updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
+                    WHERE ID = NEW.ID;
+                END;
+
+                DROP TRIGGER IF EXISTS trg_birthoutcome_update;
+                CREATE TRIGGER trg_birthoutcome_update 
+                AFTER UPDATE ON Tbl_BirthOutcome
+                WHEN NEW.updatedtime = OLD.updatedtime
+                BEGIN
+                    UPDATE Tbl_BirthOutcome
+                    SET updatedtime = (strftime('%s', 'now') * 1000),
+                        version = OLD.version + 1,
+                        syncstatus = 0
+                    WHERE ID = NEW.ID;
+                END;";
                 await createTableCmd.ExecuteNonQueryAsync();
             }
             catch (Exception e)
@@ -135,7 +156,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         placentadeliverytime, placentacomplete, estimatedbloodloss,
                         maternalcomplications, postpartumhemorrhage, eclampsia, septicshock,
                         obstructedlabor, ruptureduterus, oxytocingiven, antibioticsgiven,
-                        bloodtransfusiongiven, handlername, handler, notes,
+                        bloodtransfusiongiven, handler, notes,
                         createdtime, updatedtime, deviceid, origindeviceid, syncstatus,
                         version, serverversion, deleted, datahash
                     ) VALUES (
@@ -145,7 +166,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         @placentadeliverytime, @placentacomplete, @estimatedbloodloss,
                         @maternalcomplications, @postpartumhemorrhage, @eclampsia, @septicshock,
                         @obstructedlabor, @ruptureduterus, @oxytocingiven, @antibioticsgiven,
-                        @bloodtransfusiongiven, @handlername, @handler, @notes,
+                        @bloodtransfusiongiven, @handler, @notes,
                         @createdtime, @updatedtime, @deviceid, @origindeviceid, @syncstatus,
                         @version, @serverversion, @deleted, @datahash
                     )";
@@ -170,8 +191,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         septicshock = @septicshock, obstructedlabor = @obstructedlabor,
                         ruptureduterus = @ruptureduterus, oxytocingiven = @oxytocingiven,
                         antibioticsgiven = @antibioticsgiven, bloodtransfusiongiven = @bloodtransfusiongiven,
-                        handlername = @handlername, handler = @handler, notes = @notes,
-                        updatedtime = @updatedtime, syncstatus = 0, version = @version,
+                        handler = @handler, notes = @notes, updatedtime = @updatedtime, syncstatus = 0, version = @version,
                         datahash = @datahash
                     WHERE ID = @id";
                 }
@@ -214,8 +234,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@ruptureduterus", item.RupturedUterus ? 1 : 0);
             cmd.Parameters.AddWithValue("@oxytocingiven", item.OxytocinGiven ? 1 : 0);
             cmd.Parameters.AddWithValue("@antibioticsgiven", item.AntibioticsGiven ? 1 : 0);
-            cmd.Parameters.AddWithValue("@bloodtransfusiongiven", item.BloodTransfusionGiven ? 1 : 0);
-            cmd.Parameters.AddWithValue("@handlername", item.HandlerName ?? string.Empty);
+            cmd.Parameters.AddWithValue("@bloodtransfusiongiven", item.BloodTransfusionGiven ? 1 : 0); 
             cmd.Parameters.AddWithValue("@handler", item.Handler?.ToString() ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? string.Empty);
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
@@ -258,7 +277,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 OxytocinGiven = Convert.ToBoolean(reader["oxytocingiven"]),
                 AntibioticsGiven = Convert.ToBoolean(reader["antibioticsgiven"]),
                 BloodTransfusionGiven = Convert.ToBoolean(reader["bloodtransfusiongiven"]),
-                HandlerName = reader["handlername"]?.ToString() ?? string.Empty,
                 Handler = reader["handler"] == DBNull.Value ? null : Guid.Parse(reader["handler"].ToString()),
                 Notes = reader["notes"]?.ToString() ?? string.Empty,
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),

@@ -94,8 +94,8 @@
     </ContentPage.Resources>
     
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add Entry"
-                     Command="{Binding AddEntryCommand}"
+        <ToolbarItem Text="Promote"
+                     Command="{Binding SecondStageCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.add_16_regular}" />
         <ToolbarItem Text="Charts"
                      Command="{Binding ViewChartsCommand}"
@@ -504,7 +504,7 @@
                 <Label Grid.Column="0" Grid.Row="8" Grid.RowSpan="6" Text="B
                        A
                        B
-                       Y" Style="{StaticResource SubheaderStyle}" FontSize="6" VerticalOptions="Center" />
+                       Y" Style="{StaticResource SubheaderStyle}" FontSize="8" VerticalOptions="Center" />
 
                 <Button Grid.Row="8" Grid.Column="1"
                        BackgroundColor="{Binding FhrButtonColor}"
@@ -728,7 +728,7 @@
                        O
                        M
                        A
-                       N" Style="{StaticResource SubheaderStyle}" FontSize="6" VerticalOptions="Center" Margin="0,0,0,0" />
+                       N" Style="{StaticResource SubheaderStyle}" FontSize="8" VerticalOptions="Center" Margin="0,0,0,0" />
 
                 <Button Grid.Row="15" Grid.Column="1"
                          Text="Pulse"
@@ -899,7 +899,7 @@
                        R
                        E
                        S
-                       S" Style="{StaticResource SubheaderStyle}" FontSize="6" VerticalOptions="Center" Margin="0,0,0,0" />
+                       S" Style="{StaticResource SubheaderStyle}" FontSize="8" VerticalOptions="Center" Margin="0,0,0,0" />
 
                 <Button Grid.Row="21" Grid.Column="1" 
                          Text="Contractions"
@@ -1122,7 +1122,7 @@
                        T
                        I
                        O
-                       N" Style="{StaticResource SubheaderStyle}" FontSize="6" VerticalOptions="Center" Margin="0,0,0,0" />
+                       N" Style="{StaticResource SubheaderStyle}" FontSize="8" VerticalOptions="Center" Margin="0,0,0,0" />
 
 
                 <Button Grid.Row="38" Grid.Column="1" Grid.ColumnSpan="2"
@@ -1215,7 +1215,7 @@
                        S
                        I
                        O
-                       N" Style="{StaticResource SubheaderStyle}" FontSize="6" VerticalOptions="Center" Margin="0,0,0,0" />
+                       N" Style="{StaticResource SubheaderStyle}" FontSize="8" VerticalOptions="Center" Margin="0,0,0,0" />
 
 
                 <Button Grid.Row="42" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2"
