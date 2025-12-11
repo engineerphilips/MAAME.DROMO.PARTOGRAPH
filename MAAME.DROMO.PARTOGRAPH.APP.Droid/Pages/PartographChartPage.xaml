@@ -59,7 +59,7 @@
 
                     <sf:SfCartesianChart HeightRequest="300">
                         <sf:SfCartesianChart.Title>
-                            <Label Text="WHO Partograph - Labor Progress"
+                            <Label Text="WHO Labour Care Guide 2020 - Labor Progress"
                                    FontSize="14"
                                    HorizontalOptions="Center" />
                         </sf:SfCartesianChart.Title>

@@ -181,21 +181,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 });
             }
 
-            // Calculate Alert and Action Lines based on WHO guidelines
-            // Alert line: Expected progress from 4cm at 1cm/hour (completing in 4-6 hours)
-            // Action line: 2 hours behind alert line
+            // WHO Labour Care Guide 2020: Alert and Action Lines
+            // Alert line: 1cm/hour from 5cm (reaches 10cm in 5 hours)
+            // Action line: 4 hours to the right of alert line
 
-            var fourCmEntry = dilatations.FirstOrDefault(d => d.DilatationCm >= 4);
-            if (fourCmEntry != null)
+            var activeLaborEntry = dilatations.FirstOrDefault(d => d.DilatationCm >= 5);
+            if (activeLaborEntry != null)
             {
-                var startTime = fourCmEntry.Time;
-                var endTime = dilatations.Last().Time.AddHours(2); // Extend 2 hours beyond last measurement
+                var startTime = activeLaborEntry.Time;
 
-                // Alert line - 1.5cm per hour from 4cm (reaches 10cm in 4 hours)
-                for (double hour = 0; hour <= 6; hour += 0.5)
+                // WHO 2020: Alert line - 1cm per hour from 5cm (reaches 10cm in 5 hours)
+                for (double hour = 0; hour <= 5; hour += 0.5)
                 {
                     var time = startTime.AddHours(hour);
-                    var dilatation = 4 + (hour * 1.5);
+                    var dilatation = 5 + hour; // 1cm per hour from 5cm
                     if (dilatation > 10) dilatation = 10;
 
                     AlertLineData.Add(new ChartDataPoint
@@ -207,11 +206,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     if (dilatation >= 10) break;
                 }
 
-                // Action line - 2 hours behind alert line (1.5cm per hour starting 2 hours later)
-                for (double hour = 0; hour <= 8; hour += 0.5)
+                // WHO 2020: Action line - 4 hours to the right of alert line
+                for (double hour = 0; hour <= 9; hour += 0.5)
                 {
                     var time = startTime.AddHours(hour);
-                    var dilatation = 4 + (Math.Max(0, hour - 2) * 1.5);
+                    var dilatation = 5 + Math.Max(0, hour - 4); // Starts 4 hours later, then 1cm/hour
                     if (dilatation > 10) dilatation = 10;
 
                     ActionLineData.Add(new ChartDataPoint
@@ -220,7 +219,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         Value = dilatation
                     });
 
-                    if (dilatation >= 10 && hour >= 2) break;
+                    if (dilatation >= 10) break;
                 }
             }
         }

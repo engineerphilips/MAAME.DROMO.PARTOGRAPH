@@ -235,14 +235,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 }
             }
 
-            // Info about labor stages
+            // WHO 2020: Info about labor stages
             if (dilatation.Value >= 10)
             {
-                result.AddInfo("Labor Stage", "Fully dilated - Second stage of labor", "Monitor for urge to push. Prepare for delivery.");
+                result.AddInfo("Labor Stage", "Fully dilated - Second stage of labor", "Monitor for urge to push. Prepare for delivery. WHO 2020: Support woman in position of choice.");
             }
-            else if (dilatation.Value >= 4)
+            else if (dilatation.Value >= 5)
             {
-                result.AddInfo("Labor Stage", "Active labor (first stage)", "Monitor progress hourly. Expect approximately 1cm/hour dilatation.");
+                result.AddInfo("Labor Stage", "Active labor (WHO 2020)", "Partograph should be started at 5cm with regular contractions. Expect 1cm/hour progress. Monitor FHR and contractions every 30 min, VE every 4 hours.");
+            }
+            else if (dilatation.Value >= 4 && dilatation.Value < 5)
+            {
+                result.AddInfo("Labor Stage", "Approaching active labor", "WHO 2020: Active labor begins at 5cm with regular contractions. Continue to monitor and support woman.");
             }
 
             return result;
