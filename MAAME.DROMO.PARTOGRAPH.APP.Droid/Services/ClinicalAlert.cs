@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 {
-    public enum AlertSeverity
-    {
-        Info,       // Informational
-        Warning,    // Requires attention
-        Critical    // Immediate action required
-    }
+    //public enum AlertSeverity
+    //{
+    //    Info,       // Informational
+    //    Warning,    // Requires attention
+    //    Critical,   // Immediate action required
+    //}
 
     public enum AlertCategory
     {
