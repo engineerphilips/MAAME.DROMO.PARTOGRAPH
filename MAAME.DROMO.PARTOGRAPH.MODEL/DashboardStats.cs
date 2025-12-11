@@ -31,6 +31,21 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         // Admission trends
         public int AdmissionsToday { get; set; }
         public int AdmissionsThisShift { get; set; }
+
+        // Shift handover data
+        public List<ShiftHandoverItem> ShiftHandoverItems { get; set; } = [];
+
+        // WHO compliance metrics
+        public WHOComplianceMetrics ComplianceMetrics { get; set; } = new();
+
+        // Recent activity
+        public List<RecentActivityItem> RecentActivities { get; set; } = [];
+
+        // Resource utilization
+        public ResourceUtilization Resources { get; set; } = new();
+
+        // Labor progress trends (hourly admissions for today)
+        public List<HourlyAdmission> AdmissionTrends { get; set; } = [];
     }
 
     public class LaborProgressData
@@ -40,6 +55,69 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public int CervicalDilation { get; set; }
         public LaborStatus Status { get; set; }
         public DateTime LastUpdate { get; set; }
+    }
+
+    public class ShiftHandoverItem
+    {
+        public Guid PatientId { get; set; }
+        public string PatientName { get; set; } = string.Empty;
+        public string HospitalNumber { get; set; } = string.Empty;
+        public DateTime AdmissionTime { get; set; }
+        public LaborStatus Status { get; set; }
+        public string KeyNotes { get; set; } = string.Empty;
+        public int HoursInLabor { get; set; }
+        public bool RequiresHandover { get; set; }
+    }
+
+    public class WHOComplianceMetrics
+    {
+        public int TotalActiveLabors { get; set; }
+        public int AlertLineCrossings { get; set; }
+        public int ActionLineCrossings { get; set; }
+        public int PartographsCompleted { get; set; }
+        public int PartographsMissingData { get; set; }
+        public double ComplianceRate { get; set; }
+        public int OnTimeAssessments { get; set; }
+        public int LateAssessments { get; set; }
+    }
+
+    public class RecentActivityItem
+    {
+        public Guid ActivityId { get; set; }
+        public ActivityType Type { get; set; }
+        public string PatientName { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime Timestamp { get; set; }
+        public string TimeAgo { get; set; } = string.Empty;
+        public Guid? PatientId { get; set; }
+    }
+
+    public class ResourceUtilization
+    {
+        public int TotalBeds { get; set; }
+        public int OccupiedBeds { get; set; }
+        public int AvailableBeds { get; set; }
+        public double OccupancyRate { get; set; }
+        public int TotalStaff { get; set; }
+        public int ActivePatients { get; set; }
+        public double StaffToPatientRatio { get; set; }
+    }
+
+    public class HourlyAdmission
+    {
+        public int Hour { get; set; }
+        public string HourLabel { get; set; } = string.Empty;
+        public int AdmissionCount { get; set; }
+    }
+
+    public enum ActivityType
+    {
+        Admission,
+        Delivery,
+        EmergencyEscalation,
+        StatusChange,
+        Assessment,
+        Intervention
     }
 
     public class CriticalPatientInfo
