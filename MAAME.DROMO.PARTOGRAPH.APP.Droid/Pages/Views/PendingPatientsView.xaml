@@ -136,8 +136,7 @@
                                             </Border.StrokeShape>
                                             <Label Text="PENDING"
                                                    FontSize="11"
-                                                   FontAttributes="Bold"
-                                                   TextColor="White" />
+                                                   FontAttributes="Bold" />
                                         </Border>
                                     </Grid>
 
@@ -176,15 +175,17 @@
                                                            TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
                                                            VerticalOptions="Center" />
                                                 </HorizontalStackLayout>
-                                                <Label Text="{Binding AdmissionDate, StringFormat='{0:dd MMM yyyy}'}"
-                                                       FontSize="14"
-                                                       FontAttributes="Bold"
-                                                       TextColor="{AppThemeBinding Light=#7B1FA2, Dark=#BA68C8}"
-                                                       Margin="22,0,0,0" />
-                                                <Label Text="{Binding AdmissionDate, StringFormat='{0:HH:mm}'}"
+                                                <Label Text="{Binding AdmissionDate, StringFormat='{0:dddd, dd MMM yyyy HH:mm}'}"
                                                        FontSize="12"
+                                                       FontAttributes="Bold"
                                                        TextColor="{AppThemeBinding Light=#888, Dark=#999}"
                                                        Margin="22,0,0,0" />
+                                                <!--TextColor="{AppThemeBinding Light=#7B1FA2, Dark=#BA68C8}"-->
+
+                                                <!--<Label Text="{Binding AdmissionDate, StringFormat='{0:HH:mm}'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#888, Dark=#999}"
+                                                       Margin="22,0,0,0" />-->
                                             </VerticalStackLayout>
                                         </Border>
 

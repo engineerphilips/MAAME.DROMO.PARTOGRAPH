@@ -77,6 +77,22 @@
                                     <Border Grid.Column="0"
                                             WidthRequest="56"
                                             HeightRequest="56"
+                                            BackgroundColor="#FF9800"
+                                            StrokeThickness="3"
+                                            Stroke="#FFF3E0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="28" />
+                                        </Border.StrokeShape>
+                                        <Label Text="{Binding Name, Converter={StaticResource InitialsConverter}}"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               FontSize="20"
+                                               FontAttributes="Bold"
+                                               TextColor="White" />
+                                    </Border>
+                                    <!--<Border Grid.Column="0"
+                                            WidthRequest="56"
+                                            HeightRequest="56"
                                             BackgroundColor="{Binding StatusColor}">
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="28" />
@@ -94,7 +110,7 @@
                                                    HorizontalOptions="Center"
                                                    Margin="0,-2,0,0" />
                                         </VerticalStackLayout>
-                                    </Border>
+                                    </Border>-->
 
                                     <!-- Patient Name & Details -->
                                     <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
@@ -118,8 +134,7 @@
                                         </Border.StrokeShape>
                                         <Label Text="{Binding StatusDisplay}"
                                                FontSize="11"
-                                               FontAttributes="Bold"
-                                               TextColor="White" />
+                                               FontAttributes="Bold" />
                                     </Border>
                                 </Grid>
 
@@ -132,8 +147,7 @@
                                             <RoundRectangle CornerRadius="6" />
                                         </Border.StrokeShape>
                                         <Label Text="{Binding DisplayInfo}"
-                                               FontSize="12"
-                                               TextColor="{AppThemeBinding Light=#555, Dark=#BBB}" />
+                                               FontSize="12" TextColor="{AppThemeBinding Light=#555, Dark=#BBB}" />
                                     </Border>
                                 </HorizontalStackLayout>
 
@@ -150,7 +164,7 @@
                                             <HorizontalStackLayout Spacing="6">
                                                 <Label Text="&#xE917;"
                                                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                                       FontSize="16"
+                                                       FontSize="14"
                                                        TextColor="#2196F3"
                                                        VerticalOptions="Center" />
                                                 <Label Text="Labour Duration"
@@ -158,14 +172,13 @@
                                                        TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
                                                        VerticalOptions="Center" />
                                             </HorizontalStackLayout>
-                                            <Label Text="{Binding LaborStartTimeFormat}"
-                                                   FontSize="16"
-                                                   FontAttributes="Bold"
-                                                   TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}"
-                                                   Margin="22,0,0,0" />
-                                            <Label Text="{Binding LaborStartTime, StringFormat='Started {0:dd MMM, HH:mm}'}"
-                                                   FontSize="10"
+                                            <Label Text="{Binding LaborStartTime, StringFormat='{0:dddd, dd MMM, HH:mm}'}"
+                                                   FontSize="12"
                                                    TextColor="{AppThemeBinding Light=#888, Dark=#999}"
+                                                   Margin="22,0,0,0" />
+                                            <Label Text="{Binding LaborStartTimeFormat}"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}"
                                                    Margin="22,0,0,0" />
                                         </VerticalStackLayout>
                                     </Border>
@@ -181,7 +194,7 @@
                                             <HorizontalStackLayout Spacing="6">
                                                 <Label Text="&#xE9EA;"
                                                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                                       FontSize="16"
+                                                       FontSize="14"
                                                        TextColor="#FF9800"
                                                        VerticalOptions="Center" />
                                                 <Label Text="Membrane"
@@ -190,12 +203,12 @@
                                                        VerticalOptions="Center" />
                                             </HorizontalStackLayout>
                                             <Label Text="{Binding MembraneStatus}"
-                                                   FontSize="16"
+                                                   FontSize="12"
                                                    FontAttributes="Bold"
                                                    TextColor="{AppThemeBinding Light=#F57C00, Dark=#FFB74D}"
                                                    Margin="22,0,0,0" />
                                             <Label Text="{Binding RupturedMembraneTimeFormat, StringFormat='Ruptured: {0}'}"
-                                                   FontSize="10"
+                                                   FontSize="12"
                                                    TextColor="{AppThemeBinding Light=#888, Dark=#999}"
                                                    Margin="22,0,0,0"
                                                    IsVisible="{Binding RupturedMembraneTime, Converter={StaticResource IsNotNullConverter}}" />
