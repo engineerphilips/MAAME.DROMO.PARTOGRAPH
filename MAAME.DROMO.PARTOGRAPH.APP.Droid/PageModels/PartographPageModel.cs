@@ -1309,6 +1309,70 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             => Shell.Current.GoToAsync($"partographchart?patientId={Patient?.ID}");
 
         [RelayCommand]
+        private async Task SecondStage()
+        {
+            if (Patient?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No patient selected");
+                return;
+            }
+
+            // Check if patient has reached appropriate stage for birth outcome recording
+            if (CurrentDilation < 10 && Patient.Status != LaborStatus.Delivered)
+            {
+                var shouldContinue = await Application.Current.MainPage.DisplayAlert(
+                    "Confirm Promotion",
+                    $"Current dilation is {CurrentDilation}cm. Are you sure you want to proceed to birth outcome recording?",
+                    "Yes", "No");
+
+                if (!shouldContinue)
+                    return;
+            }
+
+            try
+            {
+                // Navigate to birth outcome page
+                var parameters = new Dictionary<string, object>
+                {
+                    { "PartographId", Patient.ID }
+                };
+
+                await Shell.Current.GoToAsync("BirthOutcomePage", parameters);
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to navigate to birth outcome page");
+            }
+        }
+
+        [RelayCommand]
+        private async Task NavigateToReferral()
+        {
+            if (Patient?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No patient selected");
+                return;
+            }
+
+            try
+            {
+                // Navigate to referral page
+                var parameters = new Dictionary<string, object>
+                {
+                    { "PartographId", Patient.ID }
+                };
+
+                await Shell.Current.GoToAsync("ReferralPage", parameters);
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to navigate to referral page");
+            }
+        }
+
+        [RelayCommand]
         private async Task Refresh()
         {
             if (Patient != null)
