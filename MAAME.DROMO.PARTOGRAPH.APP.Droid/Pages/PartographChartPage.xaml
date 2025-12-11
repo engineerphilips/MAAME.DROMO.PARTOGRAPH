@@ -4,6 +4,7 @@
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PartographChartPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              Title="Partograph Charts">
 
@@ -57,46 +58,50 @@
                            FontSize="16"
                            FontAttributes="Bold" />
 
-                    <sf:SfCartesianChart HeightRequest="300">
-                        <sf:SfCartesianChart.Title>
-                            <Label Text="WHO Labour Care Guide 2020 - Labor Progress"
+                    <chart:SfCartesianChart HeightRequest="300">
+                        <chart:SfCartesianChart.Title>
+                            <Label Text="Labour Progress"
                                    FontSize="14"
                                    HorizontalOptions="Center" />
-                        </sf:SfCartesianChart.Title>
+                        </chart:SfCartesianChart.Title>
 
-                        <sf:SfCartesianChart.XAxes>
-                            <sf:DateTimeAxis Title="Time (Hours)"
-                                             ShowMajorGridLines="True"
-                                             LabelStyle-LabelFormat="HH:mm"/>
-                        </sf:SfCartesianChart.XAxes>
+                        <chart:SfCartesianChart.XAxes>
+                            <chart:DateTimeAxis ShowMajorGridLines="True">
+                                <chart:DateTimeAxis.Title>
+                                    <chart:ChartAxisTitle Text="Time (Hours)"/>
+                                </chart:DateTimeAxis.Title>
+                            </chart:DateTimeAxis>
+                            <!--LabelStyle-LabelFormat="HH:mm"-->
+                        </chart:SfCartesianChart.XAxes>
 
-                        <sf:SfCartesianChart.YAxes>
-                            <sf:NumericalAxis Title="Cervical Dilatation (cm)"
+                        <chart:SfCartesianChart.YAxes>
+                            <chart:NumericalAxis 
                                               Minimum="0"
                                               Maximum="10"
                                               Interval="1"
                                               ShowMajorGridLines="True"/>
-                        </sf:SfCartesianChart.YAxes>
+                            <!--Title="Cervical Dilatation (cm)"-->
+                        </chart:SfCartesianChart.YAxes>
 
-                        <sf:SfCartesianChart.Series>
+                        <chart:SfCartesianChart.Series>
                             <!-- Actual Progress Line -->
-                            <sf:LineSeries ItemsSource="{Binding CervicalDilationData}"
+                            <chart:LineSeries ItemsSource="{Binding CervicalDilationData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Actual Progress"
                                            Fill="#2196F3"
                                            StrokeWidth="3"
                                            ShowMarkers="True">
-                                <sf:LineSeries.MarkerSettings>
-                                    <sf:ChartMarkerSettings Type="Circle"
+                                <chart:LineSeries.MarkerSettings>
+                                    <chart:ChartMarkerSettings Type="Circle"
                                                             Fill="#2196F3"
                                                             Width="10"
                                                             Height="10"/>
-                                </sf:LineSeries.MarkerSettings>
-                            </sf:LineSeries>
+                                </chart:LineSeries.MarkerSettings>
+                            </chart:LineSeries>
 
                             <!-- Alert Line -->
-                            <sf:LineSeries ItemsSource="{Binding AlertLineData}"
+                            <chart:LineSeries ItemsSource="{Binding AlertLineData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Alert Line"
@@ -105,19 +110,19 @@
                                            StrokeDashArray="5,2"/>
 
                             <!-- Action Line -->
-                            <sf:LineSeries ItemsSource="{Binding ActionLineData}"
+                            <chart:LineSeries ItemsSource="{Binding ActionLineData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Action Line"
                                            Fill="#EF5350"
                                            StrokeWidth="2"
                                            StrokeDashArray="5,2"/>
-                        </sf:SfCartesianChart.Series>
+                        </chart:SfCartesianChart.Series>
 
-                        <sf:SfCartesianChart.Legend>
-                            <sf:ChartLegend Placement="Top" />
-                        </sf:SfCartesianChart.Legend>
-                    </sf:SfCartesianChart>
+                        <chart:SfCartesianChart.Legend>
+                            <chart:ChartLegend Placement="Top" />
+                        </chart:SfCartesianChart.Legend>
+                    </chart:SfCartesianChart>
 
                     <!-- Legend -->
                     <Grid ColumnDefinitions="*,*,*" Margin="0,10,0,0">
@@ -150,39 +155,43 @@
                            FontSize="16"
                            FontAttributes="Bold" />
 
-                    <sf:SfCartesianChart HeightRequest="250">
-                        <sf:SfCartesianChart.XAxes>
-                            <sf:DateTimeAxis ShowMajorGridLines="True"
-                                             LabelStyle-LabelFormat="HH:mm"/>
-                        </sf:SfCartesianChart.XAxes>
+                    <chart:SfCartesianChart HeightRequest="250">
+                        <chart:SfCartesianChart.XAxes>
+                            <chart:DateTimeAxis ShowMajorGridLines="True"/>
+                            <!--LabelStyle-LabelFormat="HH:mm"-->
+                        </chart:SfCartesianChart.XAxes>
 
-                        <sf:SfCartesianChart.YAxes>
-                            <sf:NumericalAxis Title="FHR (bpm)"
-                                              Minimum="100"
+                        <chart:SfCartesianChart.YAxes>
+                            <chart:NumericalAxis Minimum="100"
                                               Maximum="180"
                                               Interval="10"
-                                              ShowMajorGridLines="True"/>
-                        </sf:SfCartesianChart.YAxes>
+                                              ShowMajorGridLines="True">
+                                <chart:NumericalAxis.Title>
+                                    <chart:ChartAxisTitle Text="FHR (bpm)"/>
+                                </chart:NumericalAxis.Title>
+                            </chart:NumericalAxis>
 
-                        <sf:SfCartesianChart.Series>
+                        </chart:SfCartesianChart.YAxes>
+
+                        <chart:SfCartesianChart.Series>
                             <!-- FHR Baseline -->
-                            <sf:LineSeries ItemsSource="{Binding FetalHeartRateData}"
+                            <chart:LineSeries ItemsSource="{Binding FetalHeartRateData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="FHR"
                                            Fill="#4CAF50"
                                            StrokeWidth="2"
                                            ShowMarkers="True">
-                                <sf:LineSeries.MarkerSettings>
-                                    <sf:ChartMarkerSettings Type="Diamond"
+                                <chart:LineSeries.MarkerSettings>
+                                    <chart:ChartMarkerSettings Type="Diamond"
                                                             Fill="#4CAF50"
                                                             Width="8"
                                                             Height="8"/>
-                                </sf:LineSeries.MarkerSettings>
-                            </sf:LineSeries>
+                                </chart:LineSeries.MarkerSettings>
+                            </chart:LineSeries>
 
                             <!-- Normal Range Upper Limit -->
-                            <sf:LineSeries ItemsSource="{Binding FHRUpperLimit}"
+                            <chart:LineSeries ItemsSource="{Binding FHRUpperLimit}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Upper Normal (160)"
@@ -191,19 +200,19 @@
                                            StrokeDashArray="3,3"/>
 
                             <!-- Normal Range Lower Limit -->
-                            <sf:LineSeries ItemsSource="{Binding FHRLowerLimit}"
+                            <chart:LineSeries ItemsSource="{Binding FHRLowerLimit}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Lower Normal (110)"
                                            Fill="#FF9800"
                                            StrokeWidth="1"
                                            StrokeDashArray="3,3"/>
-                        </sf:SfCartesianChart.Series>
+                        </chart:SfCartesianChart.Series>
 
-                        <sf:SfCartesianChart.Legend>
-                            <sf:ChartLegend Placement="Bottom" />
-                        </sf:SfCartesianChart.Legend>
-                    </sf:SfCartesianChart>
+                        <chart:SfCartesianChart.Legend>
+                            <chart:ChartLegend Placement="Bottom" />
+                        </chart:SfCartesianChart.Legend>
+                    </chart:SfCartesianChart>
                 </VerticalStackLayout>
             </Border>
 
@@ -220,37 +229,40 @@
                            FontSize="16"
                            FontAttributes="Bold" />
 
-                    <sf:SfCartesianChart HeightRequest="200">
-                        <sf:SfCartesianChart.XAxes>
-                            <sf:DateTimeAxis ShowMajorGridLines="True"
-                                             LabelStyle-LabelFormat="HH:mm"/>
-                        </sf:SfCartesianChart.XAxes>
+                    <chart:SfCartesianChart HeightRequest="200">
+                        <chart:SfCartesianChart.XAxes>
+                            <chart:DateTimeAxis ShowMajorGridLines="True"/>
+                            <!--LabelStyle-LabelFormat="HH:mm"-->
+                        </chart:SfCartesianChart.XAxes>
 
-                        <sf:SfCartesianChart.YAxes>
-                            <sf:NumericalAxis Title="Contractions per 10 min"
-                                              Minimum="0"
+                        <chart:SfCartesianChart.YAxes>
+                            <chart:NumericalAxis Minimum="0"
                                               Maximum="7"
                                               Interval="1"
-                                              ShowMajorGridLines="True"/>
-                        </sf:SfCartesianChart.YAxes>
+                                              ShowMajorGridLines="True">
+                                <chart:NumericalAxis.Title>
+                                    <chart:ChartAxisTitle Text="Contractions per 10 min"/>
+                                </chart:NumericalAxis.Title>
+                            </chart:NumericalAxis>
+                        </chart:SfCartesianChart.YAxes>
 
-                        <sf:SfCartesianChart.Series>
-                            <sf:ColumnSeries ItemsSource="{Binding ContractionsData}"
+                        <chart:SfCartesianChart.Series>
+                            <chart:ColumnSeries ItemsSource="{Binding ContractionsData}"
                                              XBindingPath="Time"
                                              YBindingPath="Value"
                                              Label="Frequency"
                                              Fill="#9C27B0"/>
 
                             <!-- Optimal Range -->
-                            <sf:LineSeries ItemsSource="{Binding OptimalContractionRange}"
+                            <chart:LineSeries ItemsSource="{Binding OptimalContractionRange}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Optimal (3-5)"
                                            Fill="#4CAF50"
                                            StrokeWidth="1"
                                            StrokeDashArray="5,2"/>
-                        </sf:SfCartesianChart.Series>
-                    </sf:SfCartesianChart>
+                        </chart:SfCartesianChart.Series>
+                    </chart:SfCartesianChart>
                 </VerticalStackLayout>
             </Border>
 
@@ -267,23 +279,26 @@
                            FontSize="16"
                            FontAttributes="Bold" />
 
-                    <sf:SfCartesianChart HeightRequest="250">
-                        <sf:SfCartesianChart.XAxes>
-                            <sf:DateTimeAxis ShowMajorGridLines="True"
-                                             LabelStyle-LabelFormat="HH:mm"/>
-                        </sf:SfCartesianChart.XAxes>
+                    <chart:SfCartesianChart HeightRequest="250">
+                        <chart:SfCartesianChart.XAxes>
+                            <chart:DateTimeAxis ShowMajorGridLines="True"/>
+                            <!--LabelStyle-LabelFormat="HH:mm"-->
+                        </chart:SfCartesianChart.XAxes>
 
-                        <sf:SfCartesianChart.YAxes>
-                            <sf:NumericalAxis Title="mmHg / bpm"
-                                              Minimum="40"
+                        <chart:SfCartesianChart.YAxes>
+                            <chart:NumericalAxis Minimum="40"
                                               Maximum="160"
                                               Interval="20"
-                                              ShowMajorGridLines="True"/>
-                        </sf:SfCartesianChart.YAxes>
+                                              ShowMajorGridLines="True">
+                                <chart:NumericalAxis.Title>
+                                    <chart:ChartAxisTitle Text="mmHg / bpm"/>
+                                </chart:NumericalAxis.Title>
+                            </chart:NumericalAxis>
+                        </chart:SfCartesianChart.YAxes>
 
-                        <sf:SfCartesianChart.Series>
+                        <chart:SfCartesianChart.Series>
                             <!-- Systolic BP -->
-                            <sf:LineSeries ItemsSource="{Binding SystolicBPData}"
+                            <chart:LineSeries ItemsSource="{Binding SystolicBPData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Systolic BP"
@@ -291,7 +306,7 @@
                                            StrokeWidth="2"/>
 
                             <!-- Diastolic BP -->
-                            <sf:LineSeries ItemsSource="{Binding DiastolicBPData}"
+                            <chart:LineSeries ItemsSource="{Binding DiastolicBPData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Diastolic BP"
@@ -299,18 +314,18 @@
                                            StrokeWidth="2"/>
 
                             <!-- Pulse -->
-                            <sf:LineSeries ItemsSource="{Binding PulseData}"
+                            <chart:LineSeries ItemsSource="{Binding PulseData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Pulse"
                                            Fill="#2196F3"
                                            StrokeWidth="2"/>
-                        </sf:SfCartesianChart.Series>
+                        </chart:SfCartesianChart.Series>
 
-                        <sf:SfCartesianChart.Legend>
-                            <sf:ChartLegend Placement="Bottom" />
-                        </sf:SfCartesianChart.Legend>
-                    </sf:SfCartesianChart>
+                        <chart:SfCartesianChart.Legend>
+                            <chart:ChartLegend Placement="Bottom" />
+                        </chart:SfCartesianChart.Legend>
+                    </chart:SfCartesianChart>
                 </VerticalStackLayout>
             </Border>
 
@@ -327,46 +342,49 @@
                            FontSize="16"
                            FontAttributes="Bold" />
 
-                    <sf:SfCartesianChart HeightRequest="180">
-                        <sf:SfCartesianChart.XAxes>
-                            <sf:DateTimeAxis ShowMajorGridLines="True"
-                                             LabelStyle-LabelFormat="HH:mm"/>
-                        </sf:SfCartesianChart.XAxes>
+                    <chart:SfCartesianChart HeightRequest="180">
+                        <chart:SfCartesianChart.XAxes>
+                            <chart:DateTimeAxis ShowMajorGridLines="True"/>
+                            <!--LabelStyle-LabelFormat="HH:mm"-->
+                        </chart:SfCartesianChart.XAxes>
 
-                        <sf:SfCartesianChart.YAxes>
-                            <sf:NumericalAxis Title="Temperature (°C)"
-                                              Minimum="35"
+                        <chart:SfCartesianChart.YAxes>
+                            <chart:NumericalAxis Minimum="35"
                                               Maximum="40"
                                               Interval="0.5"
-                                              ShowMajorGridLines="True"/>
-                        </sf:SfCartesianChart.YAxes>
+                                              ShowMajorGridLines="True">
+                                <chart:NumericalAxis.Title>
+                                    <chart:ChartAxisTitle Text="Temperature (°C)"/>
+                                </chart:NumericalAxis.Title>
+                            </chart:NumericalAxis>
+                        </chart:SfCartesianChart.YAxes>
 
-                        <sf:SfCartesianChart.Series>
-                            <sf:LineSeries ItemsSource="{Binding TemperatureData}"
+                        <chart:SfCartesianChart.Series>
+                            <chart:LineSeries ItemsSource="{Binding TemperatureData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Temperature"
                                            Fill="#E91E63"
                                            StrokeWidth="2"
                                            ShowMarkers="True">
-                                <sf:LineSeries.MarkerSettings>
-                                    <sf:ChartMarkerSettings Type="Square"
+                                <chart:LineSeries.MarkerSettings>
+                                    <chart:ChartMarkerSettings Type="Rectangle"
                                                             Fill="#E91E63"
                                                             Width="8"
                                                             Height="8"/>
-                                </sf:LineSeries.MarkerSettings>
-                            </sf:LineSeries>
+                                </chart:LineSeries.MarkerSettings>
+                            </chart:LineSeries>
 
                             <!-- Normal range indicators -->
-                            <sf:LineSeries ItemsSource="{Binding TempUpperNormal}"
+                            <chart:LineSeries ItemsSource="{Binding TempUpperNormal}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Label="Upper Normal"
                                            Fill="#FF9800"
                                            StrokeWidth="1"
                                            StrokeDashArray="3,3"/>
-                        </sf:SfCartesianChart.Series>
-                    </sf:SfCartesianChart>
+                        </chart:SfCartesianChart.Series>
+                    </chart:SfCartesianChart>
                 </VerticalStackLayout>
             </Border>
 

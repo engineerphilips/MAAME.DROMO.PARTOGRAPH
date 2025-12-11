@@ -1644,9 +1644,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
     }
 
-    public class ChartDataPoint
-    {
-        public DateTime Time { get; set; }
-        public double Value { get; set; }
-    }
+    //public class ChartDataPoint
+    //{
+    //    public DateTime Time { get; set; }
+    //    public double Value { get; set; }
+    //}
 }

@@ -13,10 +13,17 @@
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:fonts="clr-namespace:Fonts"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
              Title="Partograph Chart">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <!--<toolkit:CompareConverter x:Key="EqualToZeroConverter"
+                ComparisonOperator="Greater"
+                ComparingValue="0"
+                TrueObject="True"
+                FalseObject="False" />-->
+            
             <!-- Input Styles -->
             <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
                 <Setter Property="ContainerType" Value="Outlined" />
@@ -37,7 +44,7 @@
                 </Setter>
                 <Setter Property="Shadow">
                     <Shadow Brush="{AppThemeBinding Light=#10000000, Dark=#30000000}"
-                                Offset="0,8"
+                            Offset="0,8"
                                 Radius="24"
                                 Opacity="0.15" />
                 </Setter>
@@ -84,7 +91,6 @@
                 <Setter Property="Padding" Value="8,0" />
             </Style>
         </ResourceDictionary>
-
     </ContentPage.Resources>
     
     <ContentPage.ToolbarItems>
@@ -132,9 +138,10 @@
             </Border>
 
             <!-- Clinical Alerts Panel -->
+            <!---->
             <Border Grid.Row="1"
                     StrokeThickness="2"
-                    Stroke="{Binding CriticalAlertCount, Converter={toolkit:ComparisonConverter ComparisonOperator=GreaterThan, TrueObject='#EF5350', FalseObject='#FF9800', ComparisonValue=0}}"
+                    Stroke="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#EF5350', FalseObject='#FF9800', ComparingValue={x:Int32 0}}}"
                     BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3E2723}"
                     Padding="15"
                     Margin="0,0,0,10"
@@ -146,13 +153,14 @@
                     <!-- Alert Header -->
                     <Grid ColumnDefinitions="Auto,*,Auto">
                         <HorizontalStackLayout Grid.Column="0" Spacing="10">
-                            <Label Text="{Binding CriticalAlertCount, Converter={toolkit:ComparisonConverter ComparisonOperator=GreaterThan, TrueObject='🚨', FalseObject='⚠️', ComparisonValue=0}}"
-                                   FontSize="20" />
-                            <Label Text="Clinical Alerts"
+                            <!--<Label Text="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='🚨', FalseObject='⚠️', ComparingValue={x:Int32 0}}}"
+                                   FontSize="20" />-->
+
+                            <!--<Label Text="Clinical Alerts"
                                    FontSize="16"
                                    FontAttributes="Bold"
-                                   TextColor="{Binding CriticalAlertCount, Converter={toolkit:ComparisonConverter ComparisonOperator=GreaterThan, TrueObject='#EF5350', FalseObject='#FF9800', ComparisonValue=0}}"
-                                   VerticalOptions="Center" />
+                                   TextColor="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#EF5350', FalseObject='#FF9800', ComparingValue={x:Int32 0}}}"
+                                   VerticalOptions="Center" />-->
                         </HorizontalStackLayout>
 
                         <Label Grid.Column="1"
@@ -232,9 +240,12 @@
                                         </HorizontalStackLayout>
 
                                         <!-- Recommended Actions -->
+                                        
+                                        <!--IsVisible="{Binding RecommendedActions.Count, Converter={toolkit:CompareConverter ComparisonOperator=Greater, ComparingValue=0}}"-->
+                                        
                                         <VerticalStackLayout Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                                                              Margin="0,8,0,0"
-                                                             IsVisible="{Binding RecommendedActions.Count, Converter={toolkit:ComparisonConverter ComparisonOperator=GreaterThan, ComparisonValue=0}}">
+                                                             IsVisible="{Binding RecommendedActions.Count, Converter={toolkit:CompareConverter ComparisonOperator=Greater, ComparingValue={x:Int32 0}}}">
                                             <Label Text="Recommended Actions:"
                                                    FontSize="11"
                                                    FontAttributes="Bold"
@@ -277,55 +288,56 @@
             <Grid Grid.Row="2" MinimumWidthRequest="800" ColumnDefinitions="25,65,35,*">
                 <Grid.RowDefinitions>
                     <!-- Control Row -->
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="Auto" />
                     <!-- Header Rows -->
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
 
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
                     <!-- Category Rows -->
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
 
                 <Label Grid.Column="0" Grid.Row="3" Grid.RowSpan="4" Text="C
@@ -342,7 +354,7 @@
                        T
                        I
                        V
-                       E" Style="{StaticResource SubheaderStyle}" FontSize="6" VerticalOptions="Center" Margin="0,0,0,0" />
+                       E" Style="{StaticResource SubheaderStyle}" FontSize="8" VerticalOptions="Center" Margin="0,0,0,0" />
                 
                 <Button Grid.Row="3" Grid.Column="1"
                          Text="Companion"

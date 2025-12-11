@@ -108,6 +108,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         public const int CONTRACTION_TACHYSYSTOLE = 6; // >5 per 10 minutes
         public const int CONTRACTION_DURATION_MIN = 20;    // Seconds
         public const int CONTRACTION_DURATION_MAX = 60;    // Typical maximum
+        public const int CONTRACTION_HYPERSTIMULATION = 10;
 
         // WHO 2020: Labor progression thresholds (Page 29-35)
         // Active labor starts at 5cm with regular contractions
@@ -130,5 +131,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         public const int TEMP_MONITORING_INTERVAL_MINUTES = 240;    // Every 4 hours
         public const int CONTRACTION_MONITORING_INTERVAL_MINUTES = 30; // Every 30 minutes
         public const int VAGINAL_EXAM_INTERVAL_HOURS = 4;          // Every 4 hours in active labor
+
     }
 }
