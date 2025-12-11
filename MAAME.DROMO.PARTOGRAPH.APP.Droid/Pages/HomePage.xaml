@@ -756,14 +756,14 @@
                     </Border>
 
                     <!-- Resource Utilization -->
-                    <Border Grid.Row="10" Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <!--<Border Grid.Row="10" Style="{StaticResource ModernCardStyle}" Padding="20">
                         <VerticalStackLayout Spacing="16">
                             <Label Text="Resource Utilization"
                                    FontSize="18"
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
 
-                            <!-- Bed Occupancy -->
+                            --><!-- Bed Occupancy --><!--
                             <VerticalStackLayout Spacing="8">
                                 <HorizontalStackLayout Spacing="8">
                                     <Label Text="Bed Occupancy"
@@ -794,7 +794,7 @@
 
                             <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#E5E7EB, Dark=#374151}" />
 
-                            <!-- Staff-to-Patient Ratio -->
+                            --><!-- Staff-to-Patient Ratio --><!--
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
                                 <VerticalStackLayout Grid.Column="0" Spacing="4">
                                     <Label Text="Staff on Duty"
@@ -817,7 +817,7 @@
                                 </VerticalStackLayout>
                             </Grid>
                         </VerticalStackLayout>
-                    </Border>
+                    </Border>-->
 
                 </Grid>
             </ScrollView>
