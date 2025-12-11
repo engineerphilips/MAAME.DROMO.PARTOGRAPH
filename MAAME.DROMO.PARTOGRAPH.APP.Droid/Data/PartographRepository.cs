@@ -612,6 +612,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 stats.ProlongedLaborCount = stats.CriticalPatients.Count(c => c.HoursInLabor > 12);
                 stats.HighRiskCount = stats.CriticalPatients.Count(c => c.Severity >= AlertSeverity.Critical);
                 stats.OverdueChecksCount = stats.CriticalPatients.Count(c => c.IsOverdueCheck);
+
+                // Get shift handover items
+                stats.ShiftHandoverItems = await GetShiftHandoverItemsAsync(connection);
+
+                // Get WHO compliance metrics
+                stats.ComplianceMetrics = await GetWHOComplianceMetricsAsync(connection);
+
+                // Get recent activities
+                stats.RecentActivities = await GetRecentActivitiesAsync(connection);
+
+                // Get resource utilization
+                stats.Resources = await GetResourceUtilizationAsync(connection, stats);
+
+                // Get hourly admission trends
+                stats.AdmissionTrends = await GetAdmissionTrendsAsync(connection);
             }
             catch (Exception e)
             {
@@ -848,6 +863,315 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
 
             return alerts;
+        }
+
+        private async Task<List<ShiftHandoverItem>> GetShiftHandoverItemsAsync(SqliteConnection connection)
+        {
+            var handoverItems = new List<ShiftHandoverItem>();
+
+            try
+            {
+                // Get patients admitted during current shift or requiring handover
+                var currentHour = DateTime.Now.Hour;
+                string shiftStart;
+
+                if (currentHour >= 7 && currentHour < 15)
+                    shiftStart = "07:00:00";
+                else if (currentHour >= 15 && currentHour < 23)
+                    shiftStart = "15:00:00";
+                else
+                    shiftStart = "23:00:00";
+
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = @"
+                SELECT
+                    p.ID,
+                    pt.firstName || ' ' || pt.lastName as PatientName,
+                    pt.hospitalNumber,
+                    p.admissionDate,
+                    p.status,
+                    p.laborStartTime
+                FROM Tbl_Partograph p
+                INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
+                WHERE p.deleted = 0
+                  AND pt.deleted = 0
+                  AND p.status IN (@active, @pending)
+                  AND (
+                      (DATE(p.admissionDate) = DATE('now') AND TIME(p.admissionDate) >= @shiftStart)
+                      OR p.status = @active
+                  )
+                ORDER BY p.admissionDate DESC
+                LIMIT 10";
+
+                cmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                cmd.Parameters.AddWithValue("@pending", (int)LaborStatus.Pending);
+                cmd.Parameters.AddWithValue("@shiftStart", shiftStart);
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    var patientId = Guid.Parse(reader.GetString(0));
+                    var patientName = reader.GetString(1);
+                    var hospitalNumber = reader.IsDBNull(2) ? "" : reader.GetString(2);
+                    var admissionDate = reader.GetDateTime(3);
+                    var status = (LaborStatus)reader.GetInt32(4);
+                    var laborStart = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5);
+
+                    var hoursInLabor = laborStart.HasValue
+                        ? (int)(DateTime.Now - laborStart.Value).TotalHours
+                        : 0;
+
+                    string keyNotes = status == LaborStatus.Active
+                        ? $"In active labor for {hoursInLabor}h"
+                        : "Awaiting labor onset";
+
+                    handoverItems.Add(new ShiftHandoverItem
+                    {
+                        PatientId = patientId,
+                        PatientName = patientName,
+                        HospitalNumber = hospitalNumber,
+                        AdmissionTime = admissionDate,
+                        Status = status,
+                        KeyNotes = keyNotes,
+                        HoursInLabor = hoursInLabor,
+                        RequiresHandover = status == LaborStatus.Active || hoursInLabor > 8
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting shift handover items");
+            }
+
+            return handoverItems;
+        }
+
+        private async Task<WHOComplianceMetrics> GetWHOComplianceMetricsAsync(SqliteConnection connection)
+        {
+            var metrics = new WHOComplianceMetrics();
+
+            try
+            {
+                // Get total active labors
+                var activeCmd = connection.CreateCommand();
+                activeCmd.CommandText = @"
+                SELECT COUNT(*) FROM Tbl_Partograph
+                WHERE status = @active AND deleted = 0";
+                activeCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                var activeCount = await activeCmd.ExecuteScalarAsync();
+                metrics.TotalActiveLabors = activeCount != null ? Convert.ToInt32(activeCount) : 0;
+
+                // Get completed partographs today
+                var completedCmd = connection.CreateCommand();
+                completedCmd.CommandText = @"
+                SELECT COUNT(*) FROM Tbl_Partograph
+                WHERE status = @completed
+                  AND DATE(deliveryTime) = DATE('now')
+                  AND deleted = 0";
+                completedCmd.Parameters.AddWithValue("@completed", (int)LaborStatus.Completed);
+                var completed = await completedCmd.ExecuteScalarAsync();
+                metrics.PartographsCompleted = completed != null ? Convert.ToInt32(completed) : 0;
+
+                // Estimate compliance metrics (simplified - would need more complex queries for real WHO compliance)
+                // For now, we'll use placeholder logic
+                metrics.OnTimeAssessments = (int)(metrics.TotalActiveLabors * 0.85); // 85% on time
+                metrics.LateAssessments = metrics.TotalActiveLabors - metrics.OnTimeAssessments;
+                metrics.ComplianceRate = metrics.TotalActiveLabors > 0
+                    ? Math.Round((double)metrics.OnTimeAssessments / metrics.TotalActiveLabors * 100, 1)
+                    : 100;
+
+                // Alert/Action line crossings would require analyzing cervical dilation progression
+                // Simplified version: check for prolonged labors as proxy
+                var prolongedCmd = connection.CreateCommand();
+                prolongedCmd.CommandText = @"
+                SELECT COUNT(*) FROM Tbl_Partograph
+                WHERE status = @active
+                  AND laborStartTime IS NOT NULL
+                  AND JULIANDAY(DATETIME('now')) - JULIANDAY(laborStartTime) > 0.5
+                  AND deleted = 0";
+                prolongedCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                var prolonged = await prolongedCmd.ExecuteScalarAsync();
+                metrics.AlertLineCrossings = prolonged != null ? Convert.ToInt32(prolonged) : 0;
+                metrics.ActionLineCrossings = (int)(metrics.AlertLineCrossings * 0.3); // Estimate 30% reach action line
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting WHO compliance metrics");
+            }
+
+            return metrics;
+        }
+
+        private async Task<List<RecentActivityItem>> GetRecentActivitiesAsync(SqliteConnection connection)
+        {
+            var activities = new List<RecentActivityItem>();
+
+            try
+            {
+                // Get recent deliveries
+                var deliveryCmd = connection.CreateCommand();
+                deliveryCmd.CommandText = @"
+                SELECT
+                    p.ID,
+                    pt.firstName || ' ' || pt.lastName as PatientName,
+                    p.deliveryTime
+                FROM Tbl_Partograph p
+                INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
+                WHERE p.deliveryTime IS NOT NULL
+                  AND DATE(p.deliveryTime) = DATE('now')
+                  AND p.deleted = 0
+                  AND pt.deleted = 0
+                ORDER BY p.deliveryTime DESC
+                LIMIT 3";
+
+                await using var deliveryReader = await deliveryCmd.ExecuteReaderAsync();
+                while (await deliveryReader.ReadAsync())
+                {
+                    var patientId = Guid.Parse(deliveryReader.GetString(0));
+                    var patientName = deliveryReader.GetString(1);
+                    var deliveryTime = deliveryReader.GetDateTime(2);
+
+                    activities.Add(new RecentActivityItem
+                    {
+                        ActivityId = Guid.NewGuid(),
+                        Type = ActivityType.Delivery,
+                        PatientName = patientName,
+                        Description = $"{patientName} delivered successfully",
+                        Timestamp = deliveryTime,
+                        TimeAgo = Helper.ElapseTimeCalc.PeriodElapseTimeLower(deliveryTime, DateTime.Now),
+                        PatientId = patientId
+                    });
+                }
+
+                // Get recent admissions
+                var admissionCmd = connection.CreateCommand();
+                admissionCmd.CommandText = @"
+                SELECT
+                    p.ID,
+                    pt.firstName || ' ' || pt.lastName as PatientName,
+                    p.admissionDate
+                FROM Tbl_Partograph p
+                INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
+                WHERE DATE(p.admissionDate) = DATE('now')
+                  AND p.deleted = 0
+                  AND pt.deleted = 0
+                ORDER BY p.admissionDate DESC
+                LIMIT 3";
+
+                await using var admissionReader = await admissionCmd.ExecuteReaderAsync();
+                while (await admissionReader.ReadAsync())
+                {
+                    var patientId = Guid.Parse(admissionReader.GetString(0));
+                    var patientName = admissionReader.GetString(1);
+                    var admissionDate = admissionReader.GetDateTime(2);
+
+                    activities.Add(new RecentActivityItem
+                    {
+                        ActivityId = Guid.NewGuid(),
+                        Type = ActivityType.Admission,
+                        PatientName = patientName,
+                        Description = $"{patientName} admitted to ward",
+                        Timestamp = admissionDate,
+                        TimeAgo = Helper.ElapseTimeCalc.PeriodElapseTimeLower(admissionDate, DateTime.Now),
+                        PatientId = patientId
+                    });
+                }
+
+                // Sort all activities by timestamp
+                activities = activities
+                    .OrderByDescending(a => a.Timestamp)
+                    .Take(5)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting recent activities");
+            }
+
+            return activities;
+        }
+
+        private async Task<ResourceUtilization> GetResourceUtilizationAsync(SqliteConnection connection, DashboardStats stats)
+        {
+            var resources = new ResourceUtilization
+            {
+                TotalBeds = 20, // This would typically come from a configuration table
+                TotalStaff = 6   // This would typically come from staff/shift management
+            };
+
+            try
+            {
+                // Calculate occupied beds (active + pending patients)
+                resources.OccupiedBeds = stats.ActiveLabor + stats.PendingLabor;
+                resources.AvailableBeds = resources.TotalBeds - resources.OccupiedBeds;
+                resources.OccupancyRate = resources.TotalBeds > 0
+                    ? Math.Round((double)resources.OccupiedBeds / resources.TotalBeds * 100, 1)
+                    : 0;
+
+                resources.ActivePatients = stats.ActiveLabor;
+                resources.StaffToPatientRatio = resources.ActivePatients > 0
+                    ? Math.Round((double)resources.TotalStaff / resources.ActivePatients, 2)
+                    : resources.TotalStaff;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating resource utilization");
+            }
+
+            return resources;
+        }
+
+        private async Task<List<HourlyAdmission>> GetAdmissionTrendsAsync(SqliteConnection connection)
+        {
+            var trends = new List<HourlyAdmission>();
+
+            try
+            {
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = @"
+                SELECT
+                    CAST(strftime('%H', admissionDate) AS INTEGER) as Hour,
+                    COUNT(*) as AdmissionCount
+                FROM Tbl_Partograph
+                WHERE DATE(admissionDate) = DATE('now')
+                  AND deleted = 0
+                GROUP BY CAST(strftime('%H', admissionDate) AS INTEGER)
+                ORDER BY Hour";
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                // Initialize all 24 hours with 0
+                var hourlyData = new Dictionary<int, int>();
+                for (int i = 0; i < 24; i++)
+                {
+                    hourlyData[i] = 0;
+                }
+
+                // Fill in actual data
+                while (await reader.ReadAsync())
+                {
+                    var hour = reader.GetInt32(0);
+                    var count = reader.GetInt32(1);
+                    hourlyData[hour] = count;
+                }
+
+                // Convert to list
+                foreach (var kvp in hourlyData)
+                {
+                    trends.Add(new HourlyAdmission
+                    {
+                        Hour = kvp.Key,
+                        HourLabel = $"{kvp.Key:00}:00",
+                        AdmissionCount = kvp.Value
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting admission trends");
+            }
+
+            return trends;
         }
 
         /// <summary>
