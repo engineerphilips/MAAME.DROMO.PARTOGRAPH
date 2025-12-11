@@ -44,7 +44,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         }
 
         /// <summary>
-        /// Analyzes labor progression against WHO alert/action lines
+        /// Analyzes labor progression against WHO Labour Care Guide 2020 alert/action lines
+        /// Based on WHO 2020 guidelines: Active labor starts at 5cm, alert line crosses at 1cm/hour
         /// </summary>
         private List<ClinicalAlert> AnalyzeLaborProgression(Partograph patient)
         {
@@ -55,87 +56,144 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
             var dilatations = patient.Dilatations.OrderBy(d => d.Time).ToList();
             var latestDilatation = dilatations.Last();
-
-            // Find when patient reached 4cm (active labor start)
-            var fourCmEntry = dilatations.FirstOrDefault(d => d.DilatationCm >= 4);
-            if (fourCmEntry == null)
-                return alerts;
-
-            var hoursSinceFourCm = (latestDilatation.Time - fourCmEntry.Time).TotalHours;
-            var expectedDilatation = 4 + hoursSinceFourCm; // 1cm per hour expected
             var actualDilatation = latestDilatation.DilatationCm;
 
-            // Alert line - 4 hours from 4cm to 10cm (1.5cm/hr)
-            var alertLineExpected = 4 + (hoursSinceFourCm * 1.5);
-
-            // Action line - 2 hours behind alert line
-            var actionLineExpected = 4 + Math.Max(0, (hoursSinceFourCm - 2) * 1.5);
-
-            if (actualDilatation < actionLineExpected && hoursSinceFourCm > 2)
+            // WHO 2020: Active labor starts at 5cm with regular contractions
+            var activeLaborEntry = dilatations.FirstOrDefault(d => d.DilatationCm >= AlertThresholds.ACTIVE_LABOR_START_CM);
+            if (activeLaborEntry == null)
             {
-                // Crossing action line - CRITICAL
+                // Patient not yet in active labor
+                if (actualDilatation >= 4 && actualDilatation < 5)
+                {
+                    alerts.Add(new ClinicalAlert
+                    {
+                        Severity = AlertSeverity.Info,
+                        Category = AlertCategory.Labor,
+                        Title = "Approaching Active Labor",
+                        Message = $"Cervix is {actualDilatation}cm dilated. Active labor begins at 5cm with regular contractions.",
+                        RecommendedActions = new List<string>
+                        {
+                            "Continue to monitor progress",
+                            "Ensure woman is comfortable and supported",
+                            "Assess contraction pattern",
+                            "Prepare to start partograph when 5cm reached"
+                        },
+                        MeasurementType = "Cervical Dilatation",
+                        CurrentValue = $"{actualDilatation} cm",
+                        ExpectedRange = "Active labor starts at 5cm"
+                    });
+                }
+                return alerts;
+            }
+
+            var hoursSinceActiveLaborStart = (latestDilatation.Time - activeLaborEntry.Time).TotalHours;
+
+            // WHO 2020: Alert line - 1cm per hour from 5cm (reaches 10cm in 5 hours)
+            var alertLineExpected = AlertThresholds.ALERT_LINE_START_CM +
+                                   (hoursSinceActiveLaborStart * AlertThresholds.DILATATION_RATE_EXPECTED);
+            if (alertLineExpected > 10) alertLineExpected = 10;
+
+            // WHO 2020: Action line - 4 hours to the right of alert line
+            var actionLineExpected = AlertThresholds.ALERT_LINE_START_CM +
+                                    (Math.Max(0, hoursSinceActiveLaborStart - AlertThresholds.ACTION_LINE_OFFSET_HOURS) *
+                                     AlertThresholds.DILATATION_RATE_EXPECTED);
+            if (actionLineExpected > 10) actionLineExpected = 10;
+
+            // Check if labor has crossed the action line (Critical)
+            if (actualDilatation < actionLineExpected && hoursSinceActiveLaborStart > AlertThresholds.ACTION_LINE_OFFSET_HOURS)
+            {
                 alerts.Add(new ClinicalAlert
                 {
                     Severity = AlertSeverity.Critical,
                     Category = AlertCategory.Labor,
-                    Title = "Labor Progression: Action Line Crossed",
-                    Message = $"Cervical dilatation is progressing slower than expected. Current: {actualDilatation}cm, Expected: {actionLineExpected:F1}cm.",
+                    Title = "Labor Progress: Action Line Crossed",
+                    Message = $"Cervical dilatation has crossed the action line. Current: {actualDilatation}cm, Expected: ≥{actionLineExpected:F1}cm after {hoursSinceActiveLaborStart:F1} hours in active labor.",
                     RecommendedActions = new List<string>
                     {
+                        "URGENT: Notify senior obstetrician immediately",
                         "Assess for cephalopelvic disproportion (CPD)",
-                        "Consider augmentation with oxytocin if no contraindications",
-                        "Inform senior obstetrician",
-                        "Review for need of operative delivery",
-                        "Ensure adequate hydration and pain relief"
+                        "Review for malpresentation or malposition",
+                        "Consider augmentation with oxytocin if membranes ruptured and no contraindications",
+                        "Artificial rupture of membranes if not done and no contraindications",
+                        "Prepare for potential operative delivery",
+                        "Ensure woman is well-hydrated and has adequate pain relief",
+                        "Monitor fetal and maternal wellbeing closely"
                     },
                     MeasurementType = "Cervical Dilatation",
                     CurrentValue = $"{actualDilatation} cm",
-                    ExpectedRange = $">{actionLineExpected:F1} cm at this time"
+                    ExpectedRange = $"≥{actionLineExpected:F1} cm (Action line)"
                 });
             }
-            else if (actualDilatation < alertLineExpected && hoursSinceFourCm > 1)
+            // Check if labor has crossed the alert line (Warning)
+            else if (actualDilatation < alertLineExpected && hoursSinceActiveLaborStart > 1)
             {
-                // Crossing alert line - WARNING
                 alerts.Add(new ClinicalAlert
                 {
                     Severity = AlertSeverity.Warning,
                     Category = AlertCategory.Labor,
-                    Title = "Labor Progression: Alert Line Crossed",
-                    Message = $"Labor is progressing slower than optimal. Current: {actualDilatation}cm, Expected: {alertLineExpected:F1}cm.",
+                    Title = "Labor Progress: Alert Line Crossed",
+                    Message = $"Labor is progressing slower than expected. Current: {actualDilatation}cm, Expected: ≥{alertLineExpected:F1}cm after {hoursSinceActiveLaborStart:F1} hours in active labor.",
                     RecommendedActions = new List<string>
                     {
-                        "Assess for adequate contractions (3-5 in 10 minutes)",
-                        "Ensure adequate hydration",
-                        "Optimize maternal position and mobility",
-                        "Review pain relief adequacy",
-                        "Monitor closely for further delays"
+                        "Assess contraction pattern (should be 3-5 in 10 minutes, each lasting 40 seconds)",
+                        "Assess for obstructed labor signs: severe pain, maternal distress, bladder distension",
+                        "Ensure woman is well-hydrated (IV fluids if needed)",
+                        "Encourage upright positions and mobility if appropriate",
+                        "Consider artificial rupture of membranes if appropriate and no contraindications",
+                        "Review pain relief options",
+                        "Monitor closely - if crosses action line, escalate immediately"
                     },
                     MeasurementType = "Cervical Dilatation",
                     CurrentValue = $"{actualDilatation} cm",
-                    ExpectedRange = $">{alertLineExpected:F1} cm at this time"
+                    ExpectedRange = $"≥{alertLineExpected:F1} cm (Alert line)"
                 });
             }
 
-            // Check for prolonged labor (>12 hours in active phase)
-            if (hoursSinceFourCm > 12 && actualDilatation < 10)
+            // WHO 2020: Prolonged active labor (>12 hours from 5cm)
+            if (hoursSinceActiveLaborStart > 12 && actualDilatation < 10)
             {
                 alerts.Add(new ClinicalAlert
                 {
                     Severity = AlertSeverity.Critical,
                     Category = AlertCategory.Labor,
-                    Title = "Prolonged Labor",
-                    Message = $"Active labor has exceeded 12 hours ({hoursSinceFourCm:F1} hours). Current dilatation: {actualDilatation}cm.",
+                    Title = "Prolonged Active Labor",
+                    Message = $"Active labor has exceeded 12 hours ({hoursSinceActiveLaborStart:F1} hours since 5cm). Current dilatation: {actualDilatation}cm.",
                     RecommendedActions = new List<string>
                     {
-                        "Senior obstetrician review required",
-                        "Assess maternal exhaustion",
-                        "Consider operative delivery",
-                        "Review augmentation strategy",
-                        "Monitor maternal and fetal wellbeing closely"
+                        "URGENT: Senior obstetrician review required",
+                        "Assess for obstructed labor",
+                        "Assess maternal exhaustion and hydration status",
+                        "Review for fetal distress",
+                        "Consider operative delivery (cesarean section or instrumental delivery)",
+                        "Ensure continuous maternal and fetal monitoring",
+                        "Provide emotional support and keep woman informed"
                     },
                     MeasurementType = "Labor Duration",
-                    CurrentValue = $"{hoursSinceFourCm:F1} hours",
-                    ExpectedRange = "<12 hours in active phase"
+                    CurrentValue = $"{hoursSinceActiveLaborStart:F1} hours in active labor",
+                    ExpectedRange = "<12 hours from 5cm to full dilatation"
+                });
+            }
+
+            // Good progress - informational
+            if (actualDilatation >= alertLineExpected && actualDilatation < 10 && hoursSinceActiveLaborStart > 0)
+            {
+                alerts.Add(new ClinicalAlert
+                {
+                    Severity = AlertSeverity.Info,
+                    Category = AlertCategory.Labor,
+                    Title = "Normal Labor Progress",
+                    Message = $"Labor is progressing normally. Current: {actualDilatation}cm after {hoursSinceActiveLaborStart:F1} hours in active labor.",
+                    RecommendedActions = new List<string>
+                    {
+                        "Continue supportive care",
+                        "Monitor according to WHO 2020 schedule (FHR and contractions every 30 min, VE every 4 hours)",
+                        "Encourage oral fluids and light food if desired",
+                        "Provide continuous emotional support",
+                        "Encourage mobility and upright positions"
+                    },
+                    MeasurementType = "Cervical Dilatation",
+                    CurrentValue = $"{actualDilatation} cm",
+                    ExpectedRange = "On or ahead of alert line"
                 });
             }
 
@@ -469,7 +527,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         }
 
         /// <summary>
-        /// Analyzes contraction patterns for abnormalities
+        /// Analyzes contraction patterns for abnormalities (WHO Labour Care Guide 2020)
         /// </summary>
         private List<ClinicalAlert> AnalyzeContractions(Partograph patient)
         {
@@ -480,32 +538,33 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
             var latestContraction = patient.Contractions.OrderByDescending(c => c.Time).First();
 
-            // Hyperstimulation
-            if (latestContraction.FrequencyPer10Min > AlertThresholds.CONTRACTION_HYPERSTIMULATION)
+            // WHO 2020: Tachysystole (>5 contractions per 10 minutes)
+            if (latestContraction.FrequencyPer10Min > AlertThresholds.CONTRACTION_NORMAL_MAX)
             {
                 alerts.Add(new ClinicalAlert
                 {
                     Severity = AlertSeverity.Critical,
                     Category = AlertCategory.Labor,
-                    Title = "Uterine Hyperstimulation",
-                    Message = $"Contractions: {latestContraction.FrequencyPer10Min} in 10 minutes - Excessive frequency.",
+                    Title = "Uterine Tachysystole Detected",
+                    Message = $"Contractions: {latestContraction.FrequencyPer10Min} in 10 minutes - More than 5 contractions per 10 minutes (tachysystole).",
                     RecommendedActions = new List<string>
                     {
-                        "URGENT: Discontinue oxytocin immediately if running",
+                        "URGENT: Stop oxytocin infusion immediately if running",
                         "Monitor fetal heart rate continuously",
-                        "Change maternal position",
-                        "Consider tocolytic if fetal distress",
-                        "Inform senior obstetrician",
-                        "Assess for uterine rupture risk"
+                        "Change woman's position to left lateral",
+                        "Administer oxygen to woman",
+                        "Consider tocolysis if fetal heart rate abnormalities present",
+                        "Notify senior obstetrician immediately",
+                        "Assess for signs of uterine rupture (severe continuous pain, maternal shock)"
                     },
                     MeasurementType = "Contraction Frequency",
                     CurrentValue = $"{latestContraction.FrequencyPer10Min} per 10 min",
-                    ExpectedRange = $"≤{AlertThresholds.CONTRACTION_NORMAL_MAX} per 10 min"
+                    ExpectedRange = $"3-5 per 10 min (WHO 2020)"
                 });
             }
 
-            // Inadequate contractions in active labor
-            if (latestContraction.FrequencyPer10Min < 3 && patient.Dilatations.Any())
+            // WHO 2020: Inadequate contractions in active labor
+            if (latestContraction.FrequencyPer10Min < AlertThresholds.CONTRACTION_NORMAL_MIN && patient.Dilatations.Any())
             {
                 var latestDilatation = patient.Dilatations.OrderByDescending(d => d.Time).FirstOrDefault();
                 if (latestDilatation != null && latestDilatation.DilatationCm >= 4 && latestDilatation.DilatationCm < 10)

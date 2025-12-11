@@ -6,13 +6,16 @@
 **Status:** ✅ Complete
 
 **Components Created:**
-- `Services/ClinicalAlert.cs` - Alert model and severity levels
+- `Services/ClinicalAlert.cs` - Alert model, severity levels, and WHO Labour Care Guide 2020 thresholds (ISBN 978-92-4-001756-6)
 - `Services/AlertEngine.cs` - Comprehensive clinical decision support engine
-- `Services/AlertThresholds.cs` - WHO-based clinical thresholds
+- Integrated AlertThresholds based on WHO Labour Care Guide 2020 standards
 
 **Features:**
-- **Labor Progression Analysis**
-  - WHO alert/action line crossing detection
+- **Labor Progression Analysis** (WHO Labour Care Guide 2020)
+  - Active labor defined at 5cm with regular contractions
+  - Alert line: 1cm/hour progression from 5cm (reaches 10cm in 5 hours)
+  - Action line: 4 hours to the right of alert line
+  - Alert/action line crossing detection with recommended clinical actions
   - Prolonged labor alerts (>12 hours in active phase)
   - Automatic calculation of expected vs actual dilatation
 
@@ -28,8 +31,9 @@
   - Fever and hypothermia monitoring
   - Proteinuria and ketonuria warnings
 
-- **Contraction Monitoring**
-  - Hyperstimulation detection (>6 per 10 min)
+- **Contraction Monitoring** (WHO Labour Care Guide 2020)
+  - Tachysystole detection (>5 per 10 min)
+  - Optimal contraction frequency: 3-5 per 10 minutes in active labor
   - Inadequate contraction alerts in active labor
   - Prolonged contraction warnings
 
@@ -80,18 +84,23 @@
 - Critical: ≥38.5°C
 - Infection screening prompts
 
-#### Cervical Dilatation
+#### Cervical Dilatation (WHO Labour Care Guide 2020)
 - Range: 0-10 cm (anatomical limit)
 - **Prevents regression** (dilatation cannot decrease)
 - Rapid progression alerts (>3cm/hour)
 - No progress alerts (>4 hours without change in active labor)
-- Labor stage information
+- Labor stage information:
+  - Active labor: ≥5cm with regular contractions
+  - Approaching active labor: 4-5cm
+  - Latent phase: <4cm
+- Monitoring intervals: Vaginal exam every 4 hours in active labor
 
-#### Contractions
+#### Contractions (WHO Labour Care Guide 2020)
 - Frequency: 3-5 per 10 min (optimal in active labor)
 - Duration: 20-90 seconds
-- Hyperstimulation warnings
+- Tachysystole warnings (>5 per 10 min)
 - Inadequate contraction alerts
+- Monitoring interval: Every 30 minutes in active labor
 
 #### Urine
 - Protein warnings (++, +++, ++++)
@@ -126,12 +135,13 @@
 
 **Charts Implemented:**
 
-#### 1. Cervical Dilatation Chart
+#### 1. Cervical Dilatation Chart (WHO Labour Care Guide 2020)
 - Line chart with actual progress
-- WHO Alert Line (1.5cm/hour from 4cm)
-- WHO Action Line (2 hours behind alert)
+- WHO 2020 Alert Line: 1cm/hour from 5cm (reaches 10cm in 5 hours)
+- WHO 2020 Action Line: 4 hours to the right of alert line
 - Color-coded lines: Blue (actual), Orange (alert), Red (action)
 - Visual identification of labor progression delays
+- Active labor starts at 5cm with regular contractions
 
 #### 2. Fetal Heart Rate Chart
 - Real-time FHR plotting
@@ -163,6 +173,7 @@
 - Time-based X-axis (HH:mm format)
 - Automatic data refresh
 - Export-ready structure (export command placeholder)
+- Chart titles reference WHO Labour Care Guide 2020 for clinical accuracy
 
 **Navigation:**
 - Added "Charts" toolbar button to PartographPage.xaml
@@ -350,7 +361,14 @@ Patient ID → Load Measurements
 
 ## 🎓 Clinical Guidelines Implemented
 
-- **WHO Partograph Guidelines** (2000 & 2018)
+**Primary Reference:**
+- **WHO Labour Care Guide 2020** - User's Manual
+  - ISBN 978-92-4-001756-6 (electronic version)
+  - ISBN 978-92-4-001757-3 (print version)
+  - © World Health Organization 2020
+  - All labor progression thresholds, monitoring intervals, and clinical decision algorithms are based on this authoritative source
+
+**Supporting References:**
 - **FIGO Intrapartum Fetal Monitoring** (2015)
 - **NICE Clinical Guidelines** CG190
 - **ACOG Practice Bulletins** on Intrapartum Care
@@ -384,11 +402,12 @@ Patient ID → Load Measurements
 
 ## ✨ Key Achievements
 
-1. ✅ **State-of-the-art clinical decision support** - Automated detection of 15+ critical conditions
-2. ✅ **WHO-compliant visualizations** - Professional partograph charts with alert/action lines
-3. ✅ **Data quality assurance** - Comprehensive validation preventing errors
-4. ✅ **Evidence-based recommendations** - Context-specific clinical guidance
-5. ✅ **Mobile-optimized UI** - Responsive, intuitive interface for busy clinical environments
+1. ✅ **WHO Labour Care Guide 2020 Compliance** - All clinical thresholds, monitoring intervals, and decision algorithms strictly follow WHO 2020 standards (ISBN 978-92-4-001756-6)
+2. ✅ **State-of-the-art clinical decision support** - Automated detection of 15+ critical conditions
+3. ✅ **WHO 2020-compliant visualizations** - Professional partograph charts with alert/action lines (5cm start, 1cm/hour, 4-hour offset)
+4. ✅ **Data quality assurance** - Comprehensive validation preventing errors
+5. ✅ **Evidence-based recommendations** - Context-specific clinical guidance based on WHO 2020
+6. ✅ **Mobile-optimized UI** - Responsive, intuitive interface for busy clinical environments
 
 ---
 
