@@ -4,6 +4,7 @@
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.CompletedPatientsView"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              xmlns:popup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:fonts="clr-namespace:Fonts">
 
@@ -37,7 +38,7 @@
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Patient">
+                    <DataTemplate x:DataType="pagemodels:CompletedPatientItem">
                         <Border StrokeThickness="1"
                                 Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
                                 BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
@@ -48,66 +49,86 @@
                             </Border.StrokeShape>
 
                             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
-                                <!-- Patient Avatar -->
+                                <!-- Delivery Icon -->
                                 <Border Grid.Column="0"
                                         WidthRequest="60"
                                         HeightRequest="60"
-                                        BackgroundColor="{Binding StatusColor}">
+                                        BackgroundColor="#10B981">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="30" />
                                     </Border.StrokeShape>
                                     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                                        <Label Text="{Binding CervicalDilationOnAdmission, StringFormat='{0}'}"
-                                               FontSize="20"
-                                               FontAttributes="Bold"
-                                               TextColor="White" />
-                                        <Label Text="cm"
-                                               FontSize="12"
+                                        <Label Text="&#xe7fe;"
+                                               FontFamily="MaterialAssets"
+                                               FontSize="30"
                                                TextColor="White" />
                                     </VerticalStackLayout>
                                 </Border>
 
-                                <!-- Patient Details -->
+                                <!-- Patient & Delivery Details -->
                                 <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
-                                    <Label Text="{Binding Name}" 
-                                           FontAttributes="Bold" 
+                                    <Label Text="{Binding PatientName}"
+                                           FontAttributes="Bold"
                                            FontSize="18" />
-                                    <Label Text="{Binding DisplayInfo}" 
+                                    <Label Text="{Binding PatientInfo}"
                                            FontSize="14"
                                            TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+
+                                    <!-- Delivery Time -->
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="&#xe916;"
+                                               FontFamily="MaterialAssets"
+                                               FontSize="14"
+                                               TextColor="#10B981" />
+                                        <Label Text="Delivered:" FontSize="12" FontAttributes="Bold" />
+                                        <Label Text="{Binding DeliveryTimeDisplay}"
+                                               FontSize="12" />
+                                    </HorizontalStackLayout>
+
+                                    <!-- Delivery Mode & Babies -->
                                     <HorizontalStackLayout Spacing="10">
                                         <HorizontalStackLayout Spacing="5">
-                                            <Label Text="&#xe71e;" 
-                                                   FontFamily="MaterialAssets"
-                                                   FontSize="16"
-                                                   TextColor="#2196F3" />
-                                            <Label Text="{Binding LaborStartTime, StringFormat='{0:HH:mm}'}" 
-                                                   FontSize="12" />
-                                            <Label Text="{Binding LaborStartTimeFormat}" 
-                                                   FontSize="12" />
-                                        </HorizontalStackLayout>
-                                        <!--<HorizontalStackLayout Spacing="5">
-                                            <Label Text="FHR:" FontSize="12" />
-                                            <Label Text="{Binding PartographEntries[0].FetalHeartRate, StringFormat='{0}bpm'}" 
+                                            <Label Text="Mode:" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                            <Label Text="{Binding DeliveryModeDisplay}"
                                                    FontSize="12"
                                                    FontAttributes="Bold"
-                                                   TextColor="{Binding PartographEntries[0].FetalHeartRate, Converter={StaticResource FHRColorConverter}}" />
-                                        </HorizontalStackLayout>-->
+                                                   TextColor="#3B82F6" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="5">
+                                            <Label Text="&#xe7fe;"
+                                                   FontFamily="MaterialAssets"
+                                                   FontSize="12"
+                                                   TextColor="#F59E0B" />
+                                            <Label Text="{Binding BabiesDisplay}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#F59E0B" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+
+                                    <!-- Complications -->
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="●"
+                                               FontSize="12"
+                                               TextColor="{Binding ComplicationsColor}" />
+                                        <Label Text="{Binding ComplicationsDisplay}"
+                                               FontSize="12"
+                                               TextColor="{Binding ComplicationsColor}" />
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
 
                                 <!-- Action Button -->
                                 <Button Grid.Column="2"
-                                        Text="&#xe780;"
+                                        Text="&#xe8a0;"
                                         FontFamily="MaterialAssets"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewPartographCommand}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.ViewPartographCommand}"
                                         CommandParameter="{Binding .}"
-                                        BackgroundColor="#2196F3"
+                                        BackgroundColor="#10B981"
                                         TextColor="White"
                                         WidthRequest="45"
                                         HeightRequest="45"
                                         CornerRadius="22"
-                                        ToolTipProperties.Text="View Partograph" />
+                                        ToolTipProperties.Text="View Details" />
                             </Grid>
                         </Border>
                     </DataTemplate>
