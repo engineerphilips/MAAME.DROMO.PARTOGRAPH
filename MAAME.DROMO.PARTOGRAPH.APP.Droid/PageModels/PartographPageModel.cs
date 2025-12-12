@@ -434,7 +434,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             if (!HasAlerts)
             {
-                AlertSummary = "No active alerts";
+                //AlertSummary = "No active alerts";
+                AlertSummary = "";
             }
             else
             {
@@ -1306,8 +1307,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [RelayCommand]
         private Task ViewCharts()
-            => Shell.Current.GoToAsync($"partographchart?patientId={Patient?.ID}");
+            => Shell.Current.GoToAsync($"///partographchart?patientId={Patient?.ID}");
 
+        //public Task NavigateToPartograph(Partograph patient) => Shell.Current.GoToAsync($"partograph?patientId={patient.ID}");
         [RelayCommand]
         private async Task SecondStage()
         {
@@ -1318,7 +1320,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Check if patient has reached appropriate stage for birth outcome recording
-            if (CurrentDilation < 10 && Patient.Status != LaborStatus.Delivered)
+            if (CurrentDilation < 10 && Patient.Status != LaborStatus.Completed)
             {
                 var shouldContinue = await Application.Current.MainPage.DisplayAlert(
                     "Confirm Promotion",
@@ -1379,20 +1381,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 await LoadData(Patient.ID);
         }
 
-        // Popup IsOpen properties
-        //[ObservableProperty]
-        //private bool _isCompanionPopupOpen;
-
-        //public bool IsCompanionPopupOpen
-        //{
-        //    get => _isCompanionPopupOpen;
-        //    set
-        //    {
-        //        SetProperty(ref _isCompanionPopupOpen, value);
-        //        OnPropertyChanged(nameof(IsCompanionPopupOpen));
-        //    }
-        //}
-
         public Action? CloseCompanionModalPopup { get; set; }
         public Action? OpenCompanionModalPopup { get; set; }
         public Action? ClosePainReliefModalPopup { get; set; }
@@ -1436,8 +1424,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         public async Task OpenCompanionPopup()
         {
-            //if (IsCompanionPopupOpen)
-            //    IsCompanionPopupOpen = false;
             if (Patient?.ID != null)
             {
                 CompanionModalPageModel._patient = Patient;

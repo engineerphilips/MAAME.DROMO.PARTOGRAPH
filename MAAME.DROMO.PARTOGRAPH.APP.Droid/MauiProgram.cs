@@ -74,6 +74,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<PlanRepository>();
             builder.Services.AddSingleton<PartographDiagnosisRepository>();
             builder.Services.AddSingleton<PartographRiskFactorRepository>();
+            builder.Services.AddSingleton<BirthOutcomeRepository>();
+            builder.Services.AddSingleton<BabyDetailsRepository>();
+            builder.Services.AddSingleton<ReferralRepository>();
             // Keep existing repositories for compatibility during migration
             //builder.Services.AddSingleton<ProjectRepository>();
             //builder.Services.AddSingleton<TaskRepository>();
@@ -109,6 +112,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<OralFluidModalPageModel>();
             builder.Services.AddSingleton<PostureModalPageModel>();
             builder.Services.AddSingleton<SyncSettingsPageModel>();
+            builder.Services.AddSingleton<PartographChartPageModel>();
+            builder.Services.AddSingleton<BirthOutcomePageModel>();
+            builder.Services.AddSingleton<BabyDetailsPageModel>();
+            builder.Services.AddSingleton<ReferralPageModel>();
 
             // Register Measurement Modal PageModels
             builder.Services.AddSingleton<CervixDilatationModalPageModel>();
@@ -128,11 +135,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<AssessmentModalPageModel>();
             builder.Services.AddSingleton<PlanModalPageModel>();
             builder.Services.AddSingleton<FHRContractionModalPageModel>();
-            
+
             // Register Pages and PageModels with routes
             builder.Services.AddTransientWithShellRoute<PatientPage, PatientPageModel>("patient");
             builder.Services.AddTransientWithShellRoute<PartographPage, PartographPageModel>("partograph");
             builder.Services.AddTransientWithShellRoute<PartographEntryPage, PartographEntryPageModel>("partographentry");
+            builder.Services.AddTransientWithShellRoute<PartographChartPage, PartographChartPageModel>("partographchart");
 
             //builder.Services.AddTransientWithShellRoute<VitalSignsPage, VitalSignsPageModel>("vitalsigns");
             // builder.Services.AddTransientWithShellRoute<VitalSignsPage, VitalSignsPageModel>("vitalsigns");

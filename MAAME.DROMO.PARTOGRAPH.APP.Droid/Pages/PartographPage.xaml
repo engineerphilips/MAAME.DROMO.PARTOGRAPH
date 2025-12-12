@@ -99,8 +99,8 @@
                      IconImageSource="{x:Static fonts:FluentUI.add_16_regular}"
                      ToolTipProperties.Text="Record Birth Outcome" />
         <ToolbarItem Text="Referral"
-                     Command="{Binding NavigateToReferralCommand}"
-                     IconImageSource="{x:Static fonts:FluentUI.arrow_export_16_regular}"
+                     Command="{Binding NavigateToReferralCommand}" 
+                     IconImageSource="{x:Static fonts:FluentUI.arrow_export_ltr_16_regular}"
                      ToolTipProperties.Text="Create Referral" />
         <ToolbarItem Text="Charts"
                      Command="{Binding ViewChartsCommand}"

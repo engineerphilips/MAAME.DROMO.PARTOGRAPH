@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
-    public partial class PartographChartPageModel : ObservableObject
+    public partial class PartographChartPageModel : ObservableObject, IQueryAttributable
     {
         private readonly PartographRepository _partographRepository;
         private readonly CervixDilatationRepository _cervixDilatationRepository;
@@ -374,6 +374,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private async Task ExportChart()
         {
             await AppShell.DisplayToastAsync("Chart export feature coming soon");
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.ContainsKey("patientId"))
+            {
+                Guid id = Guid.Parse(Convert.ToString(query["patientId"]));
+                LoadDataAsync(id).FireAndForgetSafeAsync(_errorHandler);
+                //Refresh().FireAndForgetSafeAsync(_errorHandler);
+            }
         }
     }
 

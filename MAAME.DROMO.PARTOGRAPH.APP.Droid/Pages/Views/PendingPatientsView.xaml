@@ -92,10 +92,10 @@
                                             Opacity="0.15" />
                                 </Border.Shadow>
 
-                                <Grid RowDefinitions="Auto,Auto,Auto,1,Auto" Padding="16">
+                                <Grid RowDefinitions="Auto,Auto,Auto,10,Auto" Padding="16">
 
                                     <!-- Header Row: Patient Info -->
-                                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12">
                                         <!-- Patient Avatar -->
                                         <Border Grid.Column="0"
                                                 WidthRequest="56"
@@ -127,7 +127,7 @@
                                         </VerticalStackLayout>
 
                                         <!-- Status Badge -->
-                                        <Border Grid.Column="2"
+                                        <!--<Border Grid.Column="2"
                                                 BackgroundColor="#FF9800"
                                                 Padding="10,5"
                                                 VerticalOptions="Start">
@@ -137,11 +137,28 @@
                                             <Label Text="PENDING"
                                                    FontSize="11"
                                                    FontAttributes="Bold" />
+                                        </Border>-->
+
+                                        <Border BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#252525}"
+        Padding="0,0,10,6"
+        HorizontalOptions="Start" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="6" />
+                                            </Border.StrokeShape>
+                                            <Label Text="{Binding DisplayInfo}"
+           FontSize="12"
+           TextColor="{AppThemeBinding Light=#555, Dark=#BBB}" />
                                         </Border>
+
+                                        <Label Text="{Binding AdmissionDate, StringFormat='{0:dddd, dd MMM yyyy HH:mm}'}"
+FontSize="12"
+FontAttributes="Bold"
+TextColor="{AppThemeBinding Light=#888, Dark=#999}"
+Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" HorizontalOptions="Start" />
                                     </Grid>
 
                                     <!-- Patient Demographics -->
-                                    <HorizontalStackLayout Grid.Row="1" Spacing="16" Margin="0,12,0,0">
+                                    <!--<HorizontalStackLayout Grid.Row="1" Spacing="16" Margin="0,12,0,0">
                                         <Border BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#252525}"
                                                 Padding="10,6"
                                                 HorizontalOptions="Start">
@@ -152,11 +169,11 @@
                                                    FontSize="12"
                                                    TextColor="{AppThemeBinding Light=#555, Dark=#BBB}" />
                                         </Border>
-                                    </HorizontalStackLayout>
+                                    </HorizontalStackLayout>-->
 
                                     <!-- Clinical Information -->
-                                    <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,12,0,12">
-                                        <!-- Admission Details -->
+                                    <!--<Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,12,0,12">
+                                        --><!-- Admission Details --><!--
                                         <Border Grid.Column="0"
                                                 BackgroundColor="{AppThemeBinding Light=#F3E5F5, Dark=#4A148C}"
                                                 Padding="12,10">
@@ -180,16 +197,16 @@
                                                        FontAttributes="Bold"
                                                        TextColor="{AppThemeBinding Light=#888, Dark=#999}"
                                                        Margin="22,0,0,0" />
-                                                <!--TextColor="{AppThemeBinding Light=#7B1FA2, Dark=#BA68C8}"-->
+                                                --><!--TextColor="{AppThemeBinding Light=#7B1FA2, Dark=#BA68C8}"-->
 
                                                 <!--<Label Text="{Binding AdmissionDate, StringFormat='{0:HH:mm}'}"
                                                        FontSize="12"
                                                        TextColor="{AppThemeBinding Light=#888, Dark=#999}"
-                                                       Margin="22,0,0,0" />-->
+                                                       Margin="22,0,0,0" />--><!--
                                             </VerticalStackLayout>
                                         </Border>
 
-                                        <!-- Initial Assessment -->
+                                        --><!-- Initial Assessment --><!--
                                         <Border Grid.Column="1"
                                                 BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
                                                 Padding="12,10">
@@ -222,12 +239,13 @@
                                                 </HorizontalStackLayout>
                                             </VerticalStackLayout>
                                         </Border>
-                                    </Grid>
+                                    </Grid>-->
 
                                     <!-- Divider -->
                                     <BoxView Grid.Row="3"
                                              HeightRequest="1"
-                                             Color="{AppThemeBinding Light=#EEEEEE, Dark=#333333}" />
+                                             Color="{AppThemeBinding Light=#EEEEEE, Dark=#333333}" 
+                                             Margin="0,10,0,0"/>
 
                                     <!-- Action Button -->
                                     <Button Grid.Row="4"
@@ -237,8 +255,7 @@
                                             BackgroundColor="#4CAF50"
                                             TextColor="White"
                                             FontSize="15"
-                                            FontAttributes="Bold"
-                                            HeightRequest="48"
+                                            HeightRequest="45"
                                             CornerRadius="12"
                                             Margin="0,12,0,0">
                                         <Button.Shadow>

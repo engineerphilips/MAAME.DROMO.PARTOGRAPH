@@ -286,6 +286,22 @@
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False"
     ContentTemplate="{DataTemplate pages:PartographPage}" />
+
+    <ShellContent
+    x:Name="partographchart"
+    Route="partographchart"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="True"
+    Shell.TabBarIsVisible="True"
+    ContentTemplate="{DataTemplate pages:PartographChartPage}" />
+
+    <!--<ShellContent
+    x:Name="birthoutcome"
+    Route="birthoutcome"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="True"
+    Shell.TabBarIsVisible="True"
+    ContentTemplate="{DataTemplate pages:BirthOutcomePage}" />-->
     
     <!-- Divider -->
     <MenuFlyoutSeparator />

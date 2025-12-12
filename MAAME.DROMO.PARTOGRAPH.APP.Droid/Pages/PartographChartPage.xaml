@@ -31,7 +31,7 @@
                     <VerticalStackLayout>
                         <Label Text="{Binding PatientName}" FontSize="18" FontAttributes="Bold" />
                         <Label Text="{Binding PatientInfo}" FontSize="12" Opacity="0.8" />
-                        <Label Text="{Binding LaborDuration, StringFormat='Labor Duration: {0}'}" FontSize="11" />
+                        <Label Text="{Binding LaborDuration, StringFormat='Labour Duration: {0}'}" FontSize="11" />
                     </VerticalStackLayout>
                     <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
                         <Label Text="{Binding CurrentDilation, StringFormat='{0} cm'}"
@@ -54,7 +54,7 @@
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Cervical Dilatation Progress"
+                    <Label Text="Cervical Dilatation"
                            FontSize="16"
                            FontAttributes="Bold" />
 
@@ -151,7 +151,7 @@
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Fetal Heart Rate Monitoring"
+                    <Label Text="Fetal Heart Rate"
                            FontSize="16"
                            FontAttributes="Bold" />
 
@@ -225,7 +225,7 @@
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Contraction Frequency"
+                    <Label Text="Contraction"
                            FontSize="16"
                            FontAttributes="Bold" />
 

@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
-    public partial class BirthOutcomePageModel : ObservableObject
+    public partial class BirthOutcomePageModel : ObservableObject, IQueryAttributable
     {
         private readonly BirthOutcomeRepository _birthOutcomeRepository;
         private readonly BabyDetailsRepository _babyDetailsRepository;
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
+        private readonly ModalErrorHandler _errorHandler;
         private readonly ILogger _logger;
 
         public BirthOutcomePageModel(
@@ -23,12 +24,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             BabyDetailsRepository babyDetailsRepository,
             PatientRepository patientRepository,
             PartographRepository partographRepository,
+            ModalErrorHandler errorHandler,
             ILogger<BirthOutcomePageModel> logger)
         {
             _birthOutcomeRepository = birthOutcomeRepository;
             _babyDetailsRepository = babyDetailsRepository;
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
+            _errorHandler = errorHandler;
             _logger = logger;
         }
 
@@ -354,6 +357,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             // Ensure number is within valid range
             if (NumberOfBabies < 1) NumberOfBabies = 1;
             if (NumberOfBabies > 5) NumberOfBabies = 5;
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.ContainsKey("patientId"))
+            {
+                Guid id = Guid.Parse(Convert.ToString(query["patientId"]));
+                LoadPartographAsync(id).FireAndForgetSafeAsync(_errorHandler);
+                //Refresh().FireAndForgetSafeAsync(_errorHandler);
+            }
         }
     }
 }
