@@ -73,8 +73,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _babyTag = string.Empty;
 
+        //[ObservableProperty]
+        //private DateTime _birthTime = DateTime.Now;
+
         [ObservableProperty]
-        private DateTime _birthTime = DateTime.Now;
+        private DateOnly _birthDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _birthTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
 
         [ObservableProperty]
         private BabySex _sex = BabySex.Unknown;
@@ -253,7 +259,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     BabyTag = NumberOfBabies > 1 ? "Baby A" : "Baby";
                     if (BirthOutcome?.DeliveryTime.HasValue == true)
                     {
-                        BirthTime = BirthOutcome.DeliveryTime.Value;
+                        BirthDate = DateOnly.FromDateTime(BirthOutcome.DeliveryTime.Value);
+                        BirthTime = BirthOutcome.DeliveryTime.Value.TimeOfDay;
                     }
                 }
             }
@@ -269,7 +276,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private async Task SaveCurrentBabyAsync()
+        private async Task SaveCurrentBaby()
         {
             if (!ValidateInput())
             {
@@ -355,7 +362,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             BabyNumber = baby.BabyNumber;
             BabyTag = baby.BabyTag;
-            BirthTime = baby.BirthTime;
+            BirthDate = baby.BirthTime != null ? DateOnly.FromDateTime(baby.BirthTime) : DateOnly.FromDateTime(DateTime.Now);
+            BirthTime = baby.BirthTime != null ? baby.BirthTime.TimeOfDay : DateTime.Now.TimeOfDay;
             Sex = baby.Sex;
             VitalStatus = baby.VitalStatus;
             DeathTime = baby.DeathTime;
@@ -410,7 +418,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 BirthOutcomeID = BirthOutcomeId,
                 BabyNumber = BabyNumber,
                 BabyTag = BabyTag,
-                BirthTime = BirthTime,
+                BirthTime = BirthDate != null && BirthTime != null ? new DateTime(BirthDate.Year, BirthDate.Month, BirthDate.Day).Add(BirthTime) : DateTime.Now,
                 Sex = Sex,
                 VitalStatus = VitalStatus,
                 DeathTime = DeathTime,
@@ -512,7 +520,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private void ResetFields()
         {
-            BirthTime = BirthOutcome?.DeliveryTime ?? DateTime.Now;
+            BirthDate = DateOnly.FromDateTime((BirthOutcome?.DeliveryTime ?? DateTime.Now));
+            BirthTime = (BirthOutcome?.DeliveryTime ?? DateTime.Now).TimeOfDay;
             Sex = BabySex.Unknown;
             VitalStatus = BabyVitalStatus.LiveBirth;
             DeathTime = null;

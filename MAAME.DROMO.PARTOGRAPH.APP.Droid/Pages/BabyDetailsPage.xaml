@@ -50,9 +50,12 @@
         <StackLayout Spacing="0" Padding="0,0,0,20">
 
             <!-- Baby Identification Section -->
-            <Label Text="{Binding BabyTag, StringFormat='👶 {0} - Identification'}"
+            <!--<Label Text="{Binding BabyTag, StringFormat='👶 {0} - Identification'}"
                    Style="{StaticResource SectionTitle}"
-                   Margin="20,15,0,10" />
+                   Margin="20,15,0,10" />-->
+            <Label Text="{Binding BabyTag, StringFormat='{0} - Identification'}"
+       Style="{StaticResource SectionTitle}"
+       Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
                 <Label Text="{Binding BabyNumber, StringFormat='Recording details for Baby #{0}'}"
@@ -60,12 +63,28 @@
                        FontSize="14"
                        Margin="0,0,0,5" />
 
-                <core:SfTextInputLayout Hint="Birth Time" Style="{StaticResource PatientInput}">
+                <!--<core:SfTextInputLayout Hint="Birth Time" Style="{StaticResource PatientInput}">
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <DatePicker Grid.Column="0" Date="{Binding BirthTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateConverter}}" />
                         <TimePicker Grid.Column="1" Time="{Binding BirthTime, Mode=TwoWay, Converter={StaticResource DateTimeToTimeConverter}}" />
                     </Grid>
-                </core:SfTextInputLayout>
+                </core:SfTextInputLayout>-->
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Birth Date"
+                                                Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding BirthTime, Mode=TwoWay}"
+                                       Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Grid.Column="1"
+                                            Hint="Birth Time"
+                                            Style="{StaticResource PatientInput}">
+                        <TimePicker Time="{Binding BirthTime, Mode=TwoWay}"
+                                       Format="HH:mm" />
+                    </core:SfTextInputLayout>
+                </Grid>
 
                 <core:SfTextInputLayout Hint="Sex" Style="{StaticResource PatientInput}">
                     <Picker ItemsSource="{Binding SexOptions}"
@@ -74,7 +93,8 @@
             </StackLayout>
 
             <!-- Vital Status Section -->
-            <Label Text="💓 Vital Status" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="💓 Vital Status" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Vital Status" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
                 <core:SfTextInputLayout Hint="Vital Status" Style="{StaticResource PatientInput}">
@@ -103,7 +123,8 @@
             </StackLayout>
 
             <!-- Anthropometric Measurements Section -->
-            <Label Text="📏 Anthropometric Measurements" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="📏 Anthropometric Measurements" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Anthropometric Measurements" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
                 <core:SfTextInputLayout Hint="Birth Weight (grams)" Style="{StaticResource PatientInput}">
@@ -142,7 +163,8 @@
             </StackLayout>
 
             <!-- APGAR Scores Section -->
-            <Label Text="⭐ APGAR Scores" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="⭐ APGAR Scores" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="APGAR Scores" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
                 <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
@@ -173,7 +195,8 @@
             </StackLayout>
 
             <!-- Resuscitation Section -->
-            <Label Text="🚑 Resuscitation" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="🚑 Resuscitation" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Resuscitation" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="8">
 
                 <StackLayout Orientation="Horizontal" Spacing="10">
@@ -226,7 +249,8 @@
             </StackLayout>
 
             <!-- Immediate Newborn Care (WHO 2020) Section -->
-            <Label Text="🤱 Immediate Newborn Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="🤱 Immediate Newborn Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Immediate Newborn Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="8">
 
                 <StackLayout Orientation="Horizontal" Spacing="10">
@@ -284,7 +308,8 @@
             </StackLayout>
 
             <!-- Clinical Status Section -->
-            <Label Text="🔍 Clinical Assessment" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="🔍 Clinical Assessment" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Clinical Assessment" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="8">
 
                 <StackLayout Orientation="Horizontal" Spacing="10">
@@ -333,7 +358,8 @@
             </StackLayout>
 
             <!-- Special Care Section -->
-            <Label Text="🏥 Special Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="🏥 Special Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Special Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="8">
 
                 <StackLayout Orientation="Horizontal" Spacing="10">
@@ -365,7 +391,8 @@
             </StackLayout>
 
             <!-- Notes Section -->
-            <Label Text="📝 Notes" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="📝 Notes" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Notes" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
                 <core:SfTextInputLayout Hint="Additional Notes" Style="{StaticResource PatientInput}">
                     <Editor Text="{Binding Notes, Mode=TwoWay}"

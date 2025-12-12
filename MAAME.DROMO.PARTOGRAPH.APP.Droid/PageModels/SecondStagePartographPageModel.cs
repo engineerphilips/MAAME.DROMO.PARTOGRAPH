@@ -617,6 +617,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 PatientName = Patient.Name;
                 PatientInfo = Patient.DisplayInfo;
 
+                var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID);
+                if (birthOutcome != null)
+                    Patient.SecondStageStartTime = birthOutcome.DeliveryTime;
+
                 // Calculate second stage duration
                 if (Patient.SecondStageStartTime.HasValue)
                 {

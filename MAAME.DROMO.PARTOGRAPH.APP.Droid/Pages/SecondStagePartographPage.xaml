@@ -55,11 +55,11 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Birth Outcome"
+        <!--<ToolbarItem Text="Birth Outcome"
                      Command="{Binding NavigateToBirthOutcomeCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.add_16_regular}"
-                     ToolTipProperties.Text="Record Birth Outcome" />
-        <ToolbarItem Text="Baby Details"
+                     ToolTipProperties.Text="Record Birth Outcome" />-->
+        <ToolbarItem Text="Add Baby"
                      Command="{Binding NavigateToBabyDetailsCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.person_add_16_regular}"
                      ToolTipProperties.Text="Add Baby Details" />
@@ -112,7 +112,7 @@
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="WHO 2020 Second Stage Monitoring"
+                    <Label Text="Second Stage Monitoring"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light=#1E40AF, Dark=#DBEAFE}" />

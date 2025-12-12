@@ -141,6 +141,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [JsonIgnore]
         public bool NeedsSync => SyncStatus == 0;
 
+        public DateTime? SecondStageStartTime { get; set; }
+
         public string CalculateHash()
         {
             var data = $"{ID}|{Handler}";
