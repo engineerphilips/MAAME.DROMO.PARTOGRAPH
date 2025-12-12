@@ -345,6 +345,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     BirthOutcome = outcome;
                     IsEditMode = true;
 
+                    // Update partograph status to SecondStage
+                    if (Partograph != null)
+                    {
+                        Partograph.Status = LaborStatus.SecondStage;
+                        await _partographRepository.SaveItemAsync(Partograph);
+                        _logger.LogInformation("Updated partograph {PartographId} status to SecondStage", Partograph.ID);
+                    }
+
                     // Navigate to baby details entry
                     if (NumberOfBabies > 0 && MaternalStatus != MaternalOutcomeStatus.Died)
                     {

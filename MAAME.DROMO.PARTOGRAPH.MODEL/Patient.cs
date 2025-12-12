@@ -71,6 +71,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
     {
         Pending,    // Not in active labor
         Active,     // In active labor
+        SecondStage, // Second stage of labor (delivery phase)
         Completed,  // Delivered
         Emergency   // Requires immediate attention
     }

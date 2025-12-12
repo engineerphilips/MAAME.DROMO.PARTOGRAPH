@@ -1320,7 +1320,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Check if patient has reached appropriate stage for birth outcome recording
-            if (CurrentDilation < 10 && Patient.Status != LaborStatus.Completed)
+            if (CurrentDilation < 10 && Patient.Status != LaborStatus.Completed && Patient.Status != LaborStatus.SecondStage)
             {
                 var shouldContinue = await Application.Current.MainPage.DisplayAlert(
                     "Confirm Promotion",
