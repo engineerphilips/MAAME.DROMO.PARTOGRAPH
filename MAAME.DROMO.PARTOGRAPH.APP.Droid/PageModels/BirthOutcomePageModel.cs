@@ -127,8 +127,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _deliveryModeDetails = string.Empty;
 
+        //[ObservableProperty]
+        //private DateTime _deliveryTime = DateTime.Now;
+
         [ObservableProperty]
-        private DateTime _deliveryTime = DateTime.Now;
+        private DateOnly _deliveryDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _deliveryTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
         private int _numberOfBabies = 1;
@@ -141,8 +146,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _perinealDetails = string.Empty;
 
         // Placental Information
+
         [ObservableProperty]
-        private DateTime? _placentaDeliveryTime;
+        private DateOnly _placentaDeliveryDate = DateOnly.FromDateTime(DateTime.Now);
+        [ObservableProperty]
+        private TimeSpan _placentaDeliveryTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
         private bool _placentaComplete = true;
@@ -230,7 +238,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     // Pre-fill delivery time from partograph
                     if (Partograph.DeliveryTime.HasValue)
                     {
-                        DeliveryTime = Partograph.DeliveryTime.Value;
+                        DeliveryDate = DateOnly.FromDateTime(Partograph.DeliveryTime.Value);
+                        DeliveryTime = Partograph.DeliveryTime.Value.TimeOfDay;
+                         //?? DateTime.Now.TimeOfDay
                     }
                 }
             }
@@ -253,11 +263,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             MaternalDeathCircumstances = outcome.MaternalDeathCircumstances ?? string.Empty;
             DeliveryMode = outcome.DeliveryMode;
             DeliveryModeDetails = outcome.DeliveryModeDetails ?? string.Empty;
-            DeliveryTime = outcome.DeliveryTime ?? DateTime.Now;
+            DeliveryDate = outcome.DeliveryTime.HasValue ? DateOnly.FromDateTime(outcome.DeliveryTime.Value) : DateOnly.FromDateTime(DateTime.Now);
+            DeliveryTime = (outcome.DeliveryTime ?? DateTime.Now).TimeOfDay;
             NumberOfBabies = outcome.NumberOfBabies;
             PerinealStatus = outcome.PerinealStatus;
             PerinealDetails = outcome.PerinealDetails ?? string.Empty;
-            PlacentaDeliveryTime = outcome.PlacentaDeliveryTime;
+            PlacentaDeliveryDate = outcome.PlacentaDeliveryTime.HasValue ? DateOnly.FromDateTime(outcome.PlacentaDeliveryTime.Value.Date) : DateOnly.FromDateTime(DateTime.Now);
+            PlacentaDeliveryTime = outcome.PlacentaDeliveryTime.HasValue ? outcome.PlacentaDeliveryTime.Value.TimeOfDay : TimeSpan.Zero;
             PlacentaComplete = outcome.PlacentaComplete;
             EstimatedBloodLoss = outcome.EstimatedBloodLoss;
             MaternalComplications = outcome.MaternalComplications ?? string.Empty;
@@ -280,7 +292,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private async Task SaveAsync()
+        private async Task Save()
         {
             if (Partograph == null)
             {
@@ -315,11 +327,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     MaternalDeathCircumstances = MaternalDeathCircumstances,
                     DeliveryMode = DeliveryMode,
                     DeliveryModeDetails = DeliveryModeDetails,
-                    DeliveryTime = DeliveryTime,
+                    DeliveryTime = new DateTime(DeliveryDate.Year, DeliveryDate.Month, DeliveryDate.Day).Add(DeliveryTime),
                     NumberOfBabies = NumberOfBabies,
                     PerinealStatus = PerinealStatus,
                     PerinealDetails = PerinealDetails,
-                    PlacentaDeliveryTime = PlacentaDeliveryTime,
+                    PlacentaDeliveryTime = PlacentaDeliveryDate != null && PlacentaDeliveryTime != null ? new DateTime(PlacentaDeliveryDate.Year, PlacentaDeliveryDate.Month, PlacentaDeliveryDate.Day).Add(PlacentaDeliveryTime) : null,
                     PlacentaComplete = PlacentaComplete,
                     EstimatedBloodLoss = EstimatedBloodLoss,
                     MaternalComplications = MaternalComplications,
@@ -350,7 +362,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     {
                         Partograph.Status = LaborStatus.SecondStage;
                         await _partographRepository.SaveItemAsync(Partograph);
-                        _logger.LogInformation("Updated partograph {PartographId} status to SecondStage", Partograph.ID);
+                        _logger.LogInformation($"Updated partograph {Partograph.ID} status to SecondStage");
                     }
 
                     // Navigate to baby details entry
@@ -358,7 +370,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     {
                         var shouldContinue = await Application.Current.MainPage.DisplayAlert(
                             "Next Step",
-                            $"Do you want to record details for {NumberOfBabies} {(NumberOfBabies > 1 ? "baby" : "babies")}?",
+                            $"Do you want to record details for {NumberOfBabies} {(NumberOfBabies > 1 ? "babies" : "baby")}",
                             "Yes", "Later");
 
                         if (shouldContinue)

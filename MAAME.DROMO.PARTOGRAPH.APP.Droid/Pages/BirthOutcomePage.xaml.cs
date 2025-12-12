@@ -1,9 +1,13 @@
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages
 {
+    [QueryProperty(nameof(PartographId), "PartographId")]
     public partial class BirthOutcomePage : ContentPage
     {
+        public string PartographId { get; set; }
+
         public BirthOutcomePage(BirthOutcomePageModel pageModel)
         {
             InitializeComponent();

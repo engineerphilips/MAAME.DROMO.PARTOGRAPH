@@ -143,7 +143,7 @@
                     <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Delivery Date"
                                                 Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding DeliveryTime, Mode=TwoWay}"
+                        <DatePicker Date="{Binding DeliveryDate, Mode=TwoWay}"
                                        Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                     </core:SfTextInputLayout>
 
@@ -184,10 +184,27 @@
             <!--<Label Text="🩸 Placental Information" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
             <Label Text="Placental Information" Style="{StaticResource SectionTitle}" Margin="15,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                Hint="Placenta Delivery Date"
+                                Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding PlacentaDeliveryDate, Mode=TwoWay}"
+                       Format="dd-MM-yyyy" MinimumDate="{Binding DeliveryDate, Mode=OneWay}" />
+                    </core:SfTextInputLayout>
 
-                <core:SfTextInputLayout Hint="Placenta Delivery Time" Style="{StaticResource PatientInput}">
-                    <TimePicker Time="{Binding PlacentaDeliveryTime, Mode=TwoWay, Converter={StaticResource NullableTimeConverter}}" />
-                </core:SfTextInputLayout>
+                    <core:SfTextInputLayout Grid.Column="1"
+                            Hint="Placenta Delivery Time"
+                            Style="{StaticResource PatientInput}">
+                        <TimePicker Time="{Binding PlacentaDeliveryTime, Mode=TwoWay}"
+                       Format="HH:mm" />
+                    </core:SfTextInputLayout>
+                </Grid>
+                
+                <!--<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0" Hint="Placenta Delivery Time" Style="{StaticResource PatientInput}">
+                        <TimePicker Time="{Binding PlacentaDeliveryTime, Mode=TwoWay, Converter={StaticResource NullableTimeConverter}}" />
+                    </core:SfTextInputLayout>
+                </Grid>-->
 
                 <StackLayout Orientation="Horizontal" Spacing="10">
                     <CheckBox IsChecked="{Binding PlacentaComplete, Mode=TwoWay}" />
@@ -262,7 +279,7 @@
             <!-- Action Buttons -->
             <StackLayout Padding="15" Spacing="10">
                 <buttons:SfButton Text="{Binding IsEditMode, Converter={StaticResource EditModeToButtonTextConverter}, FallbackValue='Save Birth Outcome'}"
-                                 Command="{Binding SaveAsyncCommand}"
+                                 Command="{Binding SaveCommand}"
                                  Style="{StaticResource PrimaryButton}"
                                  IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
 

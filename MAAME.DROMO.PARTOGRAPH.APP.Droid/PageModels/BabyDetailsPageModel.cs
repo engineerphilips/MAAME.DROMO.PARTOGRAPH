@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
-    [QueryProperty(nameof(BirthOutcomeId), "BirthOutcomeId")]
-    [QueryProperty(nameof(PartographId), "PartographId")]
-    [QueryProperty(nameof(NumberOfBabies), "NumberOfBabies")]
+    //[QueryProperty(nameof(BirthOutcomeId), "BirthOutcomeId")]
+    //[QueryProperty(nameof(PartographId), "PartographId")]
+    //[QueryProperty(nameof(NumberOfBabies), "NumberOfBabies")]
     public partial class BabyDetailsPageModel : ObservableObject, IQueryAttributable
     {
         private readonly BabyDetailsRepository _babyDetailsRepository;

@@ -19,7 +19,7 @@
         <RefreshView Grid.Row="1"
                      IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshCommand}">
-            <CollectionView ItemsSource="{Binding Patients}"
+            <CollectionView ItemsSource="{Binding Partographs}"
                             ItemsLayout="VerticalList"
                             SelectionMode="None">
                 <CollectionView.EmptyView>

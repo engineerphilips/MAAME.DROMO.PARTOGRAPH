@@ -497,7 +497,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 var countCmd = connection.CreateCommand();
                 countCmd.CommandText = @"
                 SELECT status, COUNT(*) FROM Tbl_Partograph WHERE deleted = 0 GROUP BY status;
-                SELECT COUNT(*) FROM Tbl_Partograph WHERE DATE(deliveryTime) = DATE('now') AND deleted = 0;";
+                SELECT COUNT(*) FROM Tbl_BirthOutcome WHERE DATE(deliveryTime) = DATE('now') AND deleted = 0;";
 
                 await using var reader = await countCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())

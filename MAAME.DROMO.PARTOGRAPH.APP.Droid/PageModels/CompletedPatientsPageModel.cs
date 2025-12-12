@@ -57,7 +57,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
-                _allPatients = await _partographRepository.ListAsync(LaborStatus.Completed);
+                _allPatients = await _partographRepository.ListAsync(LaborStatus.SecondStage);
                 FilterPatients();
             }
             finally
@@ -68,7 +68,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private void FilterPatients()
         {
-            if (string.IsNullOrWhiteSpace(SearchText) && SelectedDate == DateTime.MinValue)
+            //&& SelectedDate == DateTime.MinValue
+            if (string.IsNullOrWhiteSpace(SearchText))
             {
                 Partographs = _allPatients.OrderByDescending(p => p.DeliveryTime).ToList();
                 return;
