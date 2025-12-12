@@ -36,6 +36,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly AssessmentRepository _assessmentRepository;
         private readonly PlanRepository _planRepository;
         private readonly BirthOutcomeRepository _birthOutcomeRepository;
+        private readonly BabyDetailsRepository _babyDetailsRepository;
 
         // Modal page models
         private readonly CompanionModalPageModel _companionModalPageModel;
@@ -228,6 +229,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private int _companionCurrentIndex = 0;
 
+        [ObservableProperty]
+        private ObservableCollection<BabyDetails> _babies = new();
+
         public SecondStagePartographPageModel(
             PatientRepository patientRepository,
             PartographRepository partographRepository,
@@ -250,6 +254,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             AssessmentRepository assessmentRepository,
             PlanRepository planRepository,
             BirthOutcomeRepository birthOutcomeRepository,
+            BabyDetailsRepository babyDetailsRepository,
             ModalErrorHandler errorHandler,
             CompanionModalPageModel companionModalPageModel,
             PainReliefModalPageModel painReliefModalPageModel,
@@ -290,6 +295,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _assessmentRepository = assessmentRepository;
             _planRepository = planRepository;
             _birthOutcomeRepository = birthOutcomeRepository;
+            _babyDetailsRepository = babyDetailsRepository;
             _errorHandler = errorHandler;
             _companionModalPageModel = companionModalPageModel;
             _painReliefModalPageModel = painReliefModalPageModel;
@@ -651,6 +657,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 CompanionCurrentIndex = 0;
                 CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
 
+                // Load babies for this partograph
+                await LoadBabiesAsync();
+
                 // Update all measurement statuses
                 UpdateMeasurementStatuses();
             }
@@ -661,6 +670,100 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        private async Task LoadBabiesAsync()
+        {
+            try
+            {
+                if (Patient?.ID == null)
+                    return;
+
+                var babies = await _babyDetailsRepository.GetByPartographIdAsync(Patient.ID);
+                Babies = new ObservableCollection<BabyDetails>(babies);
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync($"Error loading babies: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task ViewBabyDetails(BabyDetails baby)
+        {
+            if (baby == null || Patient?.ID == null)
+                return;
+
+            try
+            {
+                // Navigate to baby details page for viewing/editing
+                var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID);
+                if (birthOutcome == null)
+                {
+                    await AppShell.DisplayToastAsync("Birth outcome not found");
+                    return;
+                }
+
+                var parameters = new Dictionary<string, object>
+                {
+                    { "PartographId", Patient.ID.ToString() },
+                    { "BirthOutcomeId", birthOutcome.ID.ToString() },
+                    { "NumberOfBabies", Babies.Count }
+                };
+
+                await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to navigate to baby details");
+            }
+        }
+
+        [RelayCommand]
+        private async Task UpdateBabyVitals(BabyDetails baby)
+        {
+            if (baby == null)
+                return;
+
+            try
+            {
+                // Show a prompt to update APGAR and other vital signs
+                string apgar1 = baby.Apgar1Min?.ToString() ?? "";
+                string apgar5 = baby.Apgar5Min?.ToString() ?? "";
+                string apgar10 = baby.Apgar10Min?.ToString() ?? "";
+
+                string result = await Application.Current.MainPage.DisplayPromptAsync(
+                    $"Update Vitals - {baby.BabyTag}",
+                    $"Enter APGAR scores (1min, 5min, 10min) separated by commas:\nCurrent: {apgar1}, {apgar5}, {apgar10}",
+                    initialValue: $"{apgar1},{apgar5},{apgar10}",
+                    maxLength: 10,
+                    keyboard: Keyboard.Numeric);
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    var scores = result.Split(',');
+                    if (scores.Length >= 2)
+                    {
+                        baby.Apgar1Min = int.TryParse(scores[0].Trim(), out int a1) ? a1 : baby.Apgar1Min;
+                        baby.Apgar5Min = int.TryParse(scores[1].Trim(), out int a5) ? a5 : baby.Apgar5Min;
+                        if (scores.Length >= 3)
+                        {
+                            baby.Apgar10Min = int.TryParse(scores[2].Trim(), out int a10) ? a10 : baby.Apgar10Min;
+                        }
+
+                        await _babyDetailsRepository.SaveItemAsync(baby);
+                        await LoadBabiesAsync();
+                        await AppShell.DisplayToastAsync($"Updated vitals for {baby.BabyTag}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to update baby vitals");
             }
         }
 

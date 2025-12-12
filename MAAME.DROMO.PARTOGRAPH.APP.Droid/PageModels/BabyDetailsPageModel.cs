@@ -219,6 +219,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _notes = string.Empty;
 
+        [ObservableProperty]
+        private bool _showDeathFields = false;
+
         // Lists for pickers
         public List<BabySex> SexOptions => Enum.GetValues(typeof(BabySex)).Cast<BabySex>().ToList();
         public List<BabyVitalStatus> VitalStatusOptions => Enum.GetValues(typeof(BabyVitalStatus)).Cast<BabyVitalStatus>().ToList();
@@ -366,6 +369,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             BirthTime = baby.BirthTime != null ? baby.BirthTime.TimeOfDay : DateTime.Now.TimeOfDay;
             Sex = baby.Sex;
             VitalStatus = baby.VitalStatus;
+            ShowDeathFields = VitalStatus != BabyVitalStatus.LiveBirth && VitalStatus != BabyVitalStatus.Survived;
             DeathTime = baby.DeathTime;
             DeathCause = baby.DeathCause ?? string.Empty;
             StillbirthMacerated = baby.StillbirthMacerated;
@@ -560,10 +564,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private void OnVitalStatusChanged()
         {
+            // Show death fields only when status is NOT LiveBirth or Survived
+            ShowDeathFields = VitalStatus != BabyVitalStatus.LiveBirth && VitalStatus != BabyVitalStatus.Survived;
+
             if (VitalStatus == BabyVitalStatus.LiveBirth || VitalStatus == BabyVitalStatus.Survived)
             {
                 DeathTime = null;
                 DeathCause = string.Empty;
+                StillbirthMacerated = false;
             }
         }
 
