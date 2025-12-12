@@ -5,11 +5,23 @@ using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
+    public class ComplicationItem : ObservableObject
+    {
+        public string Name { get; set; }
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set => SetProperty(ref _isSelected, value);
+        }
+    }
+
     public partial class BirthOutcomePageModel : ObservableObject, IQueryAttributable
     {
         private readonly BirthOutcomeRepository _birthOutcomeRepository;
@@ -33,6 +45,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _partographRepository = partographRepository;
             _errorHandler = errorHandler;
             _logger = logger;
+
+            // Initialize complications collection
+            Complications = new ObservableCollection<ComplicationItem>
+            {
+                new ComplicationItem { Name = "Postpartum Hemorrhage (PPH)" },
+                new ComplicationItem { Name = "Eclampsia" },
+                new ComplicationItem { Name = "Septic Shock" },
+                new ComplicationItem { Name = "Obstructed Labor" },
+                new ComplicationItem { Name = "Ruptured Uterus" }
+            };
         }
 
         [ObservableProperty]
@@ -75,6 +97,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             set
             {
                 SetProperty(ref _maternalStatus, value);
+                IsDeathFieldsVisible = _maternalStatus == MaternalOutcomeStatus.Died;
                 //OnPropertyChanged(nameof(AbortionVisibility));
                 if (_maternalStatus == MaternalOutcomeStatus.Survived)
                 {
@@ -84,6 +107,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 }
             }
         }
+
+        [ObservableProperty]
+        private bool _isDeathFieldsVisible;
 
         [ObservableProperty]
         private DateTime? _maternalDeathTime;
@@ -142,6 +168,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private bool _rupturedUterus;
+
+        public ObservableCollection<ComplicationItem> Complications { get; set; }
 
         // Post-delivery Care
         [ObservableProperty]
@@ -241,6 +269,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             AntibioticsGiven = outcome.AntibioticsGiven;
             BloodTransfusionGiven = outcome.BloodTransfusionGiven;
             Notes = outcome.Notes ?? string.Empty;
+
+            // Sync complications to chip collection
+            Complications[0].IsSelected = outcome.PostpartumHemorrhage;
+            Complications[1].IsSelected = outcome.Eclampsia;
+            Complications[2].IsSelected = outcome.SepticShock;
+            Complications[3].IsSelected = outcome.ObstructedLabor;
+            Complications[4].IsSelected = outcome.RupturedUterus;
         }
 
         [RelayCommand]
@@ -260,6 +295,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
+
+                // Sync complications from chips to properties
+                PostpartumHemorrhage = Complications[0].IsSelected;
+                Eclampsia = Complications[1].IsSelected;
+                SepticShock = Complications[2].IsSelected;
+                ObstructedLabor = Complications[3].IsSelected;
+                RupturedUterus = Complications[4].IsSelected;
 
                 var outcome = new BirthOutcome
                 {

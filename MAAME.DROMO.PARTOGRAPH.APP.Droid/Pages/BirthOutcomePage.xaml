@@ -7,6 +7,7 @@
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:picker="clr-namespace:Syncfusion.Maui.Picker;assembly=Syncfusion.Maui.Picker"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:chip="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              Title="Birth Outcome"
              BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}">
@@ -91,19 +92,19 @@
 
                 <core:SfTextInputLayout Hint="Death Time"
                                         Style="{StaticResource PatientInput}"
-                                        IsVisible="{Binding MaternalDeathTime, Converter={StaticResource IsNotNullConverter}}">
+                                        IsVisible="{Binding IsDeathFieldsVisible}">
                     <DatePicker Date="{Binding MaternalDeathTime, Mode=TwoWay}" />
                 </core:SfTextInputLayout>
 
                 <core:SfTextInputLayout Hint="Cause of Death"
                                         Style="{StaticResource PatientInput}"
-                                        IsVisible="{Binding MaternalDeathTime, Converter={StaticResource IsNotNullConverter}}">
+                                        IsVisible="{Binding IsDeathFieldsVisible}">
                     <Entry Text="{Binding MaternalDeathCause, Mode=TwoWay}" />
                 </core:SfTextInputLayout>
 
                 <core:SfTextInputLayout Hint="Death Circumstances"
                                         Style="{StaticResource PatientInput}"
-                                        IsVisible="{Binding MaternalDeathTime, Converter={StaticResource IsNotNullConverter}}">
+                                        IsVisible="{Binding IsDeathFieldsVisible}">
                     <Editor Text="{Binding MaternalDeathCircumstances, Mode=TwoWay}"
                             HeightRequest="80" />
                 </core:SfTextInputLayout>
@@ -180,30 +181,17 @@
             <Label Text="⚠️ Maternal Complications" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="8">
 
-                <StackLayout Orientation="Horizontal" Spacing="10">
-                    <CheckBox IsChecked="{Binding PostpartumHemorrhage, Mode=TwoWay}" />
-                    <Label Text="Postpartum Hemorrhage (PPH)" VerticalOptions="Center" />
-                </StackLayout>
-
-                <StackLayout Orientation="Horizontal" Spacing="10">
-                    <CheckBox IsChecked="{Binding Eclampsia, Mode=TwoWay}" />
-                    <Label Text="Eclampsia" VerticalOptions="Center" />
-                </StackLayout>
-
-                <StackLayout Orientation="Horizontal" Spacing="10">
-                    <CheckBox IsChecked="{Binding SepticShock, Mode=TwoWay}" />
-                    <Label Text="Septic Shock" VerticalOptions="Center" />
-                </StackLayout>
-
-                <StackLayout Orientation="Horizontal" Spacing="10">
-                    <CheckBox IsChecked="{Binding ObstructedLabor, Mode=TwoWay}" />
-                    <Label Text="Obstructed Labor" VerticalOptions="Center" />
-                </StackLayout>
-
-                <StackLayout Orientation="Horizontal" Spacing="10">
-                    <CheckBox IsChecked="{Binding RupturedUterus, Mode=TwoWay}" />
-                    <Label Text="Ruptured Uterus" VerticalOptions="Center" />
-                </StackLayout>
+                <chip:SfChipGroup ItemsSource="{Binding Complications}"
+                                  DisplayMemberPath="Name"
+                                  ChipType="Filter"
+                                  Margin="0,8,16,8">
+                    <chip:SfChipGroup.ItemTemplate>
+                        <DataTemplate>
+                            <chip:SfChip Text="{Binding Name}"
+                                        IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                        </DataTemplate>
+                    </chip:SfChipGroup.ItemTemplate>
+                </chip:SfChipGroup>
 
                 <core:SfTextInputLayout Hint="Other Complications" Style="{StaticResource PatientInput}">
                     <Editor Text="{Binding MaternalComplications, Mode=TwoWay}"
