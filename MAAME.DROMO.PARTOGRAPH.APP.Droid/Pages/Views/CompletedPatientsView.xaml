@@ -155,23 +155,42 @@
                                          VerticalOptions="Center" />
 
                                 <!-- Action Buttons -->
-                                <Button Grid.Row="5" Grid.ColumnSpan="3" Margin="0,12,0,0"
-                                        Text="View Partograph"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:CompletedPatientsPageModel}}, Path=ViewPartographCommand, x:DataType=pagemodels:CompletedPatientsPageModel}"
-                                        CommandParameter="{Binding .}"
-                                        BackgroundColor="#2196F3"
-                                        TextColor="White"
-                                        FontSize="14"
-                                        FontAttributes="Bold"
-                                        HeightRequest="44"
-                                        CornerRadius="10">
-                                    <Button.Shadow>
-                                        <Shadow Brush="#2196F3"
-                                                Offset="0,2"
-                                                Radius="4"
-                                                Opacity="0.3" />
-                                    </Button.Shadow>
-                                </Button>
+                                <Grid Grid.Row="5" Grid.ColumnSpan="3" Margin="0,12,0,0" ColumnDefinitions="*,*" ColumnSpacing="10">
+                                    <Button Grid.Column="0"
+                                            Text="View Partograph"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:CompletedPatientsPageModel}}, Path=ViewPartographCommand, x:DataType=pagemodels:CompletedPatientsPageModel}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#2196F3"
+                                            TextColor="White"
+                                            FontSize="14"
+                                            FontAttributes="Bold"
+                                            HeightRequest="44"
+                                            CornerRadius="10">
+                                        <Button.Shadow>
+                                            <Shadow Brush="#2196F3"
+                                                    Offset="0,2"
+                                                    Radius="4"
+                                                    Opacity="0.3" />
+                                        </Button.Shadow>
+                                    </Button>
+                                    <Button Grid.Column="1"
+                                            Text="Second Stage"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:CompletedPatientsPageModel}}, Path=ViewSecondStagePartographCommand, x:DataType=pagemodels:CompletedPatientsPageModel}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#10B981"
+                                            TextColor="White"
+                                            FontSize="14"
+                                            FontAttributes="Bold"
+                                            HeightRequest="44"
+                                            CornerRadius="10">
+                                        <Button.Shadow>
+                                            <Shadow Brush="#10B981"
+                                                    Offset="0,2"
+                                                    Radius="4"
+                                                    Opacity="0.3" />
+                                        </Button.Shadow>
+                                    </Button>
+                                </Grid>
                             </Grid>
                         </Border>
                     </DataTemplate>

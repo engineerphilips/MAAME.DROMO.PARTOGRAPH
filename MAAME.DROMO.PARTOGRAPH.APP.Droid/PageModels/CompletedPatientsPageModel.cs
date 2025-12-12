@@ -197,6 +197,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             => Shell.Current.GoToAsync($"partograph?id={item.Partograph.ID}");
 
         [RelayCommand]
+        private Task ViewSecondStagePartograph(CompletedPatientItem item)
+            => Shell.Current.GoToAsync($"secondstagepartograph?patientId={item.Partograph.ID}");
+
+        [RelayCommand]
         private Task GenerateReport(CompletedPatientItem item)
         {
             // Generate delivery report
