@@ -350,7 +350,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     {
                         var shouldContinue = await Application.Current.MainPage.DisplayAlert(
                             "Next Step",
-                            $"Do you want to record details for {NumberOfBabies} baby(ies)?",
+                            $"Do you want to record details for {NumberOfBabies} {(NumberOfBabies > 1 ? "baby" : "babies")}?",
                             "Yes", "Later");
 
                         if (shouldContinue)
