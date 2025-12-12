@@ -8,11 +8,16 @@
              xmlns:picker="clr-namespace:Syncfusion.Maui.Picker;assembly=Syncfusion.Maui.Picker"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              Title="Baby Details"
              BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <!-- Converters -->
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:NullableTimeConverter x:Key="NullableTimeConverter" />
             <!-- Hospital Theme Colors -->
             <Color x:Key="PrimaryBlue">#0078D4</Color>
             <Color x:Key="SurfaceWhite">#FFFFFF</Color>
@@ -105,18 +110,18 @@
 
                 <core:SfTextInputLayout Hint="Death Time"
                                         Style="{StaticResource PatientInput}"
-                                        IsVisible="{Binding DeathTime, Converter={StaticResource IsNotNullConverter}}">
+                                        IsVisible="{Binding ShowDeathFields}">
                     <TimePicker Time="{Binding DeathTime, Mode=TwoWay, Converter={StaticResource NullableTimeConverter}}" />
                 </core:SfTextInputLayout>
 
                 <core:SfTextInputLayout Hint="Cause of Death"
                                         Style="{StaticResource PatientInput}"
-                                        IsVisible="{Binding DeathTime, Converter={StaticResource IsNotNullConverter}}">
+                                        IsVisible="{Binding ShowDeathFields}">
                     <Entry Text="{Binding DeathCause, Mode=TwoWay}" />
                 </core:SfTextInputLayout>
 
                 <StackLayout Orientation="Horizontal" Spacing="10"
-                             IsVisible="{Binding DeathTime, Converter={StaticResource IsNotNullConverter}}">
+                             IsVisible="{Binding ShowDeathFields}">
                     <CheckBox IsChecked="{Binding StillbirthMacerated, Mode=TwoWay}" />
                     <Label Text="Stillbirth Macerated" VerticalOptions="Center" />
                 </StackLayout>

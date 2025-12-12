@@ -5,10 +5,14 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              Title="Second Stage Partograph">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <!-- Converters -->
+            <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
             <!-- Modern Card Style -->
             <Style x:Key="ModernCardStyle" TargetType="Border">
                 <Setter Property="StrokeThickness" Value="0" />
@@ -69,7 +73,7 @@
     </ContentPage.ToolbarItems>
 
     <ScrollView>
-        <Grid RowDefinitions="Auto,Auto,Auto" Padding="10">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" Padding="10">
             <!-- Patient Header -->
             <Border Grid.Row="0"
                     StrokeThickness="0"
@@ -468,6 +472,90 @@
                     </buttons:SfButton.Content>
                 </buttons:SfButton>
             </Grid>
+
+            <!-- Baby Details Section -->
+            <Border Grid.Row="3"
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#10B981, Dark=#34D399}"
+                    BackgroundColor="{AppThemeBinding Light=#F0FDF4, Dark=#064E3B}"
+                    Padding="15"
+                    Margin="0,20,0,0"
+                    IsVisible="{Binding Babies.Count, Converter={StaticResource GreaterThanZeroConverter}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Baby Details"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#065F46, Dark=#D1FAE5}" />
+
+                    <CollectionView ItemsSource="{Binding Babies}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border StrokeThickness="1"
+                                        Stroke="{AppThemeBinding Light=#D1D5DB, Dark=#4B5563}"
+                                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1F2937}"
+                                        Padding="12"
+                                        Margin="0,5">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            <Label Text="{Binding BabyTag}"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#1F2937, Dark=#F9FAFB}" />
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label Text="{Binding Sex, StringFormat='Sex: {0}'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                <Label Text="{Binding VitalStatus, StringFormat='Status: {0}'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label Text="{Binding BirthWeight, StringFormat='Weight: {0}g'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                <Label Text="{Binding Apgar1Min, StringFormat='APGAR 1min: {0}'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                                       IsVisible="{Binding Apgar1Min, Converter={StaticResource IsNotNullConverter}}" />
+                                                <Label Text="{Binding Apgar5Min, StringFormat='5min: {0}'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                                       IsVisible="{Binding Apgar5Min, Converter={StaticResource IsNotNullConverter}}" />
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+
+                                        <Button Grid.Column="1"
+                                                Text="Update Vitals"
+                                                FontSize="12"
+                                                Padding="8,4"
+                                                BackgroundColor="#10B981"
+                                                TextColor="White"
+                                                CornerRadius="6"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.UpdateBabyVitalsCommand}"
+                                                CommandParameter="{Binding .}" />
+
+                                        <Button Grid.Column="2"
+                                                Text="View Details"
+                                                FontSize="12"
+                                                Padding="8,4"
+                                                BackgroundColor="#3B82F6"
+                                                TextColor="White"
+                                                CornerRadius="6"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewBabyDetailsCommand}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
         </Grid>
     </ScrollView>
 </ContentPage>
