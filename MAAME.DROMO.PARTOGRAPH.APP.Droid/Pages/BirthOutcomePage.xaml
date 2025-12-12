@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.BirthOutcomePage"
+             xmlns:cards="clr-namespace:Syncfusion.Maui.Cards;assembly=Syncfusion.Maui.Cards"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:picker="clr-namespace:Syncfusion.Maui.Picker;assembly=Syncfusion.Maui.Picker"
+             xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             Title="Birth Outcome"
+             BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Hospital Theme Colors -->
+            <Color x:Key="PrimaryBlue">#0078D4</Color>
+            <Color x:Key="SurfaceWhite">#FFFFFF</Color>
+            <Color x:Key="TextPrimary">#323130</Color>
+            <Color x:Key="TextSecondary">#605E5C</Color>
+            <Color x:Key="BorderLight">#E1DFDD</Color>
+
+            <!-- Gradients -->
+            <LinearGradientBrush x:Key="HeaderGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#0078D4" Offset="0.0" />
+                <GradientStop Color="#40E0FF" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- Button Styles -->
+            <Style x:Key="PrimaryButton" TargetType="buttons:SfButton">
+                <Setter Property="Background" Value="{StaticResource PrimaryBlue}" />
+                <Setter Property="TextColor" Value="{StaticResource SurfaceWhite}" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HeightRequest" Value="50" />
+            </Style>
+
+            <!-- Input Styles -->
+            <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Outlined" />
+                <Setter Property="OutlineCornerRadius" Value="8" />
+            </Style>
+
+            <!-- Typography Styles -->
+            <Style x:Key="SectionTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Margin" Value="0,0,0,8" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <StackLayout Spacing="0" Padding="0,0,0,20">
+
+            <!-- Maternal Outcome Section -->
+            <Label Text="👩 Maternal Outcome" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <StackLayout Padding="20,0" Spacing="10">
+
+                <core:SfTextInputLayout Hint="Maternal Status" Style="{StaticResource PatientInput}">
+                    <Picker ItemsSource="{Binding MaternalOutcomeOptions}"
+                            SelectedItem="{Binding MaternalStatus, Mode=TwoWay}"
+                            SelectedIndexChanged="OnMaternalStatusChanged" />
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Hint="Death Time"
+                                        Style="{StaticResource PatientInput}"
+                                        IsVisible="{Binding MaternalDeathTime, Converter={StaticResource IsNotNullConverter}}">
+                    <DatePicker Date="{Binding MaternalDeathTime, Mode=TwoWay}" />
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Hint="Cause of Death"
+                                        Style="{StaticResource PatientInput}"
+                                        IsVisible="{Binding MaternalDeathTime, Converter={StaticResource IsNotNullConverter}}">
+                    <Entry Text="{Binding MaternalDeathCause, Mode=TwoWay}" />
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Hint="Death Circumstances"
+                                        Style="{StaticResource PatientInput}"
+                                        IsVisible="{Binding MaternalDeathTime, Converter={StaticResource IsNotNullConverter}}">
+                    <Editor Text="{Binding MaternalDeathCircumstances, Mode=TwoWay}"
+                            HeightRequest="80" />
+                </core:SfTextInputLayout>
+            </StackLayout>
+
+            <!-- Delivery Information Section -->
+            <Label Text="🤱 Delivery Information" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <StackLayout Padding="20,0" Spacing="10">
+
+                <core:SfTextInputLayout Hint="Delivery Mode" Style="{StaticResource PatientInput}">
+                    <Picker ItemsSource="{Binding DeliveryModeOptions}"
+                            SelectedItem="{Binding DeliveryMode, Mode=TwoWay}" />
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Hint="Delivery Mode Details" Style="{StaticResource PatientInput}">
+                    <Entry Text="{Binding DeliveryModeDetails, Mode=TwoWay}"
+                           Placeholder="E.g., forceps, vacuum, indication for C-section" />
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Hint="Delivery Time" Style="{StaticResource PatientInput}">
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <DatePicker Grid.Column="0" Date="{Binding DeliveryTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateConverter}}" />
+                        <TimePicker Grid.Column="1" Time="{Binding DeliveryTime, Mode=TwoWay, Converter={StaticResource DateTimeToTimeConverter}}" />
+                    </Grid>
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Hint="Number of Babies" Style="{StaticResource PatientInput}">
+                    <editors:SfNumericEntry Value="{Binding NumberOfBabies, Mode=TwoWay}"
+                                           Minimum="1"
+                                           Maximum="5"
+                                           CustomFormat="0"
+                                           ValueChangeMode="OnKeyFocus" />
+                </core:SfTextInputLayout>
+            </StackLayout>
+
+            <!-- Perineal Status Section -->
+            <Label Text="🏥 Perineal Status" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <StackLayout Padding="20,0" Spacing="10">
+
+                <core:SfTextInputLayout Hint="Perineal Status" Style="{StaticResource PatientInput}">
+                    <Picker ItemsSource="{Binding PerinealStatusOptions}"
+                            SelectedItem="{Binding PerinealStatus, Mode=TwoWay}" />
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Hint="Perineal Details" Style="{StaticResource PatientInput}">
+                    <Entry Text="{Binding PerinealDetails, Mode=TwoWay}"
+                           Placeholder="Repair details, suture material, etc." />
+                </core:SfTextInputLayout>
+            </StackLayout>
+
+            <!-- Placental Information Section -->
+            <Label Text="🩸 Placental Information" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <StackLayout Padding="20,0" Spacing="10">
+
+                <core:SfTextInputLayout Hint="Placenta Delivery Time" Style="{StaticResource PatientInput}">
+                    <TimePicker Time="{Binding PlacentaDeliveryTime, Mode=TwoWay, Converter={StaticResource NullableTimeConverter}}" />
+                </core:SfTextInputLayout>
+
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding PlacentaComplete, Mode=TwoWay}" />
+                    <Label Text="Placenta Complete" VerticalOptions="Center" />
+                </StackLayout>
+
+                <core:SfTextInputLayout Hint="Estimated Blood Loss (ml)" Style="{StaticResource PatientInput}">
+                    <editors:SfNumericEntry Value="{Binding EstimatedBloodLoss, Mode=TwoWay}"
+                                           Minimum="0"
+                                           Maximum="5000"
+                                           CustomFormat="0"
+                                           ValueChangeMode="OnKeyFocus" />
+                </core:SfTextInputLayout>
+            </StackLayout>
+
+            <!-- Maternal Complications Section -->
+            <Label Text="⚠️ Maternal Complications" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <StackLayout Padding="20,0" Spacing="8">
+
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding PostpartumHemorrhage, Mode=TwoWay}" />
+                    <Label Text="Postpartum Hemorrhage (PPH)" VerticalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding Eclampsia, Mode=TwoWay}" />
+                    <Label Text="Eclampsia" VerticalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding SepticShock, Mode=TwoWay}" />
+                    <Label Text="Septic Shock" VerticalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding ObstructedLabor, Mode=TwoWay}" />
+                    <Label Text="Obstructed Labor" VerticalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding RupturedUterus, Mode=TwoWay}" />
+                    <Label Text="Ruptured Uterus" VerticalOptions="Center" />
+                </StackLayout>
+
+                <core:SfTextInputLayout Hint="Other Complications" Style="{StaticResource PatientInput}">
+                    <Editor Text="{Binding MaternalComplications, Mode=TwoWay}"
+                            HeightRequest="80"
+                            Placeholder="Describe any other complications..." />
+                </core:SfTextInputLayout>
+            </StackLayout>
+
+            <!-- Post-delivery Care Section -->
+            <Label Text="💊 Post-delivery Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <StackLayout Padding="20,0" Spacing="8">
+
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding OxytocinGiven, Mode=TwoWay}" />
+                    <Label Text="Oxytocin Given (AMTSL)" VerticalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding AntibioticsGiven, Mode=TwoWay}" />
+                    <Label Text="Antibiotics Given" VerticalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding BloodTransfusionGiven, Mode=TwoWay}" />
+                    <Label Text="Blood Transfusion Given" VerticalOptions="Center" />
+                </StackLayout>
+            </StackLayout>
+
+            <!-- Notes Section -->
+            <Label Text="📝 Notes" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <StackLayout Padding="20,0" Spacing="10">
+                <core:SfTextInputLayout Hint="Additional Notes" Style="{StaticResource PatientInput}">
+                    <Editor Text="{Binding Notes, Mode=TwoWay}"
+                            HeightRequest="100"
+                            Placeholder="Any additional observations or notes..." />
+                </core:SfTextInputLayout>
+            </StackLayout>
+
+            <!-- Action Buttons -->
+            <StackLayout Padding="20" Spacing="10">
+                <buttons:SfButton Text="{Binding IsEditMode, Converter={StaticResource EditModeToButtonTextConverter}, FallbackValue='Save Birth Outcome'}"
+                                 Command="{Binding SaveCommand}"
+                                 Style="{StaticResource PrimaryButton}"
+                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+
+                <buttons:SfButton Text="Continue to Baby Details"
+                                 Command="{Binding NavigateToBabyDetailsCommand}"
+                                 IsVisible="{Binding IsEditMode}"
+                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                                 BackgroundColor="Transparent"
+                                 TextColor="{StaticResource PrimaryBlue}"
+                                 Stroke="{StaticResource PrimaryBlue}"
+                                 StrokeThickness="2"
+                                 CornerRadius="12"
+                                 HeightRequest="48" />
+            </StackLayout>
+
+        </StackLayout>
+    </ScrollView>
+
+</ContentPage>

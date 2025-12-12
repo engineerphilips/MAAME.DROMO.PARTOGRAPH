@@ -141,6 +141,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddTransientWithShellRoute<PartographPage, PartographPageModel>("partograph");
             builder.Services.AddTransientWithShellRoute<PartographEntryPage, PartographEntryPageModel>("partographentry");
             builder.Services.AddTransientWithShellRoute<PartographChartPage, PartographChartPageModel>("partographchart");
+            builder.Services.AddTransientWithShellRoute<BirthOutcomePage, BirthOutcomePageModel>("BirthOutcomePage");
+            builder.Services.AddTransientWithShellRoute<BabyDetailsPage, BabyDetailsPageModel>("BabyDetailsPage");
+            builder.Services.AddTransientWithShellRoute<ReferralPage, ReferralPageModel>("ReferralPage");
 
             //builder.Services.AddTransientWithShellRoute<VitalSignsPage, VitalSignsPageModel>("vitalsigns");
             // builder.Services.AddTransientWithShellRoute<VitalSignsPage, VitalSignsPageModel>("vitalsigns");
