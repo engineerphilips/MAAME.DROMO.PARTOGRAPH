@@ -98,8 +98,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
     public enum MaternalOutcomeStatus
     {
         Survived,
-        Died,
-        Referred // Referred before outcome determined
+        Died
     }
 
     public enum DeliveryMode
