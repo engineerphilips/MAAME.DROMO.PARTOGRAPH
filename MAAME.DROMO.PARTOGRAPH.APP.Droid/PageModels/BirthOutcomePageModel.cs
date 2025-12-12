@@ -226,6 +226,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 }
                 else
                 {
+                    IsEditMode = false;
                     // Pre-fill delivery time from partograph
                     if (Partograph.DeliveryTime.HasValue)
                     {

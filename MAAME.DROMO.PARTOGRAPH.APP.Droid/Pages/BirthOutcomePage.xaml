@@ -81,7 +81,8 @@
             </Border>
 
             <!-- Maternal Outcome Section -->
-            <Label Text="👩 Maternal Outcome" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="👩 Maternal Outcome" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Maternal Outcome" Style="{StaticResource SectionTitle}" Margin="15,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
                 <core:SfTextInputLayout Hint="Maternal Status" Style="{StaticResource PatientInput}">
@@ -111,7 +112,8 @@
             </StackLayout>
 
             <!-- Delivery Information Section -->
-            <Label Text="🤱 Delivery Information" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="🤱 Delivery Information" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Delivery Information" Style="{StaticResource SectionTitle}" Margin="15,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
                 <core:SfTextInputLayout Hint="Delivery Mode" Style="{StaticResource PatientInput}">
@@ -124,24 +126,41 @@
                            Placeholder="E.g., forceps, vacuum, indication for C-section" />
                 </core:SfTextInputLayout>
 
-                <core:SfTextInputLayout Hint="Delivery Time" Style="{StaticResource PatientInput}">
+                <!--<core:SfTextInputLayout Hint="Delivery Time" Style="{StaticResource PatientInput}">
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <DatePicker Grid.Column="0" Date="{Binding DeliveryTime, Mode=TwoWay, Converter={StaticResource DateTimeToDateConverter}}" />
                         <TimePicker Grid.Column="1" Time="{Binding DeliveryTime, Mode=TwoWay, Converter={StaticResource DateTimeToTimeConverter}}" />
                     </Grid>
-                </core:SfTextInputLayout>
+                </core:SfTextInputLayout>-->
 
-                <core:SfTextInputLayout Hint="Number of Babies" Style="{StaticResource PatientInput}">
-                    <editors:SfNumericEntry Value="{Binding NumberOfBabies, Mode=TwoWay}"
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto" ColumnSpacing="12">
+                    <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Delivery Date"
+                                                Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding DeliveryTime, Mode=TwoWay}"
+                                       Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Grid.Column="1"
+                                            Hint="Delivery Time"
+                                            Style="{StaticResource PatientInput}">
+                        <TimePicker Time="{Binding DeliveryTime, Mode=TwoWay}"
+                                       Format="HH:mm" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Number of Babies" Style="{StaticResource PatientInput}" Grid.Row="1" Grid.Column="0">
+                        <editors:SfNumericEntry Value="{Binding NumberOfBabies, Mode=TwoWay}"
                                            Minimum="1"
                                            Maximum="5"
                                            CustomFormat="0"
                                            ValueChangeMode="OnKeyFocus" />
-                </core:SfTextInputLayout>
+                    </core:SfTextInputLayout>
+                </Grid>
             </StackLayout>
 
             <!-- Perineal Status Section -->
-            <Label Text="🏥 Perineal Status" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="🏥 Perineal Status" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Perineal Status" Style="{StaticResource SectionTitle}" Margin="15,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
                 <core:SfTextInputLayout Hint="Perineal Status" Style="{StaticResource PatientInput}">
@@ -156,7 +175,8 @@
             </StackLayout>
 
             <!-- Placental Information Section -->
-            <Label Text="🩸 Placental Information" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="🩸 Placental Information" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Placental Information" Style="{StaticResource SectionTitle}" Margin="15,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
                 <core:SfTextInputLayout Hint="Placenta Delivery Time" Style="{StaticResource PatientInput}">
@@ -178,17 +198,18 @@
             </StackLayout>
 
             <!-- Maternal Complications Section -->
-            <Label Text="⚠️ Maternal Complications" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <Label Text="Maternal Complications" Style="{StaticResource SectionTitle}" Margin="15,15,0,10" />
+            <!--<Label Text="⚠️ Maternal Complications" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
             <StackLayout Padding="20,0" Spacing="8">
 
                 <chip:SfChipGroup ItemsSource="{Binding Complications}"
-                                  DisplayMemberPath="Name"
-                                  ChipType="Filter"
-                                  Margin="0,8,16,8">
+                                  DisplayMemberPath="Name" 
+                                  Margin="0,8,16,8" ChipType="Choice" ChoiceMode="SingleOrNone">
                     <chip:SfChipGroup.ItemTemplate>
                         <DataTemplate>
-                            <chip:SfChip Text="{Binding Name}"
-                                        IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                            <chip:SfChip Text="{Binding Name}" />
+
+                            <!--IsChecked="{Binding IsSelected, Mode=TwoWay}"-->
                         </DataTemplate>
                     </chip:SfChipGroup.ItemTemplate>
                 </chip:SfChipGroup>
@@ -201,7 +222,8 @@
             </StackLayout>
 
             <!-- Post-delivery Care Section -->
-            <Label Text="💊 Post-delivery Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="💊 Post-delivery Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Post-delivery Care" Style="{StaticResource SectionTitle}" Margin="15,15,0,10" />
             <StackLayout Padding="20,0" Spacing="8">
 
                 <StackLayout Orientation="Horizontal" Spacing="10">
@@ -221,7 +243,8 @@
             </StackLayout>
 
             <!-- Notes Section -->
-            <Label Text="📝 Notes" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <!--<Label Text="📝 Notes" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />-->
+            <Label Text="Notes" Style="{StaticResource SectionTitle}" Margin="15,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
                 <core:SfTextInputLayout Hint="Additional Notes" Style="{StaticResource PatientInput}">
                     <Editor Text="{Binding Notes, Mode=TwoWay}"
@@ -231,9 +254,9 @@
             </StackLayout>
 
             <!-- Action Buttons -->
-            <StackLayout Padding="20" Spacing="10">
+            <StackLayout Padding="15" Spacing="10">
                 <buttons:SfButton Text="{Binding IsEditMode, Converter={StaticResource EditModeToButtonTextConverter}, FallbackValue='Save Birth Outcome'}"
-                                 Command="{Binding SaveCommand}"
+                                 Command="{Binding SaveAsyncCommand}"
                                  Style="{StaticResource PrimaryButton}"
                                  IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
 
