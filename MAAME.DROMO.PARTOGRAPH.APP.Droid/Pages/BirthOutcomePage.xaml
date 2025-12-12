@@ -54,6 +54,30 @@
 
     <ScrollView>
         <StackLayout Spacing="0" Padding="0,0,0,20">
+            <!-- Patient Header Card -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding PatientName}" FontSize="18" FontAttributes="Bold" />
+                        <Label Text="{Binding PatientInfo}" FontSize="12" Opacity="0.8" />
+                        <Label Text="{Binding LaborDuration, StringFormat='Labour Duration: {0}'}" FontSize="11" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="{Binding CurrentDilation, StringFormat='{0} cm'}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+                        <Label Text="Current Dilation"
+                               FontSize="9"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
 
             <!-- Maternal Outcome Section -->
             <Label Text="👩 Maternal Outcome" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />

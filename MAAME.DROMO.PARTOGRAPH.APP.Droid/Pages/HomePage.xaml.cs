@@ -6,8 +6,13 @@ public partial class HomePage : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = pageModel;
-		Loaded += (s, e) =>
+		Loaded += async (s, e) =>
 		{
+            if (BindingContext is HomePageModel homePageModel)
+            {
+                await homePageModel.AppearingCommand.ExecuteAsync(null);
+            }
+
             PendingPatients.BindingContext = pendingPageModel;
             ActivePatients.BindingContext = activePageModel;
             CompletedPatients.BindingContext = completePageModel;

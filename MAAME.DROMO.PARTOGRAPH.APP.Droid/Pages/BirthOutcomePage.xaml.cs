@@ -14,7 +14,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages
         {
             if (BindingContext is BirthOutcomePageModel viewModel)
             {
-                viewModel.OnMaternalStatusChangedCommand?.Execute(null);
+                //viewModel.OnMaternalStatusChangedCommand?.Execute(null);
             }
         }
     }

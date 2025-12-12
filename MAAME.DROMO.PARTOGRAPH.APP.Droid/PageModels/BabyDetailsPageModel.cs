@@ -14,22 +14,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     [QueryProperty(nameof(BirthOutcomeId), "BirthOutcomeId")]
     [QueryProperty(nameof(PartographId), "PartographId")]
     [QueryProperty(nameof(NumberOfBabies), "NumberOfBabies")]
-    public partial class BabyDetailsPageModel : ObservableObject
+    public partial class BabyDetailsPageModel : ObservableObject, IQueryAttributable
     {
         private readonly BabyDetailsRepository _babyDetailsRepository;
         private readonly BirthOutcomeRepository _birthOutcomeRepository;
         private readonly PartographRepository _partographRepository;
+        private readonly ModalErrorHandler _errorHandler;
         private readonly ILogger _logger;
 
         public BabyDetailsPageModel(
             BabyDetailsRepository babyDetailsRepository,
             BirthOutcomeRepository birthOutcomeRepository,
             PartographRepository partographRepository,
+            ModalErrorHandler errorHandler,
             ILogger<BabyDetailsPageModel> logger)
         {
             _babyDetailsRepository = babyDetailsRepository;
             _birthOutcomeRepository = birthOutcomeRepository;
             _partographRepository = partographRepository;
+            _errorHandler = errorHandler;
             _logger = logger;
         }
 
@@ -567,6 +570,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 ChestCompressionsGiven = false;
                 MedicationsGiven = false;
                 MedicationDetails = string.Empty;
+            }
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.ContainsKey("PartographId"))
+            {
+                PartographId = Guid.Parse(Convert.ToString(query["PartographId"]));
+                LoadDataAsync().FireAndForgetSafeAsync(_errorHandler);
+            }
+
+            if (query.ContainsKey("BirthOutcomeId"))
+            {
+                BirthOutcomeId = Guid.Parse(Convert.ToString(query["BirthOutcomeId"]));            }
+
+            if (query.ContainsKey("NumberOfBabies"))
+            {
+                NumberOfBabies = Int32.Parse(Convert.ToString(query["NumberOfBabies"]));
             }
         }
     }

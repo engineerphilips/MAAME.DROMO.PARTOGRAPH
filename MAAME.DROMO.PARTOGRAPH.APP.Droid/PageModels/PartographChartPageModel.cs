@@ -156,7 +156,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             if (_patient.Dilatations.Any())
             {
-                CurrentDilation = _patient.Dilatations.OrderByDescending(d => d.Time).First().DilatationCm;
+                CurrentDilation = _patient.Dilatations.OrderByDescending(d => d.Time).FirstOrDefault().DilatationCm;
             }
         }
 

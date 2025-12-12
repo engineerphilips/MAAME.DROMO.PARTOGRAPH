@@ -17,7 +17,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
-        private readonly ILogger _logger;
+        private readonly ILogger<BirthOutcomePageModel> _logger;
 
         public BirthOutcomePageModel(
             BirthOutcomeRepository birthOutcomeRepository,
@@ -38,6 +38,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private Partograph? _partograph;
 
+        [ObservableProperty]
+        private string _patientId = string.Empty;
+
+        [ObservableProperty]
+        private string _patientName = string.Empty;
+
+        [ObservableProperty]
+        private string _patientInfo = string.Empty;
+
+        [ObservableProperty]
+        private string _laborDuration = string.Empty;
+
+        [ObservableProperty]
+        private int _currentDilation;
+
         //[ObservableProperty]
         //private Patient? _patient;
 
@@ -51,8 +66,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private bool _isEditMode;
 
         // Maternal Outcome
-        [ObservableProperty]
+        //[ObservableProperty]
         private MaternalOutcomeStatus _maternalStatus = MaternalOutcomeStatus.Survived;
+
+        public MaternalOutcomeStatus MaternalStatus
+        {
+            get => _maternalStatus;
+            set
+            {
+                SetProperty(ref _maternalStatus, value);
+                //OnPropertyChanged(nameof(AbortionVisibility));
+                if (_maternalStatus == MaternalOutcomeStatus.Survived)
+                {
+                    MaternalDeathTime = null;
+                    MaternalDeathCause = string.Empty;
+                    MaternalDeathCircumstances = string.Empty;
+                }
+            }
+        }
 
         [ObservableProperty]
         private DateTime? _maternalDeathTime;
@@ -137,7 +168,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
 
                 // Load partograph
-                Partograph = await _partographRepository.GetCurrentPartographAsync(partographId);
+                Partograph = await _partographRepository.GetAsync(partographId);
                 if (Partograph == null)
                 {
                     await AppShell.DisplayToastAsync("Failed to load partograph");
@@ -146,6 +177,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 //// Load patient
                 //Patient = await _patientRepository.GetItemAsync(Partograph.PatientID);
+
+                PatientName = Partograph.Name;
+                PatientInfo = Partograph.DisplayInfo;
+
+                // Calculate labor duration
+                if (Partograph.LaborStartTime.HasValue)
+                {
+                    var duration = DateTime.Now - Partograph.LaborStartTime.Value;
+                    LaborDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
+                }
 
                 // Check if birth outcome already exists
                 var existingOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(partographId);
@@ -361,9 +402,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            if (query.ContainsKey("patientId"))
+            if (query.ContainsKey("PartographId"))
             {
-                Guid id = Guid.Parse(Convert.ToString(query["patientId"]));
+                Guid id = Guid.Parse(Convert.ToString(query["PartographId"]));
                 LoadPartographAsync(id).FireAndForgetSafeAsync(_errorHandler);
                 //Refresh().FireAndForgetSafeAsync(_errorHandler);
             }

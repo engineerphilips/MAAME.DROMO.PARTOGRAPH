@@ -14,7 +14,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages
         {
             if (BindingContext is BabyDetailsPageModel viewModel)
             {
-                viewModel.OnVitalStatusChangedCommand?.Execute(null);
+                //viewModel.OnVitalStatusChangedCommand?.Execute();
             }
         }
 
@@ -22,7 +22,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages
         {
             if (BindingContext is BabyDetailsPageModel viewModel)
             {
-                viewModel.OnResuscitationRequiredChangedCommand?.Execute(null);
+                //viewModel.OnResuscitationRequiredChangedCommand?.Execute();
             }
         }
     }

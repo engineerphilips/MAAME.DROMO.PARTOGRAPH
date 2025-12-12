@@ -622,8 +622,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 // Get recent activities
                 stats.RecentActivities = await GetRecentActivitiesAsync(connection);
 
-                // Get resource utilization
-                stats.Resources = await GetResourceUtilizationAsync(connection, stats);
+                //// Get resource utilization
+                //stats.Resources = await GetResourceUtilizationAsync(connection, stats);
 
                 // Get hourly admission trends
                 stats.AdmissionTrends = await GetAdmissionTrendsAsync(connection);
@@ -1017,8 +1017,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     p.deliveryTime
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
-                WHERE p.deliveryTime IS NOT NULL
-                  AND DATE(p.deliveryTime) = DATE('now')
+                WHERE p.deliveryTime IS NOT NULL 
+                  AND DATE(p.deliveryTime) BETWEEN DATE('now', '-7 days') AND DATE('now')
                   AND p.deleted = 0
                   AND pt.deleted = 0
                 ORDER BY p.deliveryTime DESC
@@ -1052,7 +1052,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     p.admissionDate
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
-                WHERE DATE(p.admissionDate) = DATE('now')
+                WHERE DATE(p.admissionDate) BETWEEN DATE('now', '-7 days') AND DATE('now')
                   AND p.deleted = 0
                   AND pt.deleted = 0
                 ORDER BY p.admissionDate DESC
@@ -1083,6 +1083,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     .Take(5)
                     .ToList();
             }
+            catch (SqliteException ex)
+            {
+                _logger.LogError(ex, "Error getting recent activities");
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting recent activities");
@@ -1091,35 +1095,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return activities;
         }
 
-        private async Task<ResourceUtilization> GetResourceUtilizationAsync(SqliteConnection connection, DashboardStats stats)
-        {
-            var resources = new ResourceUtilization
-            {
-                TotalBeds = 20, // This would typically come from a configuration table
-                TotalStaff = 6   // This would typically come from staff/shift management
-            };
+        //private async Task<ResourceUtilization> GetResourceUtilizationAsync(SqliteConnection connection, DashboardStats stats)
+        //{
+        //    var resources = new ResourceUtilization
+        //    {
+        //        TotalBeds = 20, // This would typically come from a configuration table
+        //        TotalStaff = 6   // This would typically come from staff/shift management
+        //    };
 
-            try
-            {
-                // Calculate occupied beds (active + pending patients)
-                resources.OccupiedBeds = stats.ActiveLabor + stats.PendingLabor;
-                resources.AvailableBeds = resources.TotalBeds - resources.OccupiedBeds;
-                resources.OccupancyRate = resources.TotalBeds > 0
-                    ? Math.Round((double)resources.OccupiedBeds / resources.TotalBeds * 100, 1)
-                    : 0;
+        //    try
+        //    {
+        //        // Calculate occupied beds (active + pending patients)
+        //        resources.OccupiedBeds = stats.ActiveLabor + stats.PendingLabor;
+        //        resources.AvailableBeds = resources.TotalBeds - resources.OccupiedBeds;
+        //        resources.OccupancyRate = resources.TotalBeds > 0
+        //            ? Math.Round((double)resources.OccupiedBeds / resources.TotalBeds * 100, 1)
+        //            : 0;
 
-                resources.ActivePatients = stats.ActiveLabor;
-                resources.StaffToPatientRatio = resources.ActivePatients > 0
-                    ? Math.Round((double)resources.TotalStaff / resources.ActivePatients, 2)
-                    : resources.TotalStaff;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error calculating resource utilization");
-            }
+        //        resources.ActivePatients = stats.ActiveLabor;
+        //        resources.StaffToPatientRatio = resources.ActivePatients > 0
+        //            ? Math.Round((double)resources.TotalStaff / resources.ActivePatients, 2)
+        //            : resources.TotalStaff;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error calculating resource utilization");
+        //    }
 
-            return resources;
-        }
+        //    return resources;
+        //}
 
         private async Task<List<HourlyAdmission>> GetAdmissionTrendsAsync(SqliteConnection connection)
         {

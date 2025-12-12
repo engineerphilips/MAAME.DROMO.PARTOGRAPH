@@ -297,7 +297,7 @@
                                                            TextColor="#EF4444"
                                                            FontAttributes="Bold" />
                                                     <HorizontalStackLayout Spacing="12">
-                                                        <Label Text="{Binding TimeInLabor, StringFormat='In labor: {0}'}"
+                                                        <Label Text="{Binding TimeInLabor, StringFormat='In labour: {0}'}"
                                                                FontSize="12"
                                                                Opacity="0.7" />
                                                         <Label Text="{Binding CurrentDilation, StringFormat='Dilation: {0}cm'}"
@@ -488,7 +488,7 @@
                     <!-- Labor Progress Trends Chart -->
                     <Border Grid.Row="6" Style="{StaticResource ModernCardStyle}" Padding="20">
                         <VerticalStackLayout Spacing="16">
-                            <Label Text="Admission Trends (Today)"
+                            <Label Text="Admissions (Today)"
                                    FontSize="18"
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
@@ -518,15 +518,15 @@
                         <VerticalStackLayout Spacing="16">
                             <Grid ColumnDefinitions="*,Auto">
                                 <Label Grid.Column="0"
-                                       Text="Shift Handover Summary"
+                                       Text="Handover Summary"
                                        FontSize="18"
                                        FontAttributes="Bold"
                                        TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
-                                <Label Grid.Column="1"
+                                <!--<Label Grid.Column="1"
                                        Text="{Binding CurrentShift}"
                                        FontSize="14"
                                        TextColor="#3B82F6"
-                                       FontAttributes="Bold" />
+                                       FontAttributes="Bold" />-->
                             </Grid>
 
                             <CollectionView ItemsSource="{Binding DashboardStats.ShiftHandoverItems}"

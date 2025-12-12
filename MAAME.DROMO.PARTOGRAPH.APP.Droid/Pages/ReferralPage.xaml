@@ -375,7 +375,7 @@
             </StackLayout>
 
             <!-- Interventions Section -->
-            <Label Text="💉 Interventions & Medications" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
+            <Label Text="💉 Interventions &amp; Medications" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
                 <core:SfTextInputLayout Hint="Interventions Performed" Style="{StaticResource PatientInput}">
@@ -439,7 +439,7 @@
 
             <!-- Action Buttons -->
             <StackLayout Padding="20" Spacing="10">
-                <buttons:SfButton Text="Save & Generate Referral Form"
+                <buttons:SfButton Text="Save &amp; Generate Referral Form"
                                  Command="{Binding SaveAndGenerateReferralFormCommand}"
                                  Style="{StaticResource PrimaryButton}"
                                  IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
