@@ -19,7 +19,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public string PatientName => Partograph?.Name ?? "";
         public string PatientInfo => Partograph?.DisplayInfo ?? "";
         public DateTime? DeliveryTime => BirthOutcome?.DeliveryTime;
-        public string DeliveryTimeDisplay => DeliveryTime?.ToString("MMM dd, HH:mm") ?? "N/A";
+        public string DeliveryTimeDisplay => DeliveryTime?.ToString("dddd dd, MMM yyyy HH:mm") ?? "N/A";
         public string DeliveryModeDisplay => BirthOutcome?.DeliveryMode.ToString() ?? "N/A";
         public int NumberOfBabies => BirthOutcome?.NumberOfBabies ?? 0;
         public string BabiesDisplay => NumberOfBabies == 1 ? "1 baby" : $"{NumberOfBabies} babies";
@@ -43,7 +43,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
         public Color ComplicationsColor => HasComplications ? Colors.Red : Colors.Green;
-        public string StatusColor => Partograph?.StatusColor ?? "#2196F3";
+        public string StatusColor => Partograph?.StatusColor.ToString() ?? "#2196F3";
     }
 
     public partial class CompletedPatientsPageModel : ObservableObject

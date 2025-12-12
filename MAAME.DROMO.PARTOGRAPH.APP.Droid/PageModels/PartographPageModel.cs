@@ -1336,7 +1336,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 // Navigate to birth outcome page
                 var parameters = new Dictionary<string, object>
                 {
-                    { "PartographId", Patient.ID }
+                    { "PartographId", Patient.ID.ToString() }
                 };
 
                 await Shell.Current.GoToAsync("BirthOutcomePage", parameters);

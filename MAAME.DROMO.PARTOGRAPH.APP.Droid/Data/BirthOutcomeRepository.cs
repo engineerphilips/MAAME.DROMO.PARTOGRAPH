@@ -143,23 +143,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 var saveCmd = connection.CreateCommand();
                 if (item.ID == null || item.ID == Guid.Empty)
                 {
-                    item.ID = Guid.NewGuid();
-                    item.CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                    item.UpdatedTime = item.CreatedTime;
+                    var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+                    item.ID = item.ID ?? Guid.NewGuid();
+                    item.CreatedTime = now;
+                    item.UpdatedTime = now;
+                    item.DeviceId = DeviceIdentity.GetOrCreateDeviceId();
+                    item.OriginDeviceId = DeviceIdentity.GetOrCreateDeviceId();
+                    item.Version = 1;
+                    item.ServerVersion = 0;
+                    item.SyncStatus = 0;
+                    item.Deleted = 0;
                     item.DataHash = item.CalculateHash();
 
-                    saveCmd.CommandText = @"
-                    INSERT INTO Tbl_BirthOutcome (
-                        ID, partographid, recordedtime, maternalstatus, maternaldeathtime,
+                    saveCmd.CommandText = @"INSERT INTO Tbl_BirthOutcome (ID, partographid, recordedtime, maternalstatus, maternaldeathtime,
                         maternaldeathcause, maternaldeathcircumstances, deliverymode, deliverymodedetails,
-                        deliverytime, numberofbabies, perinealstatus, perinealdetails,
-                        placentadeliverytime, placentacomplete, estimatedbloodloss,
+                        deliverytime, numberofbabies, perinealstatus, perinealdetails, placentadeliverytime, placentacomplete, estimatedbloodloss,
                         maternalcomplications, postpartumhemorrhage, eclampsia, septicshock,
-                        obstructedlabor, ruptureduterus, oxytocingiven, antibioticsgiven,
-                        bloodtransfusiongiven, handler, notes,
-                        createdtime, updatedtime, deviceid, origindeviceid, syncstatus,
-                        version, serverversion, deleted, datahash
-                    ) VALUES (
+                        obstructedlabor, ruptureduterus, oxytocingiven, antibioticsgiven, bloodtransfusiongiven, handler, notes,
+                        createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash) VALUES (
                         @id, @partographid, @recordedtime, @maternalstatus, @maternaldeathtime,
                         @maternaldeathcause, @maternaldeathcircumstances, @deliverymode, @deliverymodedetails,
                         @deliverytime, @numberofbabies, @perinealstatus, @perinealdetails,
@@ -197,7 +199,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 }
 
                 AddParameters(saveCmd, item);
-                await saveCmd.ExecuteNonQueryAsync();
+                if (await saveCmd.ExecuteNonQueryAsync() > 0)
+                {
+                    var x = item.ID;
+                }
+                else
+                    item.ID = null;
+            }
+            catch (SqliteException e)
+            {
+                _logger.LogError(e, "Error saving birth outcome");
+                throw;
             }
             catch (Exception e)
             {
@@ -212,18 +224,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographid", item.PartographID.ToString());
-            cmd.Parameters.AddWithValue("@recordedtime", item.RecordedTime.ToString("o"));
+            cmd.Parameters.AddWithValue("@recordedtime", item.RecordedTime.ToString());
             cmd.Parameters.AddWithValue("@maternalstatus", (int)item.MaternalStatus);
-            cmd.Parameters.AddWithValue("@maternaldeathtime", item.MaternalDeathTime?.ToString("o") ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@maternaldeathtime", item.MaternalDeathTime != null ? item.MaternalDeathTime?.ToString() : DBNull.Value);
             cmd.Parameters.AddWithValue("@maternaldeathcause", item.MaternalDeathCause ?? string.Empty);
             cmd.Parameters.AddWithValue("@maternaldeathcircumstances", item.MaternalDeathCircumstances ?? string.Empty);
             cmd.Parameters.AddWithValue("@deliverymode", (int)item.DeliveryMode);
             cmd.Parameters.AddWithValue("@deliverymodedetails", item.DeliveryModeDetails ?? string.Empty);
-            cmd.Parameters.AddWithValue("@deliverytime", item.DeliveryTime?.ToString("o") ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@deliverytime", item.DeliveryTime != null ? item.DeliveryTime?.ToString() : DBNull.Value);
             cmd.Parameters.AddWithValue("@numberofbabies", item.NumberOfBabies);
             cmd.Parameters.AddWithValue("@perinealstatus", (int)item.PerinealStatus);
             cmd.Parameters.AddWithValue("@perinealdetails", item.PerinealDetails ?? string.Empty);
-            cmd.Parameters.AddWithValue("@placentadeliverytime", item.PlacentaDeliveryTime?.ToString("o") ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@placentadeliverytime", item.PlacentaDeliveryTime != null ? item.PlacentaDeliveryTime?.ToString() : DBNull.Value);
             cmd.Parameters.AddWithValue("@placentacomplete", item.PlacentaComplete ? 1 : 0);
             cmd.Parameters.AddWithValue("@estimatedbloodloss", item.EstimatedBloodLoss);
             cmd.Parameters.AddWithValue("@maternalcomplications", item.MaternalComplications ?? string.Empty);
@@ -235,7 +247,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@oxytocingiven", item.OxytocinGiven ? 1 : 0);
             cmd.Parameters.AddWithValue("@antibioticsgiven", item.AntibioticsGiven ? 1 : 0);
             cmd.Parameters.AddWithValue("@bloodtransfusiongiven", item.BloodTransfusionGiven ? 1 : 0); 
-            cmd.Parameters.AddWithValue("@handler", item.Handler?.ToString() ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@handler", item.Handler != null ? item.Handler?.ToString() : DBNull.Value);
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? string.Empty);
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
@@ -288,8 +300,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Version = Convert.ToInt32(reader["version"]),
                 ServerVersion = Convert.ToInt32(reader["serverversion"]),
                 Deleted = Convert.ToInt32(reader["deleted"]),
-                ConflictData = reader["conflictdata"]?.ToString(),
-                DataHash = reader["datahash"]?.ToString()
+                ConflictData = Convert.IsDBNull(reader["conflictdata"]) ? string.Empty : reader["conflictdata"]?.ToString(),
+                DataHash = Convert.IsDBNull(reader["datahash"]) ? string.Empty : reader["datahash"]?.ToString()
             };
         }
     }

@@ -48,9 +48,9 @@
                                 <RoundRectangle CornerRadius="10" />
                             </Border.StrokeShape>
 
-                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,10,Auto" ColumnSpacing="15">
                                 <!-- Delivery Icon -->
-                                <Border Grid.Column="0"
+                                <!--<Border Grid.Column="0"
                                         WidthRequest="60"
                                         HeightRequest="60"
                                         BackgroundColor="#10B981">
@@ -63,10 +63,26 @@
                                                FontSize="30"
                                                TextColor="White" />
                                     </VerticalStackLayout>
+                                </Border>-->
+                                <Border Grid.Column="0"
+                                        WidthRequest="56"
+                                        HeightRequest="56"
+                                        BackgroundColor="#10B981"
+                                        StrokeThickness="3"
+                                        Stroke="#FFF3E0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="28" />
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding PatientName, Converter={StaticResource InitialsConverter}}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="#10B981" />
                                 </Border>
 
                                 <!-- Patient & Delivery Details -->
-                                <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="5" VerticalOptions="Center">
                                     <Label Text="{Binding PatientName}"
                                            FontAttributes="Bold"
                                            FontSize="18" />
@@ -74,27 +90,39 @@
                                            FontSize="14"
                                            TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
 
-                                    <!-- Delivery Time -->
-                                    <HorizontalStackLayout Spacing="5">
-                                        <Label Text="&#xe916;"
+                                    <!-- Complications -->
+                                    <!--<HorizontalStackLayout Spacing="5">
+                                        <Label Text="●"
+                                               FontSize="12"
+                                               TextColor="{Binding ComplicationsColor}" />
+                                        <Label Text="{Binding ComplicationsDisplay}"
+                                               FontSize="12"
+                                               TextColor="{Binding ComplicationsColor}" />
+                                    </HorizontalStackLayout>-->
+                                </VerticalStackLayout>
+
+                                <!-- Delivery Time -->
+                                <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="5">
+                                    <!--<Label Text="&#xe916;"
                                                FontFamily="MaterialAssets"
                                                FontSize="14"
-                                               TextColor="#10B981" />
-                                        <Label Text="Delivered:" FontSize="12" FontAttributes="Bold" />
-                                        <Label Text="{Binding DeliveryTimeDisplay}"
+                                               TextColor="#10B981" />-->
+                                    <Label Text="Delivered:" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                    <Label Text="{Binding DeliveryTimeDisplay}"
                                                FontSize="12" />
-                                    </HorizontalStackLayout>
+                                </HorizontalStackLayout>
 
-                                    <!-- Delivery Mode & Babies -->
-                                    <HorizontalStackLayout Spacing="10">
-                                        <HorizontalStackLayout Spacing="5">
-                                            <Label Text="Mode:" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                            <Label Text="{Binding DeliveryModeDisplay}"
+                                <!-- Delivery Mode & Babies -->
+
+                                <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Spacing="5">
+                                    <Label Text="Mode:" FontSize="12" TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                    <Label Text="{Binding DeliveryModeDisplay}"
                                                    FontSize="12"
                                                    FontAttributes="Bold"
                                                    TextColor="#3B82F6" />
-                                        </HorizontalStackLayout>
-                                        <HorizontalStackLayout Spacing="5">
+                                </HorizontalStackLayout>
+                                <!--<HorizontalStackLayout>-->
+                                    <!--<HorizontalStackLayout Spacing="5">
                                             <Label Text="&#xe7fe;"
                                                    FontFamily="MaterialAssets"
                                                    FontSize="12"
@@ -103,22 +131,11 @@
                                                    FontSize="12"
                                                    FontAttributes="Bold"
                                                    TextColor="#F59E0B" />
-                                        </HorizontalStackLayout>
-                                    </HorizontalStackLayout>
-
-                                    <!-- Complications -->
-                                    <HorizontalStackLayout Spacing="5">
-                                        <Label Text="●"
-                                               FontSize="12"
-                                               TextColor="{Binding ComplicationsColor}" />
-                                        <Label Text="{Binding ComplicationsDisplay}"
-                                               FontSize="12"
-                                               TextColor="{Binding ComplicationsColor}" />
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
-
+                                        </HorizontalStackLayout>-->
+                                <!--</HorizontalStackLayout>-->
+                                
                                 <!-- Action Button -->
-                                <Button Grid.Column="2"
+                                <!--<Button Grid.Column="2"
                                         Text="&#xe8a0;"
                                         FontFamily="MaterialAssets"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.ViewPartographCommand}"
@@ -128,7 +145,33 @@
                                         WidthRequest="45"
                                         HeightRequest="45"
                                         CornerRadius="22"
-                                        ToolTipProperties.Text="View Details" />
+                                        ToolTipProperties.Text="View Details" />-->
+
+                                <!-- Divider -->
+                                <BoxView Grid.Row="4"
+                                         Grid.ColumnSpan="3"
+                                         HeightRequest="1"
+                                         Color="{AppThemeBinding Light=#EEEEEE, Dark=#333333}" 
+                                         VerticalOptions="Center" />
+
+                                <!-- Action Buttons -->
+                                <Button Grid.Row="5" Grid.ColumnSpan="3" Margin="0,12,0,0"
+                                        Text="View Partograph"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:CompletedPatientsPageModel}}, Path=ViewPartographCommand, x:DataType=pagemodels:CompletedPatientsPageModel}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="#2196F3"
+                                        TextColor="White"
+                                        FontSize="14"
+                                        FontAttributes="Bold"
+                                        HeightRequest="44"
+                                        CornerRadius="10">
+                                    <Button.Shadow>
+                                        <Shadow Brush="#2196F3"
+                                                Offset="0,2"
+                                                Radius="4"
+                                                Opacity="0.3" />
+                                    </Button.Shadow>
+                                </Button>
                             </Grid>
                         </Border>
                     </DataTemplate>

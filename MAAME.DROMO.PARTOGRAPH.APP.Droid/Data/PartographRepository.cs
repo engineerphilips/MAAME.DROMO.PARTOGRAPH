@@ -26,6 +26,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             //try
             //{
             //    var dropTableCmd = connection.CreateCommand();
+            //    dropTableCmd.CommandText = @"UPDATE Tbl_Partograph SET status = @status WHERE status = @status1;";
+            //    dropTableCmd.Parameters.AddWithValue("@status", (int)LaborStatus.Active);
+            //    dropTableCmd.Parameters.AddWithValue("@status1", (int)LaborStatus.SecondStage);
+            //    await dropTableCmd.ExecuteNonQueryAsync();
+            //}
+            //catch (Exception e)
+            //{
+            //    _logger.LogError(e, "Update PartographEntry table");
+            //    throw;
+            //}
+
+            //try
+            //{
+            //    var dropTableCmd = connection.CreateCommand();
             //    dropTableCmd.CommandText = @"
             //    DROP TABLE Tbl_Urine;";
             //    await dropTableCmd.ExecuteNonQueryAsync();

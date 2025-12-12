@@ -318,7 +318,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 var outcome = new BirthOutcome
                 {
-                    ID = BirthOutcome?.ID ?? Guid.NewGuid(),
+                    ID = BirthOutcome?.ID,
                     PartographID = Partograph.ID,
                     RecordedTime = DateTime.Now,
                     MaternalStatus = MaternalStatus,
@@ -435,8 +435,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             var parameters = new Dictionary<string, object>
             {
-                { "BirthOutcomeId", BirthOutcome.ID },
-                { "PartographId", Partograph.ID },
+                { "BirthOutcomeId", BirthOutcome.ID.ToString() },
+                { "PartographId", Partograph.ID.ToString() },
                 { "NumberOfBabies", NumberOfBabies }
             };
 
