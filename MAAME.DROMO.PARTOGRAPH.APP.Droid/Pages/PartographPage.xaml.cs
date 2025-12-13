@@ -34,47 +34,47 @@ public partial class PartographPage : ContentPage
         sfPopupAssessment.BindingContext = pageModel.AssessmentModalPageModel;
         sfPopupPlan.BindingContext = pageModel.PlanModalPageModel;
 
-        Loaded += (s, e) =>
+        Loaded += async (s, e) =>
         {
             if (BindingContext is PartographPageModel pageModel)
             {
-                pageModel.CloseCompanionModalPopup += () => sfPopupCompanion.IsOpen = false;
+                pageModel.CloseCompanionModalPopup += async () => { sfPopupCompanion.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenCompanionModalPopup += () => sfPopupCompanion.IsOpen = true;
-                pageModel.ClosePainReliefModalPopup += () => sfPopupPainRelief.IsOpen = false;
+                pageModel.ClosePainReliefModalPopup += async () => { sfPopupPainRelief.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenPainReliefModalPopup += () => sfPopupPainRelief.IsOpen = true;
-                pageModel.CloseOralFluidModalPopup += () => sfPopupOralFluid.IsOpen = false;
+                pageModel.CloseOralFluidModalPopup += async () => { sfPopupOralFluid.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenOralFluidModalPopup += () => sfPopupOralFluid.IsOpen = true;
-                pageModel.ClosePostureModalPopup += () => sfPopupPosture.IsOpen = false;
+                pageModel.ClosePostureModalPopup += async () => { sfPopupPosture.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenPostureModalPopup += () => sfPopupPosture.IsOpen = true;
-                pageModel.CloseFetalPositionModalPopup += () => sfPopupFetalPosition.IsOpen = false;
+                pageModel.CloseFetalPositionModalPopup += async () => { sfPopupFetalPosition.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenFetalPositionModalPopup += () => sfPopupFetalPosition.IsOpen = true;
-                pageModel.CloseAmnioticFluidModalPopup += () => sfPopupAmnioticFluid.IsOpen = false;
+                pageModel.CloseAmnioticFluidModalPopup += async () => { sfPopupAmnioticFluid.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenAmnioticFluidModalPopup += () => sfPopupAmnioticFluid.IsOpen = true;
-                pageModel.CloseCaputModalPopup += () => sfPopupCaput.IsOpen = false;
+                pageModel.CloseCaputModalPopup += async () => { sfPopupCaput.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenCaputModalPopup += () => sfPopupCaput.IsOpen = true;
-                pageModel.CloseMouldingModalPopup += () => sfPopupMoulding.IsOpen = false;
+                pageModel.CloseMouldingModalPopup += async () => { sfPopupMoulding.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenMouldingModalPopup += () => sfPopupMoulding.IsOpen = true;
-                pageModel.CloseUrineModalPopup += () => sfPopupUrine.IsOpen = false;
+                pageModel.CloseUrineModalPopup += async () => { sfPopupUrine.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenUrineModalPopup += () => sfPopupUrine.IsOpen = true;
-                pageModel.CloseTemperatureModalPopup += () => sfPopupTemperature.IsOpen = false;
+                pageModel.CloseTemperatureModalPopup += async () => { sfPopupTemperature.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenTemperatureModalPopup += () => sfPopupTemperature.IsOpen = true;
-                pageModel.CloseBpPulseModalPopup += () => sfPopupBpPulse.IsOpen = false;
+                pageModel.CloseBpPulseModalPopup += async () => { sfPopupBpPulse.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenBpPulseModalPopup += () => sfPopupBpPulse.IsOpen = true;
-                pageModel.CloseMedicationModalPopup += () => sfPopupMedication.IsOpen = false;
+                pageModel.CloseMedicationModalPopup += async () => { sfPopupMedication.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenMedicationModalPopup += () => sfPopupMedication.IsOpen = true;
-                pageModel.CloseIVFluidModalPopup += () => sfPopupIVFluid.IsOpen = false;
+                pageModel.CloseIVFluidModalPopup += async () => { sfPopupIVFluid.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenIVFluidModalPopup += () => sfPopupIVFluid.IsOpen = true;
-                pageModel.CloseOxytocinModalPopup += () => sfPopupOxytocin.IsOpen = false;
+                pageModel.CloseOxytocinModalPopup += async () => { sfPopupOxytocin.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenOxytocinModalPopup += () => sfPopupOxytocin.IsOpen = true;
-                pageModel.CloseHeadDescentModalPopup += () => sfPopupHeadDescent.IsOpen = false;
+                pageModel.CloseHeadDescentModalPopup += async () => { sfPopupHeadDescent.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenHeadDescentModalPopup += () => sfPopupHeadDescent.IsOpen = true;
-                pageModel.CloseCervixDilatationModalPopup += () => sfPopupCervixDilatation.IsOpen = false;
+                pageModel.CloseCervixDilatationModalPopup += async () => { sfPopupCervixDilatation.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenCervixDilatationModalPopup += () => sfPopupCervixDilatation.IsOpen = true;
-                pageModel.CloseFHRContractionModalPopup += () => sfPopupFHRContraction.IsOpen = false;
+                pageModel.CloseFHRContractionModalPopup += async () => { sfPopupFHRContraction.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenFHRContractionModalPopup += () => sfPopupFHRContraction.IsOpen = true;
-                pageModel.CloseAssessmentModalPopup += () => sfPopupAssessment.IsOpen = false;
+                pageModel.CloseAssessmentModalPopup += async () => { sfPopupAssessment.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenAssessmentModalPopup += () => sfPopupAssessment.IsOpen = true;
-                pageModel.ClosePlanModalPopup += () => sfPopupPlan.IsOpen = false;
+                pageModel.ClosePlanModalPopup += async () => { sfPopupPlan.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenPlanModalPopup += () => sfPopupPlan.IsOpen = true;
             }
         };
