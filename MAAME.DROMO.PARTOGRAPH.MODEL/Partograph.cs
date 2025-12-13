@@ -44,25 +44,25 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
 
         // Partographs
         public List<CompanionEntry> Companions { get; set; }
-        public IEnumerable<Contraction> Contractions { get; set; }
-        public IEnumerable<Caput> Caputs { get; set; }
-        public IEnumerable<BP> BPs { get; set; }
-        public IEnumerable<Assessment> Assessments { get; set; }
-        public IEnumerable<Plan> Plans { get; set; }
-        public IEnumerable<Moulding> Mouldings { get; set; }
-        public IEnumerable<FetalPosition> FetalPositions { get; set; }
-        public IEnumerable<CervixDilatation> Dilatations { get; set; }
-        public IEnumerable<AmnioticFluid> AmnioticFluids { get; set; }
-        public IEnumerable<HeadDescent> HeadDescents { get; set; }
-        public IEnumerable<FHR> Fhrs { get; set; }
-        public IEnumerable<PainReliefEntry> PainReliefs { get; set; }
-        public IEnumerable<PostureEntry> Postures { get; set; }
-        public IEnumerable<Temperature> Temperatures { get; set; }
-        public IEnumerable<Urine> Urines { get; set; }
-        public IEnumerable<OralFluidEntry> OralFluids { get; set; }
-        public IEnumerable<Oxytocin> Oxytocins { get; set; }
-        public IEnumerable<IVFluidEntry> IVFluids { get; set; }
-        public IEnumerable<MedicationEntry> Medications { get; set; }
+        public List<Contraction> Contractions { get; set; }
+        public List<Caput> Caputs { get; set; }
+        public List<BP> BPs { get; set; }
+        public List<Assessment> Assessments { get; set; }
+        public List<Plan> Plans { get; set; }
+        public List<Moulding> Mouldings { get; set; }
+        public List<FetalPosition> FetalPositions { get; set; }
+        public List<CervixDilatation> Dilatations { get; set; }
+        public List<AmnioticFluid> AmnioticFluids { get; set; }
+        public List<HeadDescent> HeadDescents { get; set; }
+        public List<FHR> Fhrs { get; set; }
+        public List<PainReliefEntry> PainReliefs { get; set; }
+        public List<PostureEntry> Postures { get; set; }
+        public List<Temperature> Temperatures { get; set; }
+        public List<Urine> Urines { get; set; }
+        public List<OralFluidEntry> OralFluids { get; set; }
+        public List<Oxytocin> Oxytocins { get; set; }
+        public List<IVFluidEntry> IVFluids { get; set; }
+        public List<MedicationEntry> Medications { get; set; }
         
         //// Cervical Progress
         //public int CervicalDilation { get; set; } // 0-10 cm

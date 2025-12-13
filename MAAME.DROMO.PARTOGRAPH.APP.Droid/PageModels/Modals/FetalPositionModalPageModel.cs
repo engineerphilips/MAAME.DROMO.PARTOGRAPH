@@ -84,7 +84,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    Position = PositionIndex == 0 ? "N" : PositionIndex == 1 ? "Y" : PositionIndex == 2 ? "D" : string.Empty,
+                    Position = PositionIndex == 0 ? "Anterior" : PositionIndex == 1 ? "Posterior" : PositionIndex == 2 ? "Transverse" : PositionIndex == 3 ? "0" : string.Empty,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID

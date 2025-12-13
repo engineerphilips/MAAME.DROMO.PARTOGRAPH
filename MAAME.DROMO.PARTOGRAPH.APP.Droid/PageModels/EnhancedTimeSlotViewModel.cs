@@ -35,7 +35,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _fetalPosition = string.Empty;
         private string _amnioticFluidColor = string.Empty;
         private string _caputDegree = string.Empty;
-        private int? _mouldingDegree = null;
+        private string? _mouldingDegree = null;
         private int? _bpSystolic = null;
         private int? _bpDiastolic = null;
         private int? _pulse = null;
@@ -300,7 +300,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        public int? MouldingDegree
+        public string? MouldingDegree
         {
             get => _mouldingDegree;
             set

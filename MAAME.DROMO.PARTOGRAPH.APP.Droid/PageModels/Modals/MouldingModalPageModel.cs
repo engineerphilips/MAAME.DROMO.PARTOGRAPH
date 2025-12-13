@@ -58,7 +58,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var lastEntry = await _mouldingRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
-                    DegreeIndex = lastEntry.Degree;
+                    DegreeIndex = lastEntry.Degree == "0" ? 0 : lastEntry.Degree == "+" ? 1 : lastEntry.Degree == "++" ? 2 : lastEntry.Degree == "+++" ? 3 : -1;
                     DegreeDisplay = lastEntry.DegreeDisplay;
                 }
             }
@@ -85,7 +85,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    Degree = DegreeIndex,
+                    Degree = DegreeIndex == 0 ? "0" : DegreeIndex == 1 ? "+" : DegreeIndex == 2 ? "++" : DegreeIndex == 3 ? "+++" : string.Empty,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID

@@ -38,23 +38,23 @@
                         <TimePicker Time="{Binding RecordingTime}" />
                     </core:SfTextInputLayout>
 
-                    <VerticalStackLayout Padding="10,0,0,0">
+                    <!--<VerticalStackLayout Padding="10,0,0,0">
                         <Label Text="Is the woman receiving any other medication?" FontAttributes="Bold"/>
-                    </VerticalStackLayout>
+                    </VerticalStackLayout>-->
 
-                    <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" VisibleSegmentsCount="2" SelectedIndex="{Binding MedicationIndex, Mode=TwoWay}">
+                    <!--<buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" VisibleSegmentsCount="2" SelectedIndex="{Binding MedicationIndex, Mode=TwoWay}">
                         <buttons:SfSegmentedControl.ItemsSource>
                             <x:Array Type="{x:Type x:String}">
                                 <x:String>No</x:String>
                                 <x:String>Yes</x:String>
                             </x:Array>
                         </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>
+                    </buttons:SfSegmentedControl>-->
 
                     <core:SfTextInputLayout Hint="Medication name"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Administered medication name...">
-                        <Entry Text="{Binding Medicationname}"
+                        <Entry Text="{Binding MedicationName}"
                            Keyboard="Text"
                            ReturnType="Next" />
                     </core:SfTextInputLayout>
@@ -75,7 +75,7 @@
                            ReturnType="Next" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Hint="Medication name, dose and route of administration"
+                    <core:SfTextInputLayout Hint="Any other notes"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Any other notes...">
                         <Entry Text="{Binding Notes}"

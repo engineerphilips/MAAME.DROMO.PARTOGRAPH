@@ -83,19 +83,23 @@
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="28" />
                                         </Border.StrokeShape>
-                                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                                        <Grid ColumnDefinitions="Auto,Auto" VerticalOptions="Center" HorizontalOptions="Center" Margin="-10">
                                             <Label Text="{Binding CurrentDilatation, StringFormat='{0}'}"
                                                    FontSize="22"
                                                    FontAttributes="Bold"
                                                    TextColor="White"
-                                                   HorizontalOptions="Center" />
+                                                   HorizontalOptions="End"  
+                                                   VerticalOptions="End"
+                                                   Grid.Column="0"/>
                                             <Label Text="cm"
                                                    FontSize="10"
                                                    TextColor="White"
                                                    Opacity="0.9"
-                                                   HorizontalOptions="Center"
-                                                   Margin="0,-2,0,0" />
-                                        </VerticalStackLayout>
+                                                   HorizontalOptions="End" 
+                                                   VerticalOptions="End"
+                                                   Margin="0,0,0,3"
+                                                   Grid.Column="1" />
+                                        </Grid>
                                     </Border>
                                     <!--<Border Grid.Column="0"
                                             WidthRequest="56"

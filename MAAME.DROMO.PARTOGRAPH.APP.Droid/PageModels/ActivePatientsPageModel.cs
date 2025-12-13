@@ -12,6 +12,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     public partial class ActivePatientsPageModel : ObservableObject
     {
         private readonly PartographRepository _partographRepository;
+        private readonly CervixDilatationRepository _cervixDilatationRepository;
+        private readonly HeadDescentRepository _headDescentRepository;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
@@ -28,9 +30,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private List<Partograph> _allPartographs = [];
 
-        public ActivePatientsPageModel(PartographRepository partographRepository, ModalErrorHandler errorHandler)
+        public ActivePatientsPageModel(PartographRepository partographRepository, CervixDilatationRepository cervixDilatationRepository, HeadDescentRepository headDescentRepository, ModalErrorHandler errorHandler)
         {
             _partographRepository = partographRepository;
+            _cervixDilatationRepository = cervixDilatationRepository;
+            _headDescentRepository = headDescentRepository;
             _errorHandler = errorHandler;
         }
 
@@ -53,6 +57,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 IsBusy = true;
                 _allPartographs = await _partographRepository.ListAsync(LaborStatus.Active);
+
+                if (_allPartographs?.Count > 0)
+                {
+                    foreach (var item in _allPartographs)
+                    {
+                        item.Dilatations = await _cervixDilatationRepository.ListByPatientAsync(item.ID);
+                        item.HeadDescents = await _headDescentRepository.ListByPatientAsync(item.ID);
+                    }
+                }
+
                 FilterPatients();
             }
             finally

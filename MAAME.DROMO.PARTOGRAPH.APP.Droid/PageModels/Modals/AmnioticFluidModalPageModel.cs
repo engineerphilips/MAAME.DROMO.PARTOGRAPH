@@ -84,7 +84,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    Color = AmnioticFluidIndex == 0 ? "N" : AmnioticFluidIndex == 1 ? "Y" : AmnioticFluidIndex == 2 ? "D" : string.Empty,
+                    Color = AmnioticFluidIndex == 0 ? "Intact" : AmnioticFluidIndex == 1 ? "Clear" : AmnioticFluidIndex == 2 ? "Meconium - stained" : AmnioticFluidIndex == 3 ? "Blood - stained" : string.Empty,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID

@@ -4,6 +4,7 @@
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.Apgar5Popup">
 
     <sfPopup:SfPopup.Resources>
@@ -71,96 +72,101 @@
                     <!-- Heart Rate -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Heart Rate" Style="{StaticResource SectionTitle}" />
-                        <editors:SfSegmentedControl
+                        <buttons:SfSegmentedControl
                             SelectedIndex="{Binding HeartRate}"
                             SegmentHeight="60"
                             CornerRadius="8"
-                            VisibleSegmentsCount="3"
-                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
-                            <editors:SfSegmentedControl.ItemsSource>
+                            VisibleSegmentsCount="3">
+
+                            <!--SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}"-->
+                            <buttons:SfSegmentedControl.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>0&#10;Absent</x:String>
                                     <x:String>1&#10;&lt; 100 bpm</x:String>
                                     <x:String>2&#10;≥100 bpm</x:String>
                                 </x:Array>
-                            </editors:SfSegmentedControl.ItemsSource>
-                        </editors:SfSegmentedControl>
+                            </buttons:SfSegmentedControl.ItemsSource>
+                        </buttons:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Respiratory Effort -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Respiratory Effort" Style="{StaticResource SectionTitle}" />
-                        <editors:SfSegmentedControl
+                        <buttons:SfSegmentedControl
                             SelectedIndex="{Binding RespiratoryEffort}"
                             SegmentHeight="60"
                             CornerRadius="8"
-                            VisibleSegmentsCount="3"
-                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
-                            <editors:SfSegmentedControl.ItemsSource>
+                            VisibleSegmentsCount="3">
+
+                            <!--SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}"-->
+                            <buttons:SfSegmentedControl.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>0&#10;Absent</x:String>
                                     <x:String>1&#10;Slow/Irregular</x:String>
                                     <x:String>2&#10;Good/Crying</x:String>
                                 </x:Array>
-                            </editors:SfSegmentedControl.ItemsSource>
-                        </editors:SfSegmentedControl>
+                            </buttons:SfSegmentedControl.ItemsSource>
+                        </buttons:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Muscle Tone -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Muscle Tone" Style="{StaticResource SectionTitle}" />
-                        <editors:SfSegmentedControl
+                        <buttons:SfSegmentedControl
                             SelectedIndex="{Binding MuscleTone}"
                             SegmentHeight="60"
                             CornerRadius="8"
-                            VisibleSegmentsCount="3"
-                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
-                            <editors:SfSegmentedControl.ItemsSource>
+                            VisibleSegmentsCount="3">
+
+                            <!--SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}"-->
+                            <buttons:SfSegmentedControl.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>0&#10;Limp</x:String>
                                     <x:String>1&#10;Some Flexion</x:String>
                                     <x:String>2&#10;Active Motion</x:String>
                                 </x:Array>
-                            </editors:SfSegmentedControl.ItemsSource>
-                        </editors:SfSegmentedControl>
+                            </buttons:SfSegmentedControl.ItemsSource>
+                        </buttons:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Reflex Irritability -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Reflex Irritability" Style="{StaticResource SectionTitle}" />
-                        <editors:SfSegmentedControl
+                        <buttons:SfSegmentedControl
                             SelectedIndex="{Binding ReflexIrritability}"
                             SegmentHeight="60"
                             CornerRadius="8"
-                            VisibleSegmentsCount="3"
-                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
-                            <editors:SfSegmentedControl.ItemsSource>
+                            VisibleSegmentsCount="3">
+
+                            <!--SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}"-->
+                            <buttons:SfSegmentedControl.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>0&#10;No Response</x:String>
                                     <x:String>1&#10;Grimace</x:String>
                                     <x:String>2&#10;Cry/Sneeze</x:String>
                                 </x:Array>
-                            </editors:SfSegmentedControl.ItemsSource>
-                        </editors:SfSegmentedControl>
+                            </buttons:SfSegmentedControl.ItemsSource>
+                        </buttons:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Color -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Color" Style="{StaticResource SectionTitle}" />
-                        <editors:SfSegmentedControl
+                        <buttons:SfSegmentedControl
                             SelectedIndex="{Binding Color}"
                             SegmentHeight="60"
                             CornerRadius="8"
-                            VisibleSegmentsCount="3"
-                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
-                            <editors:SfSegmentedControl.ItemsSource>
+                            VisibleSegmentsCount="3">
+
+                            <!--SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}"-->
+                            <buttons:SfSegmentedControl.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>0&#10;Blue/Pale</x:String>
                                     <x:String>1&#10;Body Pink</x:String>
                                     <x:String>2&#10;Completely Pink</x:String>
                                 </x:Array>
-                            </editors:SfSegmentedControl.ItemsSource>
-                        </editors:SfSegmentedControl>
+                            </buttons:SfSegmentedControl.ItemsSource>
+                        </buttons:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Action Buttons -->

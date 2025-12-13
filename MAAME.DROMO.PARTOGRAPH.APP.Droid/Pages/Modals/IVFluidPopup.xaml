@@ -4,6 +4,7 @@
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.IVFluidPopup">
 
     <sfPopup:SfPopup.Resources>
@@ -38,7 +39,7 @@
                         <TimePicker Time="{Binding RecordingTime}" />
                     </core:SfTextInputLayout>
 
-                    <VerticalStackLayout Padding="10,0,0,0">
+                    <!--<VerticalStackLayout Padding="10,0,0,0">
                         <Label Text="Is the woman on IV fluids?" FontAttributes="Bold"/>
                     </VerticalStackLayout>
 
@@ -49,7 +50,31 @@
                                 <x:String>Yes</x:String>
                             </x:Array>
                         </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>
+                    </buttons:SfSegmentedControl>-->
+
+                    <core:SfTextInputLayout Hint="Fluid Type"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="IV Fluid Type...">
+                        <Entry Text="{Binding FluidType}"
+                           Keyboard="Text"
+                           ReturnType="Next" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Volume Infused"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Administered volume...">
+                        <editors:SfNumericEntry Value="{Binding VolumeInfused, Mode=TwoWay}" Minimum="0"
+                       CustomFormat="0"
+                       ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Rate"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Rate of infusion...">
+                        <Entry Text="{Binding Rate}"
+                           Keyboard="Text"
+                           ReturnType="Next" />
+                    </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Additional Notes"
                                         Style="{StaticResource PatientInput}"

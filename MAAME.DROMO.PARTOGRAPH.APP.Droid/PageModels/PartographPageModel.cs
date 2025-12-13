@@ -915,7 +915,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             // Medication (not scheduled, just latest)
             var latestMedication = Patient.Medications?.OrderByDescending(e => e.Time).FirstOrDefault();
-            MedicationLatestValue = latestMedication?.MedicationName ?? "";
+            MedicationLatestValue = $"{latestMedication?.MedicationName} {latestMedication?.Dose}" ?? "";
             MedicationStatusText = latestMedication != null ? $"Last: {latestMedication.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestMedication.Time - DateTime.Now)}" : "";
 
             // IV Fluid (not scheduled, just latest)

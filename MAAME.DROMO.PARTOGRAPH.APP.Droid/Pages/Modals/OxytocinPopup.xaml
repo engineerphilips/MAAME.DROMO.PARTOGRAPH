@@ -4,6 +4,7 @@
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.OxytocinPopup">
 
     <sfPopup:SfPopup.Resources>
@@ -38,7 +39,7 @@
                         <TimePicker Time="{Binding RecordingTime}" />
                     </core:SfTextInputLayout>
 
-                    <VerticalStackLayout Padding="10,0,0,0">
+                    <!--<VerticalStackLayout Padding="10,0,0,0">
                         <Label Text=" Is oxytocin currently being administered to the woman?" FontAttributes="Bold"/>
                     </VerticalStackLayout>
 
@@ -49,9 +50,25 @@
                                 <x:String>Yes</x:String>
                             </x:Array>
                         </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>
+                    </buttons:SfSegmentedControl>-->
 
-                    <core:SfTextInputLayout Hint="U/L and drops/min"
+                    <core:SfTextInputLayout Hint="U/L"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Total Volume Infused...">
+                        <editors:SfNumericEntry Value="{Binding TotalVolumeInfused, Mode=TwoWay}" Minimum="0"
+                       CustomFormat="0"
+                       ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Drops/min"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Dose M Units Per Min...">
+                        <editors:SfNumericEntry Value="{Binding DoseMUnitsPerMin, Mode=TwoWay}" Minimum="0"
+                       CustomFormat="0"
+                       ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
+                    
+                    <core:SfTextInputLayout Hint="Notes"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Administered dose...">
                         <Entry Text="{Binding Notes}"

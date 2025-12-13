@@ -41,7 +41,7 @@
                     <VerticalStackLayout Padding="10,0,0,0">
                         <Label Text="What is the baby position?" FontAttributes="Bold"/>
 
-                        <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="3" SelectedIndex="{Binding FetalPositionIndex, Mode=TwoWay}">
+                        <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="3" SelectedIndex="{Binding PositionIndex, Mode=TwoWay}">
                             <buttons:SfSegmentedControl.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>Anterior</x:String>
