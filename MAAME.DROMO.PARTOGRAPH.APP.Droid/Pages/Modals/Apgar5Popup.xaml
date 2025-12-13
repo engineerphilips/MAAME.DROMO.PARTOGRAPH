@@ -71,276 +71,96 @@
                     <!-- Heart Rate -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Heart Rate" Style="{StaticResource SectionTitle}" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
-                            <Border Grid.Column="0"
-                                    BackgroundColor="{Binding HeartRate0Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding HeartRate0BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectHeartRateCommand}" CommandParameter="0" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Absent" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1"
-                                    BackgroundColor="{Binding HeartRate1Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding HeartRate1BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectHeartRateCommand}" CommandParameter="1" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="&lt; 100 bpm" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="2"
-                                    BackgroundColor="{Binding HeartRate2Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding HeartRate2BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectHeartRateCommand}" CommandParameter="2" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="≥100 bpm" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
+                        <editors:SfSegmentedControl
+                            SelectedIndex="{Binding HeartRate}"
+                            SegmentHeight="60"
+                            CornerRadius="8"
+                            VisibleSegmentsCount="3"
+                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
+                            <editors:SfSegmentedControl.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>0&#10;Absent</x:String>
+                                    <x:String>1&#10;&lt; 100 bpm</x:String>
+                                    <x:String>2&#10;≥100 bpm</x:String>
+                                </x:Array>
+                            </editors:SfSegmentedControl.ItemsSource>
+                        </editors:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Respiratory Effort -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Respiratory Effort" Style="{StaticResource SectionTitle}" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
-                            <Border Grid.Column="0"
-                                    BackgroundColor="{Binding Respiratory0Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding Respiratory0BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectRespiratoryCommand}" CommandParameter="0" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Absent" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1"
-                                    BackgroundColor="{Binding Respiratory1Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding Respiratory1BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectRespiratoryCommand}" CommandParameter="1" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Slow/Irregular" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="2"
-                                    BackgroundColor="{Binding Respiratory2Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding Respiratory2BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectRespiratoryCommand}" CommandParameter="2" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Good/Crying" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
+                        <editors:SfSegmentedControl
+                            SelectedIndex="{Binding RespiratoryEffort}"
+                            SegmentHeight="60"
+                            CornerRadius="8"
+                            VisibleSegmentsCount="3"
+                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
+                            <editors:SfSegmentedControl.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>0&#10;Absent</x:String>
+                                    <x:String>1&#10;Slow/Irregular</x:String>
+                                    <x:String>2&#10;Good/Crying</x:String>
+                                </x:Array>
+                            </editors:SfSegmentedControl.ItemsSource>
+                        </editors:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Muscle Tone -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Muscle Tone" Style="{StaticResource SectionTitle}" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
-                            <Border Grid.Column="0"
-                                    BackgroundColor="{Binding MuscleTone0Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding MuscleTone0BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectMuscleToneCommand}" CommandParameter="0" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Limp" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1"
-                                    BackgroundColor="{Binding MuscleTone1Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding MuscleTone1BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectMuscleToneCommand}" CommandParameter="1" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Some Flexion" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="2"
-                                    BackgroundColor="{Binding MuscleTone2Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding MuscleTone2BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectMuscleToneCommand}" CommandParameter="2" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Active Motion" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
+                        <editors:SfSegmentedControl
+                            SelectedIndex="{Binding MuscleTone}"
+                            SegmentHeight="60"
+                            CornerRadius="8"
+                            VisibleSegmentsCount="3"
+                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
+                            <editors:SfSegmentedControl.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>0&#10;Limp</x:String>
+                                    <x:String>1&#10;Some Flexion</x:String>
+                                    <x:String>2&#10;Active Motion</x:String>
+                                </x:Array>
+                            </editors:SfSegmentedControl.ItemsSource>
+                        </editors:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Reflex Irritability -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Reflex Irritability" Style="{StaticResource SectionTitle}" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
-                            <Border Grid.Column="0"
-                                    BackgroundColor="{Binding Reflex0Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding Reflex0BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectReflexCommand}" CommandParameter="0" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="No Response" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1"
-                                    BackgroundColor="{Binding Reflex1Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding Reflex1BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectReflexCommand}" CommandParameter="1" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Grimace" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="2"
-                                    BackgroundColor="{Binding Reflex2Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding Reflex2BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectReflexCommand}" CommandParameter="2" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Cry/Sneeze" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
+                        <editors:SfSegmentedControl
+                            SelectedIndex="{Binding ReflexIrritability}"
+                            SegmentHeight="60"
+                            CornerRadius="8"
+                            VisibleSegmentsCount="3"
+                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
+                            <editors:SfSegmentedControl.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>0&#10;No Response</x:String>
+                                    <x:String>1&#10;Grimace</x:String>
+                                    <x:String>2&#10;Cry/Sneeze</x:String>
+                                </x:Array>
+                            </editors:SfSegmentedControl.ItemsSource>
+                        </editors:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Color -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Color" Style="{StaticResource SectionTitle}" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
-                            <Border Grid.Column="0"
-                                    BackgroundColor="{Binding Color0Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding Color0BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="0" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Blue/Pale" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1"
-                                    BackgroundColor="{Binding Color1Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding Color1BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="1" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Body Pink" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="2"
-                                    BackgroundColor="{Binding Color2Color}"
-                                    StrokeThickness="2"
-                                    Stroke="{Binding Color2BorderColor}"
-                                    Padding="10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="2" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="Completely Pink" FontSize="11" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
+                        <editors:SfSegmentedControl
+                            SelectedIndex="{Binding Color}"
+                            SegmentHeight="60"
+                            CornerRadius="8"
+                            VisibleSegmentsCount="3"
+                            SelectionIndicatorSettings="{editors:SelectionIndicatorSettings Background=#2196F3, StrokeThickness=2, Stroke=#1976D2}">
+                            <editors:SfSegmentedControl.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>0&#10;Blue/Pale</x:String>
+                                    <x:String>1&#10;Body Pink</x:String>
+                                    <x:String>2&#10;Completely Pink</x:String>
+                                </x:Array>
+                            </editors:SfSegmentedControl.ItemsSource>
+                        </editors:SfSegmentedControl>
                     </VerticalStackLayout>
 
                     <!-- Action Buttons -->
