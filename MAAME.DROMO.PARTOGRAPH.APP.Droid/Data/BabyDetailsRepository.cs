@@ -45,6 +45,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     apgar1min INTEGER,
                     apgar5min INTEGER,
                     apgar10min INTEGER,
+                    apgar1heartrate INTEGER,
+                    apgar1respiratoryeffort INTEGER,
+                    apgar1muscletone INTEGER,
+                    apgar1reflexirritability INTEGER,
+                    apgar1color INTEGER,
+                    apgar5heartrate INTEGER,
+                    apgar5respiratoryeffort INTEGER,
+                    apgar5muscletone INTEGER,
+                    apgar5reflexirritability INTEGER,
+                    apgar5color INTEGER,
                     resuscitationrequired INTEGER NOT NULL DEFAULT 0,
                     resuscitationsteps TEXT,
                     resuscitationduration INTEGER,
@@ -288,6 +298,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 stillbirthmacerated = @stillbirthmacerated, birthweight = @birthweight, length = @length,
                 headcircumference = @headcircumference, chestcircumference = @chestcircumference,
                 apgar1min = @apgar1min, apgar5min = @apgar5min, apgar10min = @apgar10min,
+                apgar1heartrate = @apgar1heartrate, apgar1respiratoryeffort = @apgar1respiratoryeffort,
+                apgar1muscletone = @apgar1muscletone, apgar1reflexirritability = @apgar1reflexirritability,
+                apgar1color = @apgar1color, apgar5heartrate = @apgar5heartrate,
+                apgar5respiratoryeffort = @apgar5respiratoryeffort, apgar5muscletone = @apgar5muscletone,
+                apgar5reflexirritability = @apgar5reflexirritability, apgar5color = @apgar5color,
                 resuscitationrequired = @resuscitationrequired, resuscitationsteps = @resuscitationsteps,
                 resuscitationduration = @resuscitationduration, oxygengiven = @oxygengiven,
                 intubationperformed = @intubationperformed, chestcompressionsgiven = @chestcompressionsgiven,
@@ -334,6 +349,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@apgar1min", item.Apgar1Min.HasValue ? item.Apgar1Min.Value : (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@apgar5min", item.Apgar5Min.HasValue ? item.Apgar5Min.Value : (object)DBNull.Value);
             //cmd.Parameters.AddWithValue("@apgar10min", item.Apgar10Min.HasValue ? item.Apgar10Min.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar1heartrate", item.Apgar1HeartRate.HasValue ? item.Apgar1HeartRate.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar1respiratoryeffort", item.Apgar1RespiratoryEffort.HasValue ? item.Apgar1RespiratoryEffort.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar1muscletone", item.Apgar1MuscleTone.HasValue ? item.Apgar1MuscleTone.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar1reflexirritability", item.Apgar1ReflexIrritability.HasValue ? item.Apgar1ReflexIrritability.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar1color", item.Apgar1Color.HasValue ? item.Apgar1Color.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar5heartrate", item.Apgar5HeartRate.HasValue ? item.Apgar5HeartRate.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar5respiratoryeffort", item.Apgar5RespiratoryEffort.HasValue ? item.Apgar5RespiratoryEffort.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar5muscletone", item.Apgar5MuscleTone.HasValue ? item.Apgar5MuscleTone.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar5reflexirritability", item.Apgar5ReflexIrritability.HasValue ? item.Apgar5ReflexIrritability.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@apgar5color", item.Apgar5Color.HasValue ? item.Apgar5Color.Value : (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@resuscitationrequired", item.ResuscitationRequired ? 1 : 0);
             cmd.Parameters.AddWithValue("@resuscitationsteps", item.ResuscitationSteps ?? string.Empty);
             cmd.Parameters.AddWithValue("@resuscitationduration", item.ResuscitationDuration.HasValue ? item.ResuscitationDuration.Value : (object)DBNull.Value);
@@ -409,6 +434,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Apgar1Min = reader["apgar1min"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar1min"]),
                 Apgar5Min = reader["apgar5min"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar5min"]),
                 //Apgar10Min = reader["apgar10min"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar10min"]),
+                Apgar1HeartRate = reader["apgar1heartrate"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar1heartrate"]),
+                Apgar1RespiratoryEffort = reader["apgar1respiratoryeffort"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar1respiratoryeffort"]),
+                Apgar1MuscleTone = reader["apgar1muscletone"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar1muscletone"]),
+                Apgar1ReflexIrritability = reader["apgar1reflexirritability"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar1reflexirritability"]),
+                Apgar1Color = reader["apgar1color"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar1color"]),
+                Apgar5HeartRate = reader["apgar5heartrate"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar5heartrate"]),
+                Apgar5RespiratoryEffort = reader["apgar5respiratoryeffort"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar5respiratoryeffort"]),
+                Apgar5MuscleTone = reader["apgar5muscletone"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar5muscletone"]),
+                Apgar5ReflexIrritability = reader["apgar5reflexirritability"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar5reflexirritability"]),
+                Apgar5Color = reader["apgar5color"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar5color"]),
                 ResuscitationRequired = Convert.ToBoolean(reader["resuscitationrequired"]),
                 ResuscitationSteps = reader["resuscitationsteps"]?.ToString() ?? string.Empty,
                 ResuscitationDuration = reader["resuscitationduration"] == DBNull.Value ? null : Convert.ToInt32(reader["resuscitationduration"]),

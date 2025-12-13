@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<sfPopup:SfPopup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.BishopScorePopup">
+
+    <sfPopup:SfPopup.Resources>
+        <ResourceDictionary>
+            <Style x:Key="SectionTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Margin" Value="0,10,0,5" />
+            </Style>
+        </ResourceDictionary>
+    </sfPopup:SfPopup.Resources>
+
+    <sfPopup:SfPopup.HeaderTemplate>
+        <DataTemplate>
+            <StackLayout>
+                <Label Text="Bishop Score Assessment"
+                       VerticalOptions="Center"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       Margin="15,15,0,0" />
+                <Label Text="Predicts likelihood of successful vaginal delivery"
+                       VerticalOptions="Center"
+                       FontSize="12"
+                       TextColor="Gray"
+                       Margin="15,5,0,10" />
+            </StackLayout>
+        </DataTemplate>
+    </sfPopup:SfPopup.HeaderTemplate>
+
+    <sfPopup:SfPopup.ContentTemplate>
+        <DataTemplate>
+            <ScrollView>
+                <VerticalStackLayout Padding="15,10" Spacing="15">
+
+                    <!-- Total Score Display -->
+                    <Border BackgroundColor="{Binding TotalScoreColor}"
+                            StrokeThickness="0"
+                            Padding="15"
+                            Margin="0,0,0,10">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Bishop Score"
+                                   FontSize="14"
+                                   TextColor="White"
+                                   HorizontalOptions="Center" />
+                            <Label Text="{Binding TotalScore}"
+                                   FontSize="32"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="Center" />
+                            <Label Text="{Binding ScoreInterpretation}"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Cervical Dilation -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Cervical Dilation" Style="{StaticResource SectionTitle}" />
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="{Binding Dilation0Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Dilation0BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectDilationCommand}" CommandParameter="0" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="Closed" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="{Binding Dilation1Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Dilation1BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectDilationCommand}" CommandParameter="1" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="1-2 cm" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{Binding Dilation2Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Dilation2BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectDilationCommand}" CommandParameter="2" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="3-4 cm" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="3"
+                                    BackgroundColor="{Binding Dilation3Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Dilation3BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectDilationCommand}" CommandParameter="3" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="3" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="≥5 cm" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Effacement -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Cervical Effacement" Style="{StaticResource SectionTitle}" />
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="{Binding Effacement0Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Effacement0BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectEffacementCommand}" CommandParameter="0" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="0-30%" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="{Binding Effacement1Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Effacement1BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectEffacementCommand}" CommandParameter="1" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="40-50%" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{Binding Effacement2Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Effacement2BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectEffacementCommand}" CommandParameter="2" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="60-70%" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="3"
+                                    BackgroundColor="{Binding Effacement3Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Effacement3BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectEffacementCommand}" CommandParameter="3" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="3" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="≥80%" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Consistency -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Cervical Consistency" Style="{StaticResource SectionTitle}" />
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="{Binding Consistency0Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Consistency0BorderColor}"
+                                    Padding="10">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectConsistencyCommand}" CommandParameter="0" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" />
+                                    <Label Text="Firm" FontSize="11" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="{Binding Consistency1Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Consistency1BorderColor}"
+                                    Padding="10">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectConsistencyCommand}" CommandParameter="1" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" />
+                                    <Label Text="Medium" FontSize="11" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{Binding Consistency2Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Consistency2BorderColor}"
+                                    Padding="10">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectConsistencyCommand}" CommandParameter="2" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" />
+                                    <Label Text="Soft" FontSize="11" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Position -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Cervical Position" Style="{StaticResource SectionTitle}" />
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="{Binding Position0Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Position0BorderColor}"
+                                    Padding="10">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectPositionCommand}" CommandParameter="0" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" />
+                                    <Label Text="Posterior" FontSize="11" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="{Binding Position1Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Position1BorderColor}"
+                                    Padding="10">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectPositionCommand}" CommandParameter="1" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" />
+                                    <Label Text="Mid-position" FontSize="11" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{Binding Position2Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Position2BorderColor}"
+                                    Padding="10">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectPositionCommand}" CommandParameter="2" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" />
+                                    <Label Text="Anterior" FontSize="11" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Station -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Fetal Station" Style="{StaticResource SectionTitle}" />
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="{Binding Station0Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Station0BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectStationCommand}" CommandParameter="0" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="0" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="-3" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="{Binding Station1Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Station1BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectStationCommand}" CommandParameter="1" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="-2" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{Binding Station2Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Station2BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectStationCommand}" CommandParameter="2" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="2" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="-1, 0" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="3"
+                                    BackgroundColor="{Binding Station3Color}"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding Station3BorderColor}"
+                                    Padding="8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectStationCommand}" CommandParameter="3" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="3" FontAttributes="Bold" HorizontalOptions="Center" FontSize="12" />
+                                    <Label Text="+1, +2" FontSize="9" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Action Buttons -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,20">
+                        <Button Grid.Column="0"
+                            Text="Cancel"
+                            Command="{Binding CancelCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                            TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                            HeightRequest="50"
+                            CornerRadius="10" />
+
+                        <Button Grid.Column="1"
+                            Text="Save Score"
+                            Command="{Binding SaveCommand}"
+                            BackgroundColor="#4CAF50"
+                            TextColor="White"
+                            HeightRequest="50"
+                            CornerRadius="10" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </DataTemplate>
+    </sfPopup:SfPopup.ContentTemplate>
+
+</sfPopup:SfPopup>
