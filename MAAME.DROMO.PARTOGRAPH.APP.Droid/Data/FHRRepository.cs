@@ -16,10 +16,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 time TEXT NOT NULL,
                 handler TEXT,
                 notes TEXT NOT NULL,
-                rate INTEGER,                
+                rate INTEGER,
+                deceleration TEXT,
                 createdtime INTEGER NOT NULL,
                 updatedtime INTEGER NOT NULL,
-                deletedtime INTEGER, 
+                deletedtime INTEGER,
                 deviceid TEXT NOT NULL,
                 origindeviceid TEXT NOT NULL,
                 syncstatus INTEGER DEFAULT 0,
@@ -70,31 +71,33 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 HandlerName = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
                 Notes = reader.GetString(4),
                 Rate = reader.IsDBNull(5) ? null : reader.GetInt32(5),
-                CreatedTime = reader.GetInt64(6),
-                UpdatedTime = reader.GetInt64(7),
-                DeletedTime = reader.IsDBNull(8) ? null : reader.GetInt64(8),
-                DeviceId = reader.GetString(9),
-                OriginDeviceId = reader.GetString(10),
-                SyncStatus = reader.GetInt32(11),
-                Version = reader.GetInt32(12),
-                ServerVersion = reader.IsDBNull(13) ? 0 : reader.GetInt32(13),
-                Deleted = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
-                ConflictData = reader.IsDBNull(15) ? string.Empty : reader.GetString(15),
-                DataHash = reader.IsDBNull(16) ? string.Empty : reader.GetString(16)
+                Deceleration = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                CreatedTime = reader.GetInt64(7),
+                UpdatedTime = reader.GetInt64(8),
+                DeletedTime = reader.IsDBNull(9) ? null : reader.GetInt64(9),
+                DeviceId = reader.GetString(10),
+                OriginDeviceId = reader.GetString(11),
+                SyncStatus = reader.GetInt32(12),
+                Version = reader.GetInt32(13),
+                ServerVersion = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
+                Deleted = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
+                ConflictData = reader.IsDBNull(16) ? string.Empty : reader.GetString(16),
+                DataHash = reader.IsDBNull(17) ? string.Empty : reader.GetString(17)
             };
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_FHR (ID, partographID, time, handler, notes, rate, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
-        VALUES (@id, @partographId, @time, @handler, @notes, @rate, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
+        INSERT INTO Tbl_FHR (ID, partographID, time, handler, notes, rate, deceleration, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
+        VALUES (@id, @partographId, @time, @handler, @notes, @rate, @deceleration, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
 
         protected override string GetUpdateSql() => @"
         UPDATE Tbl_FHR
         SET partographID = @partographId,
-            time = @time, 
+            time = @time,
             handler = @handler,
             notes = @notes,
             rate = @rate,
+            deceleration = @deceleration,
             updatedtime = @updatedtime,
             deletedtime = @deletedtime,
             deviceid = @deviceid,
@@ -124,6 +127,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@rate", item.Rate);
+            cmd.Parameters.AddWithValue("@deceleration", item.Deceleration ?? "");
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
             cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
@@ -153,6 +157,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
             cmd.Parameters.AddWithValue("@rate", item.Rate);
+            cmd.Parameters.AddWithValue("@deceleration", item.Deceleration ?? "");
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
             cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);

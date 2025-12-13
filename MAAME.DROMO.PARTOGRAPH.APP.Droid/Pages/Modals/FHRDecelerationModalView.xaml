@@ -71,6 +71,7 @@
                     <buttons:SfRadioButton x:Name="early" Text="Early"/>
                     <buttons:SfRadioButton x:Name="late" Text="Late" />
                     <buttons:SfRadioButton x:Name="variable" Text="Variable" />
+                    <buttons:SfRadioButton x:Name="prolonged" Text="Prolonged" />
                 </buttons:SfRadioGroup>
             </VerticalStackLayout>
 
