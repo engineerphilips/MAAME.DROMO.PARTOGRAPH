@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 {
@@ -14,6 +15,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
     {
         private readonly ContractionRepository _contractionRepository;
         private readonly FHRRepository _fHRRepository;
+        private readonly FHRPatternAnalysisService _fhrAnalysisService;
         private readonly ILogger<FHRContractionModalPageModel> _logger;
         public Partograph? _patient;
 
@@ -47,10 +49,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         public Action? ClosePopup { get; set; }
 
-        public FHRContractionModalPageModel(ContractionRepository contractionRepository, FHRRepository fHRRepository, ModalErrorHandler errorHandler)
+        public FHRContractionModalPageModel(ContractionRepository contractionRepository, FHRRepository fHRRepository, FHRPatternAnalysisService fhrAnalysisService, ModalErrorHandler errorHandler)
         {
             _contractionRepository = contractionRepository;
             _fHRRepository = fHRRepository;
+            _fhrAnalysisService = fhrAnalysisService;
             _errorHandler = errorHandler;
 
             // Set default recorded by from preferences
@@ -120,6 +123,52 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
                 };
+
+                // ===== AUTOMATIC FHR DECELERATION DETECTION =====
+                // Analyze FHR pattern based on current reading and recent history
+                try
+                {
+                    // Get recent FHR readings for this patient (last 5 readings)
+                    var recentFHRs = await _fHRRepository.GetRecentByPatientAsync(_patient.ID, 5);
+
+                    // Get recent contractions (within last hour)
+                    var allContractions = await _contractionRepository.GetAllByPatientAsync(_patient.ID);
+                    var recentContractions = allContractions?
+                        .Where(c => (fhrEntry.Time - c.Time).TotalHours <= 1)
+                        .OrderByDescending(c => c.Time)
+                        .ToList() ?? new List<Contraction>();
+
+                    // Analyze the pattern and detect deceleration type
+                    var analysisResult = _fhrAnalysisService.AnalyzeFHRPattern(
+                        recentFHRs?.ToList() ?? new List<FHR>(),
+                        recentContractions,
+                        fhrEntry
+                    );
+
+                    // Set the automatically detected deceleration
+                    fhrEntry.Deceleration = analysisResult.DetectedDeceleration;
+
+                    // Add analysis details to notes if confidence is reasonable
+                    if (analysisResult.Confidence >= 0.5)
+                    {
+                        var detectionNote = $"\n[AUTO-DETECTED: {analysisResult.DetectedDeceleration} (Confidence: {analysisResult.Confidence:P0})]\n{analysisResult.Reason}";
+                        if (analysisResult.Severity == "Critical" || analysisResult.Severity == "Warning")
+                        {
+                            detectionNote += $"\n⚠️ SEVERITY: {analysisResult.Severity}";
+                        }
+                        fhrEntry.Notes = string.IsNullOrEmpty(fhrEntry.Notes)
+                            ? detectionNote.Trim()
+                            : $"{fhrEntry.Notes}\n{detectionNote}";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log error but don't fail the save operation
+                    _logger?.LogError(ex, "Error during automatic FHR deceleration detection");
+                    // If auto-detection fails, set to "No" as fallback
+                    fhrEntry.Deceleration = fhrEntry.Deceleration ?? "No";
+                }
+                // ===== END AUTOMATIC DETECTION =====
 
                 var contraction = await _contractionRepository.SaveItemAsync(contractionEntry) != null;
                 var fhr = await _fHRRepository.SaveItemAsync(fhrEntry) != null;

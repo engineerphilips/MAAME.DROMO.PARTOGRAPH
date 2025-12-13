@@ -86,6 +86,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             // Register Services
             builder.Services.AddSingleton<SeedDataService>();
             builder.Services.AddSingleton<ModalErrorHandler>();
+            builder.Services.AddSingleton<FHRPatternAnalysisService>();
             //builder.Services.AddSingleton<AuthenticationService>();
 
             // Register Sync Services
