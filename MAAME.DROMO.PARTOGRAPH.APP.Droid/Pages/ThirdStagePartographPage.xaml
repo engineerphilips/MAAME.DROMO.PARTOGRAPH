@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.ThirdStagePartographPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:fonts="clr-namespace:Fonts"
+             Title="Third Stage Partograph">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Modern Card Style -->
+            <Style x:Key="ModernCardStyle" TargetType="Border">
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E293B}" />
+                <Setter Property="Padding" Value="24" />
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="20" />
+                </Setter>
+                <Setter Property="Shadow">
+                    <Shadow Brush="{AppThemeBinding Light=#10000000, Dark=#30000000}"
+                            Offset="0,8"
+                            Radius="24"
+                            Opacity="0.15" />
+                </Setter>
+            </Style>
+
+            <!-- Section Title Style -->
+            <Style x:Key="SectionTitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                <Setter Property="Margin" Value="0,0,0,12" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Print"
+                     Command="{Binding PrintCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.print_16_regular}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" Padding="10">
+            <!-- Patient Header -->
+            <Border Grid.Row="0"
+                    StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#E1F5FE, Dark=#01579B}"
+                    Padding="15"
+                    Margin="0,0,0,20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding PatientName}" FontSize="20" FontAttributes="Bold" />
+                        <Label Text="{Binding PatientInfo}" FontSize="14" Opacity="0.8" />
+                        <HorizontalStackLayout Spacing="20">
+                            <Label Text="{Binding ThirdStageDuration, StringFormat='Third Stage Duration: {0}'}" FontSize="12" />
+                            <Label Text="{Binding LastRecordedTime, StringFormat='Last Entry: {0:HH:mm}'}" FontSize="12" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="STAGE 3"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="#2196F3" />
+                        <Label Text="Placenta Delivery"
+                               FontSize="10"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- WHO 2020 Third Stage Monitoring Info -->
+            <Border Grid.Row="1"
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#3B82F6, Dark=#60A5FA}"
+                    BackgroundColor="{AppThemeBinding Light=#EFF6FF, Dark=#1E3A8A}"
+                    Padding="15"
+                    Margin="0,0,0,20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Third Stage Monitoring (Placenta Delivery)"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#1E40AF, Dark=#DBEAFE}" />
+                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#1E40AF, Dark=#BFDBFE}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Key Monitoring: " FontAttributes="Bold" />
+                                <Span Text="Placenta delivery (should occur within 30 minutes), blood loss estimation, uterine tone, maternal vital signs" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#DC2626, Dark=#FCA5A5}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Alert: " FontAttributes="Bold" />
+                                <Span Text="If placenta not delivered within 30 minutes or heavy bleeding, escalate immediately" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Third Stage Monitoring Cards -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10" Margin="0,0,0,20">
+
+                <!-- Placenta Status Card -->
+                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Placenta Status" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="{Binding PlacentaStatus}" FontSize="16" FontAttributes="Bold" TextColor="#2196F3" />
+                        <Button Text="Record Placenta Delivery"
+                                Command="{Binding RecordPlacentaDeliveryCommand}"
+                                BackgroundColor="#2196F3"
+                                TextColor="White"
+                                CornerRadius="8" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Blood Loss Card -->
+                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Estimated Blood Loss" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="{Binding BloodLoss}" FontSize="16" FontAttributes="Bold" TextColor="#F44336" />
+                        <Label Text="Normal: &lt;500 mL" FontSize="12" Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Uterine Status Card -->
+                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Uterine Tone" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="{Binding UterineStatus}" FontSize="16" FontAttributes="Bold" TextColor="#FF9800" />
+                        <Label Text="Monitor for firmness" FontSize="12" Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Maternal Vitals Card -->
+                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Maternal Vitals" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="BP, Pulse, Temperature" FontSize="12" Opacity="0.7" />
+                        <Button Text="Record Vitals"
+                                BackgroundColor="#4CAF50"
+                                TextColor="White"
+                                CornerRadius="8" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Action Buttons -->
+            <VerticalStackLayout Grid.Row="3" Spacing="10">
+                <Button Text="Transition to Fourth Stage (Immediate Postpartum)"
+                        Command="{Binding TransitionToFourthStageCommand}"
+                        BackgroundColor="#9C27B0"
+                        TextColor="White"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

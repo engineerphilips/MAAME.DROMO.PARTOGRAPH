@@ -133,9 +133,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Task NavigateToPartograph(Partograph patient)
         {
             // Navigate based on labor stage
-            var route = patient.Status == LaborStatus.SecondStage
-                ? "secondpartograph"
-                : "partograph";
+            var route = patient.Status switch
+            {
+                LaborStatus.SecondStage => "secondpartograph",
+                LaborStatus.ThirdStage => "thirdpartograph",
+                LaborStatus.FourthStage => "fourthpartograph",
+                _ => "partograph" // FirstStage, Pending, or any other status defaults to first stage partograph
+            };
 
             return Shell.Current.GoToAsync($"{route}?patientId={patient.ID.ToString()}");
         }
