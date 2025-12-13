@@ -1,12 +1,685 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:fonts="clr-namespace:Fonts"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.ReportsPage"
-             Title="ReportsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:DataType="pagemodels:ReportsPageModel"
+             Title="Clinical Reports"
+             BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#1A1A1A}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:IsNotNullConverter x:Key="IsNotNullConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <!-- Header Section -->
+        <Border Grid.Row="0"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                Padding="20"
+                Margin="0,0,0,10">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="0,0,12,12"/>
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="#40000000" Offset="0,2" Radius="8" Opacity="0.1"/>
+            </Border.Shadow>
+
+            <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto,Auto">
+                <Label Grid.Row="0" Grid.Column="0"
+                       Text="Clinical Reports &amp; Analytics"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+
+                <Label Grid.Row="1" Grid.Column="0"
+                       Text="Comprehensive reporting dashboard for maternal and neonatal care"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                       Margin="0,4,0,0"/>
+
+                <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+                        Text="&#xE72C;"
+                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                        FontSize="18"
+                        Command="{Binding RefreshCurrentReportCommand}"
+                        BackgroundColor="#2196F3"
+                        TextColor="White"
+                        WidthRequest="48"
+                        HeightRequest="48"
+                        CornerRadius="24"
+                        Margin="8,0"
+                        ToolTipProperties.Text="Refresh Report"/>
+
+                <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
+                        Text="&#xE749;"
+                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                        FontSize="18"
+                        Command="{Binding ExportReportCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        WidthRequest="48"
+                        HeightRequest="48"
+                        CornerRadius="24"
+                        Margin="8,0"
+                        ToolTipProperties.Text="Export Report"/>
+            </Grid>
+        </Border>
+
+        <!-- Date Range Selector -->
+        <Border Grid.Row="1"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                Padding="20"
+                Margin="10,0,10,10">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12"/>
+            </Border.StrokeShape>
+
+            <Grid ColumnDefinitions="Auto,*,Auto,*,Auto" ColumnSpacing="15">
+                <Label Grid.Column="0"
+                       Text="From:"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+
+                <DatePicker Grid.Column="1"
+                            Date="{Binding StartDate}"
+                            Format="MMM dd, yyyy"
+                            TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+
+                <Label Grid.Column="2"
+                       Text="To:"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       Margin="10,0,0,0"
+                       TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+
+                <DatePicker Grid.Column="3"
+                            Date="{Binding EndDate}"
+                            Format="MMM dd, yyyy"
+                            TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+
+                <Button Grid.Column="4"
+                        Text="Apply"
+                        Command="{Binding RefreshCurrentReportCommand}"
+                        BackgroundColor="#2196F3"
+                        TextColor="White"
+                        WidthRequest="100"
+                        HeightRequest="40"
+                        CornerRadius="8"/>
+            </Grid>
+        </Border>
+
+        <!-- Tab View with Reports -->
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Spacing="10" Padding="10">
+
+                <!-- Tab Selection -->
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                        Padding="10">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12"/>
+                    </Border.StrokeShape>
+
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                        <HorizontalStackLayout Spacing="10">
+                            <Button Text="📊 Dashboard"
+                                    Command="{Binding LoadMonthlyDashboardCommand}"
+                                    BackgroundColor="#2196F3"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="20,10"/>
+                            <Button Text="🚨 Maternal"
+                                    Command="{Binding LoadMaternalComplicationsCommand}"
+                                    BackgroundColor="#EF5350"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="20,10"/>
+                            <Button Text="👶 Neonatal"
+                                    Command="{Binding LoadNeonatalOutcomesCommand}"
+                                    BackgroundColor="#42A5F5"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="20,10"/>
+                            <Button Text="⚡ Alerts"
+                                    Command="{Binding LoadAlertResponseCommand}"
+                                    BackgroundColor="#FF9800"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="20,10"/>
+                            <Button Text="✓ WHO"
+                                    Command="{Binding LoadWHOComplianceCommand}"
+                                    BackgroundColor="#66BB6A"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="20,10"/>
+                            <Button Text="👥 Staff"
+                                    Command="{Binding LoadStaffPerformanceCommand}"
+                                    BackgroundColor="#AB47BC"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="20,10"/>
+                            <Button Text="🔄 Sync"
+                                    Command="{Binding LoadSyncStatusCommand}"
+                                    BackgroundColor="#26A69A"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="20,10"/>
+                            <Button Text="📏 Weight/APGAR"
+                                    Command="{Binding LoadBirthWeightApgarCommand}"
+                                    BackgroundColor="#5C6BC0"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="20,10"/>
+                            <Button Text="📈 Trends"
+                                    Command="{Binding LoadTrendAnalyticsCommand}"
+                                    BackgroundColor="#8D6E63"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="20,10"/>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+                </Border>
+
+                <!-- Loading Indicator -->
+                <Border IsVisible="{Binding IsLoading}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                        Padding="40">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12"/>
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="20" HorizontalOptions="Center">
+                        <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                         Color="#2196F3"
+                                         WidthRequest="48"
+                                         HeightRequest="48"/>
+                        <Label Text="{Binding LoadingMessage}"
+                               FontSize="16"
+                               HorizontalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Monthly Delivery Dashboard View -->
+                <ContentView IsVisible="{Binding MonthlyDashboard, Converter={StaticResource IsNotNullConverter}}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                            Padding="20">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12"/>
+                        </Border.StrokeShape>
+
+                        <VerticalStackLayout Spacing="20">
+                            <Label Text="{Binding MonthlyDashboard.ReportTitle}"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+
+                            <!-- Summary Cards Grid -->
+                            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="15" RowSpacing="15">
+
+                                <!-- Total Deliveries Card -->
+                                <Border Grid.Column="0" Grid.Row="0"
+                                        BackgroundColor="#E3F2FD"
+                                        Padding="20">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Total Deliveries"
+                                               FontSize="12"
+                                               TextColor="#1976D2"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding MonthlyDashboard.TotalDeliveries}"
+                                               FontSize="32"
+                                               FontAttributes="Bold"
+                                               TextColor="#1565C0"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- C-Section Rate Card -->
+                                <Border Grid.Column="1" Grid.Row="0"
+                                        BackgroundColor="#FFF3E0"
+                                        Padding="20">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="C-Section Rate"
+                                               FontSize="12"
+                                               TextColor="#F57C00"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding MonthlyDashboard.CaesareanSectionRate, StringFormat='{0:F1}%'}"
+                                               FontSize="32"
+                                               FontAttributes="Bold"
+                                               TextColor="#E65100"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- Live Births Card -->
+                                <Border Grid.Column="2" Grid.Row="0"
+                                        BackgroundColor="#E8F5E9"
+                                        Padding="20">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Live Births"
+                                               FontSize="12"
+                                               TextColor="#388E3C"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding MonthlyDashboard.LiveBirths}"
+                                               FontSize="32"
+                                               FontAttributes="Bold"
+                                               TextColor="#2E7D32"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- PPH Card -->
+                                <Border Grid.Column="3" Grid.Row="0"
+                                        BackgroundColor="#FFEBEE"
+                                        Padding="20">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="PPH Cases"
+                                               FontSize="12"
+                                               TextColor="#D32F2F"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding MonthlyDashboard.PostpartumHemorrhages}"
+                                               FontSize="32"
+                                               FontAttributes="Bold"
+                                               TextColor="#C62828"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- Stillbirths -->
+                                <Border Grid.Column="0" Grid.Row="1"
+                                        BackgroundColor="#F3E5F5"
+                                        Padding="20">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Stillbirths"
+                                               FontSize="12"
+                                               TextColor="#7B1FA2"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding MonthlyDashboard.Stillbirths}"
+                                               FontSize="32"
+                                               FontAttributes="Bold"
+                                               TextColor="#6A1B9A"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- NICU Admissions -->
+                                <Border Grid.Column="1" Grid.Row="1"
+                                        BackgroundColor="#E0F2F1"
+                                        Padding="20">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="NICU Admissions"
+                                               FontSize="12"
+                                               TextColor="#00796B"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding MonthlyDashboard.NICUAdmissions}"
+                                               FontSize="32"
+                                               FontAttributes="Bold"
+                                               TextColor="#00695C"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- Average APGAR -->
+                                <Border Grid.Column="2" Grid.Row="1"
+                                        BackgroundColor="#E1F5FE"
+                                        Padding="20">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Avg APGAR (5min)"
+                                               FontSize="12"
+                                               TextColor="#0288D1"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding MonthlyDashboard.AverageApgar5Min, StringFormat='{0:F1}'}"
+                                               FontSize="32"
+                                               FontAttributes="Bold"
+                                               TextColor="#01579B"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- Avg Labor Duration -->
+                                <Border Grid.Column="3" Grid.Row="1"
+                                        BackgroundColor="#FBE9E7"
+                                        Padding="20">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Avg Labor (hrs)"
+                                               FontSize="12"
+                                               TextColor="#D84315"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding MonthlyDashboard.AverageLaborDuration, StringFormat='{0:F1}'}"
+                                               FontSize="32"
+                                               FontAttributes="Bold"
+                                               TextColor="#BF360C"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+
+                            <!-- Additional Details Section -->
+                            <Label Text="Delivery Modes Distribution"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   Margin="0,20,0,10"
+                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="20" RowSpacing="10">
+                                <VerticalStackLayout Grid.Column="0" Spacing="10">
+                                    <HorizontalStackLayout Spacing="10">
+                                        <BoxView Color="#4CAF50" WidthRequest="20" HeightRequest="20" CornerRadius="4"/>
+                                        <Label Text="Spontaneous Vaginal:" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+                                        <Label Text="{Binding MonthlyDashboard.SpontaneousVaginalDeliveries}" FontAttributes="Bold" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+                                    </HorizontalStackLayout>
+
+                                    <HorizontalStackLayout Spacing="10">
+                                        <BoxView Color="#2196F3" WidthRequest="20" HeightRequest="20" CornerRadius="4"/>
+                                        <Label Text="Assisted Vaginal:" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+                                        <Label Text="{Binding MonthlyDashboard.AssistedVaginalDeliveries}" FontAttributes="Bold" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="10">
+                                    <HorizontalStackLayout Spacing="10">
+                                        <BoxView Color="#FF9800" WidthRequest="20" HeightRequest="20" CornerRadius="4"/>
+                                        <Label Text="C-Section:" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+                                        <Label Text="{Binding MonthlyDashboard.CaesareanSections}" FontAttributes="Bold" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+                                    </HorizontalStackLayout>
+
+                                    <HorizontalStackLayout Spacing="10">
+                                        <BoxView Color="#9C27B0" WidthRequest="20" HeightRequest="20" CornerRadius="4"/>
+                                        <Label Text="Breech:" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+                                        <Label Text="{Binding MonthlyDashboard.BreechDeliveries}" FontAttributes="Bold" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"/>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </ContentView>
+
+                <!-- Maternal Complications Report View -->
+                <ContentView IsVisible="{Binding MaternalComplicationsReport, Converter={StaticResource IsNotNullConverter}}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                            Padding="20">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="20">
+                            <Label Text="{Binding MaternalComplicationsReport.ReportTitle}"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="#EF5350"/>
+
+                            <!-- Summary Cards -->
+                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="15" RowSpacing="15">
+                                <Border Grid.Column="0" Grid.Row="0" BackgroundColor="#FFEBEE" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Total Cases" FontSize="12" TextColor="#D32F2F" FontAttributes="Bold"/>
+                                        <Label Text="{Binding MaternalComplicationsReport.TotalCases}" FontSize="32" FontAttributes="Bold" TextColor="#C62828"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="1" Grid.Row="0" BackgroundColor="#FCE4EC" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="PPH Cases" FontSize="12" TextColor="#C2185B" FontAttributes="Bold"/>
+                                        <Label Text="{Binding MaternalComplicationsReport.PostpartumHemorrhages}" FontSize="32" FontAttributes="Bold" TextColor="#AD1457"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="2" Grid.Row="0" BackgroundColor="#F3E5F5" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Eclampsia" FontSize="12" TextColor="#7B1FA2" FontAttributes="Bold"/>
+                                        <Label Text="{Binding MaternalComplicationsReport.Eclampsia}" FontSize="32" FontAttributes="Bold" TextColor="#6A1B9A"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="0" Grid.Row="1" BackgroundColor="#FFF3E0" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Avg Blood Loss" FontSize="12" TextColor="#F57C00" FontAttributes="Bold"/>
+                                        <Label Text="{Binding MaternalComplicationsReport.AverageBloodLoss, StringFormat='{0:F0} ml'}" FontSize="32" FontAttributes="Bold" TextColor="#E65100"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="1" Grid.Row="1" BackgroundColor="#E8EAF6" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Blood Loss >500ml" FontSize="12" TextColor="#3F51B5" FontAttributes="Bold"/>
+                                        <Label Text="{Binding MaternalComplicationsReport.CasesExceeding500ml}" FontSize="32" FontAttributes="Bold" TextColor="#303F9F"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="2" Grid.Row="1" BackgroundColor="#FFCDD2" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Maternal Deaths" FontSize="12" TextColor="#B71C1C" FontAttributes="Bold"/>
+                                        <Label Text="{Binding MaternalComplicationsReport.MaternalDeaths}" FontSize="32" FontAttributes="Bold" TextColor="#880E4F"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </ContentView>
+
+                <!-- Neonatal Outcomes Report View -->
+                <ContentView IsVisible="{Binding NeonatalOutcomesReport, Converter={StaticResource IsNotNullConverter}}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                            Padding="20">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="20">
+                            <Label Text="{Binding NeonatalOutcomesReport.ReportTitle}"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="#42A5F5"/>
+
+                            <!-- Summary Cards -->
+                            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="15" RowSpacing="15">
+                                <Border Grid.Column="0" Grid.Row="0" BackgroundColor="#E3F2FD" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Total Births" FontSize="12" TextColor="#1976D2" FontAttributes="Bold"/>
+                                        <Label Text="{Binding NeonatalOutcomesReport.TotalBirths}" FontSize="32" FontAttributes="Bold" TextColor="#1565C0"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="1" Grid.Row="0" BackgroundColor="#E8F5E9" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Live Births" FontSize="12" TextColor="#388E3C" FontAttributes="Bold"/>
+                                        <Label Text="{Binding NeonatalOutcomesReport.LiveBirths}" FontSize="32" FontAttributes="Bold" TextColor="#2E7D32"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="2" Grid.Row="0" BackgroundColor="#FFF3E0" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Stillbirths" FontSize="12" TextColor="#F57C00" FontAttributes="Bold"/>
+                                        <Label Text="{Binding NeonatalOutcomesReport.FreshStillbirths}" FontSize="32" FontAttributes="Bold" TextColor="#E65100"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="3" Grid.Row="0" BackgroundColor="#E0F2F1" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="NICU Admits" FontSize="12" TextColor="#00796B" FontAttributes="Bold"/>
+                                        <Label Text="{Binding NeonatalOutcomesReport.NICUAdmissions}" FontSize="32" FontAttributes="Bold" TextColor="#00695C"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="0" Grid.Row="1" BackgroundColor="#E1F5FE" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Avg APGAR 1-min" FontSize="12" TextColor="#0288D1" FontAttributes="Bold"/>
+                                        <Label Text="{Binding NeonatalOutcomesReport.AverageApgar1Min, StringFormat='{0:F1}'}" FontSize="32" FontAttributes="Bold" TextColor="#01579B"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="1" Grid.Row="1" BackgroundColor="#E8EAF6" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Avg APGAR 5-min" FontSize="12" TextColor="#3F51B5" FontAttributes="Bold"/>
+                                        <Label Text="{Binding NeonatalOutcomesReport.AverageApgar5Min, StringFormat='{0:F1}'}" FontSize="32" FontAttributes="Bold" TextColor="#303F9F"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="2" Grid.Row="1" BackgroundColor="#FCE4EC" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Low Birth Weight" FontSize="12" TextColor="#C2185B" FontAttributes="Bold"/>
+                                        <Label Text="{Binding NeonatalOutcomesReport.LowBirthWeight}" FontSize="32" FontAttributes="Bold" TextColor="#AD1457"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="3" Grid.Row="1" BackgroundColor="#FFEBEE" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Resuscitations" FontSize="12" TextColor="#D32F2F" FontAttributes="Bold"/>
+                                        <Label Text="{Binding NeonatalOutcomesReport.ResuscitationRequired}" FontSize="32" FontAttributes="Bold" TextColor="#C62828"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </ContentView>
+
+                <!-- WHO Compliance Report View -->
+                <ContentView IsVisible="{Binding WhoComplianceReport, Converter={StaticResource IsNotNullConverter}}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                            Padding="20">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="20">
+                            <Label Text="{Binding WhoComplianceReport.ReportTitle}"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="#66BB6A"/>
+
+                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="15" RowSpacing="15">
+                                <Border Grid.Column="0" Grid.Row="0" BackgroundColor="#E8F5E9" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Compliance Rate" FontSize="12" TextColor="#388E3C" FontAttributes="Bold"/>
+                                        <Label Text="{Binding WhoComplianceReport.CompliancePercentage, StringFormat='{0:F1}%'}" FontSize="32" FontAttributes="Bold" TextColor="#2E7D32"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="1" Grid.Row="0" BackgroundColor="#E1F5FE" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="FHR Monitoring" FontSize="12" TextColor="#0288D1" FontAttributes="Bold"/>
+                                        <Label Text="{Binding WhoComplianceReport.FHREvery30MinCompliance, StringFormat='{0:F1}%'}" FontSize="32" FontAttributes="Bold" TextColor="#01579B"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="2" Grid.Row="0" BackgroundColor="#F3E5F5" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="VE Compliance" FontSize="12" TextColor="#7B1FA2" FontAttributes="Bold"/>
+                                        <Label Text="{Binding WhoComplianceReport.VEEvery4HoursCompliance, StringFormat='{0:F1}%'}" FontSize="32" FontAttributes="Bold" TextColor="#6A1B9A"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="0" Grid.Row="1" BackgroundColor="#FFF3E0" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Delayed Cord Clamping" FontSize="12" TextColor="#F57C00" FontAttributes="Bold"/>
+                                        <Label Text="{Binding WhoComplianceReport.DelayedCordClampingRate, StringFormat='{0:F1}%'}" FontSize="32" FontAttributes="Bold" TextColor="#E65100"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="1" Grid.Row="1" BackgroundColor="#E8EAF6" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Early Breastfeeding" FontSize="12" TextColor="#3F51B5" FontAttributes="Bold"/>
+                                        <Label Text="{Binding WhoComplianceReport.EarlyBreastfeedingCount}" FontSize="32" FontAttributes="Bold" TextColor="#303F9F"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="2" Grid.Row="1" BackgroundColor="#FCE4EC" Padding="20">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="Vitamin K Given" FontSize="12" TextColor="#C2185B" FontAttributes="Bold"/>
+                                        <Label Text="{Binding WhoComplianceReport.VitaminKGivenCount}" FontSize="32" FontAttributes="Bold" TextColor="#AD1457"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </ContentView>
+
+                <!-- Placeholder views for other reports -->
+                <ContentView IsVisible="{Binding AlertResponseReport, Converter={StaticResource IsNotNullConverter}}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}" Padding="40">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                        <Label Text="⚡ Alert Response Time Report - Full implementation coming soon"
+                               FontSize="18" HorizontalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                    </Border>
+                </ContentView>
+
+                <ContentView IsVisible="{Binding StaffPerformanceReport, Converter={StaticResource IsNotNullConverter}}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}" Padding="40">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                        <Label Text="👥 Staff Performance Report - Full implementation coming soon"
+                               FontSize="18" HorizontalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                    </Border>
+                </ContentView>
+
+                <ContentView IsVisible="{Binding SyncStatusReport, Converter={StaticResource IsNotNullConverter}}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}" Padding="40">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                        <Label Text="🔄 Sync Status Report - Full implementation coming soon"
+                               FontSize="18" HorizontalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                    </Border>
+                </ContentView>
+
+                <ContentView IsVisible="{Binding BirthWeightApgarReport, Converter={StaticResource IsNotNullConverter}}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}" Padding="40">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                        <Label Text="📏 Birth Weight & APGAR Analysis - Full implementation coming soon"
+                               FontSize="18" HorizontalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                    </Border>
+                </ContentView>
+
+                <ContentView IsVisible="{Binding TrendAnalyticsReport, Converter={StaticResource IsNotNullConverter}}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}" Padding="40">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                        <Label Text="📈 Trend Analytics - Full implementation coming soon"
+                               FontSize="18" HorizontalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                    </Border>
+                </ContentView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>
