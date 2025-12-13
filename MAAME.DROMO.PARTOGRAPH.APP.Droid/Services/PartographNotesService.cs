@@ -38,10 +38,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 return "No measurements recorded yet.";
             }
 
-            // Generate notes for each time point
-            foreach (var timePoint in timePoints.OrderBy(t => t))
+            // Generate notes for each time point (sorted chronologically)
+            var sortedTimePoints = timePoints.OrderBy(t => t).ToList();
+            foreach (var timePoint in sortedTimePoints)
             {
-                var timeNote = GenerateNoteForTimePoint(partograph, patient, timePoint, timePoint == timePoints.First());
+                var timeNote = GenerateNoteForTimePoint(partograph, patient, timePoint, timePoint == sortedTimePoints.First());
                 if (!string.IsNullOrWhiteSpace(timeNote))
                 {
                     notes.AppendLine(timeNote);
