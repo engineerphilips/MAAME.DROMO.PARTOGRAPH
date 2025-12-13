@@ -8,10 +8,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         public Action? ClosePopup { get; set; }
         public Action<int, int?, int?, int?, int?, int?>? OnScoreSaved { get; set; }
 
-        private readonly Color SelectedColor = Color.FromArgb("#2196F3"); // Blue
-        private readonly Color UnselectedColor = Color.FromArgb("#F5F5F5"); // Light gray
-        private readonly Color SelectedBorderColor = Color.FromArgb("#1976D2"); // Darker blue
-        private readonly Color UnselectedBorderColor = Color.FromArgb("#E0E0E0"); // Gray
+        private readonly Color SelectedColor = Colors.Blue; //.FromArgb("#2196F3"); // Blue
+        private readonly Color UnselectedColor = Colors.LightGray; // Light gray
+        private readonly Color SelectedBorderColor = Colors.DarkBlue; // Darker blue
+        private readonly Color UnselectedBorderColor = Colors.Gray; // Gray
 
         [ObservableProperty]
         private int _heartRate;

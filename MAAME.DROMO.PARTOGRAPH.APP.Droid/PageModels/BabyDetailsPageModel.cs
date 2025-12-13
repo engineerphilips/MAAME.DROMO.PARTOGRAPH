@@ -698,7 +698,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                var popup = new Pages.Modals.Apgar1Popup();
+                var popup = new Pages.Modals.Apgar1Popup()
+                {
+                    WidthRequest = 312,
+                    HeightRequest = 600,
+                    HeaderHeight = 50
+                };
                 var viewModel = new PageModels.Modals.Apgar1PopupPageModel();
 
                 // Load existing scores if available
@@ -737,7 +742,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                var popup = new Pages.Modals.Apgar5Popup();
+                var popup = new Pages.Modals.Apgar5Popup()
+                {
+                    WidthRequest = 312,
+                    HeightRequest = 600,
+                    HeaderHeight = 50
+                };
                 var viewModel = new PageModels.Modals.Apgar5PopupPageModel();
 
                 // Load existing scores if available

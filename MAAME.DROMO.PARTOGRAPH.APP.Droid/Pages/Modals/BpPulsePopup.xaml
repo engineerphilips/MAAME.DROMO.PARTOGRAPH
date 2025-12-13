@@ -41,19 +41,25 @@
                     <core:SfTextInputLayout Hint="Pulse"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording pulse">
-                        <editors:SfNumericEntry Value="{Binding Pulse}" />
+                        <editors:SfNumericEntry Value="{Binding Pulse, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Systolic pressure"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording systolic pressure">
-                        <editors:SfNumericEntry Value="{Binding Systolic}" />
+                        <editors:SfNumericEntry Value="{Binding Systolic, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Diastolic pressure"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording diastolic pressure">
-                        <editors:SfNumericEntry Value="{Binding Diastolic}" />
+                        <editors:SfNumericEntry Value="{Binding Diastolic, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Additional Notes"

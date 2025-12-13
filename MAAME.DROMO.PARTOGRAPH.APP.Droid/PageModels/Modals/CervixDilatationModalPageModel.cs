@@ -24,8 +24,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
-        [ObservableProperty]
+        //[ObservableProperty]
         private int _dilatation;
+
+        public int Dilatation
+        {
+            get => _dilatation;
+            set
+            {
+                SetProperty(ref _dilatation, value);
+            }
+        }
 
         [ObservableProperty]
         private string _dilatationDisplay = string.Empty;

@@ -41,7 +41,9 @@
                     <core:SfTextInputLayout Hint="Head descent"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording descent">
-                        <editors:SfNumericEntry Value="{Binding Station}" />
+                        <editors:SfNumericEntry Value="{Binding Station}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Additional Notes"

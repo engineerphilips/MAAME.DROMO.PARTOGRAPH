@@ -119,7 +119,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     saveCmd.CommandText = GetInsertSql();
                     AddInsertParameters(saveCmd, item);
-                    await saveCmd.ExecuteNonQueryAsync();
+                    if (await saveCmd.ExecuteNonQueryAsync() > 0)
+                    {
+                        var x = item.ID;
+                    }
+                    else
+                        item.ID = null;
                     //item.ID = Guid.Parse(Convert.ToString(result));
                 }
                 else

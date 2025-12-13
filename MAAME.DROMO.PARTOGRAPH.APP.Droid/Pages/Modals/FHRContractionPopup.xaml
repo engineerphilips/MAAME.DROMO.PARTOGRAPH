@@ -49,24 +49,27 @@
                 <core:SfTextInputLayout Hint="FHR"
                                                 Style="{StaticResource PatientInput}"
                                                 HelperText="Recording FHR">
-                        <editors:SfNumericEntry Value="{Binding Rate}"
-                                                MaximumNumberDecimalDigits="0"
+                        <editors:SfNumericEntry Value="{Binding Rate, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus"
                                                 Minimum="0"/>
                 </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Frequency /10 Min"
                                                 Style="{StaticResource PatientInput}"
                                                 HelperText="Recording Frequency /10 Min">
-                        <editors:SfNumericEntry Value="{Binding FrequencyPer10Min}"
-                                                MaximumNumberDecimalDigits="0"
+                        <editors:SfNumericEntry Value="{Binding FrequencyPer10Min, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus"
                                                 Minimum="0" />
                 </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Duration Seconds"
                                                 Style="{StaticResource PatientInput}"
                                                 HelperText="Duration seconds">
-                        <editors:SfNumericEntry Value="{Binding DurationSeconds}"
-                                                MaximumNumberDecimalDigits="0"
+                        <editors:SfNumericEntry Value="{Binding DurationSeconds, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus"
                                                 Minimum="0" />
                     </core:SfTextInputLayout>
 

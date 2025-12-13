@@ -101,7 +101,7 @@
                                 </Border.GestureRecognizers>
                                 <VerticalStackLayout Spacing="3">
                                     <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="<100 bpm" FontSize="11" HorizontalOptions="Center" />
+                                    <Label Text="&lt; 100 bpm" FontSize="11" HorizontalOptions="Center" />
                                 </VerticalStackLayout>
                             </Border>
                             <Border Grid.Column="2"

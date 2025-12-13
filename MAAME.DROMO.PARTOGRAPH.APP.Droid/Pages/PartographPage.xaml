@@ -157,7 +157,7 @@
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
                     <!-- Icon and Title -->
                     <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="5">
-                        <Label Text="📊" FontSize="32" HorizontalOptions="Center" />
+                        <!--<Label Text="📊" FontSize="32" HorizontalOptions="Center" />-->
                         <Label Text="Bishop Score"
                                FontSize="12"
                                FontAttributes="Bold"
@@ -343,7 +343,7 @@
                 </HorizontalStackLayout>
             </Grid>-->
 
-            <Grid Grid.Row="2" MinimumWidthRequest="800" ColumnDefinitions="25,65,35,*">
+            <Grid Grid.Row="3" MinimumWidthRequest="800" ColumnDefinitions="25,65,35,*">
                 <Grid.RowDefinitions>
                     <!-- Control Row -->
                     <RowDefinition Height="Auto" />

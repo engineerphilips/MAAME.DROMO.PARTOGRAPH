@@ -53,17 +53,14 @@
                         </Border.StrokeShape>
                         <VerticalStackLayout Spacing="5">
                             <Label Text="Total APGAR Score"
-                                   FontSize="14"
-                                   TextColor="White"
+                                   FontSize="14" 
                                    HorizontalOptions="Center" />
                             <Label Text="{Binding TotalScore}"
                                    FontSize="32"
-                                   FontAttributes="Bold"
-                                   TextColor="White"
+                                   FontAttributes="Bold" 
                                    HorizontalOptions="Center" />
                             <Label Text="{Binding ScoreInterpretation}"
-                                   FontSize="12"
-                                   TextColor="White"
+                                   FontSize="12" 
                                    HorizontalOptions="Center" />
                         </VerticalStackLayout>
                     </Border>
@@ -101,7 +98,7 @@
                                 </Border.GestureRecognizers>
                                 <VerticalStackLayout Spacing="3">
                                     <Label Text="1" FontAttributes="Bold" HorizontalOptions="Center" />
-                                    <Label Text="<100 bpm" FontSize="11" HorizontalOptions="Center" />
+                                    <Label Text="&lt; 100 bpm" FontSize="11" HorizontalOptions="Center" />
                                 </VerticalStackLayout>
                             </Border>
                             <Border Grid.Column="2"

@@ -157,13 +157,13 @@
                                                ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="1" Hint="Chest Circ. (cm)" Style="{StaticResource PatientInput}">
+                    <!--<core:SfTextInputLayout Grid.Column="1" Hint="Chest Circ. (cm)" Style="{StaticResource PatientInput}">
                         <editors:SfNumericEntry Value="{Binding ChestCircumference, Mode=TwoWay}"
                                                Minimum="0"
                                                Maximum="60"
                                                CustomFormat="0.0"
                                                ValueChangeMode="OnKeyFocus" />
-                    </core:SfTextInputLayout>
+                    </core:SfTextInputLayout>-->
                 </Grid>
             </StackLayout>
 

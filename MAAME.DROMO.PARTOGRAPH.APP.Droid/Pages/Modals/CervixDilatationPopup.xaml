@@ -29,25 +29,27 @@
                     <core:SfTextInputLayout Hint="Date"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording time">
-                        <DatePicker Date="{Binding RecordingDate}" />
+                        <DatePicker Date="{Binding RecordingDate, Mode=TwoWay}" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Time"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording time">
-                        <TimePicker Time="{Binding RecordingTime}" />
+                        <TimePicker Time="{Binding RecordingTime, Mode=TwoWay}" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Cervix dilatation"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording dilatation">
-                        <editors:SfNumericEntry Value="{Binding Dilatation}" />
+                        <editors:SfNumericEntry Value="{Binding Dilatation, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Additional Notes"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Any other observations...">
-                        <Entry Text="{Binding Notes}"
+                        <Entry Text="{Binding Notes, Mode=TwoWay}"
                            Keyboard="Text"
                            ReturnType="Next" />
                     </core:SfTextInputLayout>
