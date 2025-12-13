@@ -11,5 +11,5 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
     public enum OralFluidType { None, No, Difficulty, Yes, Declined }
     public enum PostureType { None, Supine, Mobile, Upright, SideLeft, SideRight }
     //public enum BaselineFHRType { None, No, Difficulty, Yes }
-    public enum FHRDecelerationType { None, No, Early, Late, Variable }
+    public enum FHRDecelerationType { None, No, Early, Late, Variable, Prolonged }
 }

@@ -264,29 +264,99 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 });
             }
 
-            // Check for deceleration patterns
-            if (!string.IsNullOrEmpty(latestFHR.Deceleration) && latestFHR.Deceleration != "None")
+            // Check for deceleration patterns - WHO 2020 Labour Care Guide
+            if (!string.IsNullOrEmpty(latestFHR.Deceleration) &&
+                latestFHR.Deceleration != "None" &&
+                latestFHR.Deceleration != "No")
             {
-                var severity = latestFHR.Deceleration.ToLower().Contains("late") ?
-                    AlertSeverity.Critical : AlertSeverity.Warning;
+                var decelerationType = latestFHR.Deceleration.ToLower();
+                AlertSeverity severity;
+                string message;
+                List<string> actions;
+
+                // Classify according to WHO 2020 guidelines
+                if (decelerationType.Contains("late"))
+                {
+                    // Late decelerations - CRITICAL: uteroplacental insufficiency
+                    severity = AlertSeverity.Critical;
+                    message = "Late decelerations detected. These indicate uteroplacental insufficiency and fetal hypoxia.";
+                    actions = new List<string>
+                    {
+                        "URGENT: Immediate action required",
+                        "Change maternal position (left lateral)",
+                        "Discontinue oxytocin if running",
+                        "Administer oxygen to mother (8-10 L/min via face mask)",
+                        "IV fluid bolus if hypotensive",
+                        "Check maternal blood pressure",
+                        "Notify obstetrician immediately",
+                        "Prepare for possible expedited delivery"
+                    };
+                }
+                else if (decelerationType.Contains("prolonged"))
+                {
+                    // Prolonged decelerations (>2 min) - CRITICAL: immediate evaluation
+                    severity = AlertSeverity.Critical;
+                    message = "Prolonged deceleration detected (>2 minutes). Requires immediate evaluation for cord prolapse or other acute events.";
+                    actions = new List<string>
+                    {
+                        "URGENT: Immediate obstetric review required",
+                        "Check for cord prolapse if membranes ruptured",
+                        "Change maternal position",
+                        "Discontinue oxytocin if running",
+                        "Administer oxygen to mother",
+                        "Vaginal examination to check for cord prolapse",
+                        "Prepare for emergency delivery if deceleration persists"
+                    };
+                }
+                else if (decelerationType.Contains("variable"))
+                {
+                    // Variable decelerations - WARNING: cord compression
+                    severity = AlertSeverity.Warning;
+                    message = "Variable decelerations detected. These may indicate umbilical cord compression.";
+                    actions = new List<string>
+                    {
+                        "Change maternal position (left or right lateral)",
+                        "Monitor pattern - assess if persistent or worsening",
+                        "Discontinue oxytocin if running and decelerations severe",
+                        "Administer oxygen if decelerations deep or prolonged",
+                        "Notify obstetrician if pattern worsens or persists",
+                        "Consider amnioinfusion if available and appropriate"
+                    };
+                }
+                else if (decelerationType.Contains("early"))
+                {
+                    // Early decelerations - INFO: benign head compression
+                    severity = AlertSeverity.Info;
+                    message = "Early decelerations detected. These are typically benign and caused by fetal head compression.";
+                    actions = new List<string>
+                    {
+                        "Continue routine monitoring",
+                        "Early decelerations are usually benign",
+                        "Ensure decelerations are truly 'early' (mirror contractions)",
+                        "Monitor for any change in pattern"
+                    };
+                }
+                else
+                {
+                    // Unspecified deceleration type
+                    severity = AlertSeverity.Warning;
+                    message = $"{latestFHR.Deceleration} decelerations observed. Pattern requires evaluation.";
+                    actions = new List<string>
+                    {
+                        "Assess deceleration pattern carefully",
+                        "Determine deceleration type (Early/Late/Variable/Prolonged)",
+                        "Change maternal position",
+                        "Monitor closely and notify obstetrician if uncertain"
+                    };
+                }
 
                 alerts.Add(new ClinicalAlert
                 {
                     Severity = severity,
                     Category = AlertCategory.Fetal,
-                    Title = $"FHR Deceleration Detected: {latestFHR.Deceleration}",
-                    Message = $"{latestFHR.Deceleration} decelerations observed. This may indicate fetal compromise.",
-                    RecommendedActions = new List<string>
-                    {
-                        latestFHR.Deceleration.ToLower().Contains("late") ?
-                            "URGENT: Late decelerations suggest uteroplacental insufficiency" :
-                            "Variable decelerations may indicate cord compression",
-                        "Change maternal position",
-                        "Discontinue oxytocin if running",
-                        "Administer oxygen to mother",
-                        "Prepare for possible operative delivery",
-                        "Senior obstetrician review"
-                    },
+                    Title = $"FHR Deceleration: {latestFHR.Deceleration}",
+                    Message = message,
+                    RecommendedActions = actions,
                     MeasurementType = "FHR Pattern",
                     CurrentValue = latestFHR.Deceleration,
                     ExpectedRange = "No decelerations"
