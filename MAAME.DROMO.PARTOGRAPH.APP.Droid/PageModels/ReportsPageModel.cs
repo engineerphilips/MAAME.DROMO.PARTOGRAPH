@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MAAME.DROMO.PARTOGRAPH.APP.Droid.Models;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using System;
 using System.Collections.ObjectModel;

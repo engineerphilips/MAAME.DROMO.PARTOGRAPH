@@ -255,5 +255,61 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             return null;
         }
+
+        public async Task<List<Staff>> ListAsync()
+        {
+            await Init();
+            var users = new List<Staff>();
+            try
+            {
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = @"
+                SELECT ID, name, staffid, email, role, department, password, lastlogin, active, facility, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, conflictdata, datahash FROM Tbl_Staff WHERE active = 1 and deleted = 0";
+
+                await using var reader = await selectCmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    users.Add(new Staff
+                    {
+                        ID = Guid.Parse(reader.GetString(0)),
+                        FacilityName = reader.GetString(1),
+                        StaffID = reader.GetString(2),
+                        Email = reader.GetString(3),
+                        Role = reader.GetString(4),
+                        Department = reader.GetString(5),
+                        Password = reader.GetString(6),
+                        LastLogin = reader.IsDBNull(7) ? DateTime.Now : DateTime.Parse(reader.GetString(7)),
+                        IsActive = reader.GetBoolean(8),
+                        Facility = reader.IsDBNull(7) ? null : Guid.Parse(reader.GetString(9)),
+                        CreatedTime = reader.GetInt64(10),
+                        UpdatedTime = reader.GetInt64(11),
+                        DeletedTime = reader.IsDBNull(12) ? null : reader.GetInt64(12),
+                        DeviceId = reader.GetString(13),
+                        OriginDeviceId = reader.GetString(14),
+                        SyncStatus = reader.GetInt32(15),
+                        Version = reader.GetInt32(16),
+                        ServerVersion = reader.IsDBNull(17) ? 0 : reader.GetInt32(17),
+                        Deleted = reader.IsDBNull(18) ? 0 : reader.GetInt32(18),
+                        //ConflictData = reader.GetString(15),
+                        //DataHash = reader.GetString(16)
+                    });
+                }
+            }
+            catch (SqliteException e)
+            {
+                _logger.LogError(e, "Error getting Staffs");
+                throw;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error getting Staffs");
+                throw;
+            }
+
+            return users;
+        }
     }
 }

@@ -196,7 +196,7 @@
     </Shell.FlyoutHeader>
 
     <!-- Enhanced Navigation Items -->
-    <FlyoutItem Title="Dashboard">
+    <FlyoutItem Title="Home">
         <FlyoutItem.Icon>
             <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
                              Glyph="&#xE8D8;" 
@@ -217,7 +217,7 @@
                              Size="20" />
         </FlyoutItem.Icon>
 
-        <Tab Title="Pre-Labor">
+        <!--<Tab Title="Pre-Labor">
             <Tab.Icon>
                 <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
                                  Glyph="&#xE73E;" 
@@ -251,7 +251,7 @@
             <ShellContent Title="Delivered"
                           ContentTemplate="{DataTemplate pages:CompletedPatientsPage}"
                           Route="completedpatients" />
-        </Tab>
+        </Tab>-->
     </FlyoutItem>
 
     <FlyoutItem Title="Analytics">

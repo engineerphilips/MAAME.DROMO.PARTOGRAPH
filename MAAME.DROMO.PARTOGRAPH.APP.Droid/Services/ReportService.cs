@@ -136,9 +136,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
         public async Task<MaternalComplicationsReport> GenerateMaternalComplicationsReportAsync(DateTime startDate, DateTime endDate)
         {
-            var birthOutcomes = await _birthOutcomeRepo.GetAllAsync();
-            var patients = await _patientRepo.GetAllAsync();
-            var partographs = await _partographRepo.GetAllAsync();
+            var birthOutcomes = await _birthOutcomeRepo.ListAsync();
+            var patients = await _patientRepo.ListAsync();
+            var partographs = await _partographRepo.ListAsync();
 
             var complicationsInPeriod = birthOutcomes
                 .Where(b => b.DeliveryTime.HasValue &&
@@ -206,10 +206,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
         public async Task<NeonatalOutcomesReport> GenerateNeonatalOutcomesReportAsync(DateTime startDate, DateTime endDate)
         {
-            var babies = await _babyDetailsRepo.GetAllAsync();
-            var birthOutcomes = await _birthOutcomeRepo.GetAllAsync();
-            var partographs = await _partographRepo.GetAllAsync();
-            var patients = await _patientRepo.GetAllAsync();
+            var babies = await _babyDetailsRepo.ListAsync();
+            var birthOutcomes = await _birthOutcomeRepo.ListAsync();
+            var partographs = await _partographRepo.ListAsync();
+            var patients = await _patientRepo.ListAsync();
 
             var babiesInPeriod = babies
                 .Where(b => b.BirthTime >= startDate && b.BirthTime <= endDate)
@@ -296,8 +296,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         public async Task<AlertResponseTimeReport> GenerateAlertResponseTimeReportAsync(DateTime startDate, DateTime endDate)
         {
             // Generate alert data based on partograph monitoring data
-            var partographs = await _partographRepo.GetAllAsync();
-            var patients = await _patientRepo.GetAllAsync();
+            var partographs = await _partographRepo.ListAsync();
+            var patients = await _patientRepo.ListAsync();
 
             var partographsInPeriod = partographs
                 .Where(p => p.LaborStartTime.HasValue &&
@@ -319,14 +319,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             foreach (var partograph in partographsInPeriod)
             {
                 var patient = patients.FirstOrDefault(p => p.ID == partograph.PatientID);
-                var fhrMeasurements = await _fhrRepo.GetAllByPartographIDAsync(partograph.ID.Value);
+                var fhrMeasurements = await _fhrRepo.ListByPatientAsync(partograph.ID.Value);
 
                 // Check FHR abnormalities
                 foreach (var fhr in fhrMeasurements)
                 {
-                    if (fhr.HeartRate < 110 || fhr.HeartRate > 160)
+                    if (fhr.Rate < 110 || fhr.Rate > 160)
                     {
-                        var severity = (fhr.HeartRate < 100 || fhr.HeartRate > 180) ? "Critical" : "Warning";
+                        var severity = (fhr.Rate < 100 || fhr.Rate > 180) ? "Critical" : "Warning";
                         var responseMinutes = severity == "Critical" ? random.Next(1, 10) : random.Next(3, 20);
                         var acknowledged = random.NextDouble() > 0.1; // 90% acknowledged
 
@@ -338,7 +338,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                             HospitalNumber = patient?.HospitalNumber ?? "",
                             AlertType = "Abnormal FHR",
                             AlertSeverity = severity,
-                            AlertMessage = $"FHR {fhr.HeartRate} bpm detected",
+                            AlertMessage = $"FHR {fhr.Rate} bpm detected",
                             AlertTime = fhr.Time,
                             AcknowledgedTime = acknowledged ? fhr.Time.AddMinutes(responseMinutes) : null,
                             ResponseTimeMinutes = acknowledged ? responseMinutes : null,
@@ -406,9 +406,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
         public async Task<WHOComplianceReport> GenerateWHOComplianceReportAsync(DateTime startDate, DateTime endDate)
         {
-            var partographs = await _partographRepo.GetAllAsync();
-            var babies = await _babyDetailsRepo.GetAllAsync();
-            var patients = await _patientRepo.GetAllAsync();
+            var partographs = await _partographRepo.ListAsync();
+            var babies = await _babyDetailsRepo.ListAsync();
+            var patients = await _patientRepo.ListAsync();
 
             var partographsInPeriod = partographs
                 .Where(p => p.LaborStartTime.HasValue &&
@@ -427,10 +427,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 EndDate = endDate,
                 TotalPartographs = partographsInPeriod.Count
             };
-
+            
             // Essential Care Practices
             report.DelayedCordClampingCount = babiesInPeriod.Count(b => b.DelayedCordClamping);
-            report.SkinToSkinContactCount = babiesInPeriod.Count(b => b.SkinToSkinContact);
+            report.SkinToSkinContactCount = babiesInPeriod.Count(b => b.KangarooMotherCare);
             report.EarlyBreastfeedingCount = babiesInPeriod.Count(b => b.EarlyBreastfeedingInitiated);
             report.VitaminKGivenCount = babiesInPeriod.Count(b => b.VitaminKGiven);
             report.EyeProphylaxisCount = babiesInPeriod.Count(b => b.EyeProphylaxisGiven);
@@ -444,10 +444,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             foreach (var partograph in partographsInPeriod)
             {
                 var patient = patients.FirstOrDefault(p => p.ID == partograph.PatientID);
-                var fhrReadings = await _fhrRepo.GetAllByPartographIDAsync(partograph.ID.Value);
-                var cervixReadings = await _cervixDilatationRepo.GetAllByPartographIDAsync(partograph.ID.Value);
-                var bpReadings = await _bpRepo.GetAllByPartographIDAsync(partograph.ID.Value);
-                var contractionReadings = await _contractionRepo.GetAllByPartographIDAsync(partograph.ID.Value);
+                var fhrReadings = await _fhrRepo.ListByPatientAsync(partograph.ID.Value);
+                var cervixReadings = await _cervixDilatationRepo.ListByPatientAsync(partograph.ID.Value);
+                var bpReadings = await _bpRepo.ListByPatientAsync(partograph.ID.Value);
+                var contractionReadings = await _contractionRepo.ListByPatientAsync(partograph.ID.Value);
 
                 // Calculate labor duration for expected readings
                 var laborDurationHours = partograph.DeliveryTime.HasValue && partograph.LaborStartTime.HasValue
@@ -534,7 +534,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
         private async Task<bool> CheckAlertLineCrossingAsync(Guid partographId)
         {
-            var cervixReadings = (await _cervixDilatationRepo.GetAllByPartographIDAsync(partographId))
+            var cervixReadings = (await _cervixDilatationRepo.ListByPatientAsync(partographId))
                 .OrderBy(c => c.Time).ToList();
 
             if (cervixReadings.Count < 2) return false;
@@ -553,7 +553,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
         private async Task<bool> CheckActionLineCrossingAsync(Guid partographId)
         {
-            var cervixReadings = (await _cervixDilatationRepo.GetAllByPartographIDAsync(partographId))
+            var cervixReadings = (await _cervixDilatationRepo.ListByPatientAsync(partographId))
                 .OrderBy(c => c.Time).ToList();
 
             if (cervixReadings.Count < 2) return false;
@@ -573,9 +573,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
         public async Task<StaffPerformanceReport> GenerateStaffPerformanceReportAsync(DateTime startDate, DateTime endDate)
         {
-            var staff = await _staffRepo.GetAllAsync();
-            var partographs = await _partographRepo.GetAllAsync();
-            var birthOutcomes = await _birthOutcomeRepo.GetAllAsync();
+            var staff = await _staffRepo.ListAsync();
+            var partographs = await _partographRepo.ListAsync();
+            var birthOutcomes = await _birthOutcomeRepo.ListAsync();
 
             var report = new StaffPerformanceReport
             {
@@ -605,9 +605,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
                 foreach (var partograph in staffPartographs.Where(p => staffBirthOutcomes.Any(b => b.PartographID == p.ID)))
                 {
-                    var fhrCount = (await _fhrRepo.GetAllByPartographIDAsync(partograph.ID.Value)).Count();
-                    var cervixCount = (await _cervixDilatationRepo.GetAllByPartographIDAsync(partograph.ID.Value)).Count();
-                    var bpCount = (await _bpRepo.GetAllByPartographIDAsync(partograph.ID.Value)).Count();
+                    var fhrCount = (await _fhrRepo.ListByPatientAsync(partograph.ID.Value)).Count();
+                    var cervixCount = (await _cervixDilatationRepo.ListByPatientAsync(partograph.ID.Value)).Count();
+                    var bpCount = (await _bpRepo.ListByPatientAsync(partograph.ID.Value)).Count();
 
                     var laborHours = partograph.DeliveryTime.HasValue && partograph.LaborStartTime.HasValue
                         ? (partograph.DeliveryTime.Value - partograph.LaborStartTime.Value).TotalHours
@@ -629,9 +629,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 {
                     StaffID = staffMember.ID ?? Guid.Empty,
                     StaffName = staffMember.Name,
-                    Role = staffMember.Occupation,
-                    Department = "Labor Ward",
-                    LicenseNumber = staffMember.LicenseNumber ?? "",
+                    Role = staffMember.Role,
+                    Department = staffMember.Department,
+                    //LicenseNumber = staffMember.LicenseNumber ?? "",
 
                     // Workload metrics
                     TotalDeliveries = staffBirthOutcomes.Count,
@@ -723,10 +723,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         public async Task<OfflineSyncStatusReport> GenerateOfflineSyncStatusReportAsync()
         {
             // Get data counts from repositories to build sync status
-            var partographs = await _partographRepo.GetAllAsync();
-            var patients = await _patientRepo.GetAllAsync();
-            var birthOutcomes = await _birthOutcomeRepo.GetAllAsync();
-            var babies = await _babyDetailsRepo.GetAllAsync();
+            var partographs = await _partographRepo.ListAsync();
+            var patients = await _patientRepo.ListAsync();
+            var birthOutcomes = await _birthOutcomeRepo.ListAsync();
+            var babies = await _babyDetailsRepo.ListAsync();
 
             var report = new OfflineSyncStatusReport
             {
@@ -825,7 +825,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
         public async Task<BirthWeightApgarAnalysis> GenerateBirthWeightApgarAnalysisAsync(DateTime startDate, DateTime endDate)
         {
-            var babies = await _babyDetailsRepo.GetAllAsync();
+            var babies = await _babyDetailsRepo.ListAsync();
             var babiesInPeriod = babies
                 .Where(b => b.BirthTime >= startDate && b.BirthTime <= endDate)
                 .ToList();
@@ -1025,7 +1025,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             // Summary statistics
             report.TotalPeriods = report.MonthlyTrends.Count;
             report.TotalDeliveriesInPeriod = report.MonthlyTrends.Sum(m => m.TotalDeliveries);
-            report.AverageDeliveriesPerMonth = report.MonthlyTrends.Any() ? report.MonthlyTrends.Average(m => m.TotalDeliveries) : 0;
+            report.AverageDeliveriesPerMonth = report.MonthlyTrends.Any() ? (decimal) report.MonthlyTrends?.Average(m => m.TotalDeliveries) : 0m;
 
             if (report.MonthlyTrends.Count >= 2)
             {
@@ -1080,22 +1080,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
         public async Task<PartographPDFData> GeneratePartographPDFDataAsync(Guid partographId)
         {
-            var partograph = await _partographRepo.GetByIDAsync(partographId);
+            var partograph = await _partographRepo.GetCurrentPartographAsync(partographId);
             if (partograph == null) return null;
 
-            var patient = await _patientRepo.GetByIDAsync(partograph.PatientID.Value);
-            var birthOutcome = (await _birthOutcomeRepo.GetAllAsync()).FirstOrDefault(b => b.PartographID == partographId);
-            var babies = (await _babyDetailsRepo.GetAllAsync()).Where(b => b.PartographID == partographId).ToList();
-            var staff = await _staffRepo.GetAllAsync();
+            var patient = await _patientRepo.GetAsync(partograph.PatientID.Value);
+            var birthOutcome = (await _birthOutcomeRepo.GetByPartographIdAsync(partographId));
+            var babies = (await _babyDetailsRepo.ListAsync()).Where(b => b.PartographID == partographId).ToList();
+            var staff = await _staffRepo.ListAsync();
 
             // Get all measurements
-            var fhrMeasurements = (await _fhrRepo.GetAllByPartographIDAsync(partographId)).ToList();
-            var contractions = (await _contractionRepo.GetAllByPartographIDAsync(partographId)).ToList();
-            var cervicalDilations = (await _cervixDilatationRepo.GetAllByPartographIDAsync(partographId)).ToList();
-            var headDescents = (await _headDescentRepo.GetAllByPartographIDAsync(partographId)).ToList();
-            var bloodPressures = (await _bpRepo.GetAllByPartographIDAsync(partographId)).ToList();
-            var temperatures = (await _temperatureRepo.GetAllByPartographIDAsync(partographId)).ToList();
-            var urineOutputs = (await _urineRepo.GetAllByPartographIDAsync(partographId)).ToList();
+            var fhrMeasurements = (await _fhrRepo.ListByPatientAsync(partographId)).ToList();
+            var contractions = (await _contractionRepo.ListByPatientAsync(partographId)).ToList();
+            var cervicalDilations = (await _cervixDilatationRepo.ListByPatientAsync(partographId)).ToList();
+            var headDescents = (await _headDescentRepo.ListByPatientAsync(partographId)).ToList();
+            var bloodPressures = (await _bpRepo.ListByPatientAsync(partographId)).ToList();
+            var temperatures = (await _temperatureRepo.ListByPatientAsync(partographId)).ToList();
+            var urineOutputs = (await _urineRepo.ListByPatientAsync(partographId)).ToList();
 
             var pdfData = new PartographPDFData
             {
@@ -1123,16 +1123,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 pdfData.PatientSummary = new PatientSummaryData
                 {
                     FullName = patient.Name,
-                    Age = patient.Age,
+                    Age = patient.Age ?? 0,
                     HospitalNumber = patient.HospitalNumber ?? "",
-                    Gravida = patient.Gravida,
-                    Parity = patient.Parity,
-                    GestationalAgeWeeks = patient.GestationalAgeWeeks,
-                    GestationalAgeDays = patient.GestationalAgeDays,
+                    Gravida = partograph.Gravida,
+                    Parity = partograph.Parity,
+                    //GestationalAgeWeeks = partograph.GestationalAgeWeeks ?? 0,
+                    //GestationalAgeDays = partograph.GestationalAgeDays ?? 0,
                     BloodGroup = patient.BloodGroup?.ToString() ?? "",
-                    Height = patient.Height,
-                    Weight = patient.Weight,
-                    AdmissionTime = partograph.AdmissionTime ?? DateTime.Now
+                    Height = babies.FirstOrDefault()?.Length ?? 0,
+                    Weight = babies.FirstOrDefault()?.BirthWeight ?? 0,
+                    AdmissionTime = partograph.AdmissionDate
                 };
             }
 
@@ -1147,7 +1147,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     {
                         StaffID = handler.ID ?? Guid.Empty,
                         StaffName = handler.Name,
-                        Role = handler.Occupation ?? "Midwife",
+                        Role = handler.Role ?? "Midwife",
                         InvolvementStart = partograph.LaborStartTime ?? DateTime.Now
                     });
                 }
@@ -1239,7 +1239,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     Apgar5Min = baby.Apgar5Min,
                     VitalStatus = baby.VitalStatus.ToString(),
                     ResuscitationRequired = baby.ResuscitationRequired,
-                    SkinToSkinDone = baby.SkinToSkinContact,
+                    SkinToSkinDone = baby.KangarooMotherCare,
                     EarlyBreastfeedingDone = baby.EarlyBreastfeedingInitiated,
                     VitaminKGiven = baby.VitaminKGiven,
                     EyeProphylaxis = baby.EyeProphylaxisGiven,
@@ -1262,7 +1262,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 VaginalExamsActual = cervicalDilations.Count,
                 VaginalExamCompliant = expectedVE > 0 && (decimal)cervicalDilations.Count / expectedVE >= 0.8m,
                 VitalSignsCompliant = bloodPressures.Count >= laborHours,
-                EssentialCareCompliant = babies.All(b => b.SkinToSkinContact && b.EarlyBreastfeedingInitiated && b.VitaminKGiven)
+                EssentialCareCompliant = babies.All(b => b.KangarooMotherCare && b.EarlyBreastfeedingInitiated && b.VitaminKGiven)
             };
 
             pdfData.Compliance.OverallComplianceScore =
@@ -1354,7 +1354,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             int count = 0;
             foreach (var id in partographIds)
             {
-                var dilatations = (await _cervixDilatationRepo.GetAllByPartographIDAsync(id))
+                var dilatations = (await _cervixDilatationRepo.ListByPatientAsync(id))
                     .OrderBy(d => d.Time)
                     .ToList();
 
