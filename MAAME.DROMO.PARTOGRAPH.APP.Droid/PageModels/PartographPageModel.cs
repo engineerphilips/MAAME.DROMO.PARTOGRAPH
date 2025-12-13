@@ -8,6 +8,7 @@ using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,6 +46,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         // Alert and Validation Services
         private readonly AlertEngine _alertEngine;
         private readonly MeasurementValidationService _validationService;
+        private readonly PartographNotesService _notesService;
 
         // Modal page models
         private readonly CompanionModalPageModel _companionModalPageModel;
@@ -293,6 +295,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _alertSummary = string.Empty;
 
+        // Clinical Notes Properties
+        [ObservableProperty]
+        private string _clinicalNotes = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _notesGeneratedTime;
+
         //[ObservableProperty]
         //private ObservableCollection<TimeSlots> _chartinghours;
 
@@ -337,7 +346,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             BPPulseModalPageModel bpPulseModalPageModel,
             FHRContractionModalPageModel fHRContractionModalPageModel,
             AssessmentModalPageModel assessmentModalPageModel,
-            PlanModalPageModel planModalPageModel)
+            PlanModalPageModel planModalPageModel,
+            PartographNotesService notesService)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
@@ -385,6 +395,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             // Initialize alert engine and validation service
             _alertEngine = new AlertEngine();
             _validationService = new MeasurementValidationService();
+            _notesService = notesService;
 
             // Subscribe to alert events
             _alertEngine.AlertTriggered += OnAlertTriggered;
@@ -1238,6 +1249,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 // Analyze patient data and generate clinical alerts
                 AnalyzeAndGenerateAlerts();
+
+                // Generate clinical notes
+                GenerateClinicalNotes();
             }
             catch (Exception e)
             {
@@ -1728,6 +1742,107 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 _planModalPageModel.ClosePopup = () => ClosePlanModalPopup?.Invoke();
                 await _planModalPageModel.LoadPatient(Patient.ID);
                 OpenPlanModalPopup?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the clinical notes by regenerating them from current partograph data
+        /// </summary>
+        [RelayCommand]
+        private async Task RefreshNotes()
+        {
+            if (Patient == null)
+                return;
+
+            try
+            {
+                IsBusy = true;
+
+                // Get the current patient details
+                var patientDetails = await _patientRepository.GetItemAsync(Patient.PatientID);
+
+                // Generate clinical notes
+                ClinicalNotes = _notesService.GenerateClinicalNotes(Patient, patientDetails);
+                NotesGeneratedTime = DateTime.Now;
+            }
+            catch (Exception ex)
+            {
+                await _errorHandler.HandleError(ex, "Error generating clinical notes");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Exports the clinical notes to a file or shares them
+        /// </summary>
+        [RelayCommand]
+        private async Task ExportNotes()
+        {
+            if (string.IsNullOrWhiteSpace(ClinicalNotes))
+            {
+                await Application.Current.MainPage.DisplayAlert("Export Notes",
+                    "No clinical notes available to export. Please refresh notes first.", "OK");
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
+                // Get patient name for filename
+                var patientDetails = await _patientRepository.GetItemAsync(Patient.PatientID);
+                var patientName = patientDetails != null ?
+                    $"{patientDetails.FirstName}_{patientDetails.LastName}" : "Patient";
+                var fileName = $"Clinical_Notes_{patientName}_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+
+                // Create file path in app's documents directory
+                var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var filePath = Path.Combine(documentsPath, fileName);
+
+                // Write notes to file
+                await File.WriteAllTextAsync(filePath, ClinicalNotes);
+
+                // Share the file
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = "Export Clinical Notes",
+                    File = new ShareFile(filePath)
+                });
+
+                await Application.Current.MainPage.DisplayAlert("Export Successful",
+                    $"Clinical notes exported to {fileName}", "OK");
+            }
+            catch (Exception ex)
+            {
+                await _errorHandler.HandleError(ex, "Error exporting clinical notes");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Generates clinical notes when measurements are updated
+        /// </summary>
+        private async void GenerateClinicalNotes()
+        {
+            if (Patient == null)
+                return;
+
+            try
+            {
+                var patientDetails = await _patientRepository.GetItemAsync(Patient.PatientID);
+                ClinicalNotes = _notesService.GenerateClinicalNotes(Patient, patientDetails);
+                NotesGeneratedTime = DateTime.Now;
+            }
+            catch (Exception ex)
+            {
+                // Silently log error - don't disrupt user workflow
+                System.Diagnostics.Debug.WriteLine($"Error generating clinical notes: {ex.Message}");
             }
         }
     }

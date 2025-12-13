@@ -3,12 +3,14 @@ using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Helpers;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
@@ -38,6 +40,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly PlanRepository _planRepository;
         private readonly BirthOutcomeRepository _birthOutcomeRepository;
         private readonly BabyDetailsRepository _babyDetailsRepository;
+
+        // Services
+        private readonly PartographNotesService _notesService;
 
         // Modal page models
         private readonly CompanionModalPageModel _companionModalPageModel;
@@ -233,6 +238,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private ObservableCollection<BabyDetails> _babies = new();
 
+        // Clinical Notes Properties
+        [ObservableProperty]
+        private string _clinicalNotes = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _notesGeneratedTime;
+
         public SecondStagePartographPageModel(
             PatientRepository patientRepository,
             PartographRepository partographRepository,
@@ -273,7 +285,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             BPPulseModalPageModel bpPulseModalPageModel,
             FHRContractionModalPageModel fHRContractionModalPageModel,
             AssessmentModalPageModel assessmentModalPageModel,
-            PlanModalPageModel planModalPageModel)
+            PlanModalPageModel planModalPageModel,
+            PartographNotesService notesService)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
@@ -315,6 +328,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _fHRContractionModalPageModel = fHRContractionModalPageModel;
             _assessmentModalPageModel = assessmentModalPageModel;
             _planModalPageModel = planModalPageModel;
+            _notesService = notesService;
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -663,6 +677,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 // Update all measurement statuses
                 UpdateMeasurementStatuses();
+
+                // Generate clinical notes
+                GenerateClinicalNotes();
             }
             catch (Exception e)
             {
@@ -1094,6 +1111,107 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 _planModalPageModel.ClosePopup = () => ClosePlanModalPopup?.Invoke();
                 await _planModalPageModel.LoadPatient(Patient.ID);
                 OpenPlanModalPopup?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the clinical notes by regenerating them from current partograph data
+        /// </summary>
+        [RelayCommand]
+        private async Task RefreshNotes()
+        {
+            if (Patient == null)
+                return;
+
+            try
+            {
+                IsBusy = true;
+
+                // Get the current patient details
+                var patientDetails = await _patientRepository.GetItemAsync(Patient.PatientID);
+
+                // Generate clinical notes
+                ClinicalNotes = _notesService.GenerateClinicalNotes(Patient, patientDetails);
+                NotesGeneratedTime = DateTime.Now;
+            }
+            catch (Exception ex)
+            {
+                await _errorHandler.HandleError(ex, "Error generating clinical notes");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Exports the clinical notes to a file or shares them
+        /// </summary>
+        [RelayCommand]
+        private async Task ExportNotes()
+        {
+            if (string.IsNullOrWhiteSpace(ClinicalNotes))
+            {
+                await Application.Current.MainPage.DisplayAlert("Export Notes",
+                    "No clinical notes available to export. Please refresh notes first.", "OK");
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+
+                // Get patient name for filename
+                var patientDetails = await _patientRepository.GetItemAsync(Patient.PatientID);
+                var patientName = patientDetails != null ?
+                    $"{patientDetails.FirstName}_{patientDetails.LastName}" : "Patient";
+                var fileName = $"Clinical_Notes_SecondStage_{patientName}_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+
+                // Create file path in app's documents directory
+                var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var filePath = Path.Combine(documentsPath, fileName);
+
+                // Write notes to file
+                await File.WriteAllTextAsync(filePath, ClinicalNotes);
+
+                // Share the file
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = "Export Clinical Notes",
+                    File = new ShareFile(filePath)
+                });
+
+                await Application.Current.MainPage.DisplayAlert("Export Successful",
+                    $"Clinical notes exported to {fileName}", "OK");
+            }
+            catch (Exception ex)
+            {
+                await _errorHandler.HandleError(ex, "Error exporting clinical notes");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Generates clinical notes when measurements are updated
+        /// </summary>
+        private async void GenerateClinicalNotes()
+        {
+            if (Patient == null)
+                return;
+
+            try
+            {
+                var patientDetails = await _patientRepository.GetItemAsync(Patient.PatientID);
+                ClinicalNotes = _notesService.GenerateClinicalNotes(Patient, patientDetails);
+                NotesGeneratedTime = DateTime.Now;
+            }
+            catch (Exception ex)
+            {
+                // Silently log error - don't disrupt user workflow
+                System.Diagnostics.Debug.WriteLine($"Error generating clinical notes: {ex.Message}");
             }
         }
     }
