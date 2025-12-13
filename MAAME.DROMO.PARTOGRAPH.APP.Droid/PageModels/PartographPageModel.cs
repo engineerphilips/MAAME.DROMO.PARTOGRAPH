@@ -140,6 +140,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _fhrButtonColor = "LightGray";
 
         [ObservableProperty]
+        private string _fhrDecelerationLatestValue = string.Empty;
+
+        [ObservableProperty]
         private string _contractionLatestValue = string.Empty;
 
         [ObservableProperty]
@@ -780,6 +783,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         /// <summary>
+        /// Formats deceleration type to abbreviated form
+        /// </summary>
+        private string FormatDecelerationType(string decelerationType)
+        {
+            if (string.IsNullOrEmpty(decelerationType))
+                return string.Empty;
+
+            switch (decelerationType.ToLower())
+            {
+                case "early":
+                    return "Early/E";
+                case "late":
+                    return "Late/L";
+                case "variable":
+                    return "Variable/V";
+                case "prolonged":
+                    return "Prolonged/P";
+                case "no":
+                    return "No";
+                default:
+                    return decelerationType;
+            }
+        }
+
+        /// <summary>
         /// Updates the status of all measurables with latest values and due times
         /// </summary>
         private void UpdateMeasurementStatuses()
@@ -795,6 +823,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             FhrLatestValue = fhrStatus.LatestValue;
             FhrStatusText = fhrStatus.DueStatusText;
             FhrButtonColor = fhrStatus.ButtonColor;
+
+            // FHR Deceleration Status
+            if (latestFHR != null && !string.IsNullOrEmpty(latestFHR.Deceleration))
+            {
+                FhrDecelerationLatestValue = FormatDecelerationType(latestFHR.Deceleration);
+            }
+            else
+            {
+                FhrDecelerationLatestValue = string.Empty;
+            }
 
             // Contraction Status
             var latestContraction = Patient.Contractions?.OrderByDescending(e => e.Time).FirstOrDefault();
