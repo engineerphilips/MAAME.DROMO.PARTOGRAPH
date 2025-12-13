@@ -134,7 +134,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 createTableCmd.CommandText = @"
                 CREATE TABLE IF NOT EXISTS Tbl_Partograph (
                     ID TEXT PRIMARY KEY,
-                    patientID TEXT NOT NULL, 
+                    patientID TEXT NOT NULL,
                     time TEXT NOT NULL,
                     status TEXT,
                     gravida INTEGER NOT NULL,
@@ -144,15 +144,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     expectedDeliveryDate TEXT,
                     lastMenstrualDate TEXT,
                     laborStartTime TEXT,
+                    secondStageStartTime TEXT,
+                    thirdStageStartTime TEXT,
+                    fourthStageStartTime TEXT,
                     deliveryTime TEXT,
+                    completedTime TEXT,
+                    rupturedMembraneTime TEXT,
                     cervicalDilationOnAdmission INTEGER,
                     membraneStatus TEXT,
-                    liquorStatus TEXT, 
+                    liquorStatus TEXT,
                     complications TEXT,
-                    handler TEXT,               
+                    handler TEXT,
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
-                    deletedtime INTEGER, 
+                    deletedtime INTEGER,
                     deviceid TEXT NOT NULL,
                     origindeviceid TEXT NOT NULL,
                     syncstatus INTEGER DEFAULT 0,
@@ -189,6 +194,74 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     WHERE ID = NEW.ID;
                 END;";
                 await createTableCmd.ExecuteNonQueryAsync();
+
+                // Migration: Add WHO Four-Stage System timestamp columns if they don't exist
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add secondStageStartTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN secondStageStartTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add thirdStageStartTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN thirdStageStartTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add fourthStageStartTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN fourthStageStartTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add completedTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN completedTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add rupturedMembraneTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN rupturedMembraneTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                _logger.LogInformation("WHO Four-Stage System database schema migration completed successfully");
             }
             catch (Exception e)
             {
@@ -210,7 +283,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @Id ORDER BY P.time DESC";
+                selectCmd.CommandText = @"SELECT
+                    P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion,
+                    P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate,
+                    P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
+                    P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
+                    P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications,
+                    P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
+                    P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted,
+                    PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age,
+                    PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone,
+                    PA.emergencyContactRelationship
+                    FROM Tbl_Partograph P
+                    INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID
+                    WHERE P.ID = @Id
+                    ORDER BY P.time DESC";
 
                 selectCmd.Parameters.AddWithValue("@Id", patientId);
 
@@ -242,34 +329,39 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ExpectedDeliveryDate = reader.IsDBNull(8) ? null : DateOnly.Parse(reader.GetString(8)),
                 LastMenstrualDate = reader.IsDBNull(9) ? null : DateOnly.Parse(reader.GetString(9)),
                 LaborStartTime = reader.IsDBNull(10) ? null : DateTime.Parse(reader.GetString(10)),
-                DeliveryTime = reader.IsDBNull(11) ? null : DateTime.Parse(reader.GetString(11)),
-                CervicalDilationOnAdmission = reader.IsDBNull(12) ? null : reader.GetInt32(12),
-                MembraneStatus = reader.IsDBNull(13) ? "Intact" : reader.GetString(13),
-                LiquorStatus = reader.IsDBNull(14) ? "Clear" : reader.GetString(14),
-                Complications = reader.IsDBNull(15) ? "" : reader.GetString(15),
-                Handler = reader.IsDBNull(16) ? null : Guid.Parse(reader.GetString(16)),
-                CreatedTime = reader.GetInt64(17),
-                UpdatedTime = reader.GetInt64(18),
-                DeletedTime = reader.IsDBNull(19) ? null : reader.GetInt64(19),
-                DeviceId = reader.GetString(20),
-                OriginDeviceId = reader.GetString(21),
-                SyncStatus = reader.GetInt32(22),
-                Version = reader.GetInt32(23),
-                ServerVersion = reader.IsDBNull(24) ? 0 : reader.GetInt32(24),
-                Deleted = reader.IsDBNull(25) ? 0 : reader.GetInt32(25),
+                SecondStageStartTime = reader.IsDBNull(11) ? null : DateTime.Parse(reader.GetString(11)),
+                ThirdStageStartTime = reader.IsDBNull(12) ? null : DateTime.Parse(reader.GetString(12)),
+                FourthStageStartTime = reader.IsDBNull(13) ? null : DateTime.Parse(reader.GetString(13)),
+                DeliveryTime = reader.IsDBNull(14) ? null : DateTime.Parse(reader.GetString(14)),
+                CompletedTime = reader.IsDBNull(15) ? null : DateTime.Parse(reader.GetString(15)),
+                RupturedMembraneTime = reader.IsDBNull(16) ? null : DateTime.Parse(reader.GetString(16)),
+                CervicalDilationOnAdmission = reader.IsDBNull(17) ? null : reader.GetInt32(17),
+                MembraneStatus = reader.IsDBNull(18) ? "Intact" : reader.GetString(18),
+                LiquorStatus = reader.IsDBNull(19) ? "Clear" : reader.GetString(19),
+                Complications = reader.IsDBNull(20) ? "" : reader.GetString(20),
+                Handler = reader.IsDBNull(21) ? null : Guid.Parse(reader.GetString(21)),
+                CreatedTime = reader.GetInt64(22),
+                UpdatedTime = reader.GetInt64(23),
+                DeletedTime = reader.IsDBNull(24) ? null : reader.GetInt64(24),
+                DeviceId = reader.GetString(25),
+                OriginDeviceId = reader.GetString(26),
+                SyncStatus = reader.GetInt32(27),
+                Version = reader.GetInt32(28),
+                ServerVersion = reader.IsDBNull(29) ? 0 : reader.GetInt32(29),
+                Deleted = reader.IsDBNull(30) ? 0 : reader.GetInt32(30),
                 Patient = new Patient
                 {
                     ID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
-                    FirstName = reader.GetString(26),
-                    LastName = reader.GetString(27),
-                    HospitalNumber = reader.GetString(28),
-                    DateOfBirth = reader.IsDBNull(29) ? null : DateOnly.Parse(reader.GetString(29)),
-                    Age = reader.IsDBNull(30) ? null : int.Parse(reader.GetString(30)),
-                    BloodGroup = reader.IsDBNull(31) ? "" : reader.GetString(31),
-                    PhoneNumber = reader.IsDBNull(32) ? "" : reader.GetString(32),
-                    EmergencyContactName = reader.IsDBNull(33) ? "" : reader.GetString(33),
-                    EmergencyContactPhone = reader.IsDBNull(34) ? "" : reader.GetString(34),
-                    EmergencyContactRelationship = reader.IsDBNull(35) ? "" : reader.GetString(35)
+                    FirstName = reader.GetString(31),
+                    LastName = reader.GetString(32),
+                    HospitalNumber = reader.GetString(33),
+                    DateOfBirth = reader.IsDBNull(34) ? null : DateOnly.Parse(reader.GetString(34)),
+                    Age = reader.IsDBNull(35) ? null : int.Parse(reader.GetString(35)),
+                    BloodGroup = reader.IsDBNull(36) ? "" : reader.GetString(36),
+                    PhoneNumber = reader.IsDBNull(37) ? "" : reader.GetString(37),
+                    EmergencyContactName = reader.IsDBNull(38) ? "" : reader.GetString(38),
+                    EmergencyContactPhone = reader.IsDBNull(39) ? "" : reader.GetString(39),
+                    EmergencyContactRelationship = reader.IsDBNull(40) ? "" : reader.GetString(40)
                 }
             };
         }
@@ -300,19 +392,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     }
                 }
 
-                // Validate status transition for Active status - prevent multiple active partographs per patient
-                if (item.Status == LaborStatus.Active && oldStatus != LaborStatus.Active)
+                // Validate status transition for FirstStage status - prevent multiple active partographs per patient
+                if (item.Status == LaborStatus.FirstStage && oldStatus != LaborStatus.FirstStage)
                 {
                     var checkCmd = connection.CreateCommand();
                     checkCmd.CommandText = @"
                     SELECT COUNT(*) FROM Tbl_Partograph
                     WHERE patientID = @patientID
                     AND ID != @currentID
-                    AND status = @status
+                    AND status IN (@firstStage, @secondStage, @thirdStage, @fourthStage)
                     AND deleted = 0";
                     checkCmd.Parameters.AddWithValue("@patientID", item.PatientID.ToString());
                     checkCmd.Parameters.AddWithValue("@currentID", item.ID.ToString());
-                    checkCmd.Parameters.AddWithValue("@status", (int)LaborStatus.Active);
+                    checkCmd.Parameters.AddWithValue("@firstStage", (int)LaborStatus.FirstStage);
+                    checkCmd.Parameters.AddWithValue("@secondStage", (int)LaborStatus.SecondStage);
+                    checkCmd.Parameters.AddWithValue("@thirdStage", (int)LaborStatus.ThirdStage);
+                    checkCmd.Parameters.AddWithValue("@fourthStage", (int)LaborStatus.FourthStage);
 
                     var hasActivePartograph = Convert.ToInt32(await checkCmd.ExecuteScalarAsync()) > 0;
 
@@ -324,18 +419,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     }
                 }
 
-                // Set LaborStartTime when transitioning to Active status
-                if (item.Status == LaborStatus.Active && oldStatus != LaborStatus.Active && !item.LaborStartTime.HasValue)
+                // WHO Four-Stage System: Set timestamps for stage transitions
+
+                // Set LaborStartTime when transitioning to FirstStage
+                if (item.Status == LaborStatus.FirstStage && oldStatus != LaborStatus.FirstStage && !item.LaborStartTime.HasValue)
                 {
                     item.LaborStartTime = DateTime.UtcNow;
-                    _logger.LogInformation($"Labor started for partograph {item.ID} at {item.LaborStartTime}");
+                    _logger.LogInformation($"First stage labor started for partograph {item.ID} at {item.LaborStartTime}");
                 }
 
-                // Set DeliveryTime when transitioning to Completed status
-                if (item.Status == LaborStatus.Completed && oldStatus != LaborStatus.Completed && !item.DeliveryTime.HasValue)
+                // Note: SecondStageStartTime, ThirdStageStartTime, and FourthStageStartTime
+                // will be set by the PartographPageModel during stage transitions
+                // These are handled separately to allow for manual and automatic progression
+
+                // Set CompletedTime when transitioning to Completed status
+                if (item.Status == LaborStatus.Completed && oldStatus != LaborStatus.Completed)
                 {
-                    item.DeliveryTime = DateTime.UtcNow;
-                    _logger.LogInformation($"Delivery completed for partograph {item.ID} at {item.DeliveryTime}");
+                    // CompletedTime is set in the model
+                    _logger.LogInformation($"Delivery care completed for partograph {item.ID}");
                 }
 
                 item.CreatedTime = isNewPartograph ? now : item.CreatedTime;
@@ -352,8 +453,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 if (isNewPartograph)
                 {
                     saveCmd.CommandText = @"
-                    INSERT INTO Tbl_Partograph (ID, patientID, time, status, gravida, parity, abortion, admissionDate, expectedDeliveryDate, lastMenstrualDate, laborStartTime, deliveryTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus, complications, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-                    VALUES (@ID, @patientID, @time, @status, @gravida, @parity, @abortion, @admissionDate, @expectedDeliveryDate, @lastMenstrualDate, @laborStartTime, @deliveryTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus, @complications, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted)";
+                    INSERT INTO Tbl_Partograph (
+                        ID, patientID, time, status, gravida, parity, abortion, admissionDate,
+                        expectedDeliveryDate, lastMenstrualDate, laborStartTime, secondStageStartTime,
+                        thirdStageStartTime, fourthStageStartTime, deliveryTime, completedTime,
+                        rupturedMembraneTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus,
+                        complications, handler, createdtime, updatedtime, deletedtime, deviceid,
+                        origindeviceid, syncstatus, version, serverversion, deleted
+                    )
+                    VALUES (
+                        @ID, @patientID, @time, @status, @gravida, @parity, @abortion, @admissionDate,
+                        @expectedDeliveryDate, @lastMenstrualDate, @laborStartTime, @secondStageStartTime,
+                        @thirdStageStartTime, @fourthStageStartTime, @deliveryTime, @completedTime,
+                        @rupturedMembraneTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus,
+                        @complications, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid,
+                        @origindeviceid, @syncstatus, @version, @serverversion, @deleted
+                    )";
                 }
                 else
                 {
@@ -363,15 +478,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         status = @status,
                         gravida = @gravida,
                         parity = @parity,
-                        abortion = @abortion,   
+                        abortion = @abortion,
                         admissionDate = @admissionDate,
                         expectedDeliveryDate = @expectedDeliveryDate,
-                        lastMenstrualDate = @lastMenstrualDate, 
+                        lastMenstrualDate = @lastMenstrualDate,
                         laborStartTime = @laborStartTime,
+                        secondStageStartTime = @secondStageStartTime,
+                        thirdStageStartTime = @thirdStageStartTime,
+                        fourthStageStartTime = @fourthStageStartTime,
                         deliveryTime = @deliveryTime,
+                        completedTime = @completedTime,
+                        rupturedMembraneTime = @rupturedMembraneTime,
                         cervicalDilationOnAdmission = @cervicalDilationOnAdmission,
                         membraneStatus = @membraneStatus,
-                        liquorStatus = @liquorStatus, 
+                        liquorStatus = @liquorStatus,
                         complications = @complications,
                         handler = @handler,
                         updatedtime = @updatedtime,
@@ -392,7 +512,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 saveCmd.Parameters.AddWithValue("@expectedDeliveryDate", item.ExpectedDeliveryDate != null ? item.ExpectedDeliveryDate?.ToString("yyyy-MM-dd") : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@lastMenstrualDate", item.LastMenstrualDate != null ? item.LastMenstrualDate?.ToString("yyyy-MM-dd") : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@laborStartTime", item.LaborStartTime != null ? item.LaborStartTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@secondStageStartTime", item.SecondStageStartTime != null ? item.SecondStageStartTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@thirdStageStartTime", item.ThirdStageStartTime != null ? item.ThirdStageStartTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@fourthStageStartTime", item.FourthStageStartTime != null ? item.FourthStageStartTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@deliveryTime", item.DeliveryTime != null ? item.DeliveryTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@completedTime", item.CompletedTime != null ? item.CompletedTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@rupturedMembraneTime", item.RupturedMembraneTime != null ? item.RupturedMembraneTime?.ToString("yyyy-MM-dd HH:mm") : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@cervicalDilationOnAdmission", item.CervicalDilationOnAdmission != null ? item.CervicalDilationOnAdmission : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@membraneStatus", item.MembraneStatus ?? "Intact");
                 saveCmd.Parameters.AddWithValue("@liquorStatus", item.LiquorStatus ?? "Clear");
@@ -436,14 +561,30 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
+
+                // Reusable SELECT query with all WHO Four-Stage System columns
+                const string baseQuery = @"SELECT
+                    P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion,
+                    P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate,
+                    P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
+                    P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
+                    P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications,
+                    P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
+                    P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted,
+                    PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age,
+                    PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone,
+                    PA.emergencyContactRelationship
+                    FROM Tbl_Partograph P
+                    INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID";
+
                 if (status.HasValue)
                 {
-                    selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.status = @status ORDER BY P.admissionDate DESC";
+                    selectCmd.CommandText = baseQuery + " WHERE P.status = @status ORDER BY P.admissionDate DESC";
                     selectCmd.Parameters.AddWithValue("@status", (int)status.Value);
                 }
                 else
                 {
-                    selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID ORDER BY P.status, P.admissionDate DESC";
+                    selectCmd.CommandText = baseQuery + " ORDER BY P.status, P.admissionDate DESC";
                 }
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -474,7 +615,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted, PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age, PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone, PA.emergencyContactRelationship FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.ID = @id";
+                selectCmd.CommandText = @"SELECT
+                    P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion,
+                    P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate,
+                    P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
+                    P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
+                    P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications,
+                    P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
+                    P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted,
+                    PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age,
+                    PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone,
+                    PA.emergencyContactRelationship
+                    FROM Tbl_Partograph P
+                    INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID
+                    WHERE P.ID = @id";
                 selectCmd.Parameters.AddWithValue("@id", id.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();

@@ -26,11 +26,28 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
 
         // Labour Information
         public LaborStatus Status { get; set; } = LaborStatus.Pending;
-        public DateTime? LaborStartTime { get; set; }
+
+        // Stage Timestamps (WHO Four-Stage System)
+        public DateTime? LaborStartTime { get; set; }  // Also serves as FirstStageStartTime
+        public DateTime? FirstStageStartTime => LaborStartTime;  // Alias for clarity
         public string LaborStartTimeFormat => LaborStartTime != null ? ElapseTimeCalc.PeriodElapseTimeLower(LaborStartTime.Value, DateTime.Now) : string.Empty;
+
+        public DateTime? SecondStageStartTime { get; set; }
+        public string SecondStageTimeFormat => SecondStageStartTime != null ? ElapseTimeCalc.PeriodElapseTimeLower(SecondStageStartTime.Value, DateTime.Now) : string.Empty;
+
+        public DateTime? ThirdStageStartTime { get; set; }
+        public string ThirdStageTimeFormat => ThirdStageStartTime != null ? ElapseTimeCalc.PeriodElapseTimeLower(ThirdStageStartTime.Value, DateTime.Now) : string.Empty;
+
+        public DateTime? FourthStageStartTime { get; set; }
+        public string FourthStageTimeFormat => FourthStageStartTime != null ? ElapseTimeCalc.PeriodElapseTimeLower(FourthStageStartTime.Value, DateTime.Now) : string.Empty;
+
+        public DateTime? CompletedTime { get; set; }
+
         public DateTime? RupturedMembraneTime { get; set; }
         public string RupturedMembraneTimeFormat => RupturedMembraneTime != null ? ElapseTimeCalc.PeriodElapseTimeLower(RupturedMembraneTime.Value, DateTime.Now) : string.Empty;
-        public DateTime? DeliveryTime { get; set; }
+
+        public DateTime? DeliveryTime { get; set; }  // Baby delivery time (also serves as ThirdStageStartTime)
+
         public int? CervicalDilationOnAdmission { get; set; }
         public string MembraneStatus { get; set; } = "Intact";
         public string LiquorStatus { get; set; } = "Clear";
@@ -97,8 +114,11 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string StatusDisplay => Status switch
         {
             LaborStatus.Pending => "Pre-Labor",
-            LaborStatus.Active => "Active Labor",
-            LaborStatus.Completed => "Delivered",
+            LaborStatus.FirstStage => "First Stage",
+            LaborStatus.SecondStage => "Second Stage",
+            LaborStatus.ThirdStage => "Third Stage",
+            LaborStatus.FourthStage => "Fourth Stage",
+            LaborStatus.Completed => "Completed",
             LaborStatus.Emergency => "Emergency",
             _ => "Unknown"
         };
@@ -107,9 +127,12 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public Color StatusColor => Status switch
         {
             LaborStatus.Pending => Color.Orange,
-            LaborStatus.Active => Color.Green,
-            LaborStatus.Completed => Color.Blue,
-            LaborStatus.Emergency => Color.Red,
+            LaborStatus.FirstStage => Color.FromArgb("#FFC107"),  // Amber - Active labor
+            LaborStatus.SecondStage => Color.FromArgb("#FF9800"), // Orange - Delivery imminent
+            LaborStatus.ThirdStage => Color.FromArgb("#2196F3"),  // Blue - Placenta delivery
+            LaborStatus.FourthStage => Color.FromArgb("#9C27B0"), // Purple - Postpartum monitoring
+            LaborStatus.Completed => Color.FromArgb("#4CAF50"),   // Green - All clear
+            LaborStatus.Emergency => Color.FromArgb("#F44336"),   // Red - Emergency
             _ => Color.Gray
         };
 
@@ -146,8 +169,6 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
 
         [JsonIgnore]
         public bool NeedsSync => SyncStatus == 0;
-
-        public DateTime? SecondStageStartTime { get; set; }
 
         public string CalculateHash()
         {
