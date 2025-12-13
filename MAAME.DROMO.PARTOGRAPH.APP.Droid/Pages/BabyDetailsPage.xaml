@@ -182,20 +182,22 @@
                             CornerRadius="10"
                             Command="{Binding ShowApgar1PopupCommand}">
                         <buttons:SfButton.Content>
-                            <VerticalStackLayout Spacing="5">
-                                <Label Text="APGAR 1 min"
-                                       FontSize="12"
-                                       TextColor="Gray"
-                                       HorizontalOptions="Center" />
-                                <Label Text="{Binding Apgar1MinDisplay}"
-                                       FontSize="24"
-                                       FontAttributes="Bold"
-                                       HorizontalOptions="Center" />
-                                <Label Text="{Binding Apgar1StatusText}"
-                                       FontSize="10"
-                                       TextColor="{Binding Apgar1StatusColor}"
-                                       HorizontalOptions="Center" />
-                            </VerticalStackLayout>
+                            <DataTemplate>
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="APGAR 1 min"
+           FontSize="12"
+           TextColor="Gray"
+           HorizontalOptions="Center" />
+                                    <Label Text="{Binding Apgar1MinDisplay}"
+           FontSize="24"
+           FontAttributes="Bold"
+           HorizontalOptions="Center" />
+                                    <Label Text="{Binding Apgar1StatusText}"
+           FontSize="10"
+           TextColor="{Binding Apgar1StatusColor}"
+           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
                         </buttons:SfButton.Content>
                     </buttons:SfButton>
 
@@ -208,20 +210,22 @@
                             CornerRadius="10"
                             Command="{Binding ShowApgar5PopupCommand}">
                         <buttons:SfButton.Content>
-                            <VerticalStackLayout Spacing="5">
-                                <Label Text="APGAR 5 min"
-                                       FontSize="12"
-                                       TextColor="Gray"
-                                       HorizontalOptions="Center" />
-                                <Label Text="{Binding Apgar5MinDisplay}"
-                                       FontSize="24"
-                                       FontAttributes="Bold"
-                                       HorizontalOptions="Center" />
-                                <Label Text="{Binding Apgar5StatusText}"
-                                       FontSize="10"
-                                       TextColor="{Binding Apgar5StatusColor}"
-                                       HorizontalOptions="Center" />
-                            </VerticalStackLayout>
+                            <DataTemplate>
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="APGAR 5 min"
+           FontSize="12"
+           TextColor="Gray"
+           HorizontalOptions="Center" />
+                                    <Label Text="{Binding Apgar5MinDisplay}"
+           FontSize="24"
+           FontAttributes="Bold"
+           HorizontalOptions="Center" />
+                                    <Label Text="{Binding Apgar5StatusText}"
+           FontSize="10"
+           TextColor="{Binding Apgar5StatusColor}"
+           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
                         </buttons:SfButton.Content>
                     </buttons:SfButton>
                 </Grid>

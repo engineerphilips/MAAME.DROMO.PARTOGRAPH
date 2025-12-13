@@ -1128,7 +1128,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
 
                 // Get the current patient details
-                var patientDetails = await _patientRepository.GetItemAsync(Patient.PatientID);
+                var patientDetails = await _patientRepository.GetAsync(Patient.PatientID);
 
                 // Generate clinical notes
                 ClinicalNotes = _notesService.GenerateClinicalNotes(Patient, patientDetails);
@@ -1136,7 +1136,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
             catch (Exception ex)
             {
-                await _errorHandler.HandleError(ex, "Error generating clinical notes");
+                _errorHandler.HandleError(ex);
+                //, "Error generating clinical notes"
             }
             finally
             {
@@ -1162,7 +1163,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
 
                 // Get patient name for filename
-                var patientDetails = await _patientRepository.GetItemAsync(Patient.PatientID);
+                var patientDetails = await _patientRepository.GetAsync(Patient.PatientID);
                 var patientName = patientDetails != null ?
                     $"{patientDetails.FirstName}_{patientDetails.LastName}" : "Patient";
                 var fileName = $"Clinical_Notes_SecondStage_{patientName}_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
@@ -1186,7 +1187,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
             catch (Exception ex)
             {
-                await _errorHandler.HandleError(ex, "Error exporting clinical notes");
+                _errorHandler.HandleError(ex);
+                //, "Error exporting clinical notes"
             }
             finally
             {
@@ -1204,7 +1206,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             try
             {
-                var patientDetails = await _patientRepository.GetItemAsync(Patient.PatientID);
+                var patientDetails = await _patientRepository.GetAsync(Patient.PatientID);
                 ClinicalNotes = _notesService.GenerateClinicalNotes(Patient, patientDetails);
                 NotesGeneratedTime = DateTime.Now;
             }

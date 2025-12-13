@@ -103,9 +103,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             var contraction = GetMeasurementAtTime(partograph.Contractions, timePoint);
             if (contraction != null)
             {
-                var intensity = DetermineContractionIntensity(contraction.DurationSeconds ?? 0);
-                note.Append($"{contraction.FrequencyPer10Min ?? 0} uterine contractions every 10 minutes, " +
-                           $"of {intensity} intensity, and lasting {contraction.DurationSeconds ?? 0} seconds.\n");
+                var intensity = DetermineContractionIntensity(contraction.DurationSeconds);
+                note.Append($"{contraction.FrequencyPer10Min} uterine contractions every 10 minutes, " +
+                           $"of {intensity} intensity, and lasting {contraction.DurationSeconds} seconds.\n");
             }
             else
             {
@@ -193,11 +193,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         {
             var vitals = new List<string>();
 
-            var bp = GetMeasurementAtTime(partograph.BloodPressures, timePoint);
+            var bp = GetMeasurementAtTime(partograph.BPs, timePoint);
             if (bp != null)
             {
                 vitals.Add($"blood pressure {bp.Systolic}/{bp.Diastolic} mmHg");
-                if (bp.Pulse.HasValue)
+                if (bp.Pulse > 0)
                 {
                     vitals.Add($"heart rate {bp.Pulse} bpm");
                 }
@@ -206,7 +206,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             var temp = GetMeasurementAtTime(partograph.Temperatures, timePoint);
             if (temp != null)
             {
-                vitals.Add($"temperature {temp.Temperature}°C");
+                vitals.Add($"temperature {temp.Rate}°C");
             }
 
             if (vitals.Any())
@@ -254,13 +254,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             var contraction = GetMeasurementAtTime(partograph.Contractions, timePoint);
             if (contraction != null)
             {
-                var intensity = DetermineContractionIntensityAdjective(contraction.DurationSeconds ?? 0);
-                progress.Append($"Patient maintains {contraction.FrequencyPer10Min ?? 0} ");
+                var intensity = DetermineContractionIntensityAdjective(contraction.DurationSeconds);
+                progress.Append($"Patient maintains {contraction.FrequencyPer10Min} ");
                 if (!string.IsNullOrWhiteSpace(intensity))
                 {
                     progress.Append($"{intensity} ");
                 }
-                progress.Append($"uterine contractions in 10 minutes, lasting {contraction.DurationSeconds ?? 0} seconds each. ");
+                progress.Append($"uterine contractions in 10 minutes, lasting {contraction.DurationSeconds} seconds each. ");
             }
 
             var descent = GetMeasurementAtTime(partograph.HeadDescents, timePoint);
@@ -283,15 +283,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             }
 
             var moulding = GetMeasurementAtTime(partograph.Mouldings, timePoint);
-            if (moulding != null && !string.IsNullOrWhiteSpace(moulding.MouldingStatus))
+            if (moulding != null && !string.IsNullOrWhiteSpace(moulding.DegreeDisplay))
             {
-                progress.Append($"Moulding: {moulding.MouldingStatus}. ");
+                progress.Append($"Moulding: {moulding.DegreeDisplay}. ");
             }
 
             var caput = GetMeasurementAtTime(partograph.Caputs, timePoint);
-            if (caput != null && !string.IsNullOrWhiteSpace(caput.CaputStatus))
+            if (caput != null && !string.IsNullOrWhiteSpace(caput.CaputDisplay))
             {
-                progress.Append($"Caput: {caput.CaputStatus}. ");
+                progress.Append($"Caput: {caput.CaputDisplay}. ");
             }
 
             return progress.ToString();
@@ -305,49 +305,49 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             var actions = new StringBuilder();
 
             // Check for medication/interventions
-            var oxytocin = GetMeasurementAtTime(partograph.Oxyotocins, timePoint);
+            var oxytocin = GetMeasurementAtTime(partograph.Oxytocins, timePoint);
             if (oxytocin != null)
             {
-                actions.AppendLine($"Oxytocin administered: {oxytocin.DropsPerMinute} drops/minute.");
+                actions.AppendLine($"Oxytocin administered: {oxytocin.DoseMUnitsPerMin} drops/minute.");
             }
 
-            var medication = GetMeasurementAtTime(partograph.MedicationEntries, timePoint);
+            var medication = GetMeasurementAtTime(partograph.Medications, timePoint);
             if (medication != null && !string.IsNullOrWhiteSpace(medication.MedicationName))
             {
                 actions.AppendLine($"Medication administered: {medication.MedicationName}" +
-                    (!string.IsNullOrWhiteSpace(medication.Dosage) ? $" ({medication.Dosage})" : "") + ".");
+                    (!string.IsNullOrWhiteSpace(medication.Dose) ? $" ({medication.Dose})" : "") + ".");
             }
 
             // Check for care support
-            var companion = GetMeasurementAtTime(partograph.CompanionEntries, timePoint);
-            if (companion != null && companion.CompanionPresent == "Y")
+            var companion = GetMeasurementAtTime(partograph.Companions, timePoint);
+            if (companion != null && companion.Companion == "Y")
             {
-                actions.AppendLine($"Companion present: {companion.CompanionName ?? "family member"}.");
+                actions.AppendLine($"Companion present: {companion.CompanionDisplay ?? "family member"}.");
             }
 
-            var painRelief = GetMeasurementAtTime(partograph.PainReliefEntries, timePoint);
-            if (painRelief != null && !string.IsNullOrWhiteSpace(painRelief.PainReliefMethod))
+            var painRelief = GetMeasurementAtTime(partograph.PainReliefs, timePoint);
+            if (painRelief != null && !string.IsNullOrWhiteSpace(painRelief.PainReliefDisplay))
             {
-                actions.AppendLine($"Pain relief: {painRelief.PainReliefMethod}.");
+                actions.AppendLine($"Pain relief: {painRelief.PainReliefDisplay}.");
             }
 
-            var posture = GetMeasurementAtTime(partograph.PostureEntries, timePoint);
-            if (posture != null && !string.IsNullOrWhiteSpace(posture.Posture))
+            var posture = GetMeasurementAtTime(partograph.Postures, timePoint);
+            if (posture != null && !string.IsNullOrWhiteSpace(posture.PostureDisplay))
             {
-                actions.AppendLine($"Maternal position: {posture.Posture.ToLower()}.");
+                actions.AppendLine($"Maternal position: {posture.PostureDisplay.ToLower()}.");
             }
 
             // Check for assessment/plan
             var assessment = GetMeasurementAtTime(partograph.Assessments, timePoint);
-            if (assessment != null && !string.IsNullOrWhiteSpace(assessment.AssessmentNotes))
+            if (assessment != null && !string.IsNullOrWhiteSpace(assessment.Notes))
             {
-                actions.AppendLine($"Assessment: {assessment.AssessmentNotes}");
+                actions.AppendLine($"Assessment: {assessment.Notes}");
             }
 
             var plan = GetMeasurementAtTime(partograph.Plans, timePoint);
-            if (plan != null && !string.IsNullOrWhiteSpace(plan.PlanNotes))
+            if (plan != null && !string.IsNullOrWhiteSpace(plan.Notes))
             {
-                actions.AppendLine($"Plan: {plan.PlanNotes}");
+                actions.AppendLine($"Plan: {plan.Notes}");
             }
 
             return actions.ToString().TrimEnd();
@@ -360,13 +360,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         {
             // Check assessments for complaints
             var assessment = GetMeasurementAtTime(partograph.Assessments, timePoint);
-            if (assessment != null && !string.IsNullOrWhiteSpace(assessment.AssessmentNotes))
+            if (assessment != null && !string.IsNullOrWhiteSpace(assessment.Notes))
             {
-                if (assessment.AssessmentNotes.ToLower().Contains("complain") ||
-                    assessment.AssessmentNotes.ToLower().Contains("pain") ||
-                    assessment.AssessmentNotes.ToLower().Contains("discomfort"))
+                if (assessment.Notes.ToLower().Contains("complain") ||
+                    assessment.Notes.ToLower().Contains("pain") ||
+                    assessment.Notes.ToLower().Contains("discomfort"))
                 {
-                    return assessment.AssessmentNotes;
+                    return assessment.Notes;
                 }
             }
 
@@ -382,13 +382,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
             // Check if parameters are normal
             var fhr = GetMeasurementAtTime(partograph.Fhrs, timePoint);
-            var bp = GetMeasurementAtTime(partograph.BloodPressures, timePoint);
+            var bp = GetMeasurementAtTime(partograph.BPs, timePoint);
             var temp = GetMeasurementAtTime(partograph.Temperatures, timePoint);
 
             bool parametersNormal = true;
             if (fhr != null && (fhr.Rate < 110 || fhr.Rate > 160)) parametersNormal = false;
             if (bp != null && (bp.Systolic > 140 || bp.Diastolic > 90)) parametersNormal = false;
-            if (temp != null && (temp.Temperature < 36.5 || temp.Temperature > 37.5)) parametersNormal = false;
+            if (temp != null && (temp.Rate < 36.5 || temp.Rate > 37.5)) parametersNormal = false;
 
             if (parametersNormal)
             {
@@ -424,17 +424,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             AddTimes(times, partograph.Dilatations);
             AddTimes(times, partograph.HeadDescents);
             AddTimes(times, partograph.Fhrs);
-            AddTimes(times, partograph.BloodPressures);
+            AddTimes(times, partograph.BPs);
             AddTimes(times, partograph.Temperatures);
             AddTimes(times, partograph.AmnioticFluids);
             AddTimes(times, partograph.FetalPositions);
             AddTimes(times, partograph.Mouldings);
             AddTimes(times, partograph.Caputs);
-            AddTimes(times, partograph.Oxyotocins);
-            AddTimes(times, partograph.MedicationEntries);
-            AddTimes(times, partograph.CompanionEntries);
-            AddTimes(times, partograph.PainReliefEntries);
-            AddTimes(times, partograph.PostureEntries);
+            AddTimes(times, partograph.Oxytocins);
+            AddTimes(times, partograph.Medications);
+            AddTimes(times, partograph.Companions);
+            AddTimes(times, partograph.PainReliefs);
+            AddTimes(times, partograph.Postures);
             AddTimes(times, partograph.Assessments);
             AddTimes(times, partograph.Plans);
 

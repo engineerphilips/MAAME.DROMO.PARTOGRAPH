@@ -150,7 +150,8 @@
                     CornerRadius="10"
                     Command="{Binding OpenBishopScorePopupCommand}">
                 <buttons:SfButton.Content>
-                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
                         <!-- Icon and Title -->
                         <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="5">
                             <!--<Label Text="📊" FontSize="32" HorizontalOptions="Center" />-->
@@ -188,7 +189,8 @@
                                    Opacity="0.7"
                                    HorizontalOptions="Center" />
                         </VerticalStackLayout>
-                    </Grid>
+                        </Grid>
+                    </DataTemplate>
                 </buttons:SfButton.Content>
             </buttons:SfButton>
 
@@ -1518,7 +1520,8 @@
                     BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
                     Padding="15"
                     Margin="0,20,0,10"
-                    IsVisible="{Binding ClinicalNotes, Converter={toolkit:IsNotNullOrEmptyConverter}}">
+                    IsVisible="{Binding ClinicalNotes, Converter={toolkit:IsStringNotNullOrEmptyConverter}}">
+                <!--IsNotNullOrEmptyConverter-->
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
