@@ -209,6 +209,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return babies;
         }
 
+        public async Task<List<BabyDetails>> ListAsync()
+        {
+            await Init();
+            var babies = new List<BabyDetails>();
+            try
+            {
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = "SELECT * FROM Tbl_Baby WHERE deleted = 0 ORDER BY babynumber";
+                //selectCmd.Parameters.AddWithValue("@birthoutcomeid", birthOutcomeId.ToString());
+
+                await using var reader = await selectCmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    babies.Add(MapFromReader(reader));
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error getting baby details by birth outcome");
+                throw;
+            }
+
+            return babies;
+        }
+
         public async Task<Guid?> SaveItemAsync(BabyDetails item)
         {
             await Init();

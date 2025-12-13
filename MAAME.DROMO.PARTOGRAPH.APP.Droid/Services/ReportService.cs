@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using MAAME.DROMO.PARTOGRAPH.APP.Droid.Models;
+using System.Threading.Tasks; 
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
@@ -66,9 +65,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
         public async Task<MonthlyDeliveryDashboard> GenerateMonthlyDeliveryDashboardAsync(DateTime startDate, DateTime endDate)
         {
-            var partographs = await _partographRepo.GetAllAsync();
-            var birthOutcomes = await _birthOutcomeRepo.GetAllAsync();
-            var babies = await _babyDetailsRepo.GetAllAsync();
+            var partographs = await _partographRepo.ListAsync();
+            var birthOutcomes = await _birthOutcomeRepo.ListAsync();
+            var babies = await _babyDetailsRepo.ListAsync();
 
             // Filter by date range
             var deliveriesInPeriod = birthOutcomes

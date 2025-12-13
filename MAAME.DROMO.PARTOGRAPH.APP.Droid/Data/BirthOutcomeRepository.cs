@@ -132,6 +132,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return null;
         }
 
+        public async Task<List<BirthOutcome>> ListAsync()
+        {
+            await Init();
+            var results = new List<BirthOutcome>();
+            try
+            {
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = "SELECT * FROM Tbl_BirthOutcome WHERE deleted = 0";
+                //selectCmd.Parameters.AddWithValue("@partographid", partographId.ToString());
+
+                await using var reader = await selectCmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    results.Add(MapFromReader(reader));
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error getting birth outcome");
+                throw;
+            }
+
+            return results;
+        }
+
         public async Task<Guid?> SaveItemAsync(BirthOutcome item)
         {
             await Init();

@@ -184,7 +184,6 @@
                                FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                FontSize="12"
                                TextColor="White" -->
-
                             
                             <Label Text="Version: v2.1" 
                                TextColor="White" 
