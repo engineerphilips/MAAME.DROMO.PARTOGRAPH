@@ -143,57 +143,54 @@
             </Border>
 
             <!-- Bishop Score Panel -->
-            <Border Grid.Row="1"
-                    StrokeThickness="0"
-                    BackgroundColor="{Binding BishopScoreButtonColor}"
+            <buttons:SfButton Grid.Row="1"
+                    Background="{Binding BishopScoreButtonColor}"
                     Padding="15"
-                    Margin="0,0,0,10">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding OpenBishopScorePopupCommand}" />
-                </Border.GestureRecognizers>
-                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
-                    <!-- Icon and Title -->
-                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="5">
-                        <!--<Label Text="📊" FontSize="32" HorizontalOptions="Center" />-->
-                        <Label Text="Bishop Score"
-                               FontSize="12"
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center" />
-                    </VerticalStackLayout>
+                    Margin="0,0,0,10"
+                    CornerRadius="10"
+                    Command="{Binding OpenBishopScorePopupCommand}">
+                <buttons:SfButton.Content>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
+                        <!-- Icon and Title -->
+                        <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="5">
+                            <!--<Label Text="📊" FontSize="32" HorizontalOptions="Center" />-->
+                            <Label Text="Bishop Score"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
 
-                    <!-- Latest Score Info -->
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
-                        <Label Text="{Binding BishopScoreLatestValue}"
-                               FontSize="14"
-                               TextColor="#666" />
-                        <Label Text="{Binding BishopScoreInterpretation}"
-                               FontSize="12"
-                               FontAttributes="Bold"
-                               TextColor="{Binding BishopScoreStatusColor}" />
-                        <Label Text="{Binding BishopScoreNotes}"
-                               FontSize="10"
-                               Opacity="0.7"
-                               LineBreakMode="TailTruncation"
-                               MaxLines="2" />
-                    </VerticalStackLayout>
+                        <!-- Latest Score Info -->
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
+                            <Label Text="{Binding BishopScoreLatestValue}"
+                                   FontSize="14"
+                                   TextColor="#666" />
+                            <Label Text="{Binding BishopScoreInterpretation}"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   TextColor="{Binding BishopScoreStatusColor}" />
+                            <Label Text="{Binding BishopScoreNotes}"
+                                   FontSize="10"
+                                   Opacity="0.7"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="2" />
+                        </VerticalStackLayout>
 
-                    <!-- Score Display -->
-                    <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
-                        <Label Text="{Binding BishopScoreTotalDisplay}"
-                               FontSize="36"
-                               FontAttributes="Bold"
-                               TextColor="{Binding BishopScoreStatusColor}"
-                               HorizontalOptions="Center" />
-                        <Label Text="out of 13"
-                               FontSize="10"
-                               Opacity="0.7"
-                               HorizontalOptions="Center" />
-                    </VerticalStackLayout>
-                </Grid>
-            </Border>
+                        <!-- Score Display -->
+                        <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
+                            <Label Text="{Binding BishopScoreTotalDisplay}"
+                                   FontSize="36"
+                                   FontAttributes="Bold"
+                                   TextColor="{Binding BishopScoreStatusColor}"
+                                   HorizontalOptions="Center" />
+                            <Label Text="out of 13"
+                                   FontSize="10"
+                                   Opacity="0.7"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </buttons:SfButton.Content>
+            </buttons:SfButton>
 
             <!-- Clinical Alerts Panel -->
             <!---->

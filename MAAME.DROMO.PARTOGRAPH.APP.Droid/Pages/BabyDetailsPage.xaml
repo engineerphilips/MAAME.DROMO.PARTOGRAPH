@@ -174,60 +174,56 @@
 
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                     <!-- APGAR 1 Min Button -->
-                    <Border Grid.Column="0"
-                            BackgroundColor="{Binding Apgar1ButtonColor}"
+                    <buttons:SfButton Grid.Column="0"
+                            Background="{Binding Apgar1ButtonColor}"
                             StrokeThickness="2"
                             Stroke="{Binding Apgar1BorderColor}"
-                            Padding="15">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10"/>
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ShowApgar1PopupCommand}" />
-                        </Border.GestureRecognizers>
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="APGAR 1 min"
-                                   FontSize="12"
-                                   TextColor="Gray"
-                                   HorizontalOptions="Center" />
-                            <Label Text="{Binding Apgar1MinDisplay}"
-                                   FontSize="24"
-                                   FontAttributes="Bold"
-                                   HorizontalOptions="Center" />
-                            <Label Text="{Binding Apgar1StatusText}"
-                                   FontSize="10"
-                                   TextColor="{Binding Apgar1StatusColor}"
-                                   HorizontalOptions="Center" />
-                        </VerticalStackLayout>
-                    </Border>
+                            Padding="15"
+                            CornerRadius="10"
+                            Command="{Binding ShowApgar1PopupCommand}">
+                        <buttons:SfButton.Content>
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="APGAR 1 min"
+                                       FontSize="12"
+                                       TextColor="Gray"
+                                       HorizontalOptions="Center" />
+                                <Label Text="{Binding Apgar1MinDisplay}"
+                                       FontSize="24"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center" />
+                                <Label Text="{Binding Apgar1StatusText}"
+                                       FontSize="10"
+                                       TextColor="{Binding Apgar1StatusColor}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </buttons:SfButton.Content>
+                    </buttons:SfButton>
 
                     <!-- APGAR 5 Min Button -->
-                    <Border Grid.Column="1"
-                            BackgroundColor="{Binding Apgar5ButtonColor}"
+                    <buttons:SfButton Grid.Column="1"
+                            Background="{Binding Apgar5ButtonColor}"
                             StrokeThickness="2"
                             Stroke="{Binding Apgar5BorderColor}"
-                            Padding="15">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10"/>
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ShowApgar5PopupCommand}" />
-                        </Border.GestureRecognizers>
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="APGAR 5 min"
-                                   FontSize="12"
-                                   TextColor="Gray"
-                                   HorizontalOptions="Center" />
-                            <Label Text="{Binding Apgar5MinDisplay}"
-                                   FontSize="24"
-                                   FontAttributes="Bold"
-                                   HorizontalOptions="Center" />
-                            <Label Text="{Binding Apgar5StatusText}"
-                                   FontSize="10"
-                                   TextColor="{Binding Apgar5StatusColor}"
-                                   HorizontalOptions="Center" />
-                        </VerticalStackLayout>
-                    </Border>
+                            Padding="15"
+                            CornerRadius="10"
+                            Command="{Binding ShowApgar5PopupCommand}">
+                        <buttons:SfButton.Content>
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="APGAR 5 min"
+                                       FontSize="12"
+                                       TextColor="Gray"
+                                       HorizontalOptions="Center" />
+                                <Label Text="{Binding Apgar5MinDisplay}"
+                                       FontSize="24"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center" />
+                                <Label Text="{Binding Apgar5StatusText}"
+                                       FontSize="10"
+                                       TextColor="{Binding Apgar5StatusColor}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </buttons:SfButton.Content>
+                    </buttons:SfButton>
                 </Grid>
             </StackLayout>
 
