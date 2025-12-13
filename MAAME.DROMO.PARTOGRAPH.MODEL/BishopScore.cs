@@ -28,6 +28,10 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         // Interpretation
         public string Interpretation { get; set; } = string.Empty;
         public bool FavorableForDelivery { get; set; } // True if score ≥ 8
+
+        // Clinical Notes
+        public string Notes { get; set; } = string.Empty; // Additional clinical observations
+        public string RecordedBy { get; set; } = string.Empty; // Staff member who recorded the score
     }
 
     /// <summary>

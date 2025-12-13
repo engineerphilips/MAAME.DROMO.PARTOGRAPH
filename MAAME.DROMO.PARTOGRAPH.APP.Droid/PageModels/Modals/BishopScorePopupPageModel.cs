@@ -22,6 +22,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty] private int _totalScore;
         [ObservableProperty] private string _scoreInterpretation = string.Empty;
         [ObservableProperty] private Color _totalScoreColor = Colors.Gray;
+        [ObservableProperty] private string _notes = string.Empty;
 
         // Dilation Colors (0-3)
         [ObservableProperty] private Color _dilation0Color;
@@ -233,7 +234,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 TotalScore = TotalScore,
                 Interpretation = ScoreInterpretation,
                 FavorableForDelivery = TotalScore >= 8,
-                Time = DateTime.Now
+                Time = DateTime.Now,
+                Notes = Notes,
+                RecordedBy = Constants.Staff?.Name ?? Preferences.Get("StaffName", "Staff")
             };
 
             OnScoreSaved?.Invoke(score);

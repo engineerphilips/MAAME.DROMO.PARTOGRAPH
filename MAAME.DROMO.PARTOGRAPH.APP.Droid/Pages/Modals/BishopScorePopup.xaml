@@ -387,6 +387,23 @@
                         </Grid>
                     </VerticalStackLayout>
 
+                    <!-- Clinical Notes -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Clinical Notes (Optional)" Style="{StaticResource SectionTitle}" />
+                        <Border BackgroundColor="#F5F5F5"
+                                StrokeThickness="1"
+                                Stroke="#E0E0E0"
+                                Padding="10">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <Editor Text="{Binding Notes}"
+                                    Placeholder="Add clinical observations, findings, or plan..."
+                                    HeightRequest="80"
+                                    BackgroundColor="Transparent" />
+                        </Border>
+                    </VerticalStackLayout>
+
                     <!-- Action Buttons -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,20">
                         <Button Grid.Column="0"
