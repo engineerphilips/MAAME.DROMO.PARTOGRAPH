@@ -86,8 +86,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private BabySex _sex = BabySex.Unknown;
 
         // Vital Status
-        [ObservableProperty]
+        //[ObservableProperty]
         private BabyVitalStatus _vitalStatus = BabyVitalStatus.LiveBirth;
+
+        public BabyVitalStatus VitalStatus
+        {
+            get => _vitalStatus;
+            set
+            {
+                SetProperty(ref _vitalStatus, value);
+                ShowDeathFields = _vitalStatus != BabyVitalStatus.LiveBirth && _vitalStatus != BabyVitalStatus.Survived;
+                //OnPropertyChanged(nameof(AbortionVisibility));
+                if (_vitalStatus != BabyVitalStatus.LiveBirth || _vitalStatus != BabyVitalStatus.Survived)
+                {
+                    DeathTime = null;
+                    DeathCause = string.Empty;
+                    //MaternalDeathCircumstances = string.Empty;
+                }
+            }
+        }
 
         [ObservableProperty]
         private DateTime? _deathTime;
@@ -118,8 +135,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private int? _apgar5Min;
 
-        [ObservableProperty]
-        private int? _apgar10Min;
+        //[ObservableProperty]
+        //private int? _apgar10Min;
 
         // Resuscitation
         [ObservableProperty]
@@ -147,8 +164,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _medicationDetails = string.Empty;
 
         // Immediate Newborn Care (WHO 2020)
-        [ObservableProperty]
-        private bool _skinToSkinContact = true;
+        //[ObservableProperty]
+        //private bool _skinToSkinContact = true;
 
         [ObservableProperty]
         private bool _earlyBreastfeedingInitiated = true;
@@ -187,18 +204,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _birthInjuriesDescription = string.Empty;
 
-        // Clinical Status
-        [ObservableProperty]
-        private bool _breathing = true;
+        //// Clinical Status
+        //[ObservableProperty]
+        //private bool _breathing = true;
 
-        [ObservableProperty]
-        private bool _crying = true;
+        //[ObservableProperty]
+        //private bool _crying = true;
 
-        [ObservableProperty]
-        private bool _goodMuscleTone = true;
+        //[ObservableProperty]
+        //private bool _goodMuscleTone = true;
 
-        [ObservableProperty]
-        private SkinColor _skinColor = SkinColor.Pink;
+        //[ObservableProperty]
+        //private SkinColor _skinColor = SkinColor.Pink;
 
         // Special Care
         [ObservableProperty]
@@ -221,6 +238,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private bool _showDeathFields = false;
+        public string BabyCountDisplay => $"Baby {CurrentBabyIndex} of {NumberOfBabies}";
 
         // Lists for pickers
         public List<BabySex> SexOptions => Enum.GetValues(typeof(BabySex)).Cast<BabySex>().ToList();
@@ -379,7 +397,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             ChestCircumference = baby.ChestCircumference;
             Apgar1Min = baby.Apgar1Min;
             Apgar5Min = baby.Apgar5Min;
-            Apgar10Min = baby.Apgar10Min;
+            //Apgar10Min = baby.Apgar10Min;
             ResuscitationRequired = baby.ResuscitationRequired;
             ResuscitationSteps = baby.ResuscitationSteps ?? string.Empty;
             ResuscitationDuration = baby.ResuscitationDuration;
@@ -388,7 +406,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             ChestCompressionsGiven = baby.ChestCompressionsGiven;
             MedicationsGiven = baby.MedicationsGiven;
             MedicationDetails = baby.MedicationDetails ?? string.Empty;
-            SkinToSkinContact = baby.SkinToSkinContact;
+            //SkinToSkinContact = baby.SkinToSkinContact;
             EarlyBreastfeedingInitiated = baby.EarlyBreastfeedingInitiated;
             DelayedCordClamping = baby.DelayedCordClamping;
             CordClampingTime = baby.CordClampingTime;
@@ -401,10 +419,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             CongenitalAbnormalitiesDescription = baby.CongenitalAbnormalitiesDescription ?? string.Empty;
             BirthInjuriesPresent = baby.BirthInjuriesPresent;
             BirthInjuriesDescription = baby.BirthInjuriesDescription ?? string.Empty;
-            Breathing = baby.Breathing;
-            Crying = baby.Crying;
-            GoodMuscleTone = baby.GoodMuscleTone;
-            SkinColor = baby.SkinColor;
+            //Breathing = baby.Breathing;
+            //Crying = baby.Crying;
+            //GoodMuscleTone = baby.GoodMuscleTone;
+            //SkinColor = baby.SkinColor;
             RequiresSpecialCare = baby.RequiresSpecialCare;
             SpecialCareReason = baby.SpecialCareReason ?? string.Empty;
             AdmittedToNICU = baby.AdmittedToNICU;
@@ -417,7 +435,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             var baby = new BabyDetails
             {
-                ID = CurrentBaby?.ID ?? Guid.NewGuid(),
+                ID = CurrentBaby?.ID,
                 PartographID = PartographId,
                 BirthOutcomeID = BirthOutcomeId,
                 BabyNumber = BabyNumber,
@@ -434,7 +452,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 ChestCircumference = ChestCircumference,
                 Apgar1Min = Apgar1Min,
                 Apgar5Min = Apgar5Min,
-                Apgar10Min = Apgar10Min,
+                //Apgar10Min = Apgar10Min,
                 ResuscitationRequired = ResuscitationRequired,
                 ResuscitationSteps = ResuscitationSteps,
                 ResuscitationDuration = ResuscitationDuration,
@@ -443,7 +461,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 ChestCompressionsGiven = ChestCompressionsGiven,
                 MedicationsGiven = MedicationsGiven,
                 MedicationDetails = MedicationDetails,
-                SkinToSkinContact = SkinToSkinContact,
+                //SkinToSkinContact = SkinToSkinContact,
                 EarlyBreastfeedingInitiated = EarlyBreastfeedingInitiated,
                 DelayedCordClamping = DelayedCordClamping,
                 CordClampingTime = CordClampingTime,
@@ -458,10 +476,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 CongenitalAbnormalitiesDescription = CongenitalAbnormalitiesDescription,
                 BirthInjuriesPresent = BirthInjuriesPresent,
                 BirthInjuriesDescription = BirthInjuriesDescription,
-                Breathing = Breathing,
-                Crying = Crying,
-                GoodMuscleTone = GoodMuscleTone,
-                SkinColor = SkinColor,
+                //Breathing = Breathing,
+                //Crying = Crying,
+                //GoodMuscleTone = GoodMuscleTone,
+                //SkinColor = SkinColor,
                 RequiresSpecialCare = RequiresSpecialCare,
                 SpecialCareReason = SpecialCareReason,
                 AdmittedToNICU = AdmittedToNICU,
@@ -537,10 +555,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             ChestCircumference = 0;
             Apgar1Min = null;
             Apgar5Min = null;
-            Apgar10Min = null;
+            //Apgar10Min = null;
             ResuscitationRequired = false;
             ResuscitationSteps = string.Empty;
-            SkinToSkinContact = true;
+            //SkinToSkinContact = true;
             EarlyBreastfeedingInitiated = true;
             DelayedCordClamping = true;
             VitaminKGiven = true;

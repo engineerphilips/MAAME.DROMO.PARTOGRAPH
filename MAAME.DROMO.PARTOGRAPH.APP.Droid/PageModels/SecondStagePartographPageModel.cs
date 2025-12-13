@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
@@ -733,12 +734,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 // Show a prompt to update APGAR and other vital signs
                 string apgar1 = baby.Apgar1Min?.ToString() ?? "";
                 string apgar5 = baby.Apgar5Min?.ToString() ?? "";
-                string apgar10 = baby.Apgar10Min?.ToString() ?? "";
+                //string apgar10 = baby.Apgar10Min?.ToString() ?? "";
 
                 string result = await Application.Current.MainPage.DisplayPromptAsync(
                     $"Update Vitals - {baby.BabyTag}",
-                    $"Enter APGAR scores (1min, 5min, 10min) separated by commas:\nCurrent: {apgar1}, {apgar5}, {apgar10}",
-                    initialValue: $"{apgar1},{apgar5},{apgar10}",
+                    $"Enter APGAR scores (1min, 5min) separated by commas:\nCurrent: {apgar1}, {apgar5}",
+                    initialValue: $"{apgar1},{apgar5}",
                     maxLength: 10,
                     keyboard: Keyboard.Numeric);
 
@@ -749,10 +750,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     {
                         baby.Apgar1Min = int.TryParse(scores[0].Trim(), out int a1) ? a1 : baby.Apgar1Min;
                         baby.Apgar5Min = int.TryParse(scores[1].Trim(), out int a5) ? a5 : baby.Apgar5Min;
-                        if (scores.Length >= 3)
-                        {
-                            baby.Apgar10Min = int.TryParse(scores[2].Trim(), out int a10) ? a10 : baby.Apgar10Min;
-                        }
+                        //if (scores.Length >= 3)
+                        //{
+                        //    baby.Apgar10Min = int.TryParse(scores[2].Trim(), out int a10) ? a10 : baby.Apgar10Min;
+                        //}
 
                         await _babyDetailsRepository.SaveItemAsync(baby);
                         await LoadBabiesAsync();

@@ -172,7 +172,7 @@
             <Label Text="APGAR Scores" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
-                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                     <core:SfTextInputLayout Grid.Column="0" Hint="1 min" Style="{StaticResource PatientInput}">
                         <editors:SfNumericEntry Value="{Binding Apgar1Min, Mode=TwoWay}"
                                                Minimum="0"
@@ -189,13 +189,13 @@
                                                ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="2" Hint="10 min" Style="{StaticResource PatientInput}">
+                    <!--<core:SfTextInputLayout Grid.Column="2" Hint="10 min" Style="{StaticResource PatientInput}">
                         <editors:SfNumericEntry Value="{Binding Apgar10Min, Mode=TwoWay}"
                                                Minimum="0"
                                                Maximum="10"
                                                CustomFormat="0"
                                                ValueChangeMode="OnKeyFocus" />
-                    </core:SfTextInputLayout>
+                    </core:SfTextInputLayout>-->
                 </Grid>
             </StackLayout>
 
@@ -258,10 +258,10 @@
             <Label Text="Immediate Newborn Care" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="8">
 
-                <StackLayout Orientation="Horizontal" Spacing="10">
+                <!--<StackLayout Orientation="Horizontal" Spacing="10">
                     <CheckBox IsChecked="{Binding SkinToSkinContact, Mode=TwoWay}" />
                     <Label Text="Skin-to-Skin Contact" VerticalOptions="Center" />
-                </StackLayout>
+                </StackLayout>-->
 
                 <StackLayout Orientation="Horizontal" Spacing="10">
                     <CheckBox IsChecked="{Binding EarlyBreastfeedingInitiated, Mode=TwoWay}" />
@@ -317,7 +317,7 @@
             <Label Text="Clinical Assessment" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="8">
 
-                <StackLayout Orientation="Horizontal" Spacing="10">
+                <!--<StackLayout Orientation="Horizontal" Spacing="10">
                     <CheckBox IsChecked="{Binding Breathing, Mode=TwoWay}" />
                     <Label Text="Breathing Normally" VerticalOptions="Center" />
                 </StackLayout>
@@ -335,7 +335,7 @@
                 <core:SfTextInputLayout Hint="Skin Color" Style="{StaticResource PatientInput}">
                     <Picker ItemsSource="{Binding SkinColorOptions}"
                             SelectedItem="{Binding SkinColor, Mode=TwoWay}" />
-                </core:SfTextInputLayout>
+                </core:SfTextInputLayout>-->
 
                 <StackLayout Orientation="Horizontal" Spacing="10">
                     <CheckBox IsChecked="{Binding CongenitalAbnormalitiesPresent, Mode=TwoWay}" />
@@ -413,7 +413,7 @@
                                  Style="{StaticResource PrimaryButton}"
                                  IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
 
-                <Label Text="{Binding CurrentBabyIndex, StringFormat='Baby {0} of {1}', StringFormat='{0} of ' + Binding NumberOfBabies}"
+                <Label Text="{Binding BabyCountDisplay}"
                        TextColor="{StaticResource TextSecondary}"
                        FontSize="12"
                        HorizontalOptions="Center"

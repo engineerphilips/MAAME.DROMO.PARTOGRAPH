@@ -53,7 +53,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     chestcompressionsgiven INTEGER NOT NULL DEFAULT 0,
                     medicationsgiven INTEGER NOT NULL DEFAULT 0,
                     medicationdetails TEXT,
-                    skintoskincontact INTEGER NOT NULL DEFAULT 1,
                     earlybreastfeedinginitiated INTEGER NOT NULL DEFAULT 1,
                     delayedcordclamping INTEGER NOT NULL DEFAULT 1,
                     cordclampingtime INTEGER,
@@ -68,10 +67,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     congenitalabnormalitiesdescription TEXT,
                     birthinjuriespresent INTEGER NOT NULL DEFAULT 0,
                     birthinjuriesdescription TEXT,
-                    breathing INTEGER NOT NULL DEFAULT 1,
-                    crying INTEGER NOT NULL DEFAULT 1,
-                    goodmuscletone INTEGER NOT NULL DEFAULT 1,
-                    skincolor INTEGER NOT NULL DEFAULT 0,
                     requiresspecialcare INTEGER NOT NULL DEFAULT 0,
                     specialcarereason TEXT,
                     admittedtonicu INTEGER NOT NULL DEFAULT 0,
@@ -129,6 +124,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     WHERE ID = NEW.ID;
                 END;
                 ";
+
+                //skintoskincontact INTEGER NOT NULL DEFAULT 1,
+                //breathing INTEGER NOT NULL DEFAULT 1,
+                //    crying INTEGER NOT NULL DEFAULT 1,
+                //    goodmuscletone INTEGER NOT NULL DEFAULT 1,
+                //    skincolor INTEGER NOT NULL DEFAULT 0,
                 await createTableCmd.ExecuteNonQueryAsync();
             }
             catch (Exception e)
@@ -226,7 +227,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 }
 
                 AddParameters(saveCmd, item);
-                await saveCmd.ExecuteNonQueryAsync();
+                if (await saveCmd.ExecuteNonQueryAsync() > 0)
+                {
+                    var x = item.ID;
+                }
+                else
+                    item.ID = null;
             }
             catch (Exception e)
             {
@@ -245,7 +251,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 deathtime, deathcause, stillbirthmacerated, birthweight, length, headcircumference,
                 chestcircumference, apgar1min, apgar5min, apgar10min, resuscitationrequired,
                 resuscitationsteps, resuscitationduration, oxygengiven, intubationperformed,
-                chestcompressionsgiven, medicationsgiven, medicationdetails, skintoskincontact,
+                chestcompressionsgiven, medicationsgiven, medicationdetails,
                 earlybreastfeedinginitiated, delayedcordclamping, cordclampingtime, vitaminkgiven,
                 eyeprophylaxisgiven, hepatitisbvaccinegiven, firsttemperature, kangaroomothercare,
                 weightclassification, gestationalclassification, congenitalabnormalitiespresent,
@@ -260,7 +266,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 @deathtime, @deathcause, @stillbirthmacerated, @birthweight, @length, @headcircumference,
                 @chestcircumference, @apgar1min, @apgar5min, @apgar10min, @resuscitationrequired,
                 @resuscitationsteps, @resuscitationduration, @oxygengiven, @intubationperformed,
-                @chestcompressionsgiven, @medicationsgiven, @medicationdetails, @skintoskincontact,
+                @chestcompressionsgiven, @medicationsgiven, @medicationdetails,
                 @earlybreastfeedinginitiated, @delayedcordclamping, @cordclampingtime, @vitaminkgiven,
                 @eyeprophylaxisgiven, @hepatitisbvaccinegiven, @firsttemperature, @kangaroomothercare,
                 @weightclassification, @gestationalclassification, @congenitalabnormalitiespresent,
@@ -286,7 +292,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 resuscitationduration = @resuscitationduration, oxygengiven = @oxygengiven,
                 intubationperformed = @intubationperformed, chestcompressionsgiven = @chestcompressionsgiven,
                 medicationsgiven = @medicationsgiven, medicationdetails = @medicationdetails,
-                skintoskincontact = @skintoskincontact, earlybreastfeedinginitiated = @earlybreastfeedinginitiated,
+                earlybreastfeedinginitiated = @earlybreastfeedinginitiated,
                 delayedcordclamping = @delayedcordclamping, cordclampingtime = @cordclampingtime,
                 vitaminkgiven = @vitaminkgiven, eyeprophylaxisgiven = @eyeprophylaxisgiven,
                 hepatitisbvaccinegiven = @hepatitisbvaccinegiven, firsttemperature = @firsttemperature,
@@ -327,7 +333,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@chestcircumference", item.ChestCircumference);
             cmd.Parameters.AddWithValue("@apgar1min", item.Apgar1Min.HasValue ? item.Apgar1Min.Value : (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@apgar5min", item.Apgar5Min.HasValue ? item.Apgar5Min.Value : (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@apgar10min", item.Apgar10Min.HasValue ? item.Apgar10Min.Value : (object)DBNull.Value);
+            //cmd.Parameters.AddWithValue("@apgar10min", item.Apgar10Min.HasValue ? item.Apgar10Min.Value : (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@resuscitationrequired", item.ResuscitationRequired ? 1 : 0);
             cmd.Parameters.AddWithValue("@resuscitationsteps", item.ResuscitationSteps ?? string.Empty);
             cmd.Parameters.AddWithValue("@resuscitationduration", item.ResuscitationDuration.HasValue ? item.ResuscitationDuration.Value : (object)DBNull.Value);
@@ -336,7 +342,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@chestcompressionsgiven", item.ChestCompressionsGiven ? 1 : 0);
             cmd.Parameters.AddWithValue("@medicationsgiven", item.MedicationsGiven ? 1 : 0);
             cmd.Parameters.AddWithValue("@medicationdetails", item.MedicationDetails ?? string.Empty);
-            cmd.Parameters.AddWithValue("@skintoskincontact", item.SkinToSkinContact ? 1 : 0);
+            //cmd.Parameters.AddWithValue("@skintoskincontact", item.SkinToSkinContact ? 1 : 0);
             cmd.Parameters.AddWithValue("@earlybreastfeedinginitiated", item.EarlyBreastfeedingInitiated ? 1 : 0);
             cmd.Parameters.AddWithValue("@delayedcordclamping", item.DelayedCordClamping ? 1 : 0);
             cmd.Parameters.AddWithValue("@cordclampingtime", item.CordClampingTime.HasValue ? item.CordClampingTime.Value : (object)DBNull.Value);
@@ -351,10 +357,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@congenitalabnormalitiesdescription", item.CongenitalAbnormalitiesDescription ?? string.Empty);
             cmd.Parameters.AddWithValue("@birthinjuriespresent", item.BirthInjuriesPresent ? 1 : 0);
             cmd.Parameters.AddWithValue("@birthinjuriesdescription", item.BirthInjuriesDescription ?? string.Empty);
-            cmd.Parameters.AddWithValue("@breathing", item.Breathing ? 1 : 0);
-            cmd.Parameters.AddWithValue("@crying", item.Crying ? 1 : 0);
-            cmd.Parameters.AddWithValue("@goodmuscletone", item.GoodMuscleTone ? 1 : 0);
-            cmd.Parameters.AddWithValue("@skincolor", (int)item.SkinColor);
+            //cmd.Parameters.AddWithValue("@breathing", item.Breathing ? 1 : 0);
+            //cmd.Parameters.AddWithValue("@crying", item.Crying ? 1 : 0);
+            //cmd.Parameters.AddWithValue("@goodmuscletone", item.GoodMuscleTone ? 1 : 0);
+            //cmd.Parameters.AddWithValue("@skincolor", (int)item.SkinColor);
             cmd.Parameters.AddWithValue("@requiresspecialcare", item.RequiresSpecialCare ? 1 : 0);
             cmd.Parameters.AddWithValue("@specialcarereason", item.SpecialCareReason ?? string.Empty);
             cmd.Parameters.AddWithValue("@admittedtonicu", item.AdmittedToNICU ? 1 : 0);
@@ -402,7 +408,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ChestCircumference = Convert.ToDecimal(reader["chestcircumference"]),
                 Apgar1Min = reader["apgar1min"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar1min"]),
                 Apgar5Min = reader["apgar5min"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar5min"]),
-                Apgar10Min = reader["apgar10min"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar10min"]),
+                //Apgar10Min = reader["apgar10min"] == DBNull.Value ? null : Convert.ToInt32(reader["apgar10min"]),
                 ResuscitationRequired = Convert.ToBoolean(reader["resuscitationrequired"]),
                 ResuscitationSteps = reader["resuscitationsteps"]?.ToString() ?? string.Empty,
                 ResuscitationDuration = reader["resuscitationduration"] == DBNull.Value ? null : Convert.ToInt32(reader["resuscitationduration"]),
@@ -411,7 +417,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ChestCompressionsGiven = Convert.ToBoolean(reader["chestcompressionsgiven"]),
                 MedicationsGiven = Convert.ToBoolean(reader["medicationsgiven"]),
                 MedicationDetails = reader["medicationdetails"]?.ToString() ?? string.Empty,
-                SkinToSkinContact = Convert.ToBoolean(reader["skintoskincontact"]),
+                //SkinToSkinContact = Convert.ToBoolean(reader["skintoskincontact"]),
                 EarlyBreastfeedingInitiated = Convert.ToBoolean(reader["earlybreastfeedinginitiated"]),
                 DelayedCordClamping = Convert.ToBoolean(reader["delayedcordclamping"]),
                 CordClampingTime = reader["cordclampingtime"] == DBNull.Value ? null : Convert.ToInt32(reader["cordclampingtime"]),
@@ -426,10 +432,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 CongenitalAbnormalitiesDescription = reader["congenitalabnormalitiesdescription"]?.ToString() ?? string.Empty,
                 BirthInjuriesPresent = Convert.ToBoolean(reader["birthinjuriespresent"]),
                 BirthInjuriesDescription = reader["birthinjuriesdescription"]?.ToString() ?? string.Empty,
-                Breathing = Convert.ToBoolean(reader["breathing"]),
-                Crying = Convert.ToBoolean(reader["crying"]),
-                GoodMuscleTone = Convert.ToBoolean(reader["goodmuscletone"]),
-                SkinColor = (SkinColor)Convert.ToInt32(reader["skincolor"]),
+                //Breathing = Convert.ToBoolean(reader["breathing"]),
+                //Crying = Convert.ToBoolean(reader["crying"]),
+                //GoodMuscleTone = Convert.ToBoolean(reader["goodmuscletone"]),
+                //SkinColor = (SkinColor)Convert.ToInt32(reader["skincolor"]),
                 RequiresSpecialCare = Convert.ToBoolean(reader["requiresspecialcare"]),
                 SpecialCareReason = reader["specialcarereason"]?.ToString() ?? string.Empty,
                 AdmittedToNICU = Convert.ToBoolean(reader["admittedtonicu"]),

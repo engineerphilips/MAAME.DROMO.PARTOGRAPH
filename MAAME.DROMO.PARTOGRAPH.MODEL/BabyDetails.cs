@@ -40,7 +40,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         // Score interpretation: 7-10 (normal), 4-6 (moderately abnormal), 0-3 (severely abnormal)
         public int? Apgar1Min { get; set; } // At 1 minute
         public int? Apgar5Min { get; set; } // At 5 minutes
-        public int? Apgar10Min { get; set; } // At 10 minutes (if 5-min score <7)
+        //public int? Apgar10Min { get; set; } // At 10 minutes (if 5-min score <7)
 
         // Resuscitation (WHO 2020 - Pages 91-93)
         public bool ResuscitationRequired { get; set; } = false;
@@ -53,7 +53,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string MedicationDetails { get; set; } = string.Empty; // e.g., "Epinephrine 0.1ml IV"
 
         // Immediate Newborn Care (WHO 2020 - Pages 88-89)
-        public bool SkinToSkinContact { get; set; } = true; // Immediate uninterrupted skin-to-skin
+        //public bool SkinToSkinContact { get; set; } = true; // Immediate uninterrupted skin-to-skin
         public bool EarlyBreastfeedingInitiated { get; set; } = true; // Within 1 hour
         public bool DelayedCordClamping { get; set; } = true; // 1-3 minutes recommended
         public int? CordClampingTime { get; set; } // in seconds
@@ -78,10 +78,10 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string BirthInjuriesDescription { get; set; } = string.Empty;
 
         // Clinical Status at Birth
-        public bool Breathing { get; set; } = true;
-        public bool Crying { get; set; } = true;
-        public bool GoodMuscleTone { get; set; } = true;
-        public SkinColor SkinColor { get; set; } = SkinColor.Pink;
+        //public bool Breathing { get; set; } = true;
+        //public bool Crying { get; set; } = true;
+        //public bool GoodMuscleTone { get; set; } = true;
+        //public SkinColor SkinColor { get; set; } = SkinColor.Pink;
 
         // Special Care
         public bool RequiresSpecialCare { get; set; } = false;
