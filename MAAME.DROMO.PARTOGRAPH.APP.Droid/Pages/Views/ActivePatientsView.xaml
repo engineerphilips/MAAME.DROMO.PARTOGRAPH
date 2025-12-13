@@ -73,7 +73,7 @@
 
                                 <!-- Header Row: Patient Info & Status -->
                                 <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="12">
-                                    <!-- Status Avatar -->
+                                    <!-- Cervical Dilatation Display -->
                                     <Border Grid.Column="0"
                                             WidthRequest="56"
                                             HeightRequest="56"
@@ -83,12 +83,19 @@
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="28" />
                                         </Border.StrokeShape>
-                                        <Label Text="{Binding Name, Converter={StaticResource InitialsConverter}}"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"
-                                               FontSize="20"
-                                               FontAttributes="Bold"
-                                               TextColor="White" />
+                                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                                            <Label Text="{Binding CurrentDilatation, StringFormat='{0}'}"
+                                                   FontSize="22"
+                                                   FontAttributes="Bold"
+                                                   TextColor="White"
+                                                   HorizontalOptions="Center" />
+                                            <Label Text="cm"
+                                                   FontSize="10"
+                                                   TextColor="White"
+                                                   Opacity="0.9"
+                                                   HorizontalOptions="Center"
+                                                   Margin="0,-2,0,0" />
+                                        </VerticalStackLayout>
                                     </Border>
                                     <!--<Border Grid.Column="0"
                                             WidthRequest="56"
@@ -139,7 +146,22 @@
                                     
                                     <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding DisplayInfo}"  FontSize="12" TextColor="{AppThemeBinding Light=#555, Dark=#BBB}" />
 
-                                    <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding LaborStartTime, StringFormat='{0:dddd, dd MMM, HH:mm}'}" FontSize="12" TextColor="{AppThemeBinding Light=#888, Dark=#999}" />
+                                    <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Spacing="12">
+                                        <Label Text="{Binding LaborStartTime, StringFormat='{0:dddd, dd MMM, HH:mm}'}" FontSize="12" TextColor="{AppThemeBinding Light=#888, Dark=#999}" />
+                                        <Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
+                                                Padding="6,2"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center"
+                                                IsVisible="{Binding CurrentHeadDescent, Converter={StaticResource IsNotNullConverter}}">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="4" />
+                                            </Border.StrokeShape>
+                                            <Label Text="{Binding CurrentHeadDescent, StringFormat='Station {0}'}"
+                                                   FontSize="11"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}" />
+                                        </Border>
+                                    </HorizontalStackLayout>
                                     <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding LaborStartTimeFormat}" FontSize="12" TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}" />
                                 </Grid>
 

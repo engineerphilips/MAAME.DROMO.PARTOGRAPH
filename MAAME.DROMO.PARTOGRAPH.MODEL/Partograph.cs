@@ -119,6 +119,12 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Name => Patient?.Name;
         [JsonIgnore]
         public string HospitalNumber => Patient?.HospitalNumber;
+
+        // Current/Latest measurements
+        [JsonIgnore]
+        public int? CurrentDilatation => Dilatations?.OrderByDescending(d => d.Time).FirstOrDefault()?.DilatationCm;
+        [JsonIgnore]
+        public int? CurrentHeadDescent => HeadDescents?.OrderByDescending(h => h.Time).FirstOrDefault()?.Station;
         // Sync columns
         public long CreatedTime { get; set; }
         public long UpdatedTime { get; set; }
