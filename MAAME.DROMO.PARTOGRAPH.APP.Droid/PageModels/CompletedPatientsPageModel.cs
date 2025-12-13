@@ -103,7 +103,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
-                var partographs = await _partographRepository.ListAsync(LaborStatus.SecondStage);
+                // Load only completed deliveries (WHO Four-Stage System)
+                var partographs = await _partographRepository.ListAsync(LaborStatus.Completed);
 
                 // Load birth outcomes and baby details for each partograph
                 var completedPatients = new List<CompletedPatientItem>();

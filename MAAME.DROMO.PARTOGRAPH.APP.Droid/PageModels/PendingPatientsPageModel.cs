@@ -111,23 +111,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 // Show confirmation dialog
                 var confirm = await Shell.Current.DisplayAlert(
-                    "Start Active Labour",
-                    $"Are you sure you want to start active labour for {partograph.Name}?",
+                    "Start First Stage Labour",
+                    $"Are you sure you want to start first stage labour for {partograph.Name}?",
                     "Yes, Start Labour",
                     "Cancel");
 
                 if (!confirm)
                     return;
 
-                // Update partograph status
-                partograph.Status = LaborStatus.Active;
+                // Update partograph status to FirstStage (WHO Four-Stage System)
+                partograph.Status = LaborStatus.FirstStage;
                 partograph.LaborStartTime = DateTime.UtcNow;
 
                 // Save to database (repository handles validation and LaborStartTime setting)
                 await _patientRepository.SaveItemAsync(partograph);
 
                 // Show success message
-                await AppShell.DisplayToastAsync($"Labour started for {partograph.Name}");
+                await AppShell.DisplayToastAsync($"First stage labour started for {partograph.Name}");
 
                 // Reload data to refresh the list
                 await LoadData();

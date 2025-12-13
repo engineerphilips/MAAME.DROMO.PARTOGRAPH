@@ -134,7 +134,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 createTableCmd.CommandText = @"
                 CREATE TABLE IF NOT EXISTS Tbl_Partograph (
                     ID TEXT PRIMARY KEY,
-                    patientID TEXT NOT NULL, 
+                    patientID TEXT NOT NULL,
                     time TEXT NOT NULL,
                     status TEXT,
                     gravida INTEGER NOT NULL,
@@ -144,15 +144,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     expectedDeliveryDate TEXT,
                     lastMenstrualDate TEXT,
                     laborStartTime TEXT,
+                    secondStageStartTime TEXT,
+                    thirdStageStartTime TEXT,
+                    fourthStageStartTime TEXT,
                     deliveryTime TEXT,
+                    completedTime TEXT,
+                    rupturedMembraneTime TEXT,
                     cervicalDilationOnAdmission INTEGER,
                     membraneStatus TEXT,
-                    liquorStatus TEXT, 
+                    liquorStatus TEXT,
                     complications TEXT,
-                    handler TEXT,               
+                    handler TEXT,
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
-                    deletedtime INTEGER, 
+                    deletedtime INTEGER,
                     deviceid TEXT NOT NULL,
                     origindeviceid TEXT NOT NULL,
                     syncstatus INTEGER DEFAULT 0,
@@ -189,6 +194,74 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     WHERE ID = NEW.ID;
                 END;";
                 await createTableCmd.ExecuteNonQueryAsync();
+
+                // Migration: Add WHO Four-Stage System timestamp columns if they don't exist
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add secondStageStartTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN secondStageStartTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add thirdStageStartTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN thirdStageStartTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add fourthStageStartTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN fourthStageStartTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add completedTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN completedTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"
+                        -- Add rupturedMembraneTime if it doesn't exist
+                        ALTER TABLE Tbl_Partograph ADD COLUMN rupturedMembraneTime TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
+
+                _logger.LogInformation("WHO Four-Stage System database schema migration completed successfully");
             }
             catch (Exception e)
             {
@@ -300,19 +373,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     }
                 }
 
-                // Validate status transition for Active status - prevent multiple active partographs per patient
-                if (item.Status == LaborStatus.Active && oldStatus != LaborStatus.Active)
+                // Validate status transition for FirstStage status - prevent multiple active partographs per patient
+                if (item.Status == LaborStatus.FirstStage && oldStatus != LaborStatus.FirstStage)
                 {
                     var checkCmd = connection.CreateCommand();
                     checkCmd.CommandText = @"
                     SELECT COUNT(*) FROM Tbl_Partograph
                     WHERE patientID = @patientID
                     AND ID != @currentID
-                    AND status = @status
+                    AND status IN (@firstStage, @secondStage, @thirdStage, @fourthStage)
                     AND deleted = 0";
                     checkCmd.Parameters.AddWithValue("@patientID", item.PatientID.ToString());
                     checkCmd.Parameters.AddWithValue("@currentID", item.ID.ToString());
-                    checkCmd.Parameters.AddWithValue("@status", (int)LaborStatus.Active);
+                    checkCmd.Parameters.AddWithValue("@firstStage", (int)LaborStatus.FirstStage);
+                    checkCmd.Parameters.AddWithValue("@secondStage", (int)LaborStatus.SecondStage);
+                    checkCmd.Parameters.AddWithValue("@thirdStage", (int)LaborStatus.ThirdStage);
+                    checkCmd.Parameters.AddWithValue("@fourthStage", (int)LaborStatus.FourthStage);
 
                     var hasActivePartograph = Convert.ToInt32(await checkCmd.ExecuteScalarAsync()) > 0;
 
@@ -324,18 +400,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     }
                 }
 
-                // Set LaborStartTime when transitioning to Active status
-                if (item.Status == LaborStatus.Active && oldStatus != LaborStatus.Active && !item.LaborStartTime.HasValue)
+                // WHO Four-Stage System: Set timestamps for stage transitions
+
+                // Set LaborStartTime when transitioning to FirstStage
+                if (item.Status == LaborStatus.FirstStage && oldStatus != LaborStatus.FirstStage && !item.LaborStartTime.HasValue)
                 {
                     item.LaborStartTime = DateTime.UtcNow;
-                    _logger.LogInformation($"Labor started for partograph {item.ID} at {item.LaborStartTime}");
+                    _logger.LogInformation($"First stage labor started for partograph {item.ID} at {item.LaborStartTime}");
                 }
 
-                // Set DeliveryTime when transitioning to Completed status
-                if (item.Status == LaborStatus.Completed && oldStatus != LaborStatus.Completed && !item.DeliveryTime.HasValue)
+                // Note: SecondStageStartTime, ThirdStageStartTime, and FourthStageStartTime
+                // will be set by the PartographPageModel during stage transitions
+                // These are handled separately to allow for manual and automatic progression
+
+                // Set CompletedTime when transitioning to Completed status
+                if (item.Status == LaborStatus.Completed && oldStatus != LaborStatus.Completed)
                 {
-                    item.DeliveryTime = DateTime.UtcNow;
-                    _logger.LogInformation($"Delivery completed for partograph {item.ID} at {item.DeliveryTime}");
+                    // CompletedTime is set in the model
+                    _logger.LogInformation($"Delivery care completed for partograph {item.ID}");
                 }
 
                 item.CreatedTime = isNewPartograph ? now : item.CreatedTime;

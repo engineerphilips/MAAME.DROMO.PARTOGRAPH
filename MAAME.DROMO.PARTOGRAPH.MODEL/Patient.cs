@@ -67,12 +67,18 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public List<MedicalNote> MedicalNotes { get; set; } = [];
     }
 
+    /// <summary>
+    /// WHO-Aligned Four Stage Labor System
+    /// Reference: WHO recommendations for intrapartum care (2020)
+    /// </summary>
     public enum LaborStatus
     {
-        Pending,    // Not in active labor
-        Active,     // In active labor
-        SecondStage, // Second stage of labor (delivery phase)
-        Completed,  // Delivered
-        Emergency   // Requires immediate attention
+        Pending,      // Pre-labor / Not in active labor
+        FirstStage,   // Active labor: Onset of regular contractions → Full dilation (10cm)
+        SecondStage,  // Full dilation (10cm) → Baby delivery
+        ThirdStage,   // Baby delivery → Placenta delivery (up to 30 minutes)
+        FourthStage,  // First 2 hours postpartum (immediate recovery period)
+        Completed,    // Care completed, can be discharged
+        Emergency     // Requires immediate attention (can occur at any stage)
     }
 }

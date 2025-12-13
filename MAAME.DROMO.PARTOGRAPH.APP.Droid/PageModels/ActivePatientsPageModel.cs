@@ -56,7 +56,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
-                _allPartographs = await _partographRepository.ListAsync(LaborStatus.Active);
+
+                // Load all active labor stages (WHO Four-Stage System)
+                var firstStage = await _partographRepository.ListAsync(LaborStatus.FirstStage);
+                var secondStage = await _partographRepository.ListAsync(LaborStatus.SecondStage);
+                var thirdStage = await _partographRepository.ListAsync(LaborStatus.ThirdStage);
+                var fourthStage = await _partographRepository.ListAsync(LaborStatus.FourthStage);
+                var emergency = await _partographRepository.ListAsync(LaborStatus.Emergency);
+
+                // Combine all active stages
+                _allPartographs = new List<Partograph>();
+                _allPartographs.AddRange(firstStage ?? []);
+                _allPartographs.AddRange(secondStage ?? []);
+                _allPartographs.AddRange(thirdStage ?? []);
+                _allPartographs.AddRange(fourthStage ?? []);
+                _allPartographs.AddRange(emergency ?? []);
 
                 if (_allPartographs?.Count > 0)
                 {
