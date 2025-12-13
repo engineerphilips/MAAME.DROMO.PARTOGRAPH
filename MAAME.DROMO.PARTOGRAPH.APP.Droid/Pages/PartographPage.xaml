@@ -627,13 +627,12 @@
                     <buttons:SfButton.Content>
                         <DataTemplate>
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center" Margin="5,0,0,0">
-                                <Label Text="{Binding FhrLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
+                                <Label Text="{Binding FhrDecelerationLatestValue, Mode=OneWay}" FontSize="10" FontAttributes="Bold" />
                                 <Label Text="Deceleration" FontSize="8" Opacity="0.7" />
                             </VerticalStackLayout>
                         </DataTemplate>
                     </buttons:SfButton.Content>
                 </buttons:SfButton>
-
 
                 <Button Grid.Row="10" Grid.Column="1"
                          Text="Amniotic fluid"

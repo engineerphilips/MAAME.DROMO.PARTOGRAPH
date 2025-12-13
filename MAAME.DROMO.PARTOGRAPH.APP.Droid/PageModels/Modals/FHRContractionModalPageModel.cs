@@ -129,10 +129,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 try
                 {
                     // Get recent FHR readings for this patient (last 5 readings)
-                    var recentFHRs = await _fHRRepository.GetRecentByPatientAsync(_patient.ID, 5);
+                    var fHRs = await _fHRRepository.ListByPatientAsync(_patient.ID);
+                    var recentFHRs = fHRs?.OrderByDescending(f => f.Time).Take(5).ToList();
 
                     // Get recent contractions (within last hour)
-                    var allContractions = await _contractionRepository.GetAllByPatientAsync(_patient.ID);
+                    var allContractions = await _contractionRepository.ListByPatientAsync(_patient.ID);
                     var recentContractions = allContractions?
                         .Where(c => (fhrEntry.Time - c.Time).TotalHours <= 1)
                         .OrderByDescending(c => c.Time)

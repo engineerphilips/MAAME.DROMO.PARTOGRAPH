@@ -257,7 +257,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 return (false, "Insufficient readings");
 
             // Calculate trend: are values consistently declining?
-            bool isDecl ining = true;
+            bool isDeclining = true;
             int totalDrop = 0;
 
             for (int i = 1; i < recentReadings.Count; i++)
@@ -267,12 +267,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
                 if (diff >= 0) // Not declining
                 {
-                    isDecl ining = false;
+                    isDeclining = false;
                     break;
                 }
             }
 
-            if (isDecl ining && totalDrop <= -10)
+            if (isDeclining && totalDrop <= -10)
             {
                 return (true, $"Gradual decline of {Math.Abs(totalDrop)} bpm over {recentReadings.Count} readings");
             }

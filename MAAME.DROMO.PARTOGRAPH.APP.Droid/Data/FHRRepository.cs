@@ -73,7 +73,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Rate = reader.IsDBNull(5) ? null : reader.GetInt32(5),
                 Deceleration = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
                 CreatedTime = reader.GetInt64(7),
-                UpdatedTime = reader.GetInt64(8),
+                UpdatedTime = reader.IsDBNull(8) ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() : reader.GetInt64(8),
                 DeletedTime = reader.IsDBNull(9) ? null : reader.GetInt64(9),
                 DeviceId = reader.GetString(10),
                 OriginDeviceId = reader.GetString(11),
@@ -82,7 +82,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ServerVersion = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
                 Deleted = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
                 ConflictData = reader.IsDBNull(16) ? string.Empty : reader.GetString(16),
-                DataHash = reader.IsDBNull(17) ? string.Empty : reader.GetString(17)
+                //DataHash = reader.IsDBNull(17) ? string.Empty : reader.GetString(17)
             };
         }
 
