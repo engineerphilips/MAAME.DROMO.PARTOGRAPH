@@ -17,7 +17,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters
                 return status switch
                 {
                     LaborStatus.Pending => Color.FromArgb("#FFA726"),
-                    LaborStatus.Active => Color.FromArgb("#66BB6A"),
+                    LaborStatus.FirstStage => Color.FromArgb("#66BB6A"),
                     LaborStatus.SecondStage => Color.FromArgb("#AB47BC"), // Purple for second stage
                     LaborStatus.Completed => Color.FromArgb("#42A5F5"),
                     LaborStatus.Emergency => Color.FromArgb("#EF5350"),

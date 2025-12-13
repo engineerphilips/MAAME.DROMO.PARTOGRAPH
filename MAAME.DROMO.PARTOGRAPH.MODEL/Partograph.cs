@@ -127,14 +127,26 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public Color StatusColor => Status switch
         {
             LaborStatus.Pending => Color.Orange,
-            LaborStatus.FirstStage => Color.FromArgb("#FFC107"),  // Amber - Active labor
-            LaborStatus.SecondStage => Color.FromArgb("#FF9800"), // Orange - Delivery imminent
-            LaborStatus.ThirdStage => Color.FromArgb("#2196F3"),  // Blue - Placenta delivery
-            LaborStatus.FourthStage => Color.FromArgb("#9C27B0"), // Purple - Postpartum monitoring
-            LaborStatus.Completed => Color.FromArgb("#4CAF50"),   // Green - All clear
-            LaborStatus.Emergency => Color.FromArgb("#F44336"),   // Red - Emergency
+            LaborStatus.FirstStage => Color.FromArgb(255, 255, 193, 7),   // #FFC107 Amber - Active labor
+            LaborStatus.SecondStage => Color.FromArgb(255, 255, 152, 0),   // #FF9800 Orange - Delivery imminent
+            LaborStatus.ThirdStage => Color.FromArgb(255, 33, 150, 243),  // #2196F3 Blue - Placenta delivery
+            LaborStatus.FourthStage => Color.FromArgb(255, 156, 39, 176),  // #9C27B0 Purple - Postpartum monitoring
+            LaborStatus.Completed => Color.FromArgb(255, 76, 175, 80),   // #4CAF50 Green - All clear
+            LaborStatus.Emergency => Color.FromArgb(255, 244, 67, 54),   // #F44336 Red - Emergency
             _ => Color.Gray
         };
+
+        //public Color StatusColor => Status switch
+        //{
+        //    LaborStatus.Pending => Color.Orange,
+        //    LaborStatus.FirstStage => Color.FromArgb("FFC107"),  // Amber - Active labor
+        //    LaborStatus.SecondStage => Color.FromArgb("#FF9800"), // Orange - Delivery imminent
+        //    LaborStatus.ThirdStage => Color.FromArgb("#2196F3"),  // Blue - Placenta delivery
+        //    LaborStatus.FourthStage => Color.FromArgb("#9C27B0"), // Purple - Postpartum monitoring
+        //    LaborStatus.Completed => Color.FromArgb("#4CAF50"),   // Green - All clear
+        //    LaborStatus.Emergency => Color.FromArgb("#F44336"),   // Red - Emergency
+        //    _ => Color.Gray
+        //};
 
         [JsonIgnore]
         public string DisplayInfo => $"G{Gravida}P{Parity} • {GestationalAge} • {Patient?.Age}yrs";

@@ -678,7 +678,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         case LaborStatus.Pending:
                             stats.PendingLabor = count;
                             break;
-                        case LaborStatus.Active:
+                        case LaborStatus.FirstStage:
+                            stats.ActiveLabor = count;
+                            break;
+                        case LaborStatus.SecondStage:
+                            stats.ActiveLabor = count;
+                            break;
+                        case LaborStatus.ThirdStage:
                             stats.ActiveLabor = count;
                             break;
                         case LaborStatus.Emergency:
@@ -712,9 +718,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 SELECT AVG(JULIANDAY(COALESCE(deliveryTime, DATETIME('now'))) - JULIANDAY(laborStartTime)) * 24
                 FROM Tbl_Partograph
                 WHERE laborStartTime IS NOT NULL
-                  AND status IN (@active, @secondstage, @completed)
+                  AND status IN (@firststage, @secondstage, @completed)
                   AND deleted = 0";
-                avgActiveCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                avgActiveCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 avgActiveCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 avgActiveCmd.Parameters.AddWithValue("@completed", (int)LaborStatus.Completed);
                 var avgActive = await avgActiveCmd.ExecuteScalarAsync();
@@ -825,7 +831,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
                 LEFT JOIN Tbl_FHR fhr ON fhr.partographID = p.ID
-                WHERE p.status IN (@active, @secondstage, @emergency)
+                WHERE p.status IN (@firststage, @secondstage, @emergency)
                   AND p.deleted = 0
                   AND pt.deleted = 0
                 GROUP BY p.ID, pt.firstName, pt.lastName, pt.hospitalNumber, p.laborStartTime, p.cervicalDilationOnAdmission, p.status
@@ -834,7 +840,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     JULIANDAY(DATETIME('now')) - JULIANDAY(p.laborStartTime) DESC
                 LIMIT 5";
 
-                cmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                cmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 cmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 cmd.Parameters.AddWithValue("@emergency", (int)LaborStatus.Emergency);
 
@@ -934,7 +940,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
                 INNER JOIN Tbl_FHR fhr ON fhr.partographID = p.ID
-                WHERE p.status IN (@active, @secondstage, @emergency)
+                WHERE p.status IN (@firststage, @secondstage, @thirdstage, @emergency)
                   AND p.deleted = 0
                   AND pt.deleted = 0
                   AND (fhr.value < 110 OR fhr.value > 160)
@@ -946,8 +952,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ORDER BY fhr.time DESC
                 LIMIT 10";
 
-                fhrCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                fhrCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 fhrCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
+                fhrCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
                 fhrCmd.Parameters.AddWithValue("@emergency", (int)LaborStatus.Emergency);
 
                 await using var fhrReader = await fhrCmd.ExecuteReaderAsync();
@@ -984,7 +991,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     p.laborStartTime
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
-                WHERE p.status = @active
+                WHERE p.status = IN (@firststage, @secondstage, @thirdstage)
                   AND p.deleted = 0
                   AND pt.deleted = 0
                   AND p.laborStartTime IS NOT NULL
@@ -992,7 +999,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ORDER BY p.laborStartTime ASC
                 LIMIT 10";
 
-                prolongedCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                prolongedCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
+                prolongedCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
+                prolongedCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
 
                 await using var prolongedReader = await prolongedCmd.ExecuteReaderAsync();
                 while (await prolongedReader.ReadAsync())
@@ -1066,16 +1075,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
                 WHERE p.deleted = 0
                   AND pt.deleted = 0
-                  AND p.status IN (@active, @secondstage, @pending)
+                  AND p.status IN (@firststage, @secondstage, @pending)
                   AND (
                       (DATE(p.admissionDate) = DATE('now') AND TIME(p.admissionDate) >= @shiftStart)
-                      OR p.status = @active
+                      OR p.status = @firststage
                       OR p.status = @secondstage
                   )
                 ORDER BY p.admissionDate DESC
                 LIMIT 10";
 
-                cmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                cmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 cmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 cmd.Parameters.AddWithValue("@pending", (int)LaborStatus.Pending);
                 cmd.Parameters.AddWithValue("@shiftStart", shiftStart);
@@ -1094,11 +1103,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         ? (int)(DateTime.Now - laborStart.Value).TotalHours
                         : 0;
 
-                    string keyNotes = status == LaborStatus.Active
-                        ? $"In active labor for {hoursInLabor}h"
+                    string keyNotes = status == LaborStatus.FirstStage
+                        ? $"In active labour for {hoursInLabor}h"
                         : status == LaborStatus.SecondStage
-                            ? $"In second stage of labor (delivery phase)"
-                            : "Awaiting labor onset";
+                            ? $"In second stage of labour (delivery phase)"
+                            : "Awaiting labour onset";
 
                     handoverItems.Add(new ShiftHandoverItem
                     {
@@ -1109,7 +1118,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         Status = status,
                         KeyNotes = keyNotes,
                         HoursInLabor = hoursInLabor,
-                        RequiresHandover = status == LaborStatus.Active || status == LaborStatus.SecondStage || hoursInLabor > 8
+                        RequiresHandover = status == LaborStatus.FirstStage || status == LaborStatus.SecondStage || hoursInLabor > 8
                     });
                 }
             }
@@ -1131,8 +1140,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 var activeCmd = connection.CreateCommand();
                 activeCmd.CommandText = @"
                 SELECT COUNT(*) FROM Tbl_Partograph
-                WHERE status = @active AND deleted = 0";
-                activeCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                WHERE status IN (@firststage, @secondstage, @thirdstage) AND deleted = 0";
+                activeCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
+                activeCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
+                activeCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
                 var activeCount = await activeCmd.ExecuteScalarAsync();
                 metrics.TotalActiveLabors = activeCount != null ? Convert.ToInt32(activeCount) : 0;
 
@@ -1160,11 +1171,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 var prolongedCmd = connection.CreateCommand();
                 prolongedCmd.CommandText = @"
                 SELECT COUNT(*) FROM Tbl_Partograph
-                WHERE status = @active
+                WHERE status = @firststage
                   AND laborStartTime IS NOT NULL
                   AND JULIANDAY(DATETIME('now')) - JULIANDAY(laborStartTime) > 0.5
                   AND deleted = 0";
-                prolongedCmd.Parameters.AddWithValue("@active", (int)LaborStatus.Active);
+                prolongedCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage); 
                 var prolonged = await prolongedCmd.ExecuteScalarAsync();
                 metrics.AlertLineCrossings = prolonged != null ? Convert.ToInt32(prolonged) : 0;
                 metrics.ActionLineCrossings = (int)(metrics.AlertLineCrossings * 0.3); // Estimate 30% reach action line
@@ -1374,11 +1385,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 FROM Tbl_Partograph P
                 WHERE P.patientID = @patientID
                   AND P.deleted = 0
-                  AND P.status = @activeStatus
+                  AND P.status = @firststage
                 ORDER BY P.admissionDate DESC
                 LIMIT 1";
                 selectCmd.Parameters.AddWithValue("@patientID", patientId.ToString());
-                selectCmd.Parameters.AddWithValue("@activeStatus", (int)LaborStatus.Active);
+                selectCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 if (await reader.ReadAsync())

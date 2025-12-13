@@ -697,7 +697,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
             var recentFluids = patient.OralFluids.Where(f => f.Time > DateTime.Now.AddHours(-4)).ToList();
 
-            if (recentFluids.Count == 0 && patient.Status == LaborStatus.Active)
+            if (recentFluids.Count == 0 && patient.Status == LaborStatus.FirstStage && patient.Status == LaborStatus.SecondStage && patient.Status == LaborStatus.ThirdStage)
             {
                 alerts.Add(new ClinicalAlert
                 {
