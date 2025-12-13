@@ -136,6 +136,19 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
             _ => Color.Gray
         };
 
+        [JsonIgnore]
+        public string StatusColorString => Status switch
+        {
+            LaborStatus.Pending => "Orange",
+            LaborStatus.FirstStage => "#FFC107", //Amber - Active labor
+            LaborStatus.SecondStage => "#FF9800",   // Orange - Delivery imminent
+            LaborStatus.ThirdStage => "#2196F3",  // Blue - Placenta delivery
+            LaborStatus.FourthStage => "#9C27B0",  //  Purple - Postpartum monitoring
+            LaborStatus.Completed => "#4CAF50",   //  Green - All clear
+            LaborStatus.Emergency => "F44336",   // Red - Emergency
+            _ => "Gray"
+        };
+
         //public Color StatusColor => Status switch
         //{
         //    LaborStatus.Pending => Color.Orange,

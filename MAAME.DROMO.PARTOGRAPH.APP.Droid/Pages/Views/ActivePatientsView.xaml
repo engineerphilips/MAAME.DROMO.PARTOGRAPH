@@ -101,6 +101,26 @@
                                                    Grid.Column="1" />
                                         </Grid>
                                     </Border>
+
+                                    <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="3"
+        WidthRequest="56"
+        HeightRequest="56"
+        BackgroundColor="#FF9800"
+        StrokeThickness="3"
+        Stroke="#FFF3E0" IsVisible="{Binding CurrentHeadDescent, Converter={StaticResource IsNotNullConverter}}">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="28" />
+                                        </Border.StrokeShape>
+                                        <Grid ColumnDefinitions="Auto,Auto" VerticalOptions="Center" HorizontalOptions="Center" Margin="-10">
+                                            <Label Text="{Binding CurrentHeadDescent, StringFormat='{0}'}"
+               FontSize="22"
+               FontAttributes="Bold"
+               TextColor="White"
+               HorizontalOptions="End"  
+               VerticalOptions="End"
+               Grid.Column="0"/>
+                                        </Grid>
+                                    </Border>
                                     <!--<Border Grid.Column="0"
                                             WidthRequest="56"
                                             HeightRequest="56"
@@ -135,6 +155,10 @@
                                                FontFamily="monospace" />
                                     </VerticalStackLayout>
 
+                                    <Label Text="{Binding StatusDisplay, Mode=OneWay}" Grid.Column="2"
+                                           TextColor="{Binding StatusColorString, Mode=OneWay}"
+                                           FontSize="14"
+                                           LineBreakMode="TailTruncation" HorizontalOptions="End" />
                                     <!-- Status Badge -->
                                     <!--<Border Grid.Column="2"
                                             BackgroundColor="{Binding StatusColor}"
@@ -152,7 +176,7 @@
 
                                     <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Spacing="12">
                                         <Label Text="{Binding LaborStartTime, StringFormat='{0:dddd, dd MMM, HH:mm}'}" FontSize="12" TextColor="{AppThemeBinding Light=#888, Dark=#999}" />
-                                        <Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
+                                        <!--<Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
                                                 Padding="6,2"
                                                 HorizontalOptions="Start"
                                                 VerticalOptions="Center"
@@ -164,7 +188,7 @@
                                                    FontSize="11"
                                                    FontAttributes="Bold"
                                                    TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}" />
-                                        </Border>
+                                        </Border>-->
                                     </HorizontalStackLayout>
                                     <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding LaborStartTimeFormat}" FontSize="12" TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}" />
                                 </Grid>
