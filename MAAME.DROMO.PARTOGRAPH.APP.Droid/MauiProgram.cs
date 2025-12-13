@@ -89,6 +89,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<FHRPatternAnalysisService>();
             builder.Services.AddSingleton<StageProgressionService>(); // WHO Four-Stage Labor System
             builder.Services.AddSingleton<PartographNotesService>(); // Dynamic clinical notes generation
+            builder.Services.AddSingleton<IReportService, ReportService>(); // Comprehensive reporting service
             //builder.Services.AddSingleton<AuthenticationService>();
 
             // Register Sync Services
@@ -162,6 +163,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddTransient<ActivePatientsPage>();
             builder.Services.AddTransient<CompletedPatientsPage>();
             builder.Services.AddTransient<SyncSettingsPage>();
+            builder.Services.AddTransient<ReportsPage>();
+            builder.Services.AddTransient<ReportsPageModel>();
 
             //                .ConfigureMauiHandlers(handlers =>
             //                {
