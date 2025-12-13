@@ -138,6 +138,69 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         //[ObservableProperty]
         //private int? _apgar10Min;
 
+        // APGAR 1-Minute Component Scores
+        [ObservableProperty]
+        private int? _apgar1HeartRate;
+
+        [ObservableProperty]
+        private int? _apgar1RespiratoryEffort;
+
+        [ObservableProperty]
+        private int? _apgar1MuscleTone;
+
+        [ObservableProperty]
+        private int? _apgar1ReflexIrritability;
+
+        [ObservableProperty]
+        private int? _apgar1Color;
+
+        // APGAR 5-Minute Component Scores
+        [ObservableProperty]
+        private int? _apgar5HeartRate;
+
+        [ObservableProperty]
+        private int? _apgar5RespiratoryEffort;
+
+        [ObservableProperty]
+        private int? _apgar5MuscleTone;
+
+        [ObservableProperty]
+        private int? _apgar5ReflexIrritability;
+
+        [ObservableProperty]
+        private int? _apgar5Color;
+
+        // APGAR Display Properties
+        [ObservableProperty]
+        private string _apgar1MinDisplay = "—";
+
+        [ObservableProperty]
+        private string _apgar5MinDisplay = "—";
+
+        [ObservableProperty]
+        private string _apgar1StatusText = "Tap to score";
+
+        [ObservableProperty]
+        private string _apgar5StatusText = "Tap to score";
+
+        [ObservableProperty]
+        private Color _apgar1StatusColor = Colors.Gray;
+
+        [ObservableProperty]
+        private Color _apgar5StatusColor = Colors.Gray;
+
+        [ObservableProperty]
+        private Color _apgar1ButtonColor = Color.FromArgb("#F5F5F5");
+
+        [ObservableProperty]
+        private Color _apgar5ButtonColor = Color.FromArgb("#F5F5F5");
+
+        [ObservableProperty]
+        private Color _apgar1BorderColor = Color.FromArgb("#E0E0E0");
+
+        [ObservableProperty]
+        private Color _apgar5BorderColor = Color.FromArgb("#E0E0E0");
+
         // Resuscitation
         [ObservableProperty]
         private bool _resuscitationRequired;
@@ -398,6 +461,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             Apgar1Min = baby.Apgar1Min;
             Apgar5Min = baby.Apgar5Min;
             //Apgar10Min = baby.Apgar10Min;
+            Apgar1HeartRate = baby.Apgar1HeartRate;
+            Apgar1RespiratoryEffort = baby.Apgar1RespiratoryEffort;
+            Apgar1MuscleTone = baby.Apgar1MuscleTone;
+            Apgar1ReflexIrritability = baby.Apgar1ReflexIrritability;
+            Apgar1Color = baby.Apgar1Color;
+            Apgar5HeartRate = baby.Apgar5HeartRate;
+            Apgar5RespiratoryEffort = baby.Apgar5RespiratoryEffort;
+            Apgar5MuscleTone = baby.Apgar5MuscleTone;
+            Apgar5ReflexIrritability = baby.Apgar5ReflexIrritability;
+            Apgar5Color = baby.Apgar5Color;
+            UpdateApgar1Display();
+            UpdateApgar5Display();
             ResuscitationRequired = baby.ResuscitationRequired;
             ResuscitationSteps = baby.ResuscitationSteps ?? string.Empty;
             ResuscitationDuration = baby.ResuscitationDuration;
@@ -453,6 +528,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 Apgar1Min = Apgar1Min,
                 Apgar5Min = Apgar5Min,
                 //Apgar10Min = Apgar10Min,
+                Apgar1HeartRate = Apgar1HeartRate,
+                Apgar1RespiratoryEffort = Apgar1RespiratoryEffort,
+                Apgar1MuscleTone = Apgar1MuscleTone,
+                Apgar1ReflexIrritability = Apgar1ReflexIrritability,
+                Apgar1Color = Apgar1Color,
+                Apgar5HeartRate = Apgar5HeartRate,
+                Apgar5RespiratoryEffort = Apgar5RespiratoryEffort,
+                Apgar5MuscleTone = Apgar5MuscleTone,
+                Apgar5ReflexIrritability = Apgar5ReflexIrritability,
+                Apgar5Color = Apgar5Color,
                 ResuscitationRequired = ResuscitationRequired,
                 ResuscitationSteps = ResuscitationSteps,
                 ResuscitationDuration = ResuscitationDuration,
@@ -605,6 +690,162 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 ChestCompressionsGiven = false;
                 MedicationsGiven = false;
                 MedicationDetails = string.Empty;
+            }
+        }
+
+        [RelayCommand]
+        private async Task ShowApgar1Popup()
+        {
+            try
+            {
+                var popup = new Pages.Modals.Apgar1Popup();
+                var viewModel = new PageModels.Modals.Apgar1PopupPageModel();
+
+                // Load existing scores if available
+                viewModel.LoadExistingScores(Apgar1HeartRate, Apgar1RespiratoryEffort,
+                    Apgar1MuscleTone, Apgar1ReflexIrritability, Apgar1Color);
+
+                // Set up callbacks
+                viewModel.ClosePopup = () =>
+                {
+                    popup.IsOpen = false;
+                };
+
+                viewModel.OnScoreSaved = (totalScore, heartRate, respiratory, muscleTone, reflex, color) =>
+                {
+                    Apgar1Min = totalScore;
+                    Apgar1HeartRate = heartRate;
+                    Apgar1RespiratoryEffort = respiratory;
+                    Apgar1MuscleTone = muscleTone;
+                    Apgar1ReflexIrritability = reflex;
+                    Apgar1Color = color;
+                    UpdateApgar1Display();
+                };
+
+                popup.BindingContext = viewModel;
+                popup.IsOpen = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error showing APGAR 1 popup");
+                await AppShell.DisplayToastAsync("Error opening APGAR 1 score form");
+            }
+        }
+
+        [RelayCommand]
+        private async Task ShowApgar5Popup()
+        {
+            try
+            {
+                var popup = new Pages.Modals.Apgar5Popup();
+                var viewModel = new PageModels.Modals.Apgar5PopupPageModel();
+
+                // Load existing scores if available
+                viewModel.LoadExistingScores(Apgar5HeartRate, Apgar5RespiratoryEffort,
+                    Apgar5MuscleTone, Apgar5ReflexIrritability, Apgar5Color);
+
+                // Set up callbacks
+                viewModel.ClosePopup = () =>
+                {
+                    popup.IsOpen = false;
+                };
+
+                viewModel.OnScoreSaved = (totalScore, heartRate, respiratory, muscleTone, reflex, color) =>
+                {
+                    Apgar5Min = totalScore;
+                    Apgar5HeartRate = heartRate;
+                    Apgar5RespiratoryEffort = respiratory;
+                    Apgar5MuscleTone = muscleTone;
+                    Apgar5ReflexIrritability = reflex;
+                    Apgar5Color = color;
+                    UpdateApgar5Display();
+                };
+
+                popup.BindingContext = viewModel;
+                popup.IsOpen = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error showing APGAR 5 popup");
+                await AppShell.DisplayToastAsync("Error opening APGAR 5 score form");
+            }
+        }
+
+        private void UpdateApgar1Display()
+        {
+            if (Apgar1Min.HasValue)
+            {
+                Apgar1MinDisplay = Apgar1Min.Value.ToString();
+
+                // Update status text and color based on WHO 2020 guidelines
+                if (Apgar1Min.Value >= 7)
+                {
+                    Apgar1StatusText = "Normal";
+                    Apgar1StatusColor = Colors.Green;
+                    Apgar1ButtonColor = Color.FromArgb("#E8F5E9"); // Light green
+                    Apgar1BorderColor = Colors.Green;
+                }
+                else if (Apgar1Min.Value >= 4)
+                {
+                    Apgar1StatusText = "Moderately Abnormal";
+                    Apgar1StatusColor = Colors.Orange;
+                    Apgar1ButtonColor = Color.FromArgb("#FFF3E0"); // Light orange
+                    Apgar1BorderColor = Colors.Orange;
+                }
+                else
+                {
+                    Apgar1StatusText = "Severely Abnormal";
+                    Apgar1StatusColor = Colors.Red;
+                    Apgar1ButtonColor = Color.FromArgb("#FFEBEE"); // Light red
+                    Apgar1BorderColor = Colors.Red;
+                }
+            }
+            else
+            {
+                Apgar1MinDisplay = "—";
+                Apgar1StatusText = "Tap to score";
+                Apgar1StatusColor = Colors.Gray;
+                Apgar1ButtonColor = Color.FromArgb("#F5F5F5");
+                Apgar1BorderColor = Color.FromArgb("#E0E0E0");
+            }
+        }
+
+        private void UpdateApgar5Display()
+        {
+            if (Apgar5Min.HasValue)
+            {
+                Apgar5MinDisplay = Apgar5Min.Value.ToString();
+
+                // Update status text and color based on WHO 2020 guidelines
+                if (Apgar5Min.Value >= 7)
+                {
+                    Apgar5StatusText = "Normal";
+                    Apgar5StatusColor = Colors.Green;
+                    Apgar5ButtonColor = Color.FromArgb("#E8F5E9"); // Light green
+                    Apgar5BorderColor = Colors.Green;
+                }
+                else if (Apgar5Min.Value >= 4)
+                {
+                    Apgar5StatusText = "Moderately Abnormal";
+                    Apgar5StatusColor = Colors.Orange;
+                    Apgar5ButtonColor = Color.FromArgb("#FFF3E0"); // Light orange
+                    Apgar5BorderColor = Colors.Orange;
+                }
+                else
+                {
+                    Apgar5StatusText = "Severely Abnormal";
+                    Apgar5StatusColor = Colors.Red;
+                    Apgar5ButtonColor = Color.FromArgb("#FFEBEE"); // Light red
+                    Apgar5BorderColor = Colors.Red;
+                }
+            }
+            else
+            {
+                Apgar5MinDisplay = "—";
+                Apgar5StatusText = "Tap to score";
+                Apgar5StatusColor = Colors.Gray;
+                Apgar5ButtonColor = Color.FromArgb("#F5F5F5");
+                Apgar5BorderColor = Color.FromArgb("#E0E0E0");
             }
         }
 

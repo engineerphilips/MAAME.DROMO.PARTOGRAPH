@@ -42,6 +42,20 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public int? Apgar5Min { get; set; } // At 5 minutes
         //public int? Apgar10Min { get; set; } // At 10 minutes (if 5-min score <7)
 
+        // APGAR 1-Minute Component Scores (0-2 each)
+        public int? Apgar1HeartRate { get; set; } // 0=Absent, 1=<100bpm, 2=≥100bpm
+        public int? Apgar1RespiratoryEffort { get; set; } // 0=Absent, 1=Slow/irregular, 2=Good/crying
+        public int? Apgar1MuscleTone { get; set; } // 0=Limp, 1=Some flexion, 2=Active motion
+        public int? Apgar1ReflexIrritability { get; set; } // 0=No response, 1=Grimace, 2=Cry/sneeze/cough
+        public int? Apgar1Color { get; set; } // 0=Blue/pale, 1=Body pink extremities blue, 2=Completely pink
+
+        // APGAR 5-Minute Component Scores (0-2 each)
+        public int? Apgar5HeartRate { get; set; } // 0=Absent, 1=<100bpm, 2=≥100bpm
+        public int? Apgar5RespiratoryEffort { get; set; } // 0=Absent, 1=Slow/irregular, 2=Good/crying
+        public int? Apgar5MuscleTone { get; set; } // 0=Limp, 1=Some flexion, 2=Active motion
+        public int? Apgar5ReflexIrritability { get; set; } // 0=No response, 1=Grimace, 2=Cry/sneeze/cough
+        public int? Apgar5Color { get; set; } // 0=Blue/pale, 1=Body pink extremities blue, 2=Completely pink
+
         // Resuscitation (WHO 2020 - Pages 91-93)
         public bool ResuscitationRequired { get; set; } = false;
         public string ResuscitationSteps { get; set; } = string.Empty; // e.g., "Stimulation only", "Bag-mask ventilation", "Intubation"
