@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.FourthStagePartographPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:fonts="clr-namespace:Fonts"
+             Title="Fourth Stage Partograph">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Modern Card Style -->
+            <Style x:Key="ModernCardStyle" TargetType="Border">
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E293B}" />
+                <Setter Property="Padding" Value="24" />
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="20" />
+                </Setter>
+                <Setter Property="Shadow">
+                    <Shadow Brush="{AppThemeBinding Light=#10000000, Dark=#30000000}"
+                            Offset="0,8"
+                            Radius="24"
+                            Opacity="0.15" />
+                </Setter>
+            </Style>
+
+            <!-- Section Title Style -->
+            <Style x:Key="SectionTitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                <Setter Property="Margin" Value="0,0,0,12" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Print"
+                     Command="{Binding PrintCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.print_16_regular}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" Padding="10">
+            <!-- Patient Header -->
+            <Border Grid.Row="0"
+                    StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#F3E5F5, Dark=#4A148C}"
+                    Padding="15"
+                    Margin="0,0,0,20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding PatientName}" FontSize="20" FontAttributes="Bold" />
+                        <Label Text="{Binding PatientInfo}" FontSize="14" Opacity="0.8" />
+                        <HorizontalStackLayout Spacing="20">
+                            <Label Text="{Binding FourthStageDuration, StringFormat='Fourth Stage Duration: {0}'}" FontSize="12" />
+                            <Label Text="{Binding VitalSignsRecorded, StringFormat='Vitals Recorded: {0}/8'}" FontSize="12" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="STAGE 4"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="#9C27B0" />
+                        <Label Text="Postpartum (2hrs)"
+                               FontSize="10"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- WHO 2020 Fourth Stage Monitoring Info -->
+            <Border Grid.Row="1"
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#9C27B0, Dark=#BA68C8}"
+                    BackgroundColor="{AppThemeBinding Light=#F3E5F5, Dark=#4A148C}"
+                    Padding="15"
+                    Margin="0,0,0,20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Fourth Stage Monitoring (First 2 Hours Postpartum)"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#6A1B9A, Dark=#E1BEE7}" />
+                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#6A1B9A, Dark=#CE93D8}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Key Monitoring: " FontAttributes="Bold" />
+                                <Span Text="Vital signs every 15 minutes, uterine fundus, bleeding, bladder status, bonding with baby" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#DC2626, Dark=#FCA5A5}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Alert: " FontAttributes="Bold" />
+                                <Span Text="Watch for postpartum hemorrhage - monitor vital signs closely" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Fourth Stage Monitoring Cards -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="10" Margin="0,0,0,20">
+
+                <!-- Fundal Height Card -->
+                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Fundal Height" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="{Binding FundalHeight}" FontSize="16" FontAttributes="Bold" TextColor="#9C27B0" />
+                        <Label Text="Should be firm at umbilicus" FontSize="12" Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Bleeding Status Card -->
+                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Bleeding Assessment" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="{Binding BleedingStatus}" FontSize="16" FontAttributes="Bold" TextColor="#F44336" />
+                        <Label Text="Normal lochia expected" FontSize="12" Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Bladder Status Card -->
+                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Bladder Status" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="{Binding BladderStatus}" FontSize="16" FontAttributes="Bold" TextColor="#FF9800" />
+                        <Label Text="Should be empty" FontSize="12" Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Vital Signs Card -->
+                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Vital Signs" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="{Binding VitalSignsRecorded, StringFormat='{0}/8 recorded'}"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#2196F3" />
+                        <Button Text="Record Vital Signs (Every 15min)"
+                                Command="{Binding RecordVitalSignsCommand}"
+                                BackgroundColor="#4CAF50"
+                                TextColor="White"
+                                CornerRadius="8" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Breastfeeding/Bonding Card -->
+                <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Mother-Baby Bonding" Style="{StaticResource SectionTitleStyle}" />
+                        <HorizontalStackLayout Spacing="15">
+                            <Label Text="✓ Skin-to-skin contact" FontSize="14" />
+                            <Label Text="✓ Early breastfeeding initiated" FontSize="14" />
+                            <Label Text="✓ Baby vitals stable" FontSize="14" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Action Buttons -->
+            <VerticalStackLayout Grid.Row="3" Spacing="10">
+                <Border StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#FFA726, Dark=#FB8C00}"
+                        BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#E65100}"
+                        Padding="15"
+                        Margin="0,0,0,10">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#E65100, Dark=#FFCC80}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Note: " FontAttributes="Bold" />
+                                <Span Text="Fourth stage monitoring continues for 2 hours postpartum. Ensure all vital signs are recorded every 15 minutes." />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </Border>
+
+                <Button Text="Complete Delivery &amp; Transfer to Postpartum Ward"
+                        Command="{Binding CompleteDeliveryCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>
