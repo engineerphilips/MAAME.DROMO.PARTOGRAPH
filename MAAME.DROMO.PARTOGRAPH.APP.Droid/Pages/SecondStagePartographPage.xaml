@@ -94,7 +94,7 @@
                     </VerticalStackLayout>
                     <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
                         <Label Text="STAGE 2"
-                               FontSize="24"
+                               FontSize="18"
                                FontAttributes="Bold"
                                HorizontalOptions="Center"
                                TextColor="#10B981" />
