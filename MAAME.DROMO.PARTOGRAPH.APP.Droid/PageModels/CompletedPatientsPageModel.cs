@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
@@ -53,6 +54,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly BirthOutcomeRepository _birthOutcomeRepository;
         private readonly BabyDetailsRepository _babyDetailsRepository;
         private readonly ModalErrorHandler _errorHandler;
+        private readonly IPartographPdfService _pdfService;
 
         [ObservableProperty]
         private List<CompletedPatientItem> _partographs = [];
@@ -76,13 +78,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             PartographRepository partographRepository,
             BirthOutcomeRepository birthOutcomeRepository,
             BabyDetailsRepository babyDetailsRepository,
-            ModalErrorHandler errorHandler)
+            ModalErrorHandler errorHandler,
+            IPartographPdfService pdfService)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
             _birthOutcomeRepository = birthOutcomeRepository;
             _babyDetailsRepository = babyDetailsRepository;
             _errorHandler = errorHandler;
+            _pdfService = pdfService;
         }
 
         [RelayCommand]
@@ -202,10 +206,34 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             => Shell.Current.GoToAsync($"secondstagepartograph?patientId={item.Partograph.ID}");
 
         [RelayCommand]
-        private Task GenerateReport(CompletedPatientItem item)
+        private async Task GenerateReport(CompletedPatientItem item)
         {
-            // Generate delivery report
-            return AppShell.DisplayToastAsync("Delivery report generation coming soon");
+            try
+            {
+                IsBusy = true;
+                await AppShell.DisplayToastAsync("Generating partograph PDF...");
+
+                var filePath = await _pdfService.GenerateAndSavePartographPdfAsync(
+                    item.Partograph.ID.Value,
+                    item.PatientName);
+
+                await AppShell.DisplayToastAsync($"PDF saved to: {filePath}");
+
+                // Optionally, open the PDF
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(filePath)
+                });
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync($"Failed to generate PDF: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]

@@ -1,4 +1,5 @@
 using MAAME.DROMO.PARTOGRAPH.SERVICE.Data;
+using MAAME.DROMO.PARTOGRAPH.SERVICE.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
     ?? "Server=localhost;Database=PartographDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False";
 builder.Services.AddDbContext<PartographDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+// Register services
+builder.Services.AddScoped<IPartographPdfService, PartographPdfService>();
 
 // Configure CORS for mobile app access
 builder.Services.AddCors(options =>
