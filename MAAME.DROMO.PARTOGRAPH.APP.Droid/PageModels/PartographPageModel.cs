@@ -1478,10 +1478,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Action? CloseAssessmentModalPopup { get; set; }
         public Action? OpenPlanModalPopup { get; set; }
         public Action? ClosePlanModalPopup { get; set; }
+        public Action? OpenBishopScoreModalPopup { get; set; }
+        public Action? CloseBishopScoreModalPopup { get; set; }
 
         // Popup Open Commands
         [RelayCommand]
-        public async Task OpenBishopScorePopupCommand()
+        public void OpenBishopScorePopup()
         {
             if (Patient?.ID != null)
             {
@@ -1499,7 +1501,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     position: "Posterior"  // Default value
                 );
 
-                _bishopScorePopupPageModel.ClosePopup = () => CloseBishopScorePopup?.Invoke();
+                _bishopScorePopupPageModel.ClosePopup = () => CloseBishopScoreModalPopup?.Invoke();
 
                 // Subscribe to save event to refresh data after save
                 _bishopScorePopupPageModel.OnScoreSaved = async (score) =>
@@ -1508,7 +1510,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     await RefreshCommand.ExecuteAsync(null);
                 };
 
-                OpenBishopScorePopup?.Invoke();
+                OpenBishopScoreModalPopup?.Invoke();
             }
         }
 
@@ -1784,17 +1786,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        [RelayCommand]
-        private async Task OpenBishopScorePopup()
-        {
-            if (Patient?.ID != null)
-            {
-                //_planModalPageModel._patient = Patient;
-                //_planModalPageModel.ClosePopup = () => ClosePlanModalPopup?.Invoke();
-                //await _planModalPageModel.LoadPatient(Patient.ID);
-                OpenBishopScoreModalPopup?.Invoke();
-            }
-        }
+        //[RelayCommand]
+        //private async Task OpenBishopScorePopup()
+        //{
+        //    if (Patient?.ID != null)
+        //    {
+        //        //_planModalPageModel._patient = Patient;
+        //        //_planModalPageModel.ClosePopup = () => ClosePlanModalPopup?.Invoke();
+        //        //await _planModalPageModel.LoadPatient(Patient.ID);
+        //        OpenBishopScoreModalPopup?.Invoke();
+        //    }
+        //}
 
         /// <summary>
         /// Refreshes the clinical notes by regenerating them from current partograph data
