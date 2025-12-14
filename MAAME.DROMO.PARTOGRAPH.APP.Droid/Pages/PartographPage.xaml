@@ -112,8 +112,8 @@
 
     <ScrollView>
         <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" Padding="10">
-            <!-- Patient Header -->
-            <Border Grid.Row="0" 
+            <!-- Patient Header with Risk Assessment -->
+            <Border Grid.Row="0"
                     StrokeThickness="0"
                     BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
                     Padding="15"
@@ -121,25 +121,46 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
-                <Grid ColumnDefinitions="*,Auto">
-                    <VerticalStackLayout>
-                        <Label Text="{Binding PatientName}" FontSize="20" FontAttributes="Bold" />
-                        <Label Text="{Binding PatientInfo}" FontSize="14" Opacity="0.8" />
-                        <HorizontalStackLayout Spacing="20">
-                            <Label Text="{Binding LaborDuration, StringFormat='Labour Duration: {0}'}" FontSize="12" />
-                            <Label Text="{Binding LastRecordedTime, StringFormat='Last Entry: {0:HH:mm}'}" FontSize="12" />
+                <VerticalStackLayout Spacing="12">
+                    <!-- Patient Info Section -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding PatientName}" FontSize="20" FontAttributes="Bold" />
+                            <Label Text="{Binding PatientInfo}" FontSize="14" Opacity="0.8" />
+                            <HorizontalStackLayout Spacing="20">
+                                <Label Text="{Binding LaborDuration, StringFormat='Labour Duration: {0}'}" FontSize="12" />
+                                <Label Text="{Binding LastRecordedTime, StringFormat='Last Entry: {0:HH:mm}'}" FontSize="12" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="{Binding CurrentDilation, StringFormat='{0} cm'}"
+                                   FontSize="32"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Current Dilation"
+                                   FontSize="10"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <!-- Risk Assessment Badge -->
+                    <Border BackgroundColor="{Binding Patient.RiskColor}"
+                            Padding="12,8"
+                            StrokeShape="RoundRectangle 8"
+                            HorizontalOptions="Start">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="⚠️" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="{Binding Patient.RiskLevel}"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding Patient.RiskScore, StringFormat='(Score: {0})'}"
+                                   FontSize="12"
+                                   Opacity="0.9"
+                                   VerticalOptions="Center" />
                         </HorizontalStackLayout>
-                    </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                        <Label Text="{Binding CurrentDilation, StringFormat='{0} cm'}" 
-                               FontSize="32" 
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center" />
-                        <Label Text="Current Dilation" 
-                               FontSize="10"
-                               HorizontalOptions="Center" />
-                    </VerticalStackLayout>
-                </Grid>
+                    </Border>
+                </VerticalStackLayout>
             </Border>
 
             <!-- Bishop Score Panel -->
@@ -325,6 +346,75 @@
                 </VerticalStackLayout>
             </Border>
 
+            <!-- Risk Factors Panel -->
+            <Border Grid.Row="3"
+                    StrokeThickness="1"
+                    Stroke="{Binding Patient.RiskColor}"
+                    BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}"
+                    Padding="15"
+                    Margin="0,0,0,10"
+                    IsVisible="{Binding Patient.RiskFactors, Converter={toolkit:IsNotNullConverter}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <!-- Risk Header -->
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="⚠️" FontSize="18" VerticalOptions="Center" />
+                        <Label Text="Identified Risk Factors"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center" />
+                        <Border BackgroundColor="{Binding Patient.RiskColor}"
+                                Padding="6,3"
+                                StrokeShape="RoundRectangle 4"
+                                Margin="10,0,0,0">
+                            <Label Text="{Binding Patient.RiskLevel}"
+                                   FontSize="12"
+                                   FontAttributes="Bold" />
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Risk Factors List -->
+                    <CollectionView ItemsSource="{Binding Patient.RiskFactors}"
+                                    MaximumHeightRequest="150">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:PartographRiskFactor">
+                                <HorizontalStackLayout Spacing="8" Margin="0,4">
+                                    <Label Text="•" FontSize="12" VerticalOptions="Center" />
+                                    <Label Text="{Binding Name}"
+                                           FontSize="12"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Diagnoses List (if any) -->
+                    <VerticalStackLayout Spacing="5"
+                                         IsVisible="{Binding Patient.Diagnoses, Converter={toolkit:IsNotNullConverter}}"
+                                         Margin="0,10,0,0">
+                        <Label Text="Clinical Diagnoses:"
+                               FontSize="13"
+                               FontAttributes="Bold" />
+                        <CollectionView ItemsSource="{Binding Patient.Diagnoses}"
+                                        MaximumHeightRequest="100">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:PartographDiagnosis">
+                                    <HorizontalStackLayout Spacing="8" Margin="0,4">
+                                        <Label Text="🏥" FontSize="12" VerticalOptions="Center" />
+                                        <Label Text="{Binding Name}"
+                                               FontSize="12"
+                                               FontAttributes="Italic"
+                                               VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
             <!-- Alert/Action Line Legend -->
 
             <!--<Grid Grid.Row="1" ColumnDefinitions="*,*,*" Margin="0,0,0,20">
@@ -342,7 +432,7 @@
                 </HorizontalStackLayout>
             </Grid>-->
 
-            <Grid Grid.Row="3" MinimumWidthRequest="800" ColumnDefinitions="25,65,35,*">
+            <Grid Grid.Row="4" MinimumWidthRequest="800" ColumnDefinitions="25,65,35,*">
                 <Grid.RowDefinitions>
                     <!-- Control Row -->
                     <RowDefinition Height="Auto" />

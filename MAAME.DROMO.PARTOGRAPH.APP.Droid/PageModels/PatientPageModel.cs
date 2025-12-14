@@ -896,7 +896,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     ExpectedDeliveryDate = ExpectedDeliveryDate != null ? DateOnly.FromDateTime(ExpectedDeliveryDate.Value) : null,
                     LastMenstrualDate = LastMenstrualDate != null ? DateOnly.FromDateTime(LastMenstrualDate.Value) : null,
                     RupturedMembraneTime = RupturedMembraneDate != null && RupturedMembraneTime != null ? new DateTime(RupturedMembraneDate.Value.Year, RupturedMembraneDate.Value.Month, RupturedMembraneDate.Value.Day).Add(RupturedMembraneTime.Value) : null,
-                    Status = CervicalDilationOnAdmission > 4 ? LaborStatus.FirstStage : LaborStatus.Pending
+                    Status = CervicalDilationOnAdmission > 4 ? LaborStatus.FirstStage : LaborStatus.Pending,
+                    // Risk Assessment Summary
+                    RiskScore = RiskScore,
+                    RiskLevel = RiskLevel,
+                    RiskColor = RiskColor
                 });
                 //LaborStartDate.Value.ToDateTime(LaborStartTime.Value)
 

@@ -52,6 +52,11 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string MembraneStatus { get; set; } = "Intact";
         public string LiquorStatus { get; set; } = "Clear";
 
+        // Risk Assessment Summary
+        public int RiskScore { get; set; } = 0;
+        public string RiskLevel { get; set; } = "Low Risk";
+        public string RiskColor { get; set; } = "#4CAF50";
+
         // Risk Factors
         public IEnumerable<PartographDiagnosis> Diagnoses { get; set; } = Enumerable.Empty<PartographDiagnosis>();
 
