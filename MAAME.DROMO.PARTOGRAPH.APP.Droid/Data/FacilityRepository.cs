@@ -36,6 +36,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     country TEXT,
                     phone TEXT,
                     email TEXT,
+                    latitude REAL,
+                    longitude REAL,
+                    ghpostgps TEXT,
                     active INTEGER NOT NULL DEFAULT 1,
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
@@ -77,6 +80,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 END;";
 
                 await createTableCmd.ExecuteNonQueryAsync();
+
+                // Add migration for existing databases to add GPS columns
+                try
+                {
+                    var alterTableCmd = connection.CreateCommand();
+                    alterTableCmd.CommandText = @"
+                        ALTER TABLE Tbl_Facility ADD COLUMN latitude REAL;
+                        ALTER TABLE Tbl_Facility ADD COLUMN longitude REAL;
+                        ALTER TABLE Tbl_Facility ADD COLUMN ghpostgps TEXT;";
+                    await alterTableCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException)
+                {
+                    // Columns already exist, ignore error
+                }
             }
             catch (SqliteException e)
             {
@@ -124,6 +142,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Country = "Ghana",
                     Phone = "+233-302-674-191",
                     Email = "info@kbth.gov.gh",
+                    Latitude = 5.5536,
+                    Longitude = -0.2192,
+                    GHPostGPS = "GA-054-1234",
                     IsActive = true,
                     CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
@@ -146,6 +167,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Country = "Ghana",
                     Phone = "+233-302-776-111",
                     Email = "info@ridgehospital.gov.gh",
+                    Latitude = 5.5711,
+                    Longitude = -0.1920,
+                    GHPostGPS = "GA-020-5678",
                     IsActive = true,
                     CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
@@ -168,6 +192,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Country = "Ghana",
                     Phone = "+233-302-776-111",
                     Email = "info@37mh.gov.gh",
+                    Latitude = 5.5969,
+                    Longitude = -0.1800,
+                    GHPostGPS = "GA-001-9876",
                     IsActive = true,
                     CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
@@ -212,6 +239,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Country = reader["country"]?.ToString() ?? string.Empty,
                     Phone = reader["phone"]?.ToString() ?? string.Empty,
                     Email = reader["email"]?.ToString() ?? string.Empty,
+                    Latitude = reader["latitude"] != DBNull.Value ? Convert.ToDouble(reader["latitude"]) : null,
+                    Longitude = reader["longitude"] != DBNull.Value ? Convert.ToDouble(reader["longitude"]) : null,
+                    GHPostGPS = reader["ghpostgps"]?.ToString() ?? string.Empty,
                     IsActive = Convert.ToBoolean(reader["active"]),
                     CreatedTime = Convert.ToInt64(reader["createdtime"]),
                     UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
@@ -253,6 +283,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Country = reader["country"]?.ToString() ?? string.Empty,
                     Phone = reader["phone"]?.ToString() ?? string.Empty,
                     Email = reader["email"]?.ToString() ?? string.Empty,
+                    Latitude = reader["latitude"] != DBNull.Value ? Convert.ToDouble(reader["latitude"]) : null,
+                    Longitude = reader["longitude"] != DBNull.Value ? Convert.ToDouble(reader["longitude"]) : null,
+                    GHPostGPS = reader["ghpostgps"]?.ToString() ?? string.Empty,
                     IsActive = Convert.ToBoolean(reader["active"]),
                     CreatedTime = Convert.ToInt64(reader["createdtime"]),
                     UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
@@ -277,9 +310,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             var insertCmd = connection.CreateCommand();
             insertCmd.CommandText = @"INSERT INTO Tbl_Facility
-                (ID, name, code, type, address, city, region, country, phone, email, active,
+                (ID, name, code, type, address, city, region, country, phone, email, latitude, longitude, ghpostgps, active,
                  createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-                VALUES (@id, @name, @code, @type, @address, @city, @region, @country, @phone, @email, @active,
+                VALUES (@id, @name, @code, @type, @address, @city, @region, @country, @phone, @email, @latitude, @longitude, @ghpostgps, @active,
                         @createdtime, @updatedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
 
             insertCmd.Parameters.AddWithValue("@id", facility.ID.ToString());
@@ -292,6 +325,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             insertCmd.Parameters.AddWithValue("@country", facility.Country ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@phone", facility.Phone ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@email", facility.Email ?? string.Empty);
+            insertCmd.Parameters.AddWithValue("@latitude", facility.Latitude.HasValue ? (object)facility.Latitude.Value : DBNull.Value);
+            insertCmd.Parameters.AddWithValue("@longitude", facility.Longitude.HasValue ? (object)facility.Longitude.Value : DBNull.Value);
+            insertCmd.Parameters.AddWithValue("@ghpostgps", facility.GHPostGPS ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@active", facility.IsActive ? 1 : 0);
             insertCmd.Parameters.AddWithValue("@createdtime", facility.CreatedTime);
             insertCmd.Parameters.AddWithValue("@updatedtime", facility.UpdatedTime);

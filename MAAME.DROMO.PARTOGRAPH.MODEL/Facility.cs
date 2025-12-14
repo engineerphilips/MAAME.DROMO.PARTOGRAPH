@@ -19,6 +19,12 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Country { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+
+        // GPS Location fields
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string GHPostGPS { get; set; } = string.Empty; // Ghana Post GPS Address
+
         public bool IsActive { get; set; } = true;
 
         // Sync columns

@@ -40,6 +40,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         // Show user details only for non-Super/Admin users
         public bool ShowUserDetails => !Constants.IsSuperOrAdmin();
 
+        // Show facilities menu only for Super/Admin users
+        public bool ShowFacilitiesMenu => Constants.IsSuperOrAdmin();
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -68,6 +71,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             OnPropertyChanged(nameof(Email));
             OnPropertyChanged(nameof(AppVersion));
             OnPropertyChanged(nameof(ShowUserDetails));
+            OnPropertyChanged(nameof(ShowFacilitiesMenu));
         }
 
         #endregion
