@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.NeonatalOutcomesView">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="0,0,0,20">
+
+            <!-- Summary Header -->
+            <Border BackgroundColor="{AppThemeBinding Light=#FF9800, Dark=#F57C00}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                    <Label Text="&#xE8A7;"
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="48"
+                           TextColor="White"
+                           Grid.Column="0"
+                           VerticalOptions="Center"/>
+                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                        <Label Text="Neonatal Outcomes"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="White"/>
+                        <Label Text="{Binding TotalBirths, StringFormat='{0} total births'}"
+                               FontSize="16"
+                               TextColor="White"
+                               Opacity="0.9"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Vital Statistics Row -->
+            <Grid ColumnDefinitions="*,12,*,12,*,12,*" ColumnSpacing="0">
+                <Border Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light=#4CAF50, Dark=#388E3C}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Live Births"
+                               FontSize="11"
+                               TextColor="White"
+                               Opacity="0.9"/>
+                        <Label Text="{Binding LiveBirths}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="2"
+                        BackgroundColor="{AppThemeBinding Light=#FF9800, Dark=#F57C00}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Fresh SB"
+                               FontSize="11"
+                               TextColor="White"
+                               Opacity="0.9"/>
+                        <Label Text="{Binding FreshStillbirths}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="4"
+                        BackgroundColor="{AppThemeBinding Light=#F44336, Dark=#D32F2F}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Macerated SB"
+                               FontSize="11"
+                               TextColor="White"
+                               Opacity="0.9"/>
+                        <Label Text="{Binding MaceratedStillbirths}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="6"
+                        BackgroundColor="{AppThemeBinding Light=#E91E63, Dark=#C2185B}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Early ND"
+                               FontSize="11"
+                               TextColor="White"
+                               Opacity="0.9"/>
+                        <Label Text="{Binding EarlyNeonatalDeaths}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White"/>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Mortality Rates Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Mortality Rates"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Stillbirth Rate"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding StillbirthRate, StringFormat='{0:F1} per 1,000'}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#F44336"/>
+
+                        <Label Text="Early Neonatal Mortality Rate"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding EarlyNeonatalMortalityRate, StringFormat='{0:F1} per 1,000'}"
+                               Grid.Row="1" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#FF9800"/>
+
+                        <Label Text="Perinatal Mortality Rate"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding PerinatalMortalityRate, StringFormat='{0:F1} per 1,000'}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#E91E63"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Birth Weight Distribution Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="Birth Weight Distribution"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+                        <Label FontSize="14"
+                               VerticalOptions="End"
+                               Margin="0,0,0,2">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="(Avg: " />
+                                    <Span Text="{Binding AverageBirthWeight, StringFormat='{0:F0}g'}" FontAttributes="Bold"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Extremely Low (&lt;1000g)"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding ExtremelyLowBirthWeight}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#F44336"/>
+
+                        <Label Text="Very Low (1000-1499g)"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding VeryLowBirthWeight}"
+                               Grid.Row="1" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#FF9800"/>
+
+                        <Label Text="Low (1500-2499g)"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding LowBirthWeight}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#FFC107"/>
+
+                        <Label Text="Normal (2500-3999g)"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding NormalWeight}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#4CAF50"/>
+
+                        <Label Text="Macrosomia (≥4000g)"
+                               Grid.Row="4" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding Macrosomia}"
+                               Grid.Row="4" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#2196F3"/>
+                    </Grid>
+
+                    <Border BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#E65100}"
+                            Padding="12"
+                            Margin="0,8,0,0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Label FontSize="13">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Low Birth Weight Rate: " />
+                                    <Span Text="{Binding LowBirthWeightRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#FF9800"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- APGAR Scores Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="APGAR Scores"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Average APGAR 1-Min"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AverageApgar1Min, StringFormat='{0:F1}'}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+
+                        <Label Text="Average APGAR 5-Min"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AverageApgar5Min, StringFormat='{0:F1}'}"
+                               Grid.Row="1" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+
+                        <Label Text="APGAR 1-Min &lt; 7"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding Apgar1MinBelow7}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#FF9800"/>
+
+                        <Label Text="APGAR 5-Min &lt; 7"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding Apgar5MinBelow7}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#F44336"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Resuscitation Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="Resuscitation"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+                        <Label FontSize="14"
+                               VerticalOptions="End"
+                               Margin="0,0,0,2">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="(" />
+                                    <Span Text="{Binding ResuscitationRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#FF9800"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Resuscitation Required"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding ResuscitationRequired}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+
+                        <Label Text="Bag-Mask Ventilation"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding BagMaskVentilation}"
+                               Grid.Row="1" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+
+                        <Label Text="Intubations"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding Intubations}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#FF9800"/>
+
+                        <Label Text="Chest Compressions"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding ChestCompressions}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#F44336"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- NICU Admissions -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="NICU Admissions"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="{Binding NICUAdmissions}"
+                               FontSize="32"
+                               FontAttributes="Bold"
+                               TextColor="#2196F3"/>
+                        <Label FontSize="16"
+                               VerticalOptions="End"
+                               Margin="0,0,0,6">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="(" />
+                                    <Span Text="{Binding NICUAdmissionRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#2196F3"/>
+                                    <Span Text=" of births)" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Complications Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Neonatal Complications"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Birth Asphyxia"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding BirthAsphyxia}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#F44336"/>
+
+                        <Label Text="Respiratory Distress"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding RespiratoryDistress}"
+                               Grid.Row="1" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#FF9800"/>
+
+                        <Label Text="Sepsis"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding Sepsis}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+
+                        <Label Text="Jaundice"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding Jaundice}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+
+                        <Label Text="Hypothermia"
+                               Grid.Row="4" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding Hypothermia}"
+                               Grid.Row="4" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+
+                        <Label Text="Congenital Abnormalities"
+                               Grid.Row="5" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding CongenitalAbnormalities}"
+                               Grid.Row="5" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#E91E63"/>
+
+                        <Label Text="Birth Injuries"
+                               Grid.Row="6" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding BirthInjuries}"
+                               Grid.Row="6" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#E91E63"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Essential Newborn Care (WHO) -->
+            <Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Essential Newborn Care (WHO)"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Skin-to-Skin Contact"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#388E3C, Dark=#A5D6A7}"/>
+                        <Label Text="{Binding SkinToSkinContact}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+
+                        <Label Text="Early Breastfeeding"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#388E3C, Dark=#A5D6A7}"/>
+                        <Label Text="{Binding EarlyBreastfeeding}"
+                               Grid.Row="1" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+
+                        <Label Text="Delayed Cord Clamping"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#388E3C, Dark=#A5D6A7}"/>
+                        <Label Text="{Binding DelayedCordClamping}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+
+                        <Label Text="Vitamin K Given"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#388E3C, Dark=#A5D6A7}"/>
+                        <Label Text="{Binding VitaminKGiven}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+
+                        <Label Text="Eye Prophylaxis"
+                               Grid.Row="4" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#388E3C, Dark=#A5D6A7}"/>
+                        <Label Text="{Binding EyeProphylaxis}"
+                               Grid.Row="4" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Detailed Cases Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Recent Neonatal Cases"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <CollectionView ItemsSource="{Binding Cases}"
+                                    ItemsLayout="VerticalList"
+                                    SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No neonatal cases in this period"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=#888, Dark=#AAA}"
+                                   HorizontalOptions="Center"
+                                   Margin="0,20,0,0"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:NeonatalOutcomeCase">
+                                <Border BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}"
+                                        Padding="16"
+                                        Margin="0,0,0,12">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">
+                                        <HorizontalStackLayout Grid.Row="0" Spacing="8">
+                                            <Label Text="Mother:"
+                                                   FontSize="13"
+                                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                                            <Label Text="{Binding MotherName}"
+                                                   FontSize="15"
+                                                   FontAttributes="Bold"/>
+                                        </HorizontalStackLayout>
+
+                                        <Label Grid.Row="1"
+                                               Text="{Binding HospitalNumber}"
+                                               FontSize="12"
+                                               FontFamily="monospace"
+                                               TextColor="{AppThemeBinding Light=#888, Dark=#AAA}"/>
+
+                                        <Label Grid.Row="2"
+                                               FontSize="13"
+                                               TextColor="{AppThemeBinding Light=#666, Dark=#BBB}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Sex}" FontAttributes="Bold"/>
+                                                    <Span Text=" | " />
+                                                    <Span Text="{Binding BirthWeight, StringFormat='{0:F0}g'}" FontAttributes="Bold"/>
+                                                    <Span Text=" | APGAR: " />
+                                                    <Span Text="{Binding Apgar1Min}" FontAttributes="Bold"/>
+                                                    <Span Text="/" />
+                                                    <Span Text="{Binding Apgar5Min}" FontAttributes="Bold"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                        <VerticalStackLayout Grid.Row="3" Spacing="4">
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label Text="{Binding VitalStatus}"
+                                                       FontSize="12"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#4CAF50"/>
+                                                <Label Text="{Binding ResuscitationRequired, StringFormat='Resuscitation: {0}'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#888, Dark=#999}"
+                                                       IsVisible="{Binding ResuscitationRequired}"/>
+                                                <Label Text="{Binding NICUAdmission, StringFormat='NICU: {0}'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#888, Dark=#999}"
+                                                       IsVisible="{Binding NICUAdmission}"/>
+                                            </HorizontalStackLayout>
+                                            <Label Text="{Binding Complications}"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

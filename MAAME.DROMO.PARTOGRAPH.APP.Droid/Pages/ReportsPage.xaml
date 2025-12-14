@@ -1,12 +1,183 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.ReportsPage"
-             Title="ReportsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Reports & Analytics">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:TabBackgroundConverter x:Key="TabBackgroundConverter" />
+            <converters:EqualConverter x:Key="EqualConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16">
+
+        <!-- Header Section -->
+        <Border Grid.Row="0"
+                BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1976D2}"
+                Padding="20"
+                Margin="0,0,0,16">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+                <Label Text="Reports &amp; Analytics"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       Grid.Row="0" Grid.Column="0"/>
+                <Label Text="{Binding StartDate, StringFormat='Period: {0:MMM dd} - '}"
+                       FontSize="14"
+                       TextColor="White"
+                       Opacity="0.9"
+                       Grid.Row="1" Grid.Column="0">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding StartDate, StringFormat='Period: {0:MMM dd} - '}" />
+                            <Span Text="{Binding EndDate, StringFormat='{0:MMM dd, yyyy}'}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Button Text="&#xE946;"
+                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                        FontSize="20"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        Grid.Row="0" Grid.Column="1"
+                        Grid.RowSpan="2"
+                        Command="{Binding RefreshCurrentReportCommand}"
+                        VerticalOptions="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Date Range Filter -->
+        <Border Grid.Row="1"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                Padding="16"
+                Margin="0,0,0,16">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                        Offset="0,2"
+                        Radius="6"
+                        Opacity="0.1" />
+            </Border.Shadow>
+            <Grid ColumnDefinitions="*,12,*,12,Auto" RowDefinitions="Auto,8,Auto">
+                <Label Text="Start Date"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                       Grid.Row="0" Grid.Column="0"/>
+                <DatePicker Date="{Binding StartDate}"
+                            Grid.Row="2" Grid.Column="0"
+                            FontSize="14"/>
+
+                <Label Text="End Date"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                       Grid.Row="0" Grid.Column="2"/>
+                <DatePicker Date="{Binding EndDate}"
+                            Grid.Row="2" Grid.Column="2"
+                            FontSize="14"/>
+
+                <Button Text="Apply"
+                        BackgroundColor="#2196F3"
+                        TextColor="White"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        Padding="20,10"
+                        Command="{Binding RefreshCurrentReportCommand}"
+                        Grid.Row="2" Grid.Column="4"/>
+            </Grid>
+        </Border>
+
+        <!-- Reports Tabs -->
+        <Grid Grid.Row="2">
+            <!-- Loading Overlay -->
+            <Grid IsVisible="{Binding IsLoading}"
+                  BackgroundColor="{AppThemeBinding Light=#80FFFFFF, Dark=#80000000}"
+                  ZIndex="100">
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="16">
+                    <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                       Color="#2196F3"
+                                       WidthRequest="50"
+                                       HeightRequest="50"/>
+                    <Label Text="{Binding LoadingMessage}"
+                           FontSize="16"
+                           TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Tab View -->
+            <ScrollView>
+                <VerticalStackLayout Spacing="0">
+                    <!-- Tab Headers -->
+                    <ScrollView Orientation="Horizontal" Margin="0,0,0,16">
+                        <HorizontalStackLayout Spacing="8">
+                            <Button Text="Monthly Dashboard"
+                                    Command="{Binding LoadMonthlyDashboardCommand}"
+                                    BackgroundColor="{Binding SelectedTabIndex, Converter={StaticResource TabBackgroundConverter}, ConverterParameter=0}"
+                                    TextColor="White"
+                                    FontSize="13"
+                                    Padding="16,8"
+                                    CornerRadius="8"/>
+                            <Button Text="Maternal Complications"
+                                    Command="{Binding LoadMaternalComplicationsCommand}"
+                                    BackgroundColor="{Binding SelectedTabIndex, Converter={StaticResource TabBackgroundConverter}, ConverterParameter=1}"
+                                    TextColor="White"
+                                    FontSize="13"
+                                    Padding="16,8"
+                                    CornerRadius="8"/>
+                            <Button Text="Neonatal Outcomes"
+                                    Command="{Binding LoadNeonatalOutcomesCommand}"
+                                    BackgroundColor="{Binding SelectedTabIndex, Converter={StaticResource TabBackgroundConverter}, ConverterParameter=2}"
+                                    TextColor="White"
+                                    FontSize="13"
+                                    Padding="16,8"
+                                    CornerRadius="8"/>
+                            <Button Text="Alert Response"
+                                    Command="{Binding LoadAlertResponseCommand}"
+                                    BackgroundColor="{Binding SelectedTabIndex, Converter={StaticResource TabBackgroundConverter}, ConverterParameter=3}"
+                                    TextColor="White"
+                                    FontSize="13"
+                                    Padding="16,8"
+                                    CornerRadius="8"/>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+
+                    <!-- Tab Content -->
+                    <Grid>
+                        <!-- Monthly Dashboard View -->
+                        <views:MonthlyDashboardView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource EqualConverter}, ConverterParameter=0}"
+                                                     BindingContext="{Binding MonthlyDashboard}"/>
+
+                        <!-- Maternal Complications View -->
+                        <views:MaternalComplicationsView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource EqualConverter}, ConverterParameter=1}"
+                                                          BindingContext="{Binding MaternalComplicationsReport}"/>
+
+                        <!-- Neonatal Outcomes View -->
+                        <views:NeonatalOutcomesView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource EqualConverter}, ConverterParameter=2}"
+                                                     BindingContext="{Binding NeonatalOutcomesReport}"/>
+
+                        <!-- Alert Response View (Placeholder) -->
+                        <Label IsVisible="{Binding SelectedTabIndex, Converter={StaticResource EqualConverter}, ConverterParameter=3}"
+                               Text="Alert Response Time Report - Coming Soon"
+                               FontSize="18"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Margin="0,40,0,0"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+    </Grid>
 </ContentPage>
