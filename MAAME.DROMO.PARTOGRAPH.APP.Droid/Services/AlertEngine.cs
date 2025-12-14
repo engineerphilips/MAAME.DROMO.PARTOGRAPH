@@ -37,6 +37,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             // Analyze hydration
             newAlerts.AddRange(AnalyzeHydration(patient));
 
+            // Analyze risk factors
+            newAlerts.AddRange(AnalyzeRiskFactors(patient));
+
             // Update active alerts list
             UpdateActiveAlerts(newAlerts);
 
@@ -716,6 +719,161 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     MeasurementType = "Oral Fluid Intake",
                     CurrentValue = "None in 4 hours",
                     ExpectedRange = "Regular intake during labor"
+                });
+            }
+
+            return alerts;
+        }
+
+        /// <summary>
+        /// Analyzes patient risk factors and generates appropriate alerts
+        /// Based on WHO Labour Care Guide 2020 and standard obstetric risk assessment
+        /// </summary>
+        private List<ClinicalAlert> AnalyzeRiskFactors(Partograph patient)
+        {
+            var alerts = new List<ClinicalAlert>();
+
+            if (!patient.RiskFactors.Any())
+                return alerts;
+
+            // High-risk conditions that require critical alerts
+            var criticalRiskFactors = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "Previous Cesarean Section", "Previous C-Section", "Previous CS",
+                "Placenta Previa", "Placenta Praevia",
+                "Severe Pre-eclampsia", "Eclampsia",
+                "Antepartum Hemorrhage", "Antepartum Haemorrhage", "APH",
+                "Fetal Distress",
+                "Cord Prolapse",
+                "Uterine Rupture",
+                "Shoulder Dystocia",
+                "Postpartum Hemorrhage", "Postpartum Haemorrhage", "PPH",
+                "Multiple Pregnancy", "Twins", "Triplets",
+                "Breech Presentation",
+                "Transverse Lie",
+                "Obstructed Labor", "Obstructed Labour",
+                "Severe Anemia", "Severe Anaemia",
+                "Heart Disease",
+                "HIV Positive - High Viral Load",
+                "Active Genital Herpes"
+            };
+
+            // Warning-level risk factors
+            var warningRiskFactors = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "Grand Multiparity", "High Parity",
+                "Advanced Maternal Age",
+                "Teenage Pregnancy", "Adolescent Pregnancy",
+                "Gestational Diabetes",
+                "Mild Pre-eclampsia", "Pregnancy-Induced Hypertension", "PIH",
+                "Polyhydramnios",
+                "Oligohydramnios",
+                "IUGR", "Intrauterine Growth Restriction",
+                "Previous Stillbirth",
+                "Previous Neonatal Death",
+                "Premature Labor", "Preterm Labor", "Preterm Labour",
+                "Post-term Pregnancy", "Prolonged Pregnancy",
+                "Rh Negative", "Rh Incompatibility",
+                "Anemia", "Anaemia",
+                "Asthma",
+                "Epilepsy",
+                "Diabetes Mellitus",
+                "Chronic Hypertension",
+                "HIV Positive",
+                "Hepatitis B", "Hepatitis C",
+                "Syphilis",
+                "Malaria",
+                "Previous Preterm Birth"
+            };
+
+            var criticalFactors = new List<string>();
+            var warningFactors = new List<string>();
+
+            foreach (var riskFactor in patient.RiskFactors)
+            {
+                var name = riskFactor.Name.Trim();
+
+                if (criticalRiskFactors.Any(crf => name.Contains(crf, StringComparison.OrdinalIgnoreCase)))
+                {
+                    criticalFactors.Add(name);
+                }
+                else if (warningRiskFactors.Any(wrf => name.Contains(wrf, StringComparison.OrdinalIgnoreCase)))
+                {
+                    warningFactors.Add(name);
+                }
+            }
+
+            // Create critical alert if any critical risk factors exist
+            if (criticalFactors.Count > 0)
+            {
+                alerts.Add(new ClinicalAlert
+                {
+                    Severity = AlertSeverity.Critical,
+                    Category = AlertCategory.Maternal,
+                    Title = $"High-Risk Pregnancy: {criticalFactors.Count} Critical Factor{(criticalFactors.Count > 1 ? "s" : "")}",
+                    Message = $"Patient has critical risk factor(s): {string.Join(", ", criticalFactors)}",
+                    RecommendedActions = new List<string>
+                    {
+                        "Ensure senior obstetrician is aware and involved in care",
+                        "Review management plan for each risk factor",
+                        "Ensure appropriate monitoring protocols are in place",
+                        "Prepare for potential emergency interventions",
+                        "Confirm blood products available if needed",
+                        "Ensure neonatal team is alerted if indicated",
+                        "Consider transfer to higher level facility if appropriate",
+                        "Document informed consent and birth plan discussions"
+                    },
+                    MeasurementType = "Risk Assessment",
+                    CurrentValue = string.Join(", ", criticalFactors),
+                    ExpectedRange = "No high-risk factors"
+                });
+            }
+
+            // Create warning alert if any warning-level risk factors exist
+            if (warningFactors.Count > 0)
+            {
+                alerts.Add(new ClinicalAlert
+                {
+                    Severity = AlertSeverity.Warning,
+                    Category = AlertCategory.Maternal,
+                    Title = $"Risk Factors Present: {warningFactors.Count} Factor{(warningFactors.Count > 1 ? "s" : "")}",
+                    Message = $"Patient has risk factor(s) requiring enhanced monitoring: {string.Join(", ", warningFactors)}",
+                    RecommendedActions = new List<string>
+                    {
+                        "Ensure attending physician is aware of all risk factors",
+                        "Follow enhanced monitoring protocols as indicated",
+                        "Review antenatal history and previous outcomes",
+                        "Ensure appropriate birth plan in place",
+                        "Monitor labor progress closely",
+                        "Be prepared for potential complications",
+                        "Document risk factor management in clinical notes"
+                    },
+                    MeasurementType = "Risk Assessment",
+                    CurrentValue = string.Join(", ", warningFactors),
+                    ExpectedRange = "No significant risk factors"
+                });
+            }
+
+            // Informational alert for total risk factor count
+            if (patient.RiskFactors.Count() > 0 && criticalFactors.Count == 0 && warningFactors.Count == 0)
+            {
+                var allFactors = patient.RiskFactors.Select(rf => rf.Name).ToList();
+                alerts.Add(new ClinicalAlert
+                {
+                    Severity = AlertSeverity.Info,
+                    Category = AlertCategory.Maternal,
+                    Title = $"Risk Factors Documented: {patient.RiskFactors.Count()}",
+                    Message = $"Risk factors recorded: {string.Join(", ", allFactors)}",
+                    RecommendedActions = new List<string>
+                    {
+                        "Continue standard labor care",
+                        "Monitor as per WHO 2020 Labour Care Guide",
+                        "Review risk factors if clinical situation changes",
+                        "Ensure appropriate documentation"
+                    },
+                    MeasurementType = "Risk Assessment",
+                    CurrentValue = string.Join(", ", allFactors),
+                    ExpectedRange = "Standard monitoring"
                 });
             }
 

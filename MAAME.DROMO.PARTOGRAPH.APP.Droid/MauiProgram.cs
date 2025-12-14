@@ -149,6 +149,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<AssessmentModalPageModel>();
             builder.Services.AddSingleton<PlanModalPageModel>();
             builder.Services.AddSingleton<FHRContractionModalPageModel>();
+            builder.Services.AddSingleton<BishopScorePopupPageModel>();
 
             // Register Pages and PageModels with routes
             builder.Services.AddTransientWithShellRoute<PatientPage, PatientPageModel>("patient");
