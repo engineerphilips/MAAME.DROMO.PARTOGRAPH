@@ -12,6 +12,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
         private readonly CervixDilatationRepository _cervixDilatationRepository;
+        private readonly HeadDescentRepository _headDescentRepository;
+        private readonly BishopScoreRepository _bishopScoreRepository;
         private readonly PartographDiagnosisRepository _partographDiagnosisRepository;
         private readonly PartographRiskFactorRepository _partographRiskFactorRepository;
         //private readonly VitalSignRepository _vitalSignRepository;
@@ -261,6 +263,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 OnPropertyChanged(nameof(HasDilatationValue));
                 OnPropertyChanged(nameof(LaborStatusIndicator));
                 OnPropertyChanged(nameof(LaborStatusColor));
+
+                // Sync with Bishop Score dilatation when induction is planned
+                if (IsInductionPlanned && value.HasValue)
+                {
+                    BishopDilatation = value.Value;
+                }
             }
         }
 
@@ -318,6 +326,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 OnPropertyChanged(nameof(CalculatedBishopScore));
                 OnPropertyChanged(nameof(BishopScoreInterpretation));
                 CalculateRiskAssessment();
+
+                // Sync with CervicalDilationOnAdmission if it's not already set or different
+                if (CervicalDilationOnAdmission == null || CervicalDilationOnAdmission.Value != value)
+                {
+                    _cervicalDilationOnAdmission = value;
+                    OnPropertyChanged(nameof(CervicalDilationOnAdmission));
+                    OnPropertyChanged(nameof(HasDilatationValue));
+                    OnPropertyChanged(nameof(LaborStatusIndicator));
+                    OnPropertyChanged(nameof(LaborStatusColor));
+                }
             }
         }
 
@@ -503,6 +521,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public PatientPageModel(PatientRepository patientRepository,
             PartographRepository partographRepository,
             CervixDilatationRepository cervixDilatationRepository,
+            HeadDescentRepository headDescentRepository,
+            BishopScoreRepository bishopScoreRepository,
             PartographDiagnosisRepository partographDiagnosisRepository,
             PartographRiskFactorRepository partographRiskFactorRepository,
             ModalErrorHandler errorHandler)
@@ -511,6 +531,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
             _cervixDilatationRepository = cervixDilatationRepository;
+            _headDescentRepository = headDescentRepository;
+            _bishopScoreRepository = bishopScoreRepository;
             _partographDiagnosisRepository = partographDiagnosisRepository;
             _partographRiskFactorRepository = partographRiskFactorRepository;
             _errorHandler = errorHandler;
@@ -915,13 +937,59 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         }
                     }
 
-                    if (CervicalDilationOnAdmission > 4)
+                    // Record initial cervical dilatation if present (>0 cm)
+                    if (CervicalDilationOnAdmission > 0)
                     {
                         await _cervixDilatationRepository.SaveItemAsync(new CervixDilatation
                         {
                             PartographID = partographId.Value,
                             Time = DateTime.Now,
                             DilatationCm = CervicalDilationOnAdmission ?? 0,
+                            HandlerName = Constants.Staff?.Name ?? string.Empty,
+                            Handler = Constants.Staff?.ID
+                        });
+                    }
+
+                    // Save Bishop Score if induction is planned
+                    if (IsInductionPlanned)
+                    {
+                        // Calculate component scores
+                        var dilationScore = BishopScoreCalculator.CalculateDilationScore(BishopDilatation);
+                        var effacementScore = BishopScoreCalculator.CalculateEffacementScore(BishopEffacement);
+                        var stationScore = BishopScoreCalculator.CalculateStationScore(int.Parse(BishopStation.Replace("+", "")));
+                        var consistencyScore = BishopScoreCalculator.CalculateConsistencyScore(BishopConsistency);
+                        var positionScore = BishopScoreCalculator.CalculatePositionScore(BishopPosition);
+
+                        var (totalScore, interpretation, favorable) = BishopScoreCalculator.CalculateTotalScore(
+                            dilationScore, effacementScore, consistencyScore, positionScore, stationScore);
+
+                        await _bishopScoreRepository.SaveItemAsync(new BishopScore
+                        {
+                            PartographID = partographId.Value,
+                            Time = DateTime.Now,
+                            Dilation = dilationScore,
+                            Effacement = effacementScore,
+                            Station = stationScore,
+                            Consistency = consistencyScore,
+                            Position = positionScore,
+                            TotalScore = totalScore,
+                            DilationCm = BishopDilatation,
+                            EffacementPercent = BishopEffacement,
+                            StationValue = int.Parse(BishopStation.Replace("+", "")),
+                            CervicalConsistency = BishopConsistency,
+                            CervicalPosition = BishopPosition,
+                            Interpretation = interpretation,
+                            FavorableForDelivery = favorable,
+                            HandlerName = Constants.Staff?.Name ?? string.Empty,
+                            Handler = Constants.Staff?.ID
+                        });
+
+                        // Record initial head descent from Bishop Station
+                        await _headDescentRepository.SaveItemAsync(new HeadDescent
+                        {
+                            PartographID = partographId.Value,
+                            Time = DateTime.Now,
+                            Station = int.Parse(BishopStation.Replace("+", "")),
                             HandlerName = Constants.Staff?.Name ?? string.Empty,
                             Handler = Constants.Staff?.ID
                         });
