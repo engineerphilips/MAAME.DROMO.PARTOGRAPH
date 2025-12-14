@@ -5,7 +5,7 @@
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.MonthlyDashboardView">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="16" Padding="0,0,0,20">
+        <VerticalStackLayout Spacing="16" Padding="8,20">
 
             <!-- Summary Cards Row 1 -->
             <Grid ColumnDefinitions="*,12,*" ColumnSpacing="0">
@@ -21,18 +21,15 @@
                             <Label Text="&#xE8F1;"
                                    FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                    FontSize="28"
-                                   TextColor="White"
                                    VerticalOptions="Center"/>
                             <Label Text="Total Deliveries"
                                    FontSize="14"
-                                   TextColor="White"
                                    Opacity="0.9"
                                    VerticalOptions="Center"/>
                         </HorizontalStackLayout>
                         <Label Text="{Binding TotalDeliveries}"
                                FontSize="32"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold"/>
                     </VerticalStackLayout>
                 </Border>
 
@@ -48,18 +45,15 @@
                             <Label Text="&#xE8A7;"
                                    FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                    FontSize="28"
-                                   TextColor="White"
                                    VerticalOptions="Center"/>
                             <Label Text="Live Births"
                                    FontSize="14"
-                                   TextColor="White"
                                    Opacity="0.9"
                                    VerticalOptions="Center"/>
                         </HorizontalStackLayout>
                         <Label Text="{Binding LiveBirths}"
                                FontSize="32"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold"/>
                     </VerticalStackLayout>
                 </Border>
             </Grid>
@@ -76,12 +70,10 @@
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Maternal Deaths"
                                FontSize="12"
-                               TextColor="White"
                                Opacity="0.9"/>
                         <Label Text="{Binding MaternalDeaths}"
                                FontSize="28"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold"/>
                     </VerticalStackLayout>
                 </Border>
 
@@ -95,12 +87,10 @@
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Stillbirths"
                                FontSize="12"
-                               TextColor="White"
                                Opacity="0.9"/>
                         <Label Text="{Binding Stillbirths}"
                                FontSize="28"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold"/>
                     </VerticalStackLayout>
                 </Border>
 
@@ -114,12 +104,10 @@
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Neonatal Deaths"
                                FontSize="12"
-                               TextColor="White"
                                Opacity="0.9"/>
                         <Label Text="{Binding NeonatalDeaths}"
                                FontSize="28"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold"/>
                     </VerticalStackLayout>
                 </Border>
             </Grid>
@@ -147,8 +135,8 @@
                                Grid.Row="0" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
-                        <Label Text="{Binding SpontaneousVaginalDeliveries, StringFormat='{0} ({1:F1}%)', BindingContext={Binding VaginalDeliveryRate}}"
-                               Grid.Row="0" Grid.Column="1"
+                        <!--Text="{Binding SpontaneousVaginalDeliveries, StringFormat='{0} ({1:F1}%)', BindingContext={Binding VaginalDeliveryRate}}"-->
+                        <Label Grid.Row="0" Grid.Column="1"
                                FontSize="14"
                                FontAttributes="Bold"
                                HorizontalOptions="End">
@@ -348,7 +336,7 @@
                            FontAttributes="Bold"/>
 
                     <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
-                        <Label Text="Average Labor Duration"
+                        <Label Text="Average Labour Duration"
                                Grid.Row="0" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
@@ -357,7 +345,7 @@
                                FontSize="14"
                                FontAttributes="Bold"/>
 
-                        <Label Text="Prolonged Labors"
+                        <Label Text="Prolonged Labours"
                                Grid.Row="1" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
@@ -373,7 +361,7 @@
                             </Label.FormattedText>
                         </Label>
 
-                        <Label Text="Rapid Labors"
+                        <Label Text="Rapid Labours"
                                Grid.Row="2" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
@@ -387,7 +375,7 @@
 
             <!-- WHO Compliance Section -->
             <Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
-                    Padding="20">
+                    Padding="20" >
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="12" />
                 </Border.StrokeShape>

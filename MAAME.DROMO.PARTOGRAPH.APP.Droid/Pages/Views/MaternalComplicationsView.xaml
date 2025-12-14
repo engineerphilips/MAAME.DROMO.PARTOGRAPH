@@ -6,7 +6,7 @@
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.MaternalComplicationsView">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="16" Padding="0,0,0,20">
+        <VerticalStackLayout Spacing="16" Padding="4,20">
 
             <!-- Summary Header -->
             <Border BackgroundColor="{AppThemeBinding Light=#F44336, Dark=#D32F2F}"
@@ -18,16 +18,13 @@
                     <Label Text="&#xEA39;"
                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                            FontSize="48"
-                           TextColor="White"
                            Grid.Column="0"
                            VerticalOptions="Center"/>
                     <VerticalStackLayout Grid.Column="1" Spacing="4">
                         <Label Text="Maternal Complications"
                                FontSize="22"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
-                        <Label FontSize="16"
-                               TextColor="White"
+                               FontAttributes="Bold"/>
+                        <Label FontSize="16" 
                                Opacity="0.9">
                             <Label.FormattedText>
                                 <FormattedString>
@@ -51,15 +48,12 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Maternal Deaths"
-                               FontSize="12"
-                               TextColor="White"
+                               FontSize="12" 
                                Opacity="0.9"/>
                         <Label Text="{Binding MaternalDeaths}"
                                FontSize="28"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
-                        <Label FontSize="10"
-                               TextColor="White"
+                               FontAttributes="Bold" />
+                        <Label FontSize="10" 
                                Opacity="0.8">
                             <Label.FormattedText>
                                 <FormattedString>
@@ -79,13 +73,11 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="4">
                         <Label Text="PPH Cases"
-                               FontSize="12"
-                               TextColor="White"
+                               FontSize="12" 
                                Opacity="0.9"/>
                         <Label Text="{Binding PostpartumHemorrhages}"
                                FontSize="28"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold" />
                     </VerticalStackLayout>
                 </Border>
 
@@ -97,13 +89,11 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="4">
                         <Label Text="ICU Admissions"
-                               FontSize="12"
-                               TextColor="White"
+                               FontSize="12" 
                                Opacity="0.9"/>
                         <Label Text="{Binding ICUAdmissions}"
                                FontSize="28"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>

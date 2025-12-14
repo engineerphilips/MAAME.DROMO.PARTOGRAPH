@@ -15,11 +15,33 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private int selectedTabIndex = 0;
 
-        [ObservableProperty]
+        //[ObservableProperty]
         private DateTime startDate = DateTime.Now.AddMonths(-1);
-
-        [ObservableProperty]
+        public DateTime StartDate
+        {
+            get => startDate;
+            set
+            {
+                SetProperty(ref startDate, value);
+                var tasks = new Task[1];
+                tasks[0] = RefreshCurrentReportAsync();
+                Task.WhenAny(tasks);
+            }
+        }
+        
+        //[ObservableProperty]
         private DateTime endDate = DateTime.Now;
+        public DateTime EndDate
+        {
+            get => endDate;
+            set
+            {
+                SetProperty(ref endDate, value);
+                var tasks = new Task[1];
+                tasks[0] = RefreshCurrentReportAsync();
+                Task.WhenAny(tasks);
+            }
+        }
 
         [ObservableProperty]
         private bool isLoading;

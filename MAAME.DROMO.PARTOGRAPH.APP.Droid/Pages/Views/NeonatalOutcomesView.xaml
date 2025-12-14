@@ -6,7 +6,7 @@
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.NeonatalOutcomesView">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="16" Padding="0,0,0,20">
+        <VerticalStackLayout Spacing="16" Padding="4,20">
 
             <!-- Summary Header -->
             <Border BackgroundColor="{AppThemeBinding Light=#FF9800, Dark=#F57C00}"
@@ -18,17 +18,14 @@
                     <Label Text="&#xE8A7;"
                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                            FontSize="48"
-                           TextColor="White"
                            Grid.Column="0"
                            VerticalOptions="Center"/>
                     <VerticalStackLayout Grid.Column="1" Spacing="4">
                         <Label Text="Neonatal Outcomes"
                                FontSize="22"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold"/>
                         <Label Text="{Binding TotalBirths, StringFormat='{0} total births'}"
                                FontSize="16"
-                               TextColor="White"
                                Opacity="0.9"/>
                     </VerticalStackLayout>
                 </Grid>
@@ -45,12 +42,10 @@
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Live Births"
                                FontSize="11"
-                               TextColor="White"
                                Opacity="0.9"/>
                         <Label Text="{Binding LiveBirths}"
                                FontSize="24"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold" />
                     </VerticalStackLayout>
                 </Border>
 
@@ -63,12 +58,10 @@
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Fresh SB"
                                FontSize="11"
-                               TextColor="White"
                                Opacity="0.9"/>
                         <Label Text="{Binding FreshStillbirths}"
                                FontSize="24"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold" />
                     </VerticalStackLayout>
                 </Border>
 
@@ -80,13 +73,11 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Macerated SB"
-                               FontSize="11"
-                               TextColor="White"
+                               FontSize="11" 
                                Opacity="0.9"/>
                         <Label Text="{Binding MaceratedStillbirths}"
                                FontSize="24"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold" />
                     </VerticalStackLayout>
                 </Border>
 
@@ -98,13 +89,11 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Early ND"
-                               FontSize="11"
-                               TextColor="White"
+                               FontSize="11" 
                                Opacity="0.9"/>
                         <Label Text="{Binding EarlyNeonatalDeaths}"
                                FontSize="24"
-                               FontAttributes="Bold"
-                               TextColor="White"/>
+                               FontAttributes="Bold" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>

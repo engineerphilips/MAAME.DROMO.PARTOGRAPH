@@ -3,15 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views"
              xmlns:fonts="clr-namespace:Fonts"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:tabView="http://schemas.syncfusion.com/maui"
              xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.ReportsPage"
-             Title="Reports & Analytics">
+             Title="Reports &amp; Analytics">
 
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:TabBackgroundConverter x:Key="TabBackgroundConverter" />
             <converters:EqualConverter x:Key="EqualConverter" />
             <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+
+            <!-- Input Styles -->
+            <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Outlined" />
+                <Setter Property="OutlineCornerRadius" Value="8" />
+            </Style>
+
+            <!-- Typography Styles -->
+            <Style x:Key="SectionTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Margin" Value="0,0,0,8" />
+            </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -28,29 +44,27 @@
             <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
                 <Label Text="Reports &amp; Analytics"
                        FontSize="24"
-                       FontAttributes="Bold"
-                       TextColor="White"
+                       FontAttributes="Bold" 
                        Grid.Row="0" Grid.Column="0"/>
-                <Label Text="{Binding StartDate, StringFormat='Period: {0:MMM dd} - '}"
-                       FontSize="14"
-                       TextColor="White"
+                <!--Text="{Binding StartDate, StringFormat='Period: {0:MMM dd} - '}"-->
+
+                <Label FontSize="14" 
                        Opacity="0.9"
                        Grid.Row="1" Grid.Column="0">
                     <Label.FormattedText>
                         <FormattedString>
-                            <Span Text="{Binding StartDate, StringFormat='Period: {0:MMM dd} - '}" />
+                            <Span Text="{Binding StartDate, StringFormat='From {0:MMM dd} - '}" />
                             <Span Text="{Binding EndDate, StringFormat='{0:MMM dd, yyyy}'}" />
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                <Button Text="&#xE946;"
+                <Button Text="&#xE72C;"
                         FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                        FontSize="20"
-                        BackgroundColor="Transparent"
-                        TextColor="White"
+                        FontSize="20" 
                         Grid.Row="0" Grid.Column="1"
                         Grid.RowSpan="2"
                         Command="{Binding RefreshCurrentReportCommand}"
+                        BackgroundColor="#2196F3"
                         VerticalOptions="Center"/>
             </Grid>
         </Border>
@@ -58,8 +72,8 @@
         <!-- Date Range Filter -->
         <Border Grid.Row="1"
                 BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                Padding="16"
-                Margin="0,0,0,16">
+                Padding="16,8,16,0"
+                Margin="0,0,0,8">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
@@ -69,8 +83,8 @@
                         Radius="6"
                         Opacity="0.1" />
             </Border.Shadow>
-            <Grid ColumnDefinitions="*,12,*,12,Auto" RowDefinitions="Auto,8,Auto">
-                <Label Text="Start Date"
+            <Grid ColumnDefinitions="*,*,Auto">
+                <!--<Label Text="Start Date"
                        FontSize="12"
                        TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
                        Grid.Row="0" Grid.Column="0"/>
@@ -84,17 +98,30 @@
                        Grid.Row="0" Grid.Column="2"/>
                 <DatePicker Date="{Binding EndDate}"
                             Grid.Row="2" Grid.Column="2"
-                            FontSize="14"/>
+                            FontSize="14"/>-->
 
-                <Button Text="Apply"
+                <core:SfTextInputLayout Grid.Column="0"
+            Hint="Start Date"
+            Style="{StaticResource PatientInput}">
+                    <DatePicker Date="{Binding StartDate, Mode=TwoWay}"
+   Format="dd-MM-yyyy" MinimumDate="01/01/1950" Margin="-10" HeightRequest="20" />
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Grid.Column="1"
+        Hint="End date"
+        Style="{StaticResource PatientInput}">
+                    <DatePicker Date="{Binding EndDate, Mode=TwoWay}"
+Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
+                </core:SfTextInputLayout>
+                
+                <!--<Button Text="Apply"
                         BackgroundColor="#2196F3"
                         TextColor="White"
                         FontSize="14"
                         FontAttributes="Bold"
-                        CornerRadius="8"
-                        Padding="20,10"
+                        CornerRadius="8" 
                         Command="{Binding RefreshCurrentReportCommand}"
-                        Grid.Row="2" Grid.Column="4"/>
+                        Grid.Row="0" Grid.Column="2" VerticalOptions="Center" HeightRequest="44" HorizontalOptions="EndAndExpand"/>-->
             </Grid>
         </Border>
 
@@ -116,10 +143,38 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <!-- Tab View -->
+            <tabView:SfTabView x:Name="TabView" TabBarHeight="72" EnableSwiping="False" TabBarPlacement="Top">
+                <tabView:SfTabItem Header="Monthly Dashboard" ImagePosition="Top" ImageSource="todo_done_svgrepo.png">
+                    <!-- Monthly Dashboard View -->
+                    <views:MonthlyDashboardView BindingContext="{Binding MonthlyDashboard}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Maternal Complications" ImageSource="todo_done_svgrepo.png">
+                    <!-- Maternal Complications View -->
+                    <views:MaternalComplicationsView BindingContext="{Binding MaternalComplicationsReport}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Neonatal Outcomes" ImageSource="todo_done_svgrepo.png">
+                    <!-- Neonatal Outcomes View -->
+                    <views:NeonatalOutcomesView BindingContext="{Binding NeonatalOutcomesReport}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Alert Response" ImageSource="todo_done_svgrepo.png">
+                    <!-- Alert Response View (Placeholder) -->
+                    <Label 
+        Text="Alert Response Time Report - Coming Soon"
+        FontSize="18"
+        TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+        HorizontalOptions="Center"
+        VerticalOptions="Center"
+        Margin="0,40,0,0"/>
+                </tabView:SfTabItem>
+            </tabView:SfTabView>
+            
+            <!-- Tab View --><!--
             <ScrollView>
                 <VerticalStackLayout Spacing="0">
-                    <!-- Tab Headers -->
+                    --><!-- Tab Headers --><!--
                     <ScrollView Orientation="Horizontal" Margin="0,0,0,16">
                         <HorizontalStackLayout Spacing="8">
                             <Button Text="Monthly Dashboard"
@@ -153,21 +208,21 @@
                         </HorizontalStackLayout>
                     </ScrollView>
 
-                    <!-- Tab Content -->
+                    --><!-- Tab Content --><!--
                     <Grid>
-                        <!-- Monthly Dashboard View -->
+                        --><!-- Monthly Dashboard View --><!--
                         <views:MonthlyDashboardView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource EqualConverter}, ConverterParameter=0}"
                                                      BindingContext="{Binding MonthlyDashboard}"/>
 
-                        <!-- Maternal Complications View -->
+                        --><!-- Maternal Complications View --><!--
                         <views:MaternalComplicationsView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource EqualConverter}, ConverterParameter=1}"
                                                           BindingContext="{Binding MaternalComplicationsReport}"/>
 
-                        <!-- Neonatal Outcomes View -->
+                        --><!-- Neonatal Outcomes View --><!--
                         <views:NeonatalOutcomesView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource EqualConverter}, ConverterParameter=2}"
                                                      BindingContext="{Binding NeonatalOutcomesReport}"/>
 
-                        <!-- Alert Response View (Placeholder) -->
+                        --><!-- Alert Response View (Placeholder) --><!--
                         <Label IsVisible="{Binding SelectedTabIndex, Converter={StaticResource EqualConverter}, ConverterParameter=3}"
                                Text="Alert Response Time Report - Coming Soon"
                                FontSize="18"
@@ -177,7 +232,7 @@
                                Margin="0,40,0,0"/>
                     </Grid>
                 </VerticalStackLayout>
-            </ScrollView>
+            </ScrollView>-->
         </Grid>
     </Grid>
 </ContentPage>

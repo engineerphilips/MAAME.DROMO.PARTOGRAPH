@@ -124,7 +124,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted FROM Tbl_Patient ORDER BY admissionDate DESC";
+                selectCmd.CommandText = "SELECT ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted FROM Tbl_Patient ORDER BY time DESC";
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -132,26 +132,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     var patient = new Patient
                     {
                         ID = Guid.Parse(reader.GetString(0)),
-                        FirstName = reader.GetString(1),
-                        LastName = reader.GetString(2),
-                        HospitalNumber = reader.GetString(3),
-                        DateOfBirth = reader.IsDBNull(4) ? null : DateOnly.Parse(reader.GetString(4)),
-                        Age = reader.IsDBNull(5) ? null : int.Parse(reader.GetString(5)),
-                        BloodGroup = reader.IsDBNull(6) ? "" : reader.GetString(6),
-                        PhoneNumber = reader.IsDBNull(7) ? "" : reader.GetString(7),
-                        EmergencyContactName = reader.IsDBNull(8) ? "" : reader.GetString(8),
-                        EmergencyContactRelationship = reader.IsDBNull(9) ? "" : reader.GetString(9),
-                        EmergencyContactPhone = reader.IsDBNull(10) ? "" : reader.GetString(10),
-                        Handler = reader.IsDBNull(11) ? null : Guid.Parse(reader.GetString(11)),
-                        CreatedTime = reader.GetInt64(12),
-                        UpdatedTime = reader.GetInt64(13),
-                        DeletedTime = reader.IsDBNull(14) ? null : reader.GetInt64(14),
-                        DeviceId = reader.GetString(15),
-                        OriginDeviceId = reader.GetString(16),
-                        SyncStatus = reader.GetInt32(17),
-                        Version = reader.GetInt32(18),
-                        ServerVersion = reader.IsDBNull(19) ? 0 : reader.GetInt32(19),
-                        Deleted = reader.IsDBNull(20) ? 0 : reader.GetInt32(20)
+                        FirstName = reader.GetString(2),
+                        LastName = reader.GetString(3),
+                        HospitalNumber = reader.GetString(4),
+                        DateOfBirth = reader.IsDBNull(5) ? null : DateOnly.Parse(reader.GetString(5)),
+                        Age = reader.IsDBNull(6) ? null : int.Parse(reader.GetString(6)),
+                        BloodGroup = reader.IsDBNull(7) ? "" : reader.GetString(7),
+                        PhoneNumber = reader.IsDBNull(8) ? "" : reader.GetString(8),
+                        EmergencyContactName = reader.IsDBNull(9) ? "" : reader.GetString(9),
+                        EmergencyContactRelationship = reader.IsDBNull(10) ? "" : reader.GetString(10),
+                        EmergencyContactPhone = reader.IsDBNull(11) ? "" : reader.GetString(11),
+                        Handler = reader.IsDBNull(12) ? null : Guid.Parse(reader.GetString(12)),
+                        CreatedTime = reader.GetInt64(13),
+                        UpdatedTime = reader.GetInt64(14),
+                        DeletedTime = reader.IsDBNull(15) ? null : reader.GetInt64(15),
+                        DeviceId = reader.GetString(16),
+                        OriginDeviceId = reader.GetString(17),
+                        SyncStatus = reader.GetInt32(18),
+                        Version = reader.GetInt32(19),
+                        ServerVersion = reader.IsDBNull(20) ? 0 : reader.GetInt32(20),
+                        Deleted = reader.IsDBNull(21) ? 0 : reader.GetInt32(21)
                     };
 
                     // Load related data
@@ -188,26 +188,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     var patient = new Patient
                     {
                         ID = Guid.Parse(reader.GetString(0)),
-                        FirstName = reader.GetString(1),
-                        LastName = reader.GetString(2),
-                        HospitalNumber = reader.GetString(3),
-                        DateOfBirth = reader.IsDBNull(4) ? null : DateOnly.Parse(reader.GetString(4)),
-                        Age = reader.IsDBNull(5) ? null : int.Parse(reader.GetString(5)),
-                        BloodGroup = reader.IsDBNull(6) ? "" : reader.GetString(6),
-                        PhoneNumber = reader.IsDBNull(7) ? "" : reader.GetString(7),
-                        EmergencyContactName = reader.IsDBNull(8) ? "" : reader.GetString(8),
-                        EmergencyContactRelationship = reader.IsDBNull(9) ? "" : reader.GetString(9),
-                        EmergencyContactPhone = reader.IsDBNull(10) ? "" : reader.GetString(10),
-                        Handler = reader.IsDBNull(11) ? null : Guid.Parse(reader.GetString(11)),
-                        CreatedTime = reader.GetInt64(12),
-                        UpdatedTime = reader.GetInt64(13),
-                        DeletedTime = reader.IsDBNull(14) ? null : reader.GetInt64(14),
-                        DeviceId = reader.GetString(15),
-                        OriginDeviceId = reader.GetString(16),
-                        SyncStatus = reader.GetInt32(17),
-                        Version = reader.GetInt32(18),
-                        ServerVersion = reader.IsDBNull(19) ? 0 : reader.GetInt32(19),
-                        Deleted = reader.IsDBNull(20) ? 0 : reader.GetInt32(20)
+                        FirstName = reader.GetString(2),
+                        LastName = reader.GetString(3),
+                        HospitalNumber = reader.GetString(4),
+                        DateOfBirth = reader.IsDBNull(5) ? null : DateOnly.Parse(reader.GetString(5)),
+                        Age = reader.IsDBNull(6) ? null : int.Parse(reader.GetString(6)),
+                        BloodGroup = reader.IsDBNull(7) ? "" : reader.GetString(7),
+                        PhoneNumber = reader.IsDBNull(8) ? "" : reader.GetString(8),
+                        EmergencyContactName = reader.IsDBNull(9) ? "" : reader.GetString(9),
+                        EmergencyContactRelationship = reader.IsDBNull(10) ? "" : reader.GetString(10),
+                        EmergencyContactPhone = reader.IsDBNull(11) ? "" : reader.GetString(11),
+                        Handler = reader.IsDBNull(12) ? null : Guid.Parse(reader.GetString(12)),
+                        CreatedTime = reader.GetInt64(13),
+                        UpdatedTime = reader.GetInt64(14),
+                        DeletedTime = reader.IsDBNull(15) ? null : reader.GetInt64(15),
+                        DeviceId = reader.GetString(16),
+                        OriginDeviceId = reader.GetString(17),
+                        SyncStatus = reader.GetInt32(18),
+                        Version = reader.GetInt32(19),
+                        ServerVersion = reader.IsDBNull(20) ? 0 : reader.GetInt32(20),
+                        Deleted = reader.IsDBNull(21) ? 0 : reader.GetInt32(21)
 
                         //ID = Guid.Parse(reader.GetString(0)),
                         //FirstName = reader.GetString(1),
