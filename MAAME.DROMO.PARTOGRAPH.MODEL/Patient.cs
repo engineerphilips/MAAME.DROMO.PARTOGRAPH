@@ -21,9 +21,21 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public int? Age { get; set; }
         public string BloodGroup { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
         public string EmergencyContactName { get; set; } = string.Empty;
         public string EmergencyContactPhone { get; set; } = string.Empty;
         public string EmergencyContactRelationship { get; set; } = string.Empty;
+
+        // Anthropometric Data
+        public double? Weight { get; set; } // in kg
+        public double? Height { get; set; } // in cm
+
+        // Previous Pregnancy Outcomes
+        public bool HasPreviousCSection { get; set; }
+        public int? NumberOfPreviousCsections { get; set; }
+        public int? LiveBirths { get; set; }
+        public int? Stillbirths { get; set; }
+        public int? NeonatalDeaths { get; set; }
 
         //User
         public string HandlerName { get; set; } = string.Empty;

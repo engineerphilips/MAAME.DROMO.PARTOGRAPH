@@ -129,6 +129,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _bloodGroup = string.Empty;
 
+        public List<string> BloodGroupOptions => new()
+        {
+            "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"
+        };
+
         [ObservableProperty]
         private string _phoneNumber = string.Empty;
 
@@ -140,7 +145,93 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private string _emergencyContactName = string.Empty;
-        
+
+        // Anthropometric Data for BMI Calculation
+        private double? _weight;
+        public double? Weight
+        {
+            get => _weight;
+            set
+            {
+                SetProperty(ref _weight, value);
+                OnPropertyChanged(nameof(HasBmiData));
+                OnPropertyChanged(nameof(Bmi));
+                OnPropertyChanged(nameof(FormattedBmi));
+                OnPropertyChanged(nameof(BmiCategory));
+                OnPropertyChanged(nameof(BmiColor));
+            }
+        }
+
+        private double? _height;
+        public double? Height
+        {
+            get => _height;
+            set
+            {
+                SetProperty(ref _height, value);
+                OnPropertyChanged(nameof(HasBmiData));
+                OnPropertyChanged(nameof(Bmi));
+                OnPropertyChanged(nameof(FormattedBmi));
+                OnPropertyChanged(nameof(BmiCategory));
+                OnPropertyChanged(nameof(BmiColor));
+            }
+        }
+
+        public bool HasBmiData => Weight != null && Height != null && Height > 0;
+
+        public double? Bmi
+        {
+            get
+            {
+                if (!HasBmiData) return null;
+                double heightM = Height.Value / 100.0;
+                return Weight.Value / (heightM * heightM);
+            }
+        }
+
+        public string FormattedBmi => Bmi != null ? $"BMI: {Bmi.Value:F1} kg/m²" : "";
+
+        public string BmiCategory => Bmi switch
+        {
+            null => "",
+            < 18.5 => "Underweight ⚠️",
+            >= 18.5 and < 25 => "Normal ✅",
+            >= 25 and < 30 => "Overweight ⚠️",
+            >= 30 and < 35 => "Obese Class I ⚠️",
+            >= 35 and < 40 => "Obese Class II 🔴",
+            >= 40 => "Obese Class III 🔴🔴",
+            _ => ""
+        };
+
+        public string BmiColor => Bmi switch
+        {
+            null => "#808080",
+            < 18.5 => "#FF9800",
+            >= 18.5 and < 25 => "#4CAF50",
+            >= 25 and < 30 => "#FFC107",
+            >= 30 and < 35 => "#FF5722",
+            >= 35 => "#F44336",
+            _ => "#808080"
+        };
+
+        // Previous Pregnancy Outcomes
+        [ObservableProperty]
+        private bool _hasPreviousCSection = false;
+
+        [ObservableProperty]
+        private int? _numberOfPreviousCsections;
+
+        [ObservableProperty]
+        private int? _liveBirths;
+
+        [ObservableProperty]
+        private int? _stillbirths;
+
+        [ObservableProperty]
+        private int? _neonatalDeaths;
+
+        public bool HasPreviousPregnancies => Parity > 0;
+
         [ObservableProperty]
         private bool _hasRupturedMembrane = false;
 
@@ -153,8 +244,40 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _liquorStatus = "Clear";
 
-        [ObservableProperty]
         private int? _cervicalDilationOnAdmission;
+        public int? CervicalDilationOnAdmission
+        {
+            get => _cervicalDilationOnAdmission;
+            set
+            {
+                SetProperty(ref _cervicalDilationOnAdmission, value);
+                OnPropertyChanged(nameof(HasDilatationValue));
+                OnPropertyChanged(nameof(LaborStatusIndicator));
+                OnPropertyChanged(nameof(LaborStatusColor));
+            }
+        }
+
+        public bool HasDilatationValue => CervicalDilationOnAdmission != null;
+
+        public string LaborStatusIndicator => CervicalDilationOnAdmission switch
+        {
+            null => "",
+            <= 4 => "⚪ Latent Phase / Not in Active Labor",
+            > 4 and <= 7 => "🟡 Active First Stage - Early",
+            > 7 and < 10 => "🟠 Active First Stage - Advanced",
+            10 => "🔴 Fully Dilated - Second Stage",
+            _ => ""
+        };
+
+        public string LaborStatusColor => CervicalDilationOnAdmission switch
+        {
+            null => "#808080",
+            <= 4 => "#FF9800",
+            > 4 and <= 7 => "#FFC107",
+            > 7 and < 10 => "#FF9800",
+            10 => "#F44336",
+            _ => "#808080"
+        };
 
         //[ObservableProperty]
         //private string _riskFactors = string.Empty;
@@ -173,6 +296,143 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private string _complications = string.Empty;
+
+        // Bishop Score Calculator
+        [ObservableProperty]
+        private bool _isInductionPlanned = false;
+
+        private int _bishopDilatation = 0;
+        public int BishopDilatation
+        {
+            get => _bishopDilatation;
+            set
+            {
+                SetProperty(ref _bishopDilatation, value);
+                OnPropertyChanged(nameof(CalculatedBishopScore));
+                OnPropertyChanged(nameof(BishopScoreInterpretation));
+            }
+        }
+
+        private int _bishopEffacement = 0;
+        public int BishopEffacement
+        {
+            get => _bishopEffacement;
+            set
+            {
+                SetProperty(ref _bishopEffacement, value);
+                OnPropertyChanged(nameof(CalculatedBishopScore));
+                OnPropertyChanged(nameof(BishopScoreInterpretation));
+            }
+        }
+
+        private string _bishopStation = "-3";
+        public string BishopStation
+        {
+            get => _bishopStation;
+            set
+            {
+                SetProperty(ref _bishopStation, value);
+                OnPropertyChanged(nameof(CalculatedBishopScore));
+                OnPropertyChanged(nameof(BishopScoreInterpretation));
+            }
+        }
+
+        private string _bishopConsistency = "Firm";
+        public string BishopConsistency
+        {
+            get => _bishopConsistency;
+            set
+            {
+                SetProperty(ref _bishopConsistency, value);
+                OnPropertyChanged(nameof(CalculatedBishopScore));
+                OnPropertyChanged(nameof(BishopScoreInterpretation));
+            }
+        }
+
+        private string _bishopPosition = "Posterior";
+        public string BishopPosition
+        {
+            get => _bishopPosition;
+            set
+            {
+                SetProperty(ref _bishopPosition, value);
+                OnPropertyChanged(nameof(CalculatedBishopScore));
+                OnPropertyChanged(nameof(BishopScoreInterpretation));
+            }
+        }
+
+        public List<string> StationOptions => new() { "-3", "-2", "-1", "0", "+1", "+2", "+3" };
+        public List<string> ConsistencyOptions => new() { "Firm", "Medium", "Soft" };
+        public List<string> PositionOptions => new() { "Posterior", "Mid", "Anterior" };
+
+        public int CalculatedBishopScore
+        {
+            get
+            {
+                int score = 0;
+
+                // Dilatation (0-3 points)
+                score += BishopDilatation switch
+                {
+                    0 => 0,
+                    >= 1 and <= 2 => 1,
+                    >= 3 and <= 4 => 2,
+                    >= 5 => 3,
+                    _ => 0
+                };
+
+                // Effacement (0-3 points)
+                score += BishopEffacement switch
+                {
+                    >= 0 and < 30 => 0,
+                    >= 30 and < 50 => 1,
+                    >= 50 and < 80 => 2,
+                    >= 80 => 3,
+                    _ => 0
+                };
+
+                // Station (0-3 points)
+                score += BishopStation switch
+                {
+                    "-3" => 0,
+                    "-2" => 0,
+                    "-1" => 1,
+                    "0" => 1,
+                    "+1" => 2,
+                    "+2" => 2,
+                    "+3" => 3,
+                    _ => 0
+                };
+
+                // Consistency (0-2 points)
+                score += BishopConsistency switch
+                {
+                    "Firm" => 0,
+                    "Medium" => 1,
+                    "Soft" => 2,
+                    _ => 0
+                };
+
+                // Position (0-2 points)
+                score += BishopPosition switch
+                {
+                    "Posterior" => 0,
+                    "Mid" => 1,
+                    "Anterior" => 2,
+                    _ => 0
+                };
+
+                return score;
+            }
+        }
+
+        public string BishopScoreInterpretation => CalculatedBishopScore switch
+        {
+            <= 5 => "⚠️ Unfavorable (Induction may be difficult)",
+            >= 6 and <= 8 => "⚡ Moderately Favorable",
+            >= 9 => "✅ Favorable (Good for induction)",
+            _ => ""
+        };
 
         private ObservableCollection<Diagnosis> _diagnoses = new ObservableCollection<Diagnosis>();
 
@@ -194,6 +454,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private List<MedicalNote> _medicalNotes = [];
+
+        // Validation Properties
+        private Dictionary<string, string> _errors = new();
+
+        [ObservableProperty]
+        private string _errorMessage = string.Empty;
+
+        [ObservableProperty]
+        private bool _hasError = false;
+
+        // Risk Assessment Properties
+        [ObservableProperty]
+        private int _riskScore = 0;
+
+        [ObservableProperty]
+        private string _riskLevel = "Low";
+
+        [ObservableProperty]
+        private string _riskColor = "#4CAF50";
+
+        [ObservableProperty]
+        private ObservableCollection<string> _riskAssessmentFactors = new();
+
+        [ObservableProperty]
+        private ObservableCollection<string> _recommendedActions = new();
 
         [ObservableProperty]
         bool _isBusy;
@@ -250,27 +535,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 }
 
                 FirstName = _patient.FirstName;
-                LastName = _patient.LastName; 
+                LastName = _patient.LastName;
                 HospitalNumber = _patient.HospitalNumber;
                 Age = _patient.Age ?? 0;
-                //Gravidity = _patient.Gravida;
-                //Parity = _patient.Parity;
-                //AdmissionDate = _patient.AdmissionDate;
-                //ExpectedDeliveryDate = _patient.ExpectedDeliveryDate;
+                DateOfBirth = _patient.DateOfBirth != null ? new DateTime(_patient.DateOfBirth.Value.Year, _patient.DateOfBirth.Value.Month, _patient.DateOfBirth.Value.Day) : null;
                 BloodGroup = _patient.BloodGroup;
                 PhoneNumber = _patient.PhoneNumber;
+                Address = _patient.Address;
                 EmergencyContactName = _patient.EmergencyContactName;
                 EmergencyContactPhone = _patient.EmergencyContactPhone;
                 EmergencyContactRelationship = _patient.EmergencyContactRelationship;
-                //Status = _patient.Status;
-                //MembraneStatus = _patient.MembraneStatus;
-                //LiquorStatus = _patient.LiquorStatus;
-                //CervicalDilationOnAdmission = _patient.CervicalDilationOnAdmission;
-                //RiskFactors = _patient.RiskFactors;
-                //Complications = _patient.Complications;
+
+                // Load anthropometric data
+                Weight = _patient.Weight;
+                Height = _patient.Height;
+
+                // Load previous pregnancy outcomes
+                HasPreviousCSection = _patient.HasPreviousCSection;
+                NumberOfPreviousCsections = _patient.NumberOfPreviousCsections;
+                LiveBirths = _patient.LiveBirths;
+                Stillbirths = _patient.Stillbirths;
+                NeonatalDeaths = _patient.NeonatalDeaths;
 
                 PartographEntries = _patient.PartographEntries;
-                //VitalSigns = _patient.VitalSigns;
                 MedicalNotes = _patient.MedicalNotes;
             }
             catch (Exception e)
@@ -283,6 +570,230 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
+        private bool ValidateForm()
+        {
+            _errors.Clear();
+
+            // Required fields
+            if (string.IsNullOrWhiteSpace(FirstName))
+                _errors.Add(nameof(FirstName), "First name is required");
+
+            if (string.IsNullOrWhiteSpace(LastName))
+                _errors.Add(nameof(LastName), "Last name is required");
+
+            if (string.IsNullOrWhiteSpace(HospitalNumber))
+                _errors.Add(nameof(HospitalNumber), "Hospital number/MRN is required");
+
+            if (Age == null && DateOfBirth == null)
+                _errors.Add(nameof(Age), "Age or Date of Birth is required");
+
+            // Obstetric validation
+            if (Gravidity < Parity)
+                _errors.Add(nameof(Gravidity), "Gravidity cannot be less than Parity");
+
+            if (ExpectedDeliveryDate == null && LastMenstrualDate == null)
+                _errors.Add(nameof(ExpectedDeliveryDate), "Either EDD or LMP is required");
+
+            if (LaborStartDate == null || LaborStartTime == null)
+                _errors.Add(nameof(LaborStartDate), "Labor onset date and time are required");
+
+            // Date logic validation
+            if (DateOfBirth != null && DateOfBirth.Value > DateTime.Today)
+                _errors.Add(nameof(DateOfBirth), "Date of birth cannot be in the future");
+
+            if (ExpectedDeliveryDate != null && ExpectedDeliveryDate.Value < DateTime.Today)
+                _errors.Add(nameof(ExpectedDeliveryDate), "Expected delivery date should be in the future");
+
+            // Phone validation (basic)
+            if (!string.IsNullOrWhiteSpace(PhoneNumber) && PhoneNumber.Length < 10)
+                _errors.Add(nameof(PhoneNumber), "Phone number should be at least 10 digits");
+
+            // Previous C-section validation
+            if (HasPreviousCSection && (NumberOfPreviousCsections == null || NumberOfPreviousCsections <= 0))
+                _errors.Add(nameof(NumberOfPreviousCsections), "Number of previous C-sections is required");
+
+            HasError = _errors.Any();
+            ErrorMessage = string.Join("\n• ", _errors.Values);
+            if (HasError)
+                ErrorMessage = "Please correct the following:\n• " + ErrorMessage;
+
+            return !HasError;
+        }
+
+        private void CalculateRiskAssessment()
+        {
+            RiskAssessmentFactors.Clear();
+            RecommendedActions.Clear();
+            int score = 0;
+
+            // Age-based risk
+            if (Age < 18)
+            {
+                score += 2;
+                RiskAssessmentFactors.Add("⚠️ Young maternal age (<18 years)");
+            }
+            else if (Age > 35)
+            {
+                score += 2;
+                RiskAssessmentFactors.Add("⚠️ Advanced maternal age (>35 years)");
+            }
+
+            // Parity-based risk
+            if (Parity == 0)
+            {
+                score += 1;
+                RiskAssessmentFactors.Add("ℹ️ Nulliparous (First pregnancy)");
+            }
+            else if (Parity >= 5)
+            {
+                score += 3;
+                RiskAssessmentFactors.Add("🔴 Grand multiparity (≥5 births)");
+            }
+
+            // Gestational age risk
+            if (ExpectedDeliveryDate != null || LastMenstrualDate != null)
+            {
+                int weeks = CalculateGestationalWeeks();
+                if (weeks < 37)
+                {
+                    score += 3;
+                    RiskAssessmentFactors.Add($"🔴 Preterm labor ({weeks} weeks)");
+                }
+                else if (weeks > 42)
+                {
+                    score += 2;
+                    RiskAssessmentFactors.Add($"⚠️ Post-term pregnancy ({weeks} weeks)");
+                }
+            }
+
+            // BMI-based risk
+            if (Bmi < 18.5)
+            {
+                score += 1;
+                RiskAssessmentFactors.Add("⚠️ Underweight (BMI < 18.5)");
+            }
+            else if (Bmi >= 30 && Bmi < 35)
+            {
+                score += 2;
+                RiskAssessmentFactors.Add($"⚠️ Obesity Class I (BMI {Bmi:F1})");
+            }
+            else if (Bmi >= 35)
+            {
+                score += 3;
+                RiskAssessmentFactors.Add($"🔴 Obesity Class II/III (BMI {Bmi:F1})");
+            }
+
+            // Previous C-section
+            if (HasPreviousCSection)
+            {
+                score += 2;
+                RiskAssessmentFactors.Add("⚠️ Previous cesarean (VBAC attempt)");
+                if (NumberOfPreviousCsections > 1)
+                {
+                    score += 1;
+                    RiskAssessmentFactors.Add($"🔴 Multiple previous C-sections ({NumberOfPreviousCsections})");
+                }
+            }
+
+            // Adverse pregnancy outcomes
+            if (Stillbirths > 0)
+            {
+                score += 2;
+                RiskAssessmentFactors.Add($"🔴 Previous stillbirth(s) ({Stillbirths})");
+            }
+
+            if (NeonatalDeaths > 0)
+            {
+                score += 2;
+                RiskAssessmentFactors.Add($"🔴 Previous neonatal death(s) ({NeonatalDeaths})");
+            }
+
+            // Membrane rupture duration
+            if (RupturedMembraneDate != null && RupturedMembraneTime != null && HasRupturedMembrane)
+            {
+                var ruptureDateTime = new DateTime(RupturedMembraneDate.Value.Year,
+                    RupturedMembraneDate.Value.Month, RupturedMembraneDate.Value.Day)
+                    .Add(RupturedMembraneTime.Value);
+                var rupturedHours = (DateTime.Now - ruptureDateTime).TotalHours;
+
+                if (rupturedHours > 18)
+                {
+                    score += 3;
+                    RiskAssessmentFactors.Add($"🔴 Prolonged rupture ({rupturedHours:F0}h) - Infection risk");
+                }
+            }
+
+            // Additional risk factors from manual entry
+            if (RiskFactors != null && RiskFactors.Count > 0)
+            {
+                score += RiskFactors.Count;
+                foreach (var risk in RiskFactors)
+                {
+                    RiskAssessmentFactors.Add($"⚠️ {risk.Name}");
+                }
+            }
+
+            // Set risk level and recommendations
+            RiskScore = score;
+
+            if (score == 0)
+            {
+                RiskLevel = "Low Risk";
+                RiskColor = "#4CAF50"; // Green
+                RecommendedActions.Add("✅ Continue routine monitoring");
+                RecommendedActions.Add("✅ Standard labor management");
+            }
+            else if (score >= 1 && score <= 3)
+            {
+                RiskLevel = "Moderate Risk";
+                RiskColor = "#FFC107"; // Amber
+                RecommendedActions.Add("⚡ Increase monitoring frequency");
+                RecommendedActions.Add("⚡ Notify senior clinician");
+                RecommendedActions.Add("⚡ Ensure emergency equipment ready");
+            }
+            else if (score >= 4 && score <= 6)
+            {
+                RiskLevel = "High Risk";
+                RiskColor = "#FF5722"; // Deep Orange
+                RecommendedActions.Add("🔴 Continuous monitoring required");
+                RecommendedActions.Add("🔴 Senior clinician review mandatory");
+                RecommendedActions.Add("🔴 Prepare for emergency interventions");
+                RecommendedActions.Add("🔴 Consider referral to higher facility");
+            }
+            else
+            {
+                RiskLevel = "Critical Risk";
+                RiskColor = "#F44336"; // Red
+                RecommendedActions.Add("🚨 IMMEDIATE senior clinician review");
+                RecommendedActions.Add("🚨 Activate emergency response team");
+                RecommendedActions.Add("🚨 Prepare for emergency cesarean");
+                RecommendedActions.Add("🚨 Notify neonatal team");
+            }
+
+            if (RiskAssessmentFactors.Count == 0)
+            {
+                RiskAssessmentFactors.Add("✅ No significant risk factors identified");
+            }
+        }
+
+        private int CalculateGestationalWeeks()
+        {
+            if (ExpectedDeliveryDate != null)
+            {
+                var edd = new DateTime(ExpectedDeliveryDate.Value.Year,
+                    ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day);
+                var conceptDate = edd.AddDays(-280); // 40 weeks before EDD
+                return (int)((DateTime.Now - conceptDate).TotalDays / 7);
+            }
+            else if (LastMenstrualDate != null)
+            {
+                var lmp = new DateTime(LastMenstrualDate.Value.Year,
+                    LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day);
+                return (int)((DateTime.Now - lmp).TotalDays / 7);
+            }
+            return 0;
+        }
+
         [RelayCommand]
         private void ToggleEditMode()
         {
@@ -292,32 +803,44 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task Save()
         {
+            // Validate form first
+            if (!ValidateForm())
+            {
+                await AppShell.DisplayToastAsync("Please correct the errors before saving");
+                return;
+            }
+
+            // Calculate risk assessment
+            CalculateRiskAssessment();
+
             if (_patient == null)
             {
                 _patient = new Patient();
             }
 
+            // Save patient data
             _patient.FirstName = FirstName;
             _patient.LastName = LastName;
             _patient.HospitalNumber = HospitalNumber;
             _patient.DateOfBirth = DateOfBirth != null ? DateOnly.FromDateTime(DateOfBirth.Value) : null;
             _patient.Age = Age;
-            //_patient.Gravida = Gravidity;
-            //_patient.Parity = Parity;
-            //_patient.AdmissionDate = AdmissionDate;
-            //_patient.ExpectedDeliveryDate = ExpectedDeliveryDate;
-            //_patient.LastMenstralDate = LastMenstralDate;
             _patient.BloodGroup = BloodGroup;
             _patient.PhoneNumber = PhoneNumber;
+            _patient.Address = Address;
             _patient.EmergencyContactName = EmergencyContactName;
             _patient.EmergencyContactPhone = EmergencyContactPhone;
             _patient.EmergencyContactRelationship = EmergencyContactRelationship;
-            //_patient.Status = Status;
-            //_patient.MembraneStatus = MembraneStatus;
-            //_patient.LiquorStatus = LiquorStatus;
-            //_patient.CervicalDilationOnAdmission = CervicalDilationOnAdmission;
-            //_patient.RiskFactors = RiskFactors;
-            //_patient.Complications = Complications;
+
+            // Save anthropometric data
+            _patient.Weight = Weight;
+            _patient.Height = Height;
+
+            // Save previous pregnancy outcomes
+            _patient.HasPreviousCSection = HasPreviousCSection;
+            _patient.NumberOfPreviousCsections = NumberOfPreviousCsections;
+            _patient.LiveBirths = LiveBirths;
+            _patient.Stillbirths = Stillbirths;
+            _patient.NeonatalDeaths = NeonatalDeaths;
 
             var id = await _patientRepository.SaveItemAsync(_patient);
 
