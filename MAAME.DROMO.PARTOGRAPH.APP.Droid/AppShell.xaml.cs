@@ -51,6 +51,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             Routing.RegisterRoute("settings", typeof(SettingsPage));
             //Routing.RegisterRoute("profile", typeof(ProfilePage));
             //Routing.RegisterRoute("about", typeof(AboutPage));
+
+            // User management routes
+            Routing.RegisterRoute("signup", typeof(SignupPage));
         }
 
         public static async Task DisplaySnackbarAsync(string message)

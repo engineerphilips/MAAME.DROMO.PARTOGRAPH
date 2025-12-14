@@ -210,7 +210,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     var staff = new Staff
                     {
                         ID = Guid.Parse(reader.GetString(0)),
-                        FacilityName = reader.GetString(1),
+                        Name = reader.GetString(1),
                         StaffID = reader.GetString(2),
                         Email = reader.GetString(3),
                         Role = reader.GetString(4),
@@ -218,7 +218,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         Password = reader.GetString(6),
                         LastLogin = reader.IsDBNull(7) ? DateTime.Now : DateTime.Parse(reader.GetString(7)),
                         IsActive = reader.GetBoolean(8),
-                        Facility = reader.IsDBNull(7) ? null : Guid.Parse(reader.GetString(9)),
+                        Facility = reader.IsDBNull(9) ? null : Guid.Parse(reader.GetString(9)),
                         CreatedTime = reader.GetInt64(10),
                         UpdatedTime = reader.GetInt64(11),
                         DeletedTime = reader.IsDBNull(12) ? null : reader.GetInt64(12),
@@ -275,7 +275,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     users.Add(new Staff
                     {
                         ID = Guid.Parse(reader.GetString(0)),
-                        FacilityName = reader.GetString(1),
+                        Name = reader.GetString(1),
                         StaffID = reader.GetString(2),
                         Email = reader.GetString(3),
                         Role = reader.GetString(4),
@@ -283,7 +283,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         Password = reader.GetString(6),
                         LastLogin = reader.IsDBNull(7) ? DateTime.Now : DateTime.Parse(reader.GetString(7)),
                         IsActive = reader.GetBoolean(8),
-                        Facility = reader.IsDBNull(7) ? null : Guid.Parse(reader.GetString(9)),
+                        Facility = reader.IsDBNull(9) ? null : Guid.Parse(reader.GetString(9)),
                         CreatedTime = reader.GetInt64(10),
                         UpdatedTime = reader.GetInt64(11),
                         DeletedTime = reader.IsDBNull(12) ? null : reader.GetInt64(12),
@@ -310,6 +310,51 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
 
             return users;
+        }
+
+        public async Task AddAsync(Staff staff)
+        {
+            await Init();
+            try
+            {
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
+
+                var insertCmd = connection.CreateCommand();
+                insertCmd.CommandText = @"
+                INSERT INTO Tbl_Staff (ID, name, staffId, email, role, department, password, active, facility, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
+                VALUES (@id, @name, @staffId, @email, @role, @department, @password, @active, @facility, @createdtime, @updatedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted)";
+
+                insertCmd.Parameters.AddWithValue("@id", staff.ID.ToString());
+                insertCmd.Parameters.AddWithValue("@name", staff.Name ?? string.Empty);
+                insertCmd.Parameters.AddWithValue("@staffId", staff.StaffID ?? string.Empty);
+                insertCmd.Parameters.AddWithValue("@email", staff.Email ?? string.Empty);
+                insertCmd.Parameters.AddWithValue("@role", staff.Role ?? string.Empty);
+                insertCmd.Parameters.AddWithValue("@department", staff.Department ?? string.Empty);
+                insertCmd.Parameters.AddWithValue("@password", staff.Password ?? string.Empty);
+                insertCmd.Parameters.AddWithValue("@active", staff.IsActive ? 1 : 0);
+                insertCmd.Parameters.AddWithValue("@facility", staff.Facility?.ToString() ?? string.Empty);
+                insertCmd.Parameters.AddWithValue("@createdtime", staff.CreatedTime);
+                insertCmd.Parameters.AddWithValue("@updatedtime", staff.UpdatedTime);
+                insertCmd.Parameters.AddWithValue("@deviceid", staff.DeviceId ?? string.Empty);
+                insertCmd.Parameters.AddWithValue("@origindeviceid", staff.OriginDeviceId ?? string.Empty);
+                insertCmd.Parameters.AddWithValue("@syncstatus", staff.SyncStatus);
+                insertCmd.Parameters.AddWithValue("@version", staff.Version);
+                insertCmd.Parameters.AddWithValue("@serverversion", staff.ServerVersion);
+                insertCmd.Parameters.AddWithValue("@deleted", staff.Deleted);
+
+                await insertCmd.ExecuteNonQueryAsync();
+            }
+            catch (SqliteException e)
+            {
+                _logger.LogError(e, "Error adding Staff");
+                throw;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error adding Staff");
+                throw;
+            }
         }
     }
 }

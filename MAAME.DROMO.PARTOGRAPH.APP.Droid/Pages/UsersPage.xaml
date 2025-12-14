@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.UsersPage"
+             xmlns:model="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:fonts="clr-namespace:Fonts"
+             Title="User Management"
+             BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#1A1A1A}">
+
+    <Grid RowDefinitions="Auto,*" Padding="0">
+
+        <!-- Header with Add Button -->
+        <Border Grid.Row="0"
+                BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1565C0}"
+                Padding="24,40,24,24">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="0,0,24,24" />
+            </Border.StrokeShape>
+
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Grid.Column="0" Spacing="8">
+                    <Label Text="User Management"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+                    <Label Text="Manage staff and onboard new users"
+                           FontSize="14"
+                           Opacity="0.9"
+                           TextColor="White" />
+                </VerticalStackLayout>
+
+                <!-- Add User Button -->
+                <Button Grid.Column="1"
+                        Text="&#xE8FA;"
+                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                        FontSize="20"
+                        Command="{Binding AddUserCommand}"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        WidthRequest="56"
+                        HeightRequest="56"
+                        CornerRadius="28"
+                        VerticalOptions="Center"
+                        IsVisible="{Binding CanAddUser}"
+                        ToolTipProperties.Text="Add New User">
+                    <Button.Shadow>
+                        <Shadow Brush="#40000000"
+                                Offset="0,4"
+                                Radius="12"
+                                Opacity="0.25" />
+                    </Button.Shadow>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Users List -->
+        <ScrollView Grid.Row="1" Padding="20,20,20,0">
+            <VerticalStackLayout Spacing="12">
+                <Label Text="{Binding TotalUsers, StringFormat='Total Users: {0}'}"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                       Margin="0,0,0,8" />
+
+                <!-- Loading Indicator -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                 IsVisible="{Binding IsBusy}"
+                                 Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                                 HeightRequest="50" />
+
+                <!-- Empty State -->
+                <VerticalStackLayout IsVisible="{Binding TotalUsers, Converter={StaticResource EqualConverter}, ConverterParameter=0}"
+                                   Spacing="16"
+                                   Padding="20"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"
+                                   Margin="0,60,0,0">
+                    <Label Text="&#xE716;"
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="64"
+                           TextColor="{AppThemeBinding Light=#CCC, Dark=#444}"
+                           HorizontalOptions="Center" />
+                    <Label Text="No Users Found"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                           HorizontalOptions="Center" />
+                    <Label Text="Click the + button to add your first user"
+                           FontSize="14"
+                           TextColor="{AppThemeBinding Light=#888, Dark=#777}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <!-- Users CollectionView -->
+                <CollectionView ItemsSource="{Binding Users}"
+                              SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="model:Staff">
+                            <Border Margin="0,0,0,12"
+                                  BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                                  StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
+                                <Border.Shadow>
+                                    <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
+                                            Offset="0,2"
+                                            Radius="8"
+                                            Opacity="0.15" />
+                                </Border.Shadow>
+
+                                <Grid Padding="20" RowSpacing="12" ColumnSpacing="16">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- User Avatar -->
+                                    <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0"
+                                            WidthRequest="56"
+                                            HeightRequest="56"
+                                            BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1976D2}"
+                                            VerticalOptions="Start">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="28" />
+                                        </Border.StrokeShape>
+                                        <Label Text="&#xE716;"
+                                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                               FontSize="28"
+                                               TextColor="White"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center" />
+                                    </Border>
+
+                                    <!-- User Name -->
+                                    <Label Grid.Row="0" Grid.Column="1"
+                                           Text="{Binding Name}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+
+                                    <!-- Staff ID & Email -->
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Spacing="8">
+                                        <Label Text="&#xE8DD;"
+                                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                               FontSize="14"
+                                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                               VerticalOptions="Center" />
+                                        <Label Text="{Binding StaffID}"
+                                               FontSize="14"
+                                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                               VerticalOptions="Center" />
+                                        <Label Text="•"
+                                               FontSize="14"
+                                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                               VerticalOptions="Center" />
+                                        <Label Text="{Binding Email}"
+                                               FontSize="14"
+                                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                               VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+
+                                    <!-- Role, Department & Facility -->
+                                    <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Spacing="12">
+                                        <!-- Role Badge -->
+                                        <Border BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1E3A5F}"
+                                                Padding="8,4">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Label Text="{Binding Role}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}" />
+                                        </Border>
+
+                                        <!-- Department Badge -->
+                                        <Border BackgroundColor="{AppThemeBinding Light=#F3E5F5, Dark=#4A1B5C}"
+                                                Padding="8,4">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Label Text="{Binding Department}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#7B1FA2, Dark=#BA68C8}" />
+                                        </Border>
+
+                                        <!-- Facility -->
+                                        <Label Text="{Binding FacilityName}"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#888, Dark=#999}"
+                                               VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+
+                                    <!-- Active Status -->
+                                    <Border Grid.Row="0" Grid.Column="2"
+                                            BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
+                                            Padding="8,4">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="●"
+                                                   FontSize="8"
+                                                   TextColor="#4CAF50"
+                                                   VerticalOptions="Center" />
+                                            <Label Text="Active"
+                                                   FontSize="10"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}" />
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Pull to Refresh -->
+        <!--<RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy}">
+        </RefreshView>-->
+    </Grid>
+</ContentPage>

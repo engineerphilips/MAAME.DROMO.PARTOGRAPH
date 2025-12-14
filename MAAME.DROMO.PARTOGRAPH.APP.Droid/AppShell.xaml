@@ -248,6 +248,20 @@
                       Route="facilities" />
     </FlyoutItem>
 
+    <FlyoutItem Title="Users"
+                x:Name="UsersMenuItem"
+                IsVisible="{Binding ShowUsersMenu}">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                             Glyph="&#xE716;"
+                             Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                             Size="20" />
+        </FlyoutItem.Icon>
+        <ShellContent Title="Users"
+                      ContentTemplate="{DataTemplate pages:UsersPage}"
+                      Route="users" />
+    </FlyoutItem>
+
     <ShellContent
     x:Name="partograph"
     Route="partograph"
