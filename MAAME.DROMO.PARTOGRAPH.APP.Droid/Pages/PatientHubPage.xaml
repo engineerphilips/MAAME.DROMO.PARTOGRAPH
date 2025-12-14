@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PatientHubPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
+             Title="Patient Hub">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InitialsConverter x:Key="StringInitialsConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing"
+                                       Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="20">
+
+                <!-- Patient Header Card -->
+                <Border StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        Padding="20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="15" />
+                    </Border.StrokeShape>
+
+                    <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="15">
+                        <!-- Patient Avatar and Name -->
+                        <HorizontalStackLayout Grid.Row="0" Spacing="15">
+                            <Border WidthRequest="80"
+                                    HeightRequest="80"
+                                    BackgroundColor="#2196F3">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="40" />
+                                </Border.StrokeShape>
+                                <Label Text="{Binding Patient.FirstName, Converter={StaticResource StringInitialsConverter}}"
+                                       FontSize="32"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="5">
+                                <Label Text="{Binding Patient.Name}"
+                                       FontSize="24"
+                                       FontAttributes="Bold" />
+                                <Label Text="{Binding Patient.HospitalNumber, StringFormat='Hospital #: {0}'}"
+                                       FontSize="14"
+                                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <!-- Patient Basic Info -->
+                        <Grid Grid.Row="1"
+                              ColumnDefinitions="*,*"
+                              RowDefinitions="Auto,Auto,Auto"
+                              ColumnSpacing="15"
+                              RowSpacing="10">
+
+                            <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="8">
+                                <Label Text="&#xE7EF;"
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                       FontSize="16"
+                                       TextColor="#2196F3"
+                                       VerticalOptions="Center" />
+                                <Label Text="{Binding Patient.Age, StringFormat='Age: {0} years'}"
+                                       FontSize="14" />
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="8">
+                                <Label Text="&#xE90A;"
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                       FontSize="16"
+                                       TextColor="#F44336"
+                                       VerticalOptions="Center" />
+                                <Label Text="{Binding Patient.BloodGroup, StringFormat='Blood: {0}'}"
+                                       FontSize="14"
+                                       FontAttributes="Bold" />
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="8">
+                                <Label Text="&#xE787;"
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                       FontSize="16"
+                                       TextColor="#4CAF50"
+                                       VerticalOptions="Center" />
+                                <Label Text="{Binding Patient.DateOfBirth, StringFormat='DOB: {0:dd/MM/yyyy}'}"
+                                       FontSize="14" />
+                            </HorizontalStackLayout>
+                        </Grid>
+
+                        <!-- Action Buttons -->
+                        <HorizontalStackLayout Grid.Row="2" Spacing="10">
+                            <Button Text="Edit"
+                                    Command="{Binding EditPatientCommand}"
+                                    BackgroundColor="#2196F3"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="15,8" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Contact Information Card -->
+                <Border StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        Padding="20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="15" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Contact Information"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+
+                        <!-- Patient Phone -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0"
+                                   Text="&#xE717;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="18"
+                                   TextColor="#4CAF50"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Patient.PhoneNumber}"
+                                   FontSize="16"
+                                   VerticalOptions="Center" />
+                            <Button Grid.Column="2"
+                                    Text="Call"
+                                    Command="{Binding CallPatientCommand}"
+                                    BackgroundColor="#4CAF50"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="12,6"
+                                    IsVisible="{Binding Patient.PhoneNumber, Converter={StaticResource IsNotNullOrEmptyConverter}}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Emergency Contact Card -->
+                <Border StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        Padding="20"
+                        IsVisible="{Binding Patient.EmergencyContactName, Converter={StaticResource IsNotNullOrEmptyConverter}}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="15" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Emergency Contact"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+
+                        <!-- Emergency Contact Name -->
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="&#xE77B;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="18"
+                                   TextColor="#FF9800"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding Patient.EmergencyContactName}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <!-- Relationship -->
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="Relationship:"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Label Text="{Binding Patient.EmergencyContactRelationship}"
+                                   FontSize="14" />
+                        </HorizontalStackLayout>
+
+                        <!-- Emergency Contact Phone -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0"
+                                   Text="&#xE717;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="18"
+                                   TextColor="#4CAF50"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Patient.EmergencyContactPhone}"
+                                   FontSize="16"
+                                   VerticalOptions="Center" />
+                            <Button Grid.Column="2"
+                                    Text="Call"
+                                    Command="{Binding CallEmergencyContactCommand}"
+                                    BackgroundColor="#FF9800"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    Padding="12,6"
+                                    IsVisible="{Binding Patient.EmergencyContactPhone, Converter={StaticResource IsNotNullOrEmptyConverter}}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Partographs List -->
+                <Border StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        Padding="20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="15" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Partograph History"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+
+                        <CollectionView ItemsSource="{Binding Partographs}"
+                                        SelectionMode="None">
+                            <CollectionView.EmptyView>
+                                <VerticalStackLayout Spacing="10" Padding="20">
+                                    <Label Text="&#xE8B6;"
+                                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                           FontSize="48"
+                                           TextColor="{AppThemeBinding Light=#CCC, Dark=#666}"
+                                           HorizontalOptions="Center" />
+                                    <Label Text="No Partographs Found"
+                                           FontSize="16"
+                                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </CollectionView.EmptyView>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:Partograph">
+                                    <Border StrokeThickness="1"
+                                            Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                                            BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}"
+                                            Margin="0,5"
+                                            Padding="15">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
+                                            <!-- Status Badge -->
+                                            <Border Grid.Column="0"
+                                                    WidthRequest="50"
+                                                    HeightRequest="50"
+                                                    BackgroundColor="{Binding StatusColor}"
+                                                    VerticalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="25" />
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding Status}"
+                                                       FontSize="10"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center"
+                                                       HorizontalTextAlignment="Center" />
+                                            </Border>
+
+                                            <!-- Partograph Details -->
+                                            <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                                <Label Text="{Binding Status}"
+                                                       FontAttributes="Bold"
+                                                       FontSize="16" />
+                                                <Label Text="{Binding AdmissionDate, StringFormat='Admission: {0:dd/MM/yyyy HH:mm}'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                                <Label Text="{Binding GestationalAge, StringFormat='GA: {0}'}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                                       IsVisible="{Binding GestationalAge, Converter={StaticResource IsNotNullOrEmptyConverter}}" />
+                                            </VerticalStackLayout>
+
+                                            <!-- View Button -->
+                                            <Button Grid.Column="2"
+                                                    Text="&#xE8A5;"
+                                                    FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPartographCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#2196F3"
+                                                    TextColor="White"
+                                                    WidthRequest="45"
+                                                    HeightRequest="45"
+                                                    CornerRadius="22"
+                                                    ToolTipProperties.Text="View Partograph" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

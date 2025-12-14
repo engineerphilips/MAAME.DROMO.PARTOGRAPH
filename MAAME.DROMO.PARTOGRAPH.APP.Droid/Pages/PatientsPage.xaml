@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PatientsPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
+             Title="Patients">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InitialsConverter x:Key="StringInitialsConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing"
+                                       Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="20">
+
+        <!-- Header -->
+        <Label Grid.Row="0"
+               Text="Patient Registry"
+               FontSize="24"
+               FontAttributes="Bold"
+               Margin="0,0,0,20" />
+
+        <!-- Search Bar -->
+        <SearchBar Grid.Row="1"
+                   Placeholder="Search by name or hospital number..."
+                   Text="{Binding SearchText}"
+                   Margin="0,0,0,20" />
+
+        <!-- Patients List -->
+        <RefreshView Grid.Row="2"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding Patients}"
+                            ItemsLayout="VerticalList"
+                            SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20">
+                        <Label Text="&#xE77B;"
+                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                               FontSize="64"
+                               TextColor="{AppThemeBinding Light=#CCC, Dark=#666}"
+                               HorizontalOptions="Center" />
+                        <Label Text="No Patients Found"
+                               FontSize="18"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Patient">
+                        <Border StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                                BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                                Margin="0,5"
+                                Padding="15">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
+                                <!-- Patient Avatar -->
+                                <Border Grid.Column="0"
+                                        WidthRequest="60"
+                                        HeightRequest="60"
+                                        BackgroundColor="#2196F3">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="30" />
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding FirstName, Converter={StaticResource StringInitialsConverter}}"
+                                           FontSize="24"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+
+                                <!-- Patient Details -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}"
+                                           FontAttributes="Bold"
+                                           FontSize="18" />
+                                    <Label Text="{Binding HospitalNumber, StringFormat='Hospital #: {0}'}"
+                                           FontSize="14"
+                                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                    <HorizontalStackLayout Spacing="10">
+                                        <HorizontalStackLayout Spacing="5" IsVisible="{Binding Age, Converter={StaticResource IsNotNullConverter}}">
+                                            <Label Text="&#xE77B;"
+                                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                                   FontSize="14"
+                                                   TextColor="#2196F3" />
+                                            <Label Text="{Binding Age, StringFormat='{0} years'}"
+                                                   FontSize="12" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="5" IsVisible="{Binding BloodGroup, Converter={StaticResource IsNotNullOrEmptyConverter}}">
+                                            <Label Text="&#xE90A;"
+                                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                                   FontSize="14"
+                                                   TextColor="#F44336" />
+                                            <Label Text="{Binding BloodGroup}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+
+                                <!-- Action Button -->
+                                <Button Grid.Column="2"
+                                        Text="&#xE8A5;"
+                                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPatientHubCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="#2196F3"
+                                        TextColor="White"
+                                        WidthRequest="45"
+                                        HeightRequest="45"
+                                        CornerRadius="22"
+                                        ToolTipProperties.Text="View Patient Details" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Add Patient Button -->
+        <Button Grid.Row="3"
+                Text="+ Add New Patient"
+                Command="{Binding AddNewPatientCommand}"
+                BackgroundColor="#4CAF50"
+                TextColor="White"
+                HeightRequest="50"
+                CornerRadius="25"
+                Margin="0,20,0,0"
+                FontSize="16"
+                FontAttributes="Bold" />
+    </Grid>
+</ContentPage>

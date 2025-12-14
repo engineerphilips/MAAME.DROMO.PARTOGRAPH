@@ -112,6 +112,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<FacilityListPageModel>();
             builder.Services.AddSingleton<FacilityOnboardingPageModel>();
             builder.Services.AddTransient<HomePageModel>();
+            builder.Services.AddTransient<PatientsPageModel>();
+            builder.Services.AddTransient<PatientHubPageModel>();
             builder.Services.AddTransient<PendingPatientsPageModel>();
             builder.Services.AddTransient<ActivePatientsPageModel>();
             builder.Services.AddTransient<CompletedPatientsPageModel>();
@@ -166,6 +168,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddTransient<FacilityListPage>();
             builder.Services.AddTransient<FacilityOnboardingPage>();
             builder.Services.AddTransient<HomePage>();
+            builder.Services.AddTransient<PatientsPage>();
+            builder.Services.AddTransient<PatientHubPage>();
             builder.Services.AddTransient<PendingPatientsPage>();
             builder.Services.AddTransient<ActivePatientsPage>();
             builder.Services.AddTransient<CompletedPatientsPage>();
