@@ -42,6 +42,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly BPRepository _bpRepository;
         private readonly AssessmentRepository _assessmentRepository;
         private readonly PlanRepository _planRepository;
+        private readonly BishopScoreRepository _bishopScoreRepository;
 
         // Alert and Validation Services
         private readonly AlertEngine _alertEngine;
@@ -282,6 +283,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _planStatusText = string.Empty;
 
+        // Bishop Score Properties
+        [ObservableProperty]
+        private string _bishopScoreButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _bishopScoreLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _bishopScoreInterpretation = string.Empty;
+
+        [ObservableProperty]
+        private string _bishopScoreNotes = string.Empty;
+
+        [ObservableProperty]
+        private string _bishopScoreTotalDisplay = "-";
+
+        [ObservableProperty]
+        private string _bishopScoreStatusColor = "#808080";
+
         // Alert Properties
         [ObservableProperty]
         private ObservableCollection<ClinicalAlert> _activeAlerts = new ObservableCollection<ClinicalAlert>();
@@ -330,6 +350,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             BPRepository bpRepository,
             AssessmentRepository assessmentRepository,
             PlanRepository planRepository,
+            BishopScoreRepository bishopScoreRepository,
             ModalErrorHandler errorHandler,
             CompanionModalPageModel companionModalPageModel,
             PainReliefModalPageModel painReliefModalPageModel,
@@ -376,6 +397,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _bpRepository = bpRepository;
             _assessmentRepository = assessmentRepository;
             _planRepository = planRepository;
+            _bishopScoreRepository = bishopScoreRepository;
             _errorHandler = errorHandler;
             _companionModalPageModel = companionModalPageModel;
             _painReliefModalPageModel = painReliefModalPageModel;
@@ -785,6 +807,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     latestTimes.Add(Patient.Plans.Max(e => e.Time));
                 }
 
+                Patient.BishopScores = await _bishopScoreRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.BishopScores.Any())
+                {
+                    earliestTimes.Add(Patient.BishopScores.Min(e => e.Time));
+                    latestTimes.Add(Patient.BishopScores.Max(e => e.Time));
+                }
+
                 if (latestTimes.Any())
                     LastRecordedTime = latestTimes.Max();
 
@@ -983,6 +1012,44 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             var latestPlan = Patient.Plans?.OrderByDescending(e => e.Time).FirstOrDefault();
             PlanLatestValue = latestPlan?.Notes ?? "";
             PlanStatusText = latestPlan != null ? $"Last: {latestPlan.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPlan.Time - DateTime.Now)}" : "";
+
+            // Bishop Score (not scheduled, just latest)
+            var latestBishopScore = Patient.BishopScores?.OrderByDescending(e => e.Time).FirstOrDefault();
+            if (latestBishopScore != null)
+            {
+                BishopScoreTotalDisplay = latestBishopScore.TotalScore.ToString();
+                BishopScoreLatestValue = latestBishopScore.Time != default
+                    ? $"Last recorded: {latestBishopScore.Time:HH:mm}"
+                    : "No score recorded";
+                BishopScoreInterpretation = latestBishopScore.Interpretation ?? "";
+                BishopScoreNotes = latestBishopScore.Notes ?? "";
+
+                // Color based on score favorability
+                if (latestBishopScore.TotalScore >= 9)
+                {
+                    BishopScoreStatusColor = "#4CAF50"; // Green - Favorable
+                    BishopScoreButtonColor = "#E8F5E9"; // Light green background
+                }
+                else if (latestBishopScore.TotalScore >= 6)
+                {
+                    BishopScoreStatusColor = "#FF9800"; // Orange - Moderately favorable
+                    BishopScoreButtonColor = "#FFF3E0"; // Light orange background
+                }
+                else
+                {
+                    BishopScoreStatusColor = "#F44336"; // Red - Unfavorable
+                    BishopScoreButtonColor = "#FFEBEE"; // Light red background
+                }
+            }
+            else
+            {
+                BishopScoreTotalDisplay = "-";
+                BishopScoreLatestValue = "";
+                BishopScoreInterpretation = "";
+                BishopScoreNotes = "";
+                BishopScoreStatusColor = "#808080"; // Gray - No data
+                BishopScoreButtonColor = "LightGray";
+            }
         }
 
         //private void LoadMeasurablesFromDatabase()
