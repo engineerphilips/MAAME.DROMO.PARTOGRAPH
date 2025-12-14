@@ -113,6 +113,12 @@ GET https://localhost:7193/api/Partographs/12345678-1234-1234-1234-123456789abc/
 
 **Modified Files:**
 - `MAAME.DROMO.PARTOGRAPH.APP.Droid/PageModels/CompletedPatientsPageModel.cs` - Added PDF generation command
+- `MAAME.DROMO.PARTOGRAPH.APP.Droid/PageModels/EnhancedPartographPageModel.cs` - Added print command
+- `MAAME.DROMO.PARTOGRAPH.APP.Droid/PageModels/PartographPageModel.cs` - Added print command
+- `MAAME.DROMO.PARTOGRAPH.APP.Droid/PageModels/SecondStagePartographPageModel.cs` - Added print command
+- `MAAME.DROMO.PARTOGRAPH.APP.Droid/Pages/EnhancedPartographPage.xaml` - Added print toolbar button
+- `MAAME.DROMO.PARTOGRAPH.APP.Droid/Pages/PartographPage.xaml` - Updated print button binding
+- `MAAME.DROMO.PARTOGRAPH.APP.Droid/Pages/SecondStagePartographPage.xaml` - Updated print button binding
 - `MAAME.DROMO.PARTOGRAPH.APP.Droid/MauiProgram.cs` - Registered PDF service
 - `MAAME.DROMO.PARTOGRAPH.APP.Droid/MAAME.DROMO.PARTOGRAPH.APP.Droid.csproj` - Added Syncfusion.Pdf.NET package
 
@@ -126,14 +132,29 @@ GET https://localhost:7193/api/Partographs/12345678-1234-1234-1234-123456789abc/
 - Automatically opens PDF after generation
 - Shows progress toasts during generation
 - Error handling with user-friendly messages
+- **Print button available on all partograph pages** (toolbar)
 
 #### User Experience
+
+**Method 1: From Completed Patients page**
 1. Navigate to Completed Patients page
 2. Select a completed partograph
 3. Tap "Generate Report" button
 4. PDF is generated and saved to Downloads
 5. PDF automatically opens for viewing
 6. Toast notification shows save location
+
+**Method 2: From Partograph pages (Recommended)**
+1. Open any partograph page (Enhanced Partograph, Chart View, or Second Stage)
+2. Tap the "Print" button in the toolbar (top-right)
+3. PDF is generated and saved to Downloads
+4. PDF automatically opens for viewing
+5. Toast notification shows save location
+
+The Print button is available on:
+- **EnhancedPartographPage** - Advanced partograph view
+- **PartographPage** - Chart view
+- **SecondStagePartographPage** - Second stage monitoring
 
 ## Technical Details
 

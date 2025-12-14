@@ -47,6 +47,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly AlertEngine _alertEngine;
         private readonly MeasurementValidationService _validationService;
         private readonly PartographNotesService _notesService;
+        private readonly IPartographPdfService _pdfService;
 
         // Modal page models
         private readonly CompanionModalPageModel _companionModalPageModel;
@@ -347,7 +348,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             FHRContractionModalPageModel fHRContractionModalPageModel,
             AssessmentModalPageModel assessmentModalPageModel,
             PlanModalPageModel planModalPageModel,
-            PartographNotesService notesService)
+            PartographNotesService notesService,
+            IPartographPdfService pdfService)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
@@ -396,6 +398,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _alertEngine = new AlertEngine();
             _validationService = new MeasurementValidationService();
             _notesService = notesService;
+            _pdfService = pdfService;
 
             // Subscribe to alert events
             _alertEngine.AlertTriggered += OnAlertTriggered;
@@ -1845,6 +1848,46 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 // Silently log error - don't disrupt user workflow
                 System.Diagnostics.Debug.WriteLine($"Error generating clinical notes: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Generates and downloads partograph PDF report
+        /// </summary>
+        [RelayCommand]
+        private async Task PrintPartograph()
+        {
+            if (Patient?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No partograph loaded");
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+                await AppShell.DisplayToastAsync("Generating partograph PDF...");
+
+                var filePath = await _pdfService.GenerateAndSavePartographPdfAsync(
+                    Patient.ID.Value,
+                    PatientName);
+
+                await AppShell.DisplayToastAsync($"PDF saved to: {filePath}");
+
+                // Optionally, open the PDF
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(filePath)
+                });
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync($"Failed to generate PDF: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
     }

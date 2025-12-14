@@ -69,7 +69,7 @@
                      IconImageSource="{x:Static fonts:FluentUI.person_add_16_regular}"
                      ToolTipProperties.Text="Add Baby Details" />
         <ToolbarItem Text="Print"
-                     Command="{Binding PrintCommand}"
+                     Command="{Binding PrintPartographCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.print_16_regular}" />
     </ContentPage.ToolbarItems>
 

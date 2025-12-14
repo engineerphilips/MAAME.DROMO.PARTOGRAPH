@@ -8,10 +8,13 @@
              Title="Advanced Partograph">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Assessment" 
+        <ToolbarItem Text="Print"
+                     Command="{Binding PrintPartographCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.print_16_regular}" />
+        <ToolbarItem Text="Assessment"
                      Command="{Binding OpenAssessmentCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.clipboard_task_16_regular}" />
-        <ToolbarItem Text="Chart View" 
+        <ToolbarItem Text="Chart View"
                      Command="{Binding ViewChartCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.chart_multiple_16_regular}" />
     </ContentPage.ToolbarItems>
