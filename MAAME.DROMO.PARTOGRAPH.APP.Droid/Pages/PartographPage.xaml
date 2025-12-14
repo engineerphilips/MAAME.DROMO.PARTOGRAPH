@@ -106,7 +106,7 @@
                      Command="{Binding ViewChartsCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.chart_multiple_16_regular}" />
         <ToolbarItem Text="Print"
-                     Command="{Binding PrintCommand}"
+                     Command="{Binding PrintPartographCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.print_16_regular}" />
     </ContentPage.ToolbarItems>
 

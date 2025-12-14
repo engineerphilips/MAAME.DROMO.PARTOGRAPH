@@ -1,4 +1,5 @@
 using MAAME.DROMO.PARTOGRAPH.SERVICE.Data;
+using MAAME.DROMO.PARTOGRAPH.SERVICE.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,11 +12,13 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
     {
         private readonly PartographDbContext _context;
         private readonly ILogger<PartographsController> _logger;
+        private readonly IPartographPdfService _pdfService;
 
-        public PartographsController(PartographDbContext context, ILogger<PartographsController> logger)
+        public PartographsController(PartographDbContext context, ILogger<PartographsController> logger, IPartographPdfService pdfService)
         {
             _context = context;
             _logger = logger;
+            _pdfService = pdfService;
         }
 
         // GET: api/Partographs
@@ -310,6 +313,30 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 _logger.LogError(ex, "Error updating partograph status {PartographId}", id);
                 return StatusCode(500, new { error = "Failed to update status", message = ex.Message });
+            }
+        }
+
+        // GET: api/Partographs/{id}/pdf
+        [HttpGet("{id}/pdf")]
+        public async Task<IActionResult> GeneratePartographPdf(Guid id)
+        {
+            try
+            {
+                var partograph = await _context.Partographs.FirstOrDefaultAsync(p => p.ID == id && p.Deleted == 0);
+                if (partograph == null)
+                {
+                    return NotFound(new { error = "Partograph not found", id });
+                }
+
+                var pdfBytes = await _pdfService.GeneratePartographPdfAsync(id);
+                var fileName = $"Partograph_{partograph.Patient?.Name?.Replace(" ", "_") ?? id.ToString()}_{DateTime.Now:yyyyMMdd}.pdf";
+
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating partograph PDF for {PartographId}", id);
+                return StatusCode(500, new { error = "Failed to generate PDF", message = ex.Message });
             }
         }
     }

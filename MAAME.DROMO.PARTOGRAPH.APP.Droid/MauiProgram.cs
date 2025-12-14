@@ -91,6 +91,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<StageProgressionService>(); // WHO Four-Stage Labor System
             builder.Services.AddSingleton<PartographNotesService>(); // Dynamic clinical notes generation
             builder.Services.AddSingleton<IReportService, ReportService>(); // Comprehensive reporting service
+            builder.Services.AddHttpClient<IPartographPdfService, PartographPdfService>(); // PDF generation service
             //builder.Services.AddSingleton<AuthenticationService>();
 
             // Register Sync Services

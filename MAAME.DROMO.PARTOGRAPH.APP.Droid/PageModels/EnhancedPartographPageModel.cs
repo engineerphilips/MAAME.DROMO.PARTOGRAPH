@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         //private readonly VitalSignRepository _vitalSignRepository;
         private readonly AssessmentRepository _assessmentPlanRepository;
         private readonly ModalErrorHandler _errorHandler;
+        private readonly IPartographPdfService _pdfService;
 
         [ObservableProperty]
         private string _patientName = string.Empty;
@@ -102,13 +104,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             PatientRepository patientRepository,
             PartographRepository partographRepository,
             AssessmentRepository assessmentPlanRepository,
-            ModalErrorHandler errorHandler)
+            ModalErrorHandler errorHandler,
+            IPartographPdfService pdfService)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
             //_vitalSignRepository = vitalSignRepository;
             _assessmentPlanRepository = assessmentPlanRepository;
             _errorHandler = errorHandler;
+            _pdfService = pdfService;
 
             // Start timer to update time and check due measurements
             StartTimeUpdater();
@@ -441,6 +445,43 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (_partograph != null)
                 await LoadData(_partograph.ID);
+        }
+
+        [RelayCommand]
+        private async Task PrintPartograph()
+        {
+            if (_partograph?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No partograph loaded");
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+                await AppShell.DisplayToastAsync("Generating partograph PDF...");
+
+                var filePath = await _pdfService.GenerateAndSavePartographPdfAsync(
+                    _partograph.ID.Value,
+                    PatientName);
+
+                await AppShell.DisplayToastAsync($"PDF saved to: {filePath}");
+
+                // Optionally, open the PDF
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(filePath)
+                });
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync($"Failed to generate PDF: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }
