@@ -211,59 +211,15 @@
 
     <FlyoutItem Title="Patients">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                             Glyph="&#xE77B;" 
+            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                             Glyph="&#xE77B;"
                              Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
                              Size="20" />
         </FlyoutItem.Icon>
 
-        <!--<Tab Title="Pre-Labor">
-            <Tab.Icon>
-                <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                                 Glyph="&#xE73E;" 
-                                 Color="{AppThemeBinding Light=#FFA726, Dark=#FFB74D}"
-                                 Size="18" />
-            </Tab.Icon>
-            <ShellContent Title="Pre-Labor"
-                          ContentTemplate="{DataTemplate pages:PendingPatientsPage}"
-                          Route="pendingpatients" />
-        </Tab>
-
-        <Tab Title="Active">
-            <Tab.Icon>
-                <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                                 Glyph="&#xE8E7;" 
-                                 Color="{AppThemeBinding Light=#66BB6A, Dark=#81C784}"
-                                 Size="18" />
-            </Tab.Icon>
-            <ShellContent Title="Active Labor"
-                          ContentTemplate="{DataTemplate pages:ActivePatientsPage}"
-                          Route="activepatients" />
-        </Tab>
-
-        <Tab Title="Delivered">
-            <Tab.Icon>
-                <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                                 Glyph="&#xE73A;" 
-                                 Color="{AppThemeBinding Light=#42A5F5, Dark=#64B5F6}"
-                                 Size="18" />
-            </Tab.Icon>
-            <ShellContent Title="Delivered"
-                          ContentTemplate="{DataTemplate pages:CompletedPatientsPage}"
-                          Route="completedpatients" />
-        </Tab>-->
-    </FlyoutItem>
-
-    <FlyoutItem Title="Analytics">
-        <FlyoutItem.Icon>
-            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                             Glyph="&#xE9D2;" 
-                             Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                             Size="20" />
-        </FlyoutItem.Icon>
-        <ShellContent Title="Analytics"
-                      ContentTemplate="{DataTemplate pages:AnalyticsPage}"
-                      Route="analytics" />
+        <ShellContent Title="Patients"
+                      ContentTemplate="{DataTemplate pages:PatientsPage}"
+                      Route="patients" />
     </FlyoutItem>
 
     <FlyoutItem Title="Reports">
