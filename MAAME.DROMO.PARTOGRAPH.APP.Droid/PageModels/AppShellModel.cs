@@ -11,8 +11,34 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     public class AppShellModel : INotifyPropertyChanged
     {
         public string? Name => Constants.Staff?.Name;
-        public string? Facility => Constants.Staff?.FacilityName;
+        public string? Role => Constants.Staff?.Role;
+        public string? Facility
+        {
+            get
+            {
+                // For Super/Admin, show selected facility
+                if (Constants.IsSuperOrAdmin())
+                {
+                    return Constants.SelectedFacility?.Name ?? "No Facility Selected";
+                }
+                // For other users, show their assigned facility
+                return Constants.Staff?.FacilityName ?? "No Facility";
+            }
+        }
         public string? Email => Constants.Staff?.Email;
+
+        // Get app version from assembly
+        public string AppVersion
+        {
+            get
+            {
+                var version = AppInfo.Current.VersionString;
+                return $"v{version}";
+            }
+        }
+
+        // Show user details only for non-Super/Admin users
+        public bool ShowUserDetails => !Constants.IsSuperOrAdmin();
 
         #region INotifyPropertyChanged
 
@@ -31,6 +57,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             backingStore = value;
             OnPropertyChanged(propertyName);
             return true;
+        }
+
+        // Method to refresh bindings when facility selection changes
+        public void RefreshBindings()
+        {
+            OnPropertyChanged(nameof(Facility));
+            OnPropertyChanged(nameof(Name));
+            OnPropertyChanged(nameof(Role));
+            OnPropertyChanged(nameof(Email));
+            OnPropertyChanged(nameof(AppVersion));
+            OnPropertyChanged(nameof(ShowUserDetails));
         }
 
         #endregion

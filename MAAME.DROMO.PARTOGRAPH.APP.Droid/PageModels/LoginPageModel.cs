@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
@@ -161,15 +163,28 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     Email = string.Empty;
                     Password = string.Empty;
 
-                    // Navigation will be handled by AuthenticationStateChanged event
-
-                    //var serviceProvider = IPlatformApplication.Current.Services;
-                    ////await Shell.Current.GoToAsync("//main");
-                    //var appshell = serviceProvider.GetService<AppShell>();
-                    //Application.Current.MainPage = appshell;
-
-                    //await Shell.Current.GoToAsync("//main");
-                    Application.Current.MainPage = new AppShell();
+                    // Check if user is Super or Maame.Dromo.Admin
+                    // If yes, redirect to FacilitySelectionPage
+                    // If no, redirect to AppShell
+                    if (Constants.IsSuperOrAdmin())
+                    {
+                        // Navigate to FacilitySelectionPage for facility selection
+                        var facilitySelectionPage = IPlatformApplication.Current!.Services.GetService<FacilitySelectionPage>();
+                        if (facilitySelectionPage != null)
+                        {
+                            Application.Current.MainPage = facilitySelectionPage;
+                        }
+                        else
+                        {
+                            // Fallback if service not registered
+                            Application.Current.MainPage = new AppShell();
+                        }
+                    }
+                    else
+                    {
+                        // Navigate directly to AppShell for non-Super/Admin users
+                        Application.Current.MainPage = new AppShell();
+                    }
                 }
                 else
                 {

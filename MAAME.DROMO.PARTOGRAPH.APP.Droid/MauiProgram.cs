@@ -45,13 +45,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
-            // Register Repositories                        
+            // Register Repositories
             builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
             builder.Services.AddSingleton<PatientRepository>();
             builder.Services.AddSingleton<PartographRepository>();
             //builder.Services.AddSingleton<VitalSignRepository>();
             //builder.Services.AddSingleton<MedicalNoteRepository>();
             builder.Services.AddSingleton<StaffRepository>();
+            builder.Services.AddSingleton<FacilityRepository>();
             builder.Services.AddSingleton<CompanionRepository>();
             builder.Services.AddSingleton<PainReliefRepository>();
             builder.Services.AddSingleton<OralFluidRepository>();
@@ -107,6 +108,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             // Register PageModels
             builder.Services.AddSingleton<AppShellModel>();
             builder.Services.AddSingleton<LoginPageModel>();
+            builder.Services.AddSingleton<FacilitySelectionPageModel>();
             builder.Services.AddTransient<HomePageModel>();
             builder.Services.AddTransient<PendingPatientsPageModel>();
             builder.Services.AddTransient<ActivePatientsPageModel>();
@@ -158,6 +160,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 
             // Register Pages
             builder.Services.AddTransient<LoginPage>();
+            builder.Services.AddTransient<FacilitySelectionPage>();
             builder.Services.AddTransient<HomePage>();
             builder.Services.AddTransient<PendingPatientsPage>();
             builder.Services.AddTransient<ActivePatientsPage>();

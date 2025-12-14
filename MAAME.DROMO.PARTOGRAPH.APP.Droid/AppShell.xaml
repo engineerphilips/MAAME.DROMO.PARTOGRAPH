@@ -185,8 +185,8 @@
                                FontSize="12"
                                TextColor="White" -->
                             
-                            <Label Text="Version: v2.1" 
-                               TextColor="White" 
+                            <Label Text="{Binding AppVersion, StringFormat='Version: {0}'}"
+                               TextColor="White"
                                FontSize="12"
                                FontAttributes="Bold" />
                     </HorizontalStackLayout>
@@ -385,13 +385,17 @@
 
                     <!-- User Info -->
                     <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                        <Label Text="{Binding Name}" 
-                               FontAttributes="Bold" 
+                        <Label Text="{Binding Name}"
+                               FontAttributes="Bold"
                                FontSize="16"
                                TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
-                        <Label Text="Labor Ward Supervisor" 
-                               FontSize="13" 
+                        <Label Text="{Binding Role}"
+                               FontSize="13"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        <Label Text="{Binding Facility}"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light=#888, Dark=#999}"
+                               Margin="0,2,0,0" />
 
                         <!-- Status Badge -->
                         <Border BackgroundColor="#E8F5E9"
