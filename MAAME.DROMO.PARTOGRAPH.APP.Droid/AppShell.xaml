@@ -268,14 +268,28 @@
 
     <FlyoutItem Title="Reports">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="MaterialAssets" 
-                             Glyph="&#xe775;" 
+            <FontImageSource FontFamily="MaterialAssets"
+                             Glyph="&#xe775;"
                              Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
                              Size="20" />
         </FlyoutItem.Icon>
         <ShellContent Title="Reports"
                       ContentTemplate="{DataTemplate pages:ReportsPage}"
                       Route="reports" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Facilities"
+                x:Name="FacilitiesMenuItem"
+                IsVisible="{Binding ShowFacilitiesMenu}">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                             Glyph="&#xE8DD;"
+                             Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                             Size="20" />
+        </FlyoutItem.Icon>
+        <ShellContent Title="Facilities"
+                      ContentTemplate="{DataTemplate pages:FacilityListPage}"
+                      Route="facilities" />
     </FlyoutItem>
 
     <ShellContent
