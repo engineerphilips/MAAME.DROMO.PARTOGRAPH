@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.StaffPerformanceView">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="8,20">
+
+            <!-- Summary Cards -->
+            <Grid ColumnDefinitions="*,12,*" ColumnSpacing="0">
+                <!-- Total Staff -->
+                <Border Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light=#AB47BC, Dark=#8E24AA}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="&#xE716;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="28"
+                                   VerticalOptions="Center"/>
+                            <Label Text="Total Staff"
+                                   FontSize="14"
+                                   Opacity="0.9"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Label FontSize="32"
+                               FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding ActiveStaff}" />
+                                    <Span Text=" / " FontSize="20" />
+                                    <Span Text="{Binding TotalStaff}" FontSize="20" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Average Performance -->
+                <Border Grid.Column="2"
+                        BackgroundColor="{AppThemeBinding Light=#7E57C2, Dark=#5E35B1}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="&#xE734;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="28"
+                                   VerticalOptions="Center"/>
+                            <Label Text="Avg Deliveries"
+                                   FontSize="14"
+                                   Opacity="0.9"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding AverageDeliveriesPerStaff, StringFormat='{0:F1}'}"
+                               FontSize="32"
+                               FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Performance Metrics Overview -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Average Performance Metrics"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="WHO Compliance"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AverageWHOCompliance, StringFormat='{0:F1}%'}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#66BB6A"/>
+
+                        <Label Text="Complication Rate"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AverageComplicationRate, StringFormat='{0:F1}%'}"
+                               Grid.Row="1" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#FF9800"/>
+
+                        <Label Text="Documentation Score"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AverageDocumentationScore, StringFormat='{0:F1}%'}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#2196F3"/>
+
+                        <Label Text="Total Deliveries"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AverageDeliveriesPerStaff, StringFormat='{0:F1}'}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Top Performers Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="&#xE734;"
+                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                               FontSize="24"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+                        <Label Text="Top Performers"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+                    </HorizontalStackLayout>
+
+                    <CollectionView ItemsSource="{Binding TopPerformers}"
+                                    EmptyView="No top performers to display">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="{AppThemeBinding Light=#F1F8E9, Dark=#2E7D32}"
+                                        Padding="12"
+                                        Margin="0,0,0,8">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                        <Label Text="{Binding StaffName}"
+                                               Grid.Row="0" Grid.Column="0"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light=#1B5E20, Dark=#C5E1A5}"/>
+                                        <Label Text="{Binding OverallPerformanceScore, StringFormat='{0:F1}%'}"
+                                               Grid.Row="0" Grid.Column="1"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+
+                                        <Label Grid.Row="1" Grid.Column="0"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#388E3C, Dark=#A5D6A7}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Role}" FontAttributes="Italic"/>
+                                                    <Span Text=" • " />
+                                                    <Span Text="{Binding TotalDeliveries}"/>
+                                                    <Span Text=" deliveries" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                        <Label Text="{Binding PerformanceRating}"
+                                               Grid.Row="1" Grid.Column="1"
+                                               FontSize="12"
+                                               FontAttributes="Italic"
+                                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Needing Improvement Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#E65100}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="&#xE7BA;"
+                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                               FontSize="24"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"/>
+                        <Label Text="Needs Improvement"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"/>
+                    </HorizontalStackLayout>
+
+                    <CollectionView ItemsSource="{Binding NeedingImprovement}"
+                                    EmptyView="All staff performing satisfactorily">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="{AppThemeBinding Light=#FBE9E7, Dark=#BF360C}"
+                                        Padding="12"
+                                        Margin="0,0,0,8">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                        <Label Text="{Binding StaffName}"
+                                               Grid.Row="0" Grid.Column="0"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light=#BF360C, Dark=#FFCCBC}"/>
+                                        <Label Text="{Binding OverallPerformanceScore, StringFormat='{0:F1}%'}"
+                                               Grid.Row="0" Grid.Column="1"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light=#E64A19, Dark=#FF8A65}"/>
+
+                                        <Label Grid.Row="1" Grid.Column="0"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#D84315, Dark=#FFAB91}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Role}" FontAttributes="Italic"/>
+                                                    <Span Text=" • " />
+                                                    <Span Text="{Binding TotalDeliveries}"/>
+                                                    <Span Text=" deliveries" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                        <Label Text="{Binding PerformanceRating}"
+                                               Grid.Row="1" Grid.Column="1"
+                                               FontSize="12"
+                                               FontAttributes="Italic"
+                                               TextColor="{AppThemeBinding Light=#E64A19, Dark=#FF8A65}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Individual Staff Performance List -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="All Staff Performance"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <CollectionView ItemsSource="{Binding StaffPerformance}"
+                                    EmptyView="No staff data available">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2C2C2C}"
+                                        Padding="16"
+                                        Margin="0,0,0,12">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10" />
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="12">
+                                        <!-- Name and Score -->
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <Label Text="{Binding StaffName}"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   Grid.Column="0"/>
+                                            <Label Text="{Binding OverallPerformanceScore, StringFormat='{0:F1}%'}"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#AB47BC"
+                                                   Grid.Column="1"/>
+                                        </Grid>
+
+                                        <!-- Role and Department -->
+                                        <Label FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Role}" FontAttributes="Bold"/>
+                                                    <Span Text=" • " />
+                                                    <Span Text="{Binding Department}"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                        <!-- Performance Metrics -->
+                                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="12">
+                                            <Label Text="Deliveries"
+                                                   Grid.Row="0" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding TotalDeliveries}"
+                                                   Grid.Row="0" Grid.Column="1"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   HorizontalOptions="End"/>
+
+                                            <Label Text="WHO Compliance"
+                                                   Grid.Row="1" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding WHOProtocolCompliance, StringFormat='{0:F1}%'}"
+                                                   Grid.Row="1" Grid.Column="1"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   HorizontalOptions="End"
+                                                   TextColor="#66BB6A"/>
+
+                                            <Label Text="Documentation"
+                                                   Grid.Row="2" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding DocumentationCompleteness, StringFormat='{0:F1}%'}"
+                                                   Grid.Row="2" Grid.Column="1"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   HorizontalOptions="End"
+                                                   TextColor="#2196F3"/>
+                                        </Grid>
+
+                                        <!-- Performance Rating Badge -->
+                                        <HorizontalStackLayout Spacing="8" HorizontalOptions="End">
+                                            <Label Text="&#xE734;"
+                                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                                   FontSize="16"
+                                                   VerticalOptions="Center"
+                                                   TextColor="#AB47BC"/>
+                                            <Label Text="{Binding PerformanceRating}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   VerticalOptions="Center"
+                                                   TextColor="#AB47BC"/>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

@@ -160,14 +160,33 @@ Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                 </tabView:SfTabItem>
 
                 <tabView:SfTabItem Header="Alert Response" ImageSource="todo_done_svgrepo.png">
-                    <!-- Alert Response View (Placeholder) -->
-                    <Label 
-        Text="Alert Response Time Report - Coming Soon"
-        FontSize="18"
-        TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
-        HorizontalOptions="Center"
-        VerticalOptions="Center"
-        Margin="0,40,0,0"/>
+                    <!-- Alert Response View -->
+                    <views:AlertResponseView BindingContext="{Binding AlertResponseReport}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="WHO Compliance" ImageSource="todo_done_svgrepo.png">
+                    <!-- WHO Compliance View -->
+                    <views:WHOComplianceView BindingContext="{Binding WHOComplianceReport}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Staff Performance" ImageSource="todo_done_svgrepo.png">
+                    <!-- Staff Performance View -->
+                    <views:StaffPerformanceView BindingContext="{Binding StaffPerformanceReport}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Sync Status" ImageSource="todo_done_svgrepo.png">
+                    <!-- Sync Status View -->
+                    <views:SyncStatusView BindingContext="{Binding SyncStatusReport}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Birth Weight & APGAR" ImageSource="todo_done_svgrepo.png">
+                    <!-- Birth Weight & APGAR Analysis View -->
+                    <views:BirthWeightApgarView BindingContext="{Binding BirthWeightApgarReport}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Trend Analytics" ImageSource="todo_done_svgrepo.png">
+                    <!-- Trend Analytics View -->
+                    <views:TrendAnalyticsView BindingContext="{Binding TrendAnalyticsReport}"/>
                 </tabView:SfTabItem>
             </tabView:SfTabView>
             

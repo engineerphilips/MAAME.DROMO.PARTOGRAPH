@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.WHOComplianceView">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="8,20">
+
+            <!-- Overall Compliance Score -->
+            <Border BackgroundColor="{AppThemeBinding Light=#66BB6A, Dark=#388E3C}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="&#xE73E;"
+                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                               FontSize="32"
+                               VerticalOptions="Center"/>
+                        <Label Text="WHO 2020 Compliance"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <Label FontSize="56"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding CompliancePercentage, StringFormat='{0:F1}'}" />
+                                <Span Text="%" FontSize="40" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="{Binding CompliantPartographs}"
+                               FontSize="16"
+                               FontAttributes="Bold"/>
+                        <Label Text="of"
+                               FontSize="14"
+                               Opacity="0.9"/>
+                        <Label Text="{Binding TotalPartographs}"
+                               FontSize="16"
+                               FontAttributes="Bold"/>
+                        <Label Text="partographs compliant"
+                               FontSize="14"
+                               Opacity="0.9"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Labor Progression Compliance -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Labor Progression (WHO 2020)"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Active Labor at 5cm"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding ActiveLaborStartedAt5cm}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+
+                        <Label Text="Alert Line Crossings"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding AlertLineCrossings}" FontAttributes="Bold"/>
+                                    <Span Text=" (" />
+                                    <Span Text="{Binding AlertLineCrossingRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#FF9800"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Action Line Crossings"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Grid.Row="2" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding ActionLineCrossings}" FontAttributes="Bold"/>
+                                    <Span Text=" (" />
+                                    <Span Text="{Binding ActionLineCrossingRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#F44336"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Appropriate Interventions"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Grid.Row="3" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding AppropriateInterventions}" FontAttributes="Bold"/>
+                                    <Span Text=" (" />
+                                    <Span Text="{Binding InterventionRateOnAlertCrossing, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#4CAF50"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Monitoring Frequency Compliance -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="Monitoring Frequency Compliance"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+                        <Label FontSize="14"
+                               VerticalOptions="End"
+                               Margin="0,0,0,2">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="(" />
+                                    <Span Text="{Binding OverallMonitoringCompliance, StringFormat='{0:F1}%'}" TextColor="#66BB6A" FontAttributes="Bold"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="FHR Every 30 Min"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding FHREvery30MinCompliance, StringFormat='{0:F1}%'}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#66BB6A"/>
+
+                        <Label Text="VE Every 4 Hours"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding VEEvery4HoursCompliance, StringFormat='{0:F1}%'}"
+                               Grid.Row="1" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#66BB6A"/>
+
+                        <Label Text="Vital Signs Hourly"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding VitalSignsHourlyCompliance, StringFormat='{0:F1}%'}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#66BB6A"/>
+
+                        <Label Text="Contractions Every 30 Min"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding ContractionsEvery30MinCompliance, StringFormat='{0:F1}%'}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#66BB6A"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Essential Care Practices -->
+            <Border BackgroundColor="{AppThemeBinding Light=#E1F5FE, Dark=#01579B}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="Essential Care Practices"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                        <Label FontSize="14"
+                               VerticalOptions="End"
+                               Margin="0,0,0,2">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="(" />
+                                    <Span Text="{Binding EssentialCareComplianceRate, StringFormat='{0:F1}%'}" TextColor="{AppThemeBinding Light=#0288D1, Dark=#4FC3F7}" FontAttributes="Bold"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Delayed Cord Clamping"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                        <Label Grid.Row="0" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding DelayedCordClampingCount}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#01579B, Dark=#B3E5FC}"/>
+                                    <Span Text=" (" TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                                    <Span Text="{Binding DelayedCordClampingRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#0288D1, Dark=#4FC3F7}"/>
+                                    <Span Text=")" TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Skin-to-Skin Contact"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding SkinToSkinContactCount}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#01579B, Dark=#B3E5FC}"/>
+                                    <Span Text=" (" TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                                    <Span Text="{Binding SkinToSkinRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#0288D1, Dark=#4FC3F7}"/>
+                                    <Span Text=")" TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Early Breastfeeding"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                        <Label Grid.Row="2" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding EarlyBreastfeedingCount}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#01579B, Dark=#B3E5FC}"/>
+                                    <Span Text=" (" TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                                    <Span Text="{Binding EarlyBreastfeedingRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#0288D1, Dark=#4FC3F7}"/>
+                                    <Span Text=")" TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Vitamin K Administration"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                        <Label Grid.Row="3" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding VitaminKGivenCount}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#01579B, Dark=#B3E5FC}"/>
+                                    <Span Text=" (" TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                                    <Span Text="{Binding VitaminKRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#0288D1, Dark=#4FC3F7}"/>
+                                    <Span Text=")" TextColor="{AppThemeBinding Light=#0277BD, Dark=#81D4FA}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Documentation Quality -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Documentation Quality"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Average Data Completeness"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AverageDataCompleteness, StringFormat='{0:F1}%'}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#66BB6A"/>
+
+                        <Label Text="Partographs Started On Time"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding PartographsStartedOnTime}" FontAttributes="Bold"/>
+                                    <Span Text=" (" />
+                                    <Span Text="{Binding PartographStartTimeCompliance, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#66BB6A"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Missing Critical Data"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding MissingCriticalData}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#F44336"/>
+
+                        <Label Text="Incomplete Partographs"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding PartographsWithIncompleteData}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#FF9800"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Monitoring Counts -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Monitoring Statistics"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="2*,*,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <!-- Header -->
+                        <Label Text=""
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="Actual"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                               HorizontalOptions="End"/>
+                        <Label Text="Expected"
+                               Grid.Row="0" Grid.Column="2"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                               HorizontalOptions="End"/>
+
+                        <!-- FHR -->
+                        <Label Text="FHR Recordings"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding TotalFHRRecordings}"
+                               Grid.Row="1" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               HorizontalOptions="End"/>
+                        <Label Text="{Binding ExpectedFHRRecordings}"
+                               Grid.Row="1" Grid.Column="2"
+                               FontSize="14"
+                               HorizontalOptions="End"
+                               TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+
+                        <!-- VE -->
+                        <Label Text="Vaginal Exams"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding TotalVaginalExams}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               HorizontalOptions="End"/>
+                        <Label Text="{Binding ExpectedVaginalExams}"
+                               Grid.Row="2" Grid.Column="2"
+                               FontSize="14"
+                               HorizontalOptions="End"
+                               TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+
+                        <!-- BP -->
+                        <Label Text="BP Recordings"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding TotalBPRecordings}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               HorizontalOptions="End"/>
+                        <Label Text="{Binding ExpectedBPRecordings}"
+                               Grid.Row="3" Grid.Column="2"
+                               FontSize="14"
+                               HorizontalOptions="End"
+                               TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>
