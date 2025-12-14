@@ -298,7 +298,7 @@
                                                      Grid.Row="2" Grid.Column="0"
                                                      Grid.ColumnSpan="3"
                                                      ProgressColor="#5C6BC0"
-                                                     Margin="0,4,0,0"/>
+                                                     Margin="0,15,0,0"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -314,7 +314,7 @@
                     <RoundRectangle CornerRadius="12" />
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="16">
-                    <Label Text="Birth Weight & APGAR Correlation"
+                    <Label Text="Birth Weight &amp; APGAR Correlation"
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light=#283593, Dark=#9FA8DA}"/>

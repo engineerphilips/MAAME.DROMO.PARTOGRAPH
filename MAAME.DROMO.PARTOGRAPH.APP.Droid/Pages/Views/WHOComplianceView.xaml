@@ -19,7 +19,7 @@
                                FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                FontSize="32"
                                VerticalOptions="Center"/>
-                        <Label Text="WHO 2020 Compliance"
+                        <Label Text="WHO Compliance"
                                FontSize="20"
                                FontAttributes="Bold"
                                VerticalOptions="Center"/>
@@ -66,12 +66,12 @@
                             Opacity="0.15" />
                 </Border.Shadow>
                 <VerticalStackLayout Spacing="16">
-                    <Label Text="Labor Progression (WHO 2020)"
+                    <Label Text="Labour Progression"
                            FontSize="18"
                            FontAttributes="Bold"/>
 
                     <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
-                        <Label Text="Active Labor at 5cm"
+                        <Label Text="Active Labour at 5cm"
                                Grid.Row="0" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>

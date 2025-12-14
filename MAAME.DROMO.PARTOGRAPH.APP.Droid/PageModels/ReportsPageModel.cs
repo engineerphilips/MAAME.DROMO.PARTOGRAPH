@@ -286,19 +286,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     await LoadNeonatalOutcomesAsync();
                     break;
                 case 3:
-                    await LoadAlertResponseAsync();
-                    break;
-                case 4:
                     await LoadWHOComplianceAsync();
                     break;
+                case 4:
+                    await LoadBirthWeightApgarAsync();
+                    break;
                 case 5:
-                    await LoadStaffPerformanceAsync();
+                    await LoadAlertResponseAsync();
                     break;
                 case 6:
                     await LoadSyncStatusAsync();
                     break;
                 case 7:
-                    await LoadBirthWeightApgarAsync();
+                    await LoadStaffPerformanceAsync();
                     break;
                 case 8:
                     await LoadTrendAnalyticsAsync();

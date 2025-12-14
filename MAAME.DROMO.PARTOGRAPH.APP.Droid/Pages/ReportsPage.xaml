@@ -143,7 +143,7 @@ Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                 </VerticalStackLayout>
             </Grid>
 
-            <tabView:SfTabView x:Name="TabView" TabBarHeight="72" EnableSwiping="False" TabBarPlacement="Top">
+            <tabView:SfTabView x:Name="TabView" TabBarHeight="72" TabWidthMode="SizeToContent" EnableSwiping="True" TabBarPlacement="Top" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
                 <tabView:SfTabItem Header="Monthly Dashboard" ImagePosition="Top" ImageSource="todo_done_svgrepo.png">
                     <!-- Monthly Dashboard View -->
                     <views:MonthlyDashboardView BindingContext="{Binding MonthlyDashboard}"/>
@@ -159,14 +159,19 @@ Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                     <views:NeonatalOutcomesView BindingContext="{Binding NeonatalOutcomesReport}"/>
                 </tabView:SfTabItem>
 
+                <tabView:SfTabItem Header="WHO Compliance" ImageSource="todo_done_svgrepo.png">
+                    <!-- WHO Compliance View -->
+                    <views:WHOComplianceView BindingContext="{Binding WhoComplianceReport}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Birth Weight &amp; APGAR" ImageSource="todo_done_svgrepo.png">
+                    <!-- Birth Weight & APGAR Analysis View -->
+                    <views:BirthWeightApgarView BindingContext="{Binding BirthWeightApgarReport}"/>
+                </tabView:SfTabItem>
+
                 <tabView:SfTabItem Header="Alert Response" ImageSource="todo_done_svgrepo.png">
                     <!-- Alert Response View -->
                     <views:AlertResponseView BindingContext="{Binding AlertResponseReport}"/>
-                </tabView:SfTabItem>
-
-                <tabView:SfTabItem Header="WHO Compliance" ImageSource="todo_done_svgrepo.png">
-                    <!-- WHO Compliance View -->
-                    <views:WHOComplianceView BindingContext="{Binding WHOComplianceReport}"/>
                 </tabView:SfTabItem>
 
                 <tabView:SfTabItem Header="Staff Performance" ImageSource="todo_done_svgrepo.png">
@@ -177,11 +182,6 @@ Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                 <tabView:SfTabItem Header="Sync Status" ImageSource="todo_done_svgrepo.png">
                     <!-- Sync Status View -->
                     <views:SyncStatusView BindingContext="{Binding SyncStatusReport}"/>
-                </tabView:SfTabItem>
-
-                <tabView:SfTabItem Header="Birth Weight & APGAR" ImageSource="todo_done_svgrepo.png">
-                    <!-- Birth Weight & APGAR Analysis View -->
-                    <views:BirthWeightApgarView BindingContext="{Binding BirthWeightApgarReport}"/>
                 </tabView:SfTabItem>
 
                 <tabView:SfTabItem Header="Trend Analytics" ImageSource="todo_done_svgrepo.png">
