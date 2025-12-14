@@ -3,7 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:fonts="clr-namespace:Fonts"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.NeonatalOutcomesView">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:GramsToKilogramsConverter x:Key="GramsToKg" />
+        </ResourceDictionary>
+    </ContentView.Resources>
 
     <ScrollView>
         <VerticalStackLayout Spacing="16" Padding="4,20">
@@ -172,7 +179,7 @@
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="(Avg: " />
-                                    <Span Text="{Binding AverageBirthWeight, StringFormat='{0:F0}g'}" FontAttributes="Bold"/>
+                                    <Span Text="{Binding AverageBirthWeight, Converter={StaticResource GramsToKg}}" FontAttributes="Bold"/>
                                     <Span Text=")" />
                                 </FormattedString>
                             </Label.FormattedText>
@@ -180,7 +187,7 @@
                     </HorizontalStackLayout>
 
                     <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="12">
-                        <Label Text="Extremely Low (&lt;1000g)"
+                        <Label Text="Extremely Low (&lt;1 KG)"
                                Grid.Row="0" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
@@ -190,7 +197,7 @@
                                FontAttributes="Bold"
                                TextColor="#F44336"/>
 
-                        <Label Text="Very Low (1000-1499g)"
+                        <Label Text="Very Low (1-1.499 KG)"
                                Grid.Row="1" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
@@ -200,7 +207,7 @@
                                FontAttributes="Bold"
                                TextColor="#FF9800"/>
 
-                        <Label Text="Low (1500-2499g)"
+                        <Label Text="Low (1.5-2.499 KG)"
                                Grid.Row="2" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
@@ -210,7 +217,7 @@
                                FontAttributes="Bold"
                                TextColor="#FFC107"/>
 
-                        <Label Text="Normal (2500-3999g)"
+                        <Label Text="Normal (2.5-3.999 KG)"
                                Grid.Row="3" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
@@ -220,7 +227,7 @@
                                FontAttributes="Bold"
                                TextColor="#4CAF50"/>
 
-                        <Label Text="Macrosomia (≥4000g)"
+                        <Label Text="Macrosomia (≥4 KG)"
                                Grid.Row="4" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
@@ -629,7 +636,7 @@
                                                 <FormattedString>
                                                     <Span Text="{Binding Sex}" FontAttributes="Bold"/>
                                                     <Span Text=" | " />
-                                                    <Span Text="{Binding BirthWeight, StringFormat='{0:F0}g'}" FontAttributes="Bold"/>
+                                                    <Span Text="{Binding BirthWeight, Converter={StaticResource GramsToKg}}" FontAttributes="Bold"/>
                                                     <Span Text=" | APGAR: " />
                                                     <Span Text="{Binding Apgar1Min}" FontAttributes="Bold"/>
                                                     <Span Text="/" />
