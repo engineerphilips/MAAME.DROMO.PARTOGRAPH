@@ -62,6 +62,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private AlertResponseTimeReport alertResponseReport;
 
+        [ObservableProperty]
+        private MonthlyMidwivesReturnsReport monthlyMidwivesReturnsReport;
+
         // Medium Priority Reports
         [ObservableProperty]
         private WHOComplianceReport whoComplianceReport;
@@ -163,6 +166,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsLoading = true;
                 LoadingMessage = "Loading Alert Response Time Report...";
                 AlertResponseReport = await _reportService.GenerateAlertResponseTimeReportAsync(StartDate, EndDate);
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", $"Failed to load report: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task LoadMonthlyMidwivesReturnsAsync()
+        {
+            try
+            {
+                SelectedTabIndex = 4;
+                IsLoading = true;
+                LoadingMessage = "Loading Monthly Midwives Returns Report...";
+                MonthlyMidwivesReturnsReport = await _reportService.GenerateMonthlyMidwivesReturnsReportAsync(StartDate, EndDate);
             }
             catch (Exception ex)
             {
@@ -286,21 +309,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     await LoadNeonatalOutcomesAsync();
                     break;
                 case 3:
-                    await LoadWHOComplianceAsync();
-                    break;
-                case 4:
-                    await LoadBirthWeightApgarAsync();
-                    break;
-                case 5:
                     await LoadAlertResponseAsync();
                     break;
+                case 4:
+                    await LoadMonthlyMidwivesReturnsAsync();
+                    break;
+                case 5:
+                    await LoadWHOComplianceAsync();
+                    break;
                 case 6:
-                    await LoadSyncStatusAsync();
+                    await LoadBirthWeightApgarAsync();
                     break;
                 case 7:
-                    await LoadStaffPerformanceAsync();
+                    await LoadSyncStatusAsync();
                     break;
                 case 8:
+                    await LoadStaffPerformanceAsync();
+                    break;
+                case 9:
                     await LoadTrendAnalyticsAsync();
                     break;
             }

@@ -1327,4 +1327,488 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public List<string> ComplianceIssues { get; set; } = new();
         public List<string> ComplianceAchievements { get; set; } = new();
     }
+
+    /// <summary>
+    /// Monthly Midwives Returns - Form A
+    /// Comprehensive monthly reporting for maternal and newborn health services
+    /// </summary>
+    public class MonthlyMidwivesReturnsReport : BaseReport
+    {
+        // EMONC Service Level
+        public EMONCServiceLevel ServiceLevel { get; set; } = EMONCServiceLevel.Basic;
+        public string FacilityName { get; set; } = string.Empty;
+        public string FacilityCode { get; set; } = string.Empty;
+        public string District { get; set; } = string.Empty;
+        public string Region { get; set; } = string.Empty;
+        public int ReportMonth { get; set; }
+        public int ReportYear { get; set; }
+
+        // ANTENATAL DATA
+        public AntenatalData Antenatal { get; set; } = new();
+
+        // DELIVERIES DATA
+        public DeliveriesData Deliveries { get; set; } = new();
+
+        // POSTNATAL DATA
+        public PostnatalData Postnatal { get; set; } = new();
+
+        // BIRTH OUTCOMES
+        public BirthOutcomesData BirthOutcomes { get; set; } = new();
+
+        // REFERRALS
+        public ReferralsData Referrals { get; set; } = new();
+
+        // ABORTIONS
+        public AbortionsData Abortions { get; set; } = new();
+
+        // COMPLICATIONS & MORBIDITIES
+        public ComplicationsData Complications { get; set; } = new();
+
+        // SITE OF DELIVERY
+        public SiteOfDeliveryData SiteOfDelivery { get; set; } = new();
+
+        // MALE INVOLVEMENT
+        public MaleInvolvementData MaleInvolvement { get; set; } = new();
+    }
+
+    public class AntenatalData
+    {
+        // Registrations
+        public int TotalRegistrants { get; set; }
+        public int TotalAttendances { get; set; }
+        public int Making4thVisit { get; set; }
+        public int Making8thVisit { get; set; }
+
+        // Mothers physical characteristics
+        public int MothersBelow150cmHeight { get; set; }
+        public int PregnantWomenAt36Weeks { get; set; }
+
+        // IPT (Intermittent Preventive Treatment) for Malaria
+        public IPTData IPT { get; set; } = new();
+
+        // IFA (Iron and Folic Acid) Supplementation
+        public IFASupplementationData IFA { get; set; } = new();
+
+        // Duration of pregnancy at registration
+        public DurationOfPregnancyData DurationAtRegistration { get; set; } = new();
+
+        // Age of mother at registration
+        public AgeDistributionData AgeAtRegistration { get; set; } = new();
+
+        // Parity
+        public ParityData Parity { get; set; } = new();
+
+        // Syphilis Screening
+        public SyphilisScreeningData SyphilisScreening { get; set; } = new();
+
+        // TB Screening
+        public TBScreeningData TBScreening { get; set; } = new();
+
+        // ITN (Insecticide-Treated Nets) Distributed
+        public int ITNDistributed { get; set; }
+
+        // Anaemia tracking
+        public AnaemiaData Anaemia { get; set; } = new();
+
+        // PMTCT (Prevention of Mother to Child Transmission of HIV)
+        public PMTCTData PMTCT { get; set; } = new();
+    }
+
+    public class IPTData
+    {
+        public int IPT1 { get; set; }
+        public int IPT2 { get; set; }
+        public int IPT3 { get; set; }
+        public int IPT4 { get; set; }
+        public int IPT5 { get; set; }
+    }
+
+    public class IFASupplementationData
+    {
+        // IFA during pregnancy
+        public int WithReaction { get; set; }
+        public int ThreeTimes { get; set; }
+        public int SixTimes { get; set; }
+
+        // Postnatal IFA
+        public int PostnatalIFA { get; set; }
+    }
+
+    public class DurationOfPregnancyData
+    {
+        public int FirstTrimester { get; set; }
+        public int SecondTrimester { get; set; }
+        public int ThirdTrimester { get; set; }
+    }
+
+    public class AgeDistributionData
+    {
+        public int Age10to14 { get; set; }
+        public int Age15to19 { get; set; }
+        public int Age20to24 { get; set; }
+        public int Age25to29 { get; set; }
+        public int Age30to34 { get; set; }
+        public int Age35Plus { get; set; }
+    }
+
+    public class ParityData
+    {
+        public int Parity0 { get; set; }
+        public int Parity1to2 { get; set; }
+        public int Parity3to4 { get; set; }
+        public int Parity5Plus { get; set; }
+    }
+
+    public class SyphilisScreeningData
+    {
+        public int Tested { get; set; }
+        public int Positive { get; set; }
+        public int Treated { get; set; }
+    }
+
+    public class TBScreeningData
+    {
+        public int Screened { get; set; }
+        public int Positive { get; set; }
+        public int Treated { get; set; }
+    }
+
+    public class AnaemiaData
+    {
+        // At registration
+        public AnaemiaLevelsData AtRegistration { get; set; } = new();
+
+        // At 36 weeks
+        public AnaemiaLevelsData At36Weeks { get; set; } = new();
+    }
+
+    public class AnaemiaLevelsData
+    {
+        public int HbCheckedAtRegistration { get; set; }
+        public int HbBelow11gm { get; set; }
+        public int HbBelow7gm { get; set; }
+        public int HbCheckedAt36Weeks { get; set; }
+        public int HbBelow11gmAt36Weeks { get; set; }
+        public int HbBelow7gmAt36Weeks { get; set; }
+        public int PrimigravaeHbCheckedAt30Weeks { get; set; }
+        public int PrimigravaeWithHbBelow11gm { get; set; }
+        public int PrimigravaeWithHbBelow7gm { get; set; }
+    }
+
+    public class PMTCTData
+    {
+        // HIV Testing
+        public int KnownHIVPositiveBeforeCurrentPregnancy { get; set; }
+        public int KnownHIVPositiveBeforeTested { get; set; }
+        public int OnARVBeforeCurrentPregnancy { get; set; }
+        public int InitiallyTested { get; set; }
+        public int PositiveAtInitialTesting { get; set; }
+        public int NegativesRetested { get; set; }
+        public int PositiveAtRetest { get; set; }
+        public int NewHIVPositives { get; set; }
+        public int PutOnARV { get; set; }
+        public int NewBornHIVPositives { get; set; }
+        public int TotalHIVPosOnARV { get; set; }
+        public int OnEFV { get; set; }
+    }
+
+    public class DeliveriesData
+    {
+        // Age group of mother at delivery
+        public AgeDistributionData AgeAtDelivery { get; set; } = new();
+
+        // Essential Newborn Care
+        public EssentialNewbornCareData EssentialNewbornCare { get; set; } = new();
+
+        // Birth weight
+        public BirthWeightData BirthWeight { get; set; } = new();
+
+        // Primigravidae outcomes
+        public PrimigravaeOutcomesData PrimigravaeOutcomes { get; set; } = new();
+
+        // Type of delivery
+        public int NormalDeliveries { get; set; }
+        public int CaesareanSections { get; set; }
+        public int VacuumDeliveries { get; set; }
+        public int ForcepsDeliveries { get; set; }
+        public int TotalDeliveries { get; set; }
+
+        // First PNC timing for delivery cases
+        public PNCTimingData FirstPNCTiming { get; set; } = new();
+    }
+
+    public class EssentialNewbornCareData
+    {
+        public int BreastfeedingWithinFirst30Minutes { get; set; }
+        public int BabiesReceivingCordCareWithChlorhexidine { get; set; }
+        public int BabiesReceivingWithMethylatedSpirit { get; set; }
+        public int ExclusiveBreastfeedingAtDischarge { get; set; }
+    }
+
+    public class BirthWeightData
+    {
+        public int Below2_5kg { get; set; }
+        public int Between2_5kgAndAbove { get; set; }
+        public int Above2_9kg { get; set; }
+        public int Total { get; set; }
+    }
+
+    public class PrimigravaeOutcomesData
+    {
+        public int LiveBirthsToPrimigravae { get; set; }
+        public int PrimigravaeStillbirths { get; set; }
+        public int Male { get; set; }
+        public int Female { get; set; }
+    }
+
+    public class PNCTimingData
+    {
+        public int FirstPNCOnDay1Or2 { get; set; }
+        public int FirstPNCFromDay3To7 { get; set; }
+        public int FirstPNCFromDay8AndAbove { get; set; }
+    }
+
+    public class PostnatalData
+    {
+        public int TotalRegistrants { get; set; }
+
+        // Age group of postnatal registrants
+        public AgeDistributionData AgeDistribution { get; set; } = new();
+
+        // IFA Supplementation
+        public int PostPartumFPAcceptors { get; set; }
+        public int MotherInfantPairsExclusivelyBreastfeedingAtDischarge { get; set; }
+        public int NumberWithIFAGiven { get; set; }
+    }
+
+    public class BirthOutcomesData
+    {
+        // Outcome of delivery - Mothers
+        public int MothersSingle { get; set; }
+        public int MothersTwin { get; set; }
+        public int MothersTriplets { get; set; }
+        public int MothersOthers { get; set; }
+        public int MothersTotal { get; set; }
+
+        // Outcome of delivery - Children
+        public int ChildrenSingle { get; set; }
+        public int ChildrenTwin { get; set; }
+        public int ChildrenTriplets { get; set; }
+        public int ChildrenOthers { get; set; }
+        public int ChildrenTotal { get; set; }
+
+        // Eligible women for PNC
+        public int EligibleWomenForPNCAt28_34Weeks { get; set; }
+
+        // Vesico-vaginal fistula
+        public VesicoVaginalFistulaData VVF { get; set; } = new();
+
+        // Morbidities
+        public int DropFootCases { get; set; }
+        public int PuerperalPsychosis { get; set; }
+
+        // Total births breakdown
+        public TotalBirthsData TotalBirths { get; set; } = new();
+
+        // Maternal deaths
+        public MaternalDeathsData MaternalDeaths { get; set; } = new();
+
+        // Neonatal deaths
+        public NeonatalDeathsData NeonatalDeaths { get; set; } = new();
+
+        // Mastitis
+        public int MastitisCases { get; set; }
+    }
+
+    public class VesicoVaginalFistulaData
+    {
+        public int Seen { get; set; }
+        public int Repaired { get; set; }
+        public int Referred { get; set; }
+    }
+
+    public class TotalBirthsData
+    {
+        // Live births
+        public LiveBirthsData LiveBirths { get; set; } = new();
+
+        // Still births
+        public StillBirthsData StillBirths { get; set; } = new();
+
+        // Total neonatal deaths
+        public int TotalNeonatalDeaths { get; set; }
+    }
+
+    public class LiveBirthsData
+    {
+        public int Male { get; set; }
+        public int Female { get; set; }
+        public int Macerated { get; set; }
+        public int Fresh { get; set; }
+        public int Total { get; set; }
+    }
+
+    public class StillBirthsData
+    {
+        public int Macerated { get; set; }
+        public int Fresh { get; set; }
+        public int Total { get; set; }
+    }
+
+    public class MaternalDeathsData
+    {
+        public int TotalMaternalDeaths { get; set; }
+        public int MaternalDeathsAutopsied { get; set; }
+
+        // Age groups
+        public AgeDistributionData AgeDistribution { get; set; } = new();
+
+        // Timing
+        public int EarlyNeonatalDeathsBirthTo7Days { get; set; }
+        public int LateNeonatalDeaths8to28Days { get; set; }
+        public int TotalNeonatalDeathsLessThan1Month { get; set; }
+        public int PostNeonatalDeaths1To11Months { get; set; }
+    }
+
+    public class NeonatalDeathsData
+    {
+        // Baby's weight categories
+        public int DeathsBelow2_5kg { get; set; }
+        public int DeathsAbove2_5kg { get; set; }
+    }
+
+    public class ReferralsData
+    {
+        // Antenatal Referrals
+        public int AntenatalReferralsIn { get; set; }
+        public int AntenatalReferralsOut { get; set; }
+
+        // Labor Referrals
+        public int LaborReferralsIn { get; set; }
+        public int LaborReferralsOut { get; set; }
+
+        // Postnatal Referrals
+        public int PostnatalReferralsIn { get; set; }
+        public int PostnatalReferralsOut { get; set; }
+
+        // Age group for referrals
+        public AgeDistributionData AgeDistribution { get; set; } = new();
+    }
+
+    public class AbortionsData
+    {
+        // Type of abortion
+        public int Elective { get; set; }
+        public int Spontaneous { get; set; }
+        public int Induced { get; set; }
+
+        // Method
+        public int ElectricManualVacuumAspiration { get; set; }
+        public int DAndC { get; set; }
+        public int Medical { get; set; }
+
+        // Age group of mothers performing abortions
+        public AgeDistributionData AgeDistribution { get; set; } = new();
+
+        // Deaths and complications
+        public int DeathsFromPostAbortionComplications { get; set; }
+
+        // Post abortion complications recorded
+        public PostAbortionComplicationsData PostAbortionComplications { get; set; } = new();
+
+        // PA-FP (Post Abortion Family Planning)
+        public int Haemorrhage { get; set; }
+        public int Sepsis { get; set; }
+        public int Perforations { get; set; }
+        public int Counselled { get; set; }
+        public int Acceptors { get; set; }
+    }
+
+    public class PostAbortionComplicationsData
+    {
+        public int Haemorrhage { get; set; }
+        public int Sepsis { get; set; }
+        public int Perforations { get; set; }
+    }
+
+    public class ComplicationsData
+    {
+        // Birth Abnormalities
+        public BirthAbnormalitiesData BirthAbnormalities { get; set; } = new();
+
+        // Newborn Complications
+        public NewbornComplicationsData NewbornComplications { get; set; } = new();
+
+        // Endometritis
+        public int Endometritis { get; set; }
+
+        // Mastitis
+        public int Mastitis { get; set; }
+    }
+
+    public class BirthAbnormalitiesData
+    {
+        public int HareLipCleftPalate { get; set; }
+        public int Anencephaly { get; set; }
+        public int Talipes { get; set; }
+        public int Hydrocephalus { get; set; }
+        public int UndescendedTestis { get; set; }
+        public int SpinaBifida { get; set; }
+        public int Exomphalus { get; set; }
+        public int DownsSyndrome { get; set; }
+        public int ImperfectAnus { get; set; }
+        public int Others { get; set; }
+    }
+
+    public class NewbornComplicationsData
+    {
+        public int Asphyxia { get; set; }
+        public int Jaundice { get; set; }
+        public int SepsisOfCord { get; set; }
+        public int OphthalmiaNeonatorum { get; set; }
+        public int Others { get; set; }
+    }
+
+    public class SiteOfDeliveryData
+    {
+        public int TBATrainedUntrained { get; set; }
+        public int GovernmentHCAndHP { get; set; }
+        public int TeachingHospital { get; set; }
+        public int GovernmentHospitalRegionDistrict { get; set; }
+        public int PrivateHospital { get; set; }
+        public int PrivateMidwife { get; set; }
+        public int CHAG { get; set; }
+        public int QuasiGovtInstitution { get; set; }
+        public int Mines { get; set; }
+        public int ANC { get; set; }
+        public int Delivery { get; set; }
+        public int PNC { get; set; }
+        public int FP { get; set; }
+        public int CWC { get; set; }
+    }
+
+    public class MaleInvolvementData
+    {
+        public int TBATrainedUntrained { get; set; }
+        public int GovernmentHCAndHP { get; set; }
+        public int TeachingHospital { get; set; }
+        public int GovernmentHospitalRegionDistrict { get; set; }
+        public int PrivateHospital { get; set; }
+        public int PrivateMidwife { get; set; }
+        public int CHAG { get; set; }
+        public int QuasiGovtInstitution { get; set; }
+        public int Mines { get; set; }
+        public int ANC { get; set; }
+        public int Delivery { get; set; }
+        public int PNC { get; set; }
+        public int FP { get; set; }
+        public int CWC { get; set; }
+    }
+
+    public enum EMONCServiceLevel
+    {
+        None,
+        Basic,
+        Comprehensive
+    }
 }
