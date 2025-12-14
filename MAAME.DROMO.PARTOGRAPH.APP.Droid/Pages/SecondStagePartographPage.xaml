@@ -13,6 +13,7 @@
             <!-- Converters -->
             <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
             <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:GramsToKilogramsConverter x:Key="GramsToKg" />
             <!-- Modern Card Style -->
             <Style x:Key="ModernCardStyle" TargetType="Border">
                 <Setter Property="StrokeThickness" Value="0" />
@@ -571,9 +572,15 @@
                                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
                                             </HorizontalStackLayout>
                                             <HorizontalStackLayout Spacing="8">
-                                                <Label Text="{Binding BirthWeight, StringFormat='Weight: {0}g'}"
-                                                       FontSize="12"
-                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                <Label FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="Weight: " />
+                                                            <Span Text="{Binding BirthWeight, Converter={StaticResource GramsToKg}}" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
                                                 <Label Text="{Binding Apgar1Min, StringFormat='APGAR 1min: {0}'}"
                                                        FontSize="12"
                                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"

@@ -2,7 +2,14 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.BirthWeightApgarView">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:GramsToKilogramsConverter x:Key="GramsToKg" />
+        </ResourceDictionary>
+    </ContentView.Resources>
 
     <ScrollView>
         <VerticalStackLayout Spacing="16" Padding="8,20">
@@ -51,15 +58,9 @@
                                    Opacity="0.9"
                                    VerticalOptions="Center"/>
                         </HorizontalStackLayout>
-                        <Label FontSize="32"
-                               FontAttributes="Bold">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="{Binding AverageBirthWeight, StringFormat='{0:F0}'}" />
-                                    <Span Text="g" FontSize="20" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
+                        <Label Text="{Binding AverageBirthWeight, Converter={StaticResource GramsToKg}}"
+                               FontSize="32"
+                               FontAttributes="Bold" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>
@@ -86,7 +87,7 @@
                                Grid.Row="0" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
-                        <Label Text="{Binding AverageBirthWeight, StringFormat='{0:F0}g'}"
+                        <Label Text="{Binding AverageBirthWeight, Converter={StaticResource GramsToKg}}"
                                Grid.Row="0" Grid.Column="1"
                                FontSize="14"
                                FontAttributes="Bold"/>
@@ -95,7 +96,7 @@
                                Grid.Row="1" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
-                        <Label Text="{Binding MedianBirthWeight, StringFormat='{0:F0}g'}"
+                        <Label Text="{Binding MedianBirthWeight, Converter={StaticResource GramsToKg}}"
                                Grid.Row="1" Grid.Column="1"
                                FontSize="14"
                                FontAttributes="Bold"/>
@@ -104,7 +105,7 @@
                                Grid.Row="2" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
-                        <Label Text="{Binding StandardDeviation, StringFormat='{0:F0}g'}"
+                        <Label Text="{Binding StandardDeviation, Converter={StaticResource GramsToKg}}"
                                Grid.Row="2" Grid.Column="1"
                                FontSize="14"
                                FontAttributes="Bold"/>
@@ -118,9 +119,9 @@
                                FontAttributes="Bold">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="{Binding MinBirthWeight, StringFormat='{0:F0}'}" />
+                                    <Span Text="{Binding MinBirthWeight, Converter={StaticResource GramsToKg}}" />
                                     <Span Text=" - " />
-                                    <Span Text="{Binding MaxBirthWeight, StringFormat='{0:F0}g'}" />
+                                    <Span Text="{Binding MaxBirthWeight, Converter={StaticResource GramsToKg}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
@@ -285,11 +286,11 @@
                                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}">
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="{Binding MinWeight, StringFormat='{0:F0}'}" />
-                                                    <Span Text="g - " />
-                                                    <Span Text="{Binding MaxWeight, StringFormat='{0:F0}g'}" />
+                                                    <Span Text="{Binding MinWeight, Converter={StaticResource GramsToKg}}" />
+                                                    <Span Text=" - " />
+                                                    <Span Text="{Binding MaxWeight, Converter={StaticResource GramsToKg}}" />
                                                     <Span Text=" • Avg: " />
-                                                    <Span Text="{Binding AverageWeight, StringFormat='{0:F0}g'}" FontAttributes="Bold"/>
+                                                    <Span Text="{Binding AverageWeight, Converter={StaticResource GramsToKg}}" FontAttributes="Bold"/>
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
@@ -437,12 +438,12 @@
                                Grid.Row="2" Grid.Column="0"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
-                        <Label Text="{Binding MaleStatistics.AverageBirthWeight, StringFormat='{0:F0}g'}"
+                        <Label Text="{Binding MaleStatistics.AverageBirthWeight, Converter={StaticResource GramsToKg}}"
                                Grid.Row="2" Grid.Column="1"
                                FontSize="14"
                                FontAttributes="Bold"
                                HorizontalOptions="End"/>
-                        <Label Text="{Binding FemaleStatistics.AverageBirthWeight, StringFormat='{0:F0}g'}"
+                        <Label Text="{Binding FemaleStatistics.AverageBirthWeight, Converter={StaticResource GramsToKg}}"
                                Grid.Row="2" Grid.Column="2"
                                FontSize="14"
                                FontAttributes="Bold"
@@ -519,7 +520,7 @@
                         </Label.Text>
                     </Label>
 
-                    <Label Text="Babies with low birth weight (&lt;2500g) and/or low APGAR scores requiring specialized care"
+                    <Label Text="Babies with low birth weight (&lt;2.5 KG) and/or low APGAR scores requiring specialized care"
                            FontSize="12"
                            HorizontalTextAlignment="Center"
                            TextColor="{AppThemeBinding Light=#D32F2F, Dark=#EF9A9A}"/>
