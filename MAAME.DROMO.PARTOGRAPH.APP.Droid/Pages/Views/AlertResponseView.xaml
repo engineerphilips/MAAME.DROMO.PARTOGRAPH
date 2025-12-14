@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.AlertResponseView">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="8,20">
+
+            <!-- Summary Cards -->
+            <Grid ColumnDefinitions="*,12,*" ColumnSpacing="0">
+                <!-- Total Alerts -->
+                <Border Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light=#FF9800, Dark=#F57C00}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="&#xEA8F;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="28"
+                                   VerticalOptions="Center"/>
+                            <Label Text="Total Alerts"
+                                   FontSize="14"
+                                   Opacity="0.9"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding TotalAlerts}"
+                               FontSize="32"
+                               FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Average Response Time -->
+                <Border Grid.Column="2"
+                        BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1976D2}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="&#xE917;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="28"
+                                   VerticalOptions="Center"/>
+                            <Label Text="Avg Response"
+                                   FontSize="14"
+                                   Opacity="0.9"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Label FontSize="32"
+                               FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding AverageResponseTime, StringFormat='{0:F1}'}" />
+                                    <Span Text=" min" FontSize="16" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Alert Severity Breakdown -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Alert Severity Breakdown"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,12,*,12,*" ColumnSpacing="0">
+                        <!-- Critical -->
+                        <Border Grid.Column="0"
+                                BackgroundColor="{AppThemeBinding Light=#F44336, Dark=#D32F2F}"
+                                Padding="16">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Critical"
+                                       FontSize="12"
+                                       Opacity="0.9"/>
+                                <Label Text="{Binding CriticalAlerts}"
+                                       FontSize="28"
+                                       FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Warning -->
+                        <Border Grid.Column="2"
+                                BackgroundColor="{AppThemeBinding Light=#FF9800, Dark=#F57C00}"
+                                Padding="16">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Warning"
+                                       FontSize="12"
+                                       Opacity="0.9"/>
+                                <Label Text="{Binding WarningAlerts}"
+                                       FontSize="28"
+                                       FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Info -->
+                        <Border Grid.Column="4"
+                                BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1976D2}"
+                                Padding="16">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Info"
+                                       FontSize="12"
+                                       Opacity="0.9"/>
+                                <Label Text="{Binding InfoAlerts}"
+                                       FontSize="28"
+                                       FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Response Time Metrics -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Response Time Metrics"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Under 5 Minutes"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Grid.Row="0" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding AlertsUnder5Minutes}" FontAttributes="Bold"/>
+                                    <Span Text=" (" />
+                                    <Span Text="{Binding ResponseRateUnder5Min, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#4CAF50"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Under 15 Minutes"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding AlertsUnder15Minutes}" FontAttributes="Bold"/>
+                                    <Span Text=" (" />
+                                    <Span Text="{Binding ResponseRateUnder15Min, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#66BB6A"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Over 30 Minutes"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AlertsOver30Minutes}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#F44336"/>
+
+                        <Label Text="Unacknowledged"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding UnacknowledgedAlerts}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#E91E63"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Critical Alert Performance -->
+            <Border BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#B71C1C}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Critical Alert Performance"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#C62828, Dark=#FFCDD2}"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Average Response Time"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#D32F2F, Dark=#EF9A9A}"/>
+                        <Label Text="{Binding AverageCriticalResponseTime, StringFormat='{0:F1} min'}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#C62828, Dark=#FFCDD2}"/>
+
+                        <Label Text="Under 5 Minutes"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#D32F2F, Dark=#EF9A9A}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding CriticalAlertsUnder5Minutes}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#C62828, Dark=#FFCDD2}"/>
+                                    <Span Text=" (" TextColor="{AppThemeBinding Light=#D32F2F, Dark=#EF9A9A}"/>
+                                    <Span Text="{Binding CriticalResponseRateUnder5Min, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+                                    <Span Text=")" TextColor="{AppThemeBinding Light=#D32F2F, Dark=#EF9A9A}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Unacknowledged"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#D32F2F, Dark=#EF9A9A}"/>
+                        <Label Text="{Binding CriticalAlertsUnacknowledged}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#B71C1C, Dark=#FFCDD2}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Alert Outcomes -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Alert Outcomes"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Text="Intervention Required"
+                               Grid.Row="0" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AlertsWithIntervention}"
+                               Grid.Row="0" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+
+                        <Label Text="Successfully Resolved"
+                               Grid.Row="1" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding AlertsResolvedSuccessfully}" FontAttributes="Bold"/>
+                                    <Span Text=" (" />
+                                    <Span Text="{Binding SuccessfulResolutionRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#4CAF50"/>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label Text="Adverse Outcome"
+                               Grid.Row="2" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding AlertsWithAdverseOutcome}"
+                               Grid.Row="2" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#F44336"/>
+
+                        <Label Text="False Positives"
+                               Grid.Row="3" Grid.Column="0"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                        <Label Text="{Binding FalsePositiveAlerts}"
+                               Grid.Row="3" Grid.Column="1"
+                               FontSize="14"
+                               FontAttributes="Bold"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Response Rate Summary -->
+            <Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Overall Response Rate"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+
+                    <Label FontSize="48"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding OverallResponseRate, StringFormat='{0:F1}'}" />
+                                <Span Text="%" FontSize="32" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="Median Response Time:"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#388E3C, Dark=#A5D6A7}"/>
+                        <Label Text="{Binding MedianResponseTime, StringFormat='{0:F1} minutes'}"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#2E7D32, Dark=#81C784}"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

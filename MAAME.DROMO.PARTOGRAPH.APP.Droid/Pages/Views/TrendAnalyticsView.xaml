@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.TrendAnalyticsView">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="8,20">
+
+            <!-- Summary Cards -->
+            <Grid ColumnDefinitions="*,12,*" ColumnSpacing="0">
+                <!-- Total Deliveries -->
+                <Border Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light=#8D6E63, Dark=#5D4037}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="&#xE9D9;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="28"
+                                   VerticalOptions="Center"/>
+                            <Label Text="Total Deliveries"
+                                   FontSize="14"
+                                   Opacity="0.9"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding TotalDeliveriesInPeriod}"
+                               FontSize="32"
+                               FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Avg per Month -->
+                <Border Grid.Column="2"
+                        BackgroundColor="{AppThemeBinding Light=#A1887F, Dark=#6D4C41}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="&#xE787;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="28"
+                                   VerticalOptions="Center"/>
+                            <Label Text="Avg/Month"
+                                   FontSize="14"
+                                   Opacity="0.9"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding AverageDeliveriesPerMonth, StringFormat='{0:F1}'}"
+                               FontSize="32"
+                               FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Key Performance Indicators -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Key Performance Indicators"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <!-- C-Section Rate Trend -->
+                    <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2C2C2C}"
+                            Padding="12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="Caesarean Section Rate"
+                                   Grid.Row="0" Grid.Column="0"
+                                   FontSize="14"
+                                   FontAttributes="Bold"/>
+                            <Label Text="{Binding CaesareanSectionRate.CurrentValue, StringFormat='{0:F1}%'}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#FF9800"/>
+
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Grid.ColumnSpan="2"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Trend: " />
+                                        <Span Text="{Binding CaesareanSectionRate.Trend}" FontAttributes="Bold"/>
+                                        <Span Text=" (" />
+                                        <Span Text="{Binding CaesareanSectionRate.ChangePercentage, StringFormat='{0:+0.0;-0.0}%'}" FontAttributes="Bold"/>
+                                        <Span Text=")" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+                    </Border>
+
+                    <!-- Maternal Mortality Trend -->
+                    <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2C2C2C}"
+                            Padding="12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="Maternal Mortality Rate"
+                                   Grid.Row="0" Grid.Column="0"
+                                   FontSize="14"
+                                   FontAttributes="Bold"/>
+                            <Label Text="{Binding MaternalMortalityRate.CurrentValue, StringFormat='{0:F1} per 100k'}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#F44336"/>
+
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Grid.ColumnSpan="2"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Trend: " />
+                                        <Span Text="{Binding MaternalMortalityRate.Trend}" FontAttributes="Bold"/>
+                                        <Span Text=" • Status: " />
+                                        <Span Text="{Binding MaternalMortalityRate.Status}" FontAttributes="Bold"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+                    </Border>
+
+                    <!-- Neonatal Mortality Trend -->
+                    <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2C2C2C}"
+                            Padding="12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="Neonatal Mortality Rate"
+                                   Grid.Row="0" Grid.Column="0"
+                                   FontSize="14"
+                                   FontAttributes="Bold"/>
+                            <Label Text="{Binding NeonatalMortalityRate.CurrentValue, StringFormat='{0:F1} per 1,000'}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#E91E63"/>
+
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Grid.ColumnSpan="2"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Trend: " />
+                                        <Span Text="{Binding NeonatalMortalityRate.Trend}" FontAttributes="Bold"/>
+                                        <Span Text=" • Status: " />
+                                        <Span Text="{Binding NeonatalMortalityRate.Status}" FontAttributes="Bold"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+                    </Border>
+
+                    <!-- WHO Compliance Trend -->
+                    <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2C2C2C}"
+                            Padding="12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="WHO Compliance Rate"
+                                   Grid.Row="0" Grid.Column="0"
+                                   FontSize="14"
+                                   FontAttributes="Bold"/>
+                            <Label Text="{Binding WHOComplianceRate.CurrentValue, StringFormat='{0:F1}%'}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#66BB6A"/>
+
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Grid.ColumnSpan="2"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Trend: " />
+                                        <Span Text="{Binding WHOComplianceRate.Trend}" FontAttributes="Bold"/>
+                                        <Span Text=" (" />
+                                        <Span Text="{Binding WHOComplianceRate.ChangePercentage, StringFormat='{0:+0.0;-0.0}%'}" FontAttributes="Bold"/>
+                                        <Span Text=")" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+                    </Border>
+
+                    <!-- PPH Rate Trend -->
+                    <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2C2C2C}"
+                            Padding="12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="PPH Rate"
+                                   Grid.Row="0" Grid.Column="0"
+                                   FontSize="14"
+                                   FontAttributes="Bold"/>
+                            <Label Text="{Binding PostpartumHemorrhageRate.CurrentValue, StringFormat='{0:F1}%'}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#FF5722"/>
+
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Grid.ColumnSpan="2"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Trend: " />
+                                        <Span Text="{Binding PostpartumHemorrhageRate.Trend}" FontAttributes="Bold"/>
+                                        <Span Text=" • Status: " />
+                                        <Span Text="{Binding PostpartumHemorrhageRate.Status}" FontAttributes="Bold"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Monthly Trends -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Monthly Trends"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <CollectionView ItemsSource="{Binding MonthlyTrends}"
+                                    EmptyView="No monthly trend data available">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2C2C2C}"
+                                        Padding="16"
+                                        Margin="0,0,0,12">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10" />
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="12">
+                                        <!-- Month and Total -->
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <Label Text="{Binding Period}"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   Grid.Column="0"/>
+                                            <Label Text="{Binding TotalDeliveries}"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#8D6E63"
+                                                   Grid.Column="1"/>
+                                        </Grid>
+
+                                        <!-- Metrics Grid -->
+                                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="12">
+                                            <Label Text="C-Section Rate"
+                                                   Grid.Row="0" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding CaesareanSectionRate, StringFormat='{0:F1}%'}"
+                                                   Grid.Row="0" Grid.Column="1"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   HorizontalOptions="End"
+                                                   TextColor="#FF9800"/>
+
+                                            <Label Text="WHO Compliance"
+                                                   Grid.Row="1" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding WHOComplianceRate, StringFormat='{0:F1}%'}"
+                                                   Grid.Row="1" Grid.Column="1"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   HorizontalOptions="End"
+                                                   TextColor="#66BB6A"/>
+
+                                            <Label Text="Complications"
+                                                   Grid.Row="2" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Grid.Row="2" Grid.Column="1"
+                                                   FontSize="12"
+                                                   HorizontalOptions="End">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding Complications}" FontAttributes="Bold"/>
+                                                        <Span Text=" (" />
+                                                        <Span Text="{Binding ComplicationRate, StringFormat='{0:F1}%'}" FontAttributes="Bold" TextColor="#F44336"/>
+                                                        <Span Text=")" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </Grid>
+
+                                        <!-- Change Indicator -->
+                                        <HorizontalStackLayout Spacing="8" HorizontalOptions="End">
+                                            <Label Text="MoM Change:"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding DeliveryChangePercent, StringFormat='{0:+0.0;-0.0}%'}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#8D6E63"/>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Quarterly Trends -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.15" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Quarterly Trends"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <CollectionView ItemsSource="{Binding QuarterlyTrends}"
+                                    EmptyView="No quarterly trend data available">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2C2C2C}"
+                                        Padding="16"
+                                        Margin="0,0,0,12">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10" />
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="12">
+                                        <!-- Quarter and Total -->
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <Label Text="{Binding QuarterName}"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   Grid.Column="0"/>
+                                            <Label FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   Grid.Column="1">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding TotalDeliveries}" TextColor="#8D6E63"/>
+                                                        <Span Text=" deliveries" FontSize="12" TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </Grid>
+
+                                        <!-- Key Metrics -->
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">
+                                            <Label Text="Avg Labor Duration"
+                                                   Grid.Row="0" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding AverageLaborDuration, StringFormat='{0:F1}h'}"
+                                                   Grid.Row="0" Grid.Column="1"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"/>
+
+                                            <Label Text="Complication Rate"
+                                                   Grid.Row="1" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding ComplicationRate, StringFormat='{0:F1}%'}"
+                                                   Grid.Row="1" Grid.Column="1"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#F44336"/>
+
+                                            <Label Text="WHO Compliance"
+                                                   Grid.Row="2" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding WHOComplianceRate, StringFormat='{0:F1}%'}"
+                                                   Grid.Row="2" Grid.Column="1"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#66BB6A"/>
+
+                                            <Label Text="Trend Direction"
+                                                   Grid.Row="3" Grid.Column="0"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#999, Dark=#777}"/>
+                                            <Label Text="{Binding TrendDirection}"
+                                                   Grid.Row="3" Grid.Column="1"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#8D6E63"/>
+                                        </Grid>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Delivery Growth -->
+            <Border BackgroundColor="{AppThemeBinding Light=#EFEBE9, Dark=#3E2723}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Delivery Growth Rate"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#4E342E, Dark=#BCAAA4}"/>
+
+                    <Label FontSize="48"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light=#4E342E, Dark=#BCAAA4}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding DeliveryGrowthRate, StringFormat='{0:+0.0;-0.0}'}" />
+                                <Span Text="%" FontSize="32" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="Total Periods Analyzed:"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#5D4037, Dark=#A1887F}"/>
+                        <Label Text="{Binding TotalPeriods}"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#4E342E, Dark=#BCAAA4}"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>
