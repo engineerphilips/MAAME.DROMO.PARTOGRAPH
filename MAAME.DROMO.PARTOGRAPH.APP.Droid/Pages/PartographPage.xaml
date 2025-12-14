@@ -172,17 +172,14 @@
                     Command="{Binding OpenBishopScorePopupCommand}">
                 <buttons:SfButton.Content>
                     <DataTemplate>
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4" VerticalOptions="Center">
                         <!-- Icon and Title -->
-                        <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="5">
-                            <!--<Label Text="📊" FontSize="32" HorizontalOptions="Center" />-->
-                            <Label Text="Bishop Score"
-                                   FontSize="12"
-                                   FontAttributes="Bold"
-                                   HorizontalOptions="Center" />
-                        </VerticalStackLayout>
+                            <Label Grid.Column="0" VerticalOptions="Center" Text="Bishop Score"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center" />
 
-                        <!-- Latest Score Info -->
+                            <!-- Latest Score Info -->
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
                             <Label Text="{Binding BishopScoreLatestValue}"
                                    FontSize="14"
@@ -1544,7 +1541,7 @@
                              StaysOpen="True"
                              ShowCloseButton="True"
                              WidthRequest="400"
-                             HeightRequest="700"
+                             HeightRequest="600"
                              HeaderHeight="50"
                              Grid.Row="0"
                              Grid.RowSpan="5" />
