@@ -33,6 +33,7 @@ public partial class PartographPage : ContentPage
         sfPopupFHRContraction.BindingContext = pageModel.FHRContractionModalPageModel;
         sfPopupAssessment.BindingContext = pageModel.AssessmentModalPageModel;
         sfPopupPlan.BindingContext = pageModel.PlanModalPageModel;
+        sfPopupBishopScore.BindingContext = pageModel.BishopScorePopupPageModel;
 
         Loaded += async (s, e) =>
         {
@@ -76,6 +77,8 @@ public partial class PartographPage : ContentPage
                 pageModel.OpenAssessmentModalPopup += () => sfPopupAssessment.IsOpen = true;
                 pageModel.ClosePlanModalPopup += async () => { sfPopupPlan.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenPlanModalPopup += () => sfPopupPlan.IsOpen = true;
+                pageModel.CloseBishopScorePopup += async () => { sfPopupBishopScore.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
+                pageModel.OpenBishopScorePopup += () => sfPopupBishopScore.IsOpen = true;
             }
         };
     }

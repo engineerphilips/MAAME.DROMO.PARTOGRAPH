@@ -69,6 +69,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly FHRContractionModalPageModel _fHRContractionModalPageModel;
         private readonly PlanModalPageModel _planModalPageModel;
         private readonly AssessmentModalPageModel _assessmentModalPageModel;
+        private readonly BishopScorePopupPageModel _bishopScorePopupPageModel;
 
         public CompanionModalPageModel CompanionModalPageModel => _companionModalPageModel;
         public PainReliefModalPageModel PainReliefModalPageModel => _painReliefModalPageModel;
@@ -89,7 +90,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public FHRContractionModalPageModel FHRContractionModalPageModel => _fHRContractionModalPageModel;
         public PlanModalPageModel PlanModalPageModel => _planModalPageModel;
         public AssessmentModalPageModel AssessmentModalPageModel => _assessmentModalPageModel;
-        
+        public BishopScorePopupPageModel BishopScorePopupPageModel => _bishopScorePopupPageModel;
+
         //[ObservableProperty]
         //private ObservableCollection<EnhancedTimeSlotViewModel> _timeSlots = new ();
 
@@ -348,6 +350,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             FHRContractionModalPageModel fHRContractionModalPageModel,
             AssessmentModalPageModel assessmentModalPageModel,
             PlanModalPageModel planModalPageModel,
+            BishopScorePopupPageModel bishopScorePopupPageModel,
             PartographNotesService notesService,
             IPartographPdfService pdfService)
         {
@@ -393,6 +396,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _fHRContractionModalPageModel = fHRContractionModalPageModel;
             _assessmentModalPageModel = assessmentModalPageModel;
             _planModalPageModel = planModalPageModel;
+            _bishopScorePopupPageModel = bishopScorePopupPageModel;
 
             // Initialize alert engine and validation service
             _alertEngine = new AlertEngine();
@@ -1474,8 +1478,42 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Action? CloseAssessmentModalPopup { get; set; }
         public Action? OpenPlanModalPopup { get; set; }
         public Action? ClosePlanModalPopup { get; set; }
+        public Action? OpenBishopScorePopup { get; set; }
+        public Action? CloseBishopScorePopup { get; set; }
 
         // Popup Open Commands
+        [RelayCommand]
+        public async Task OpenBishopScorePopupCommand()
+        {
+            if (Patient?.ID != null)
+            {
+                // Pre-populate Bishop Score with latest measurable data
+                var latestDilatation = Patient.Dilatations?.OrderByDescending(d => d.Time).FirstOrDefault();
+
+                int dilationCm = latestDilatation?.DilatationCm ?? 0;
+
+                // Initialize with available data (other fields default to 0/initial values)
+                _bishopScorePopupPageModel.InitializeWithData(
+                    dilationCm: dilationCm,
+                    effacementPercent: 0,  // Not currently tracked in CervixDilatation
+                    station: "-3",         // Default value
+                    consistency: "Firm",   // Default value
+                    position: "Posterior"  // Default value
+                );
+
+                _bishopScorePopupPageModel.ClosePopup = () => CloseBishopScorePopup?.Invoke();
+
+                // Subscribe to save event to refresh data after save
+                _bishopScorePopupPageModel.OnScoreSaved = async (score) =>
+                {
+                    // Save to repository here if needed
+                    await RefreshCommand.ExecuteAsync(null);
+                };
+
+                OpenBishopScorePopup?.Invoke();
+            }
+        }
+
         [RelayCommand]
         public async Task OpenCompanionPopup()
         {
