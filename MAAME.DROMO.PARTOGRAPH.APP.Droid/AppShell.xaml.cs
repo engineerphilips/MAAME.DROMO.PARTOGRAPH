@@ -11,6 +11,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             var currentTheme = Application.Current!.RequestedTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
 
+            // Set BindingContext for AppShell
+            var appShellModel = IPlatformApplication.Current!.Services.GetService<PageModels.AppShellModel>();
+            if (appShellModel != null)
+            {
+                BindingContext = appShellModel;
+            }
+
             // Register additional routes
             RegisterRoutes();
         }
