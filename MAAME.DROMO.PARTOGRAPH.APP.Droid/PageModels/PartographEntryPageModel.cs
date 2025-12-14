@@ -206,7 +206,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 var hoursInLabor = (DateTime.Now - _patient.LaborStartTime.Value).TotalHours;
                 if (hoursInLabor > 12 && CervicalDilation < 10)
                 {
-                    await AppShell.DisplaySnackbarAsync("⚠️ Prolonged labor - consider intervention");
+                    await AppShell.DisplaySnackbarAsync("⚠️ Prolonged labour - consider intervention");
                 }
             }
         }

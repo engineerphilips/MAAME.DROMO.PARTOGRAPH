@@ -813,7 +813,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 DataVolume = (partographs.Count + patients.Count + birthOutcomes.Count + babies.Count) * 1024, // Approximate
                 NetworkType = "WiFi",
                 AssignedUser = "Current User",
-                AssignedDepartment = "Labor Ward",
+                AssignedDepartment = "Labour Ward",
                 TotalSyncsToday = 12,
                 AverageSyncDurationSeconds = 3.5m
             });

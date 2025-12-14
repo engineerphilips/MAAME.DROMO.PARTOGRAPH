@@ -57,7 +57,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                         StaffID = "SUPER",
                         Email = "super@emperorsoftware.co", 
                         IsActive = true,
-                        Department = "Labor Ward", 
+                        Department = "Labour Ward", 
                         LastLogin = DateTime.Now,    
                     };
                     return true;

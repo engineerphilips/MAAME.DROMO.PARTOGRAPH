@@ -229,7 +229,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                         // No progress in >4 hours in active labor
                         else if (ratePerHour == 0 && timeDiff.TotalHours >= 4 && previousDilatation.DilatationCm >= 4)
                         {
-                            result.AddWarning("Cervical Dilatation", $"No cervical change in {timeDiff.TotalHours:F1} hours", "Labor may not be progressing. Consider augmentation or senior review.");
+                            result.AddWarning("Cervical Dilatation", $"No cervical change in {timeDiff.TotalHours:F1} hours", "Labour may not be progressing. Consider augmentation or senior review.");
                         }
                     }
                 }
@@ -238,15 +238,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             // WHO 2020: Info about labor stages
             if (dilatation.Value >= 10)
             {
-                result.AddInfo("Labor Stage", "Fully dilated - Second stage of labor", "Monitor for urge to push. Prepare for delivery. WHO 2020: Support woman in position of choice.");
+                result.AddInfo("Labour Stage", "Fully dilated - Second stage of labor", "Monitor for urge to push. Prepare for delivery. WHO 2020: Support woman in position of choice.");
             }
             else if (dilatation.Value >= 5)
             {
-                result.AddInfo("Labor Stage", "Active labor (WHO 2020)", "Partograph should be started at 5cm with regular contractions. Expect 1cm/hour progress. Monitor FHR and contractions every 30 min, VE every 4 hours.");
+                result.AddInfo("Labour Stage", "Active labour (WHO 2020)", "Partograph should be started at 5cm with regular contractions. Expect 1cm/hour progress. Monitor FHR and contractions every 30 min, VE every 4 hours.");
             }
             else if (dilatation.Value >= 4 && dilatation.Value < 5)
             {
-                result.AddInfo("Labor Stage", "Approaching active labor", "WHO 2020: Active labor begins at 5cm with regular contractions. Continue to monitor and support woman.");
+                result.AddInfo("Labour Stage", "Approaching active labor", "WHO 2020: Active labour begins at 5cm with regular contractions. Continue to monitor and support woman.");
             }
 
             return result;
@@ -301,7 +301,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 var latestDilatation = patient.Dilatations.OrderByDescending(d => d.Time).FirstOrDefault();
                 if (latestDilatation != null && latestDilatation.DilatationCm >= 4 && latestDilatation.DilatationCm < 10 && frequency.Value < 3)
                 {
-                    result.AddWarning("Contraction Frequency", $"Low frequency in active labor ({frequency.Value} per 10 min)", "Consider augmentation if labor not progressing. Optimal frequency is 3-5 per 10 minutes.");
+                    result.AddWarning("Contraction Frequency", $"Low frequency in active labour ({frequency.Value} per 10 min)", "Consider augmentation if labour not progressing. Optimal frequency is 3-5 per 10 minutes.");
                 }
             }
 
@@ -401,7 +401,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             // Cannot be before labor started
             if (patient.LaborStartTime.HasValue && measurementTime < patient.LaborStartTime.Value)
             {
-                result.AddWarning("Time", $"Measurement time is before labor start ({patient.LaborStartTime.Value:dd/MM/yyyy HH:mm})", "Verify this is correct");
+                result.AddWarning("Time", $"Measurement time is before labour start ({patient.LaborStartTime.Value:dd/MM/yyyy HH:mm})", "Verify this is correct");
             }
 
             // More than 24 hours old

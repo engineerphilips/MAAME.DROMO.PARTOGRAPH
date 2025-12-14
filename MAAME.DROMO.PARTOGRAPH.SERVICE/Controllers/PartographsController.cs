@@ -235,7 +235,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             try
             {
                 var activePartographs = await _context.Partographs
-                    .Where(p => p.Deleted == 0 && p.Status == LaborStatus.Active)
+                    .Where(p => p.Deleted == 0 && p.Status == LaborStatus.FirstStage)
                     .OrderByDescending(p => p.AdmissionDate)
                     .ToListAsync();
 
@@ -243,8 +243,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving active labor partographs");
-                return StatusCode(500, new { error = "Failed to retrieve active labor partographs", message = ex.Message });
+                _logger.LogError(ex, "Error retrieving active labour partographs");
+                return StatusCode(500, new { error = "Failed to retrieve active labour partographs", message = ex.Message });
             }
         }
 
@@ -255,7 +255,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             try
             {
                 var total = await _context.Partographs.CountAsync(p => p.Deleted == 0);
-                var active = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.Active);
+                var active = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.FirstStage);
                 var pending = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.Pending);
                 var completed = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.Completed);
                 var emergency = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.Emergency);

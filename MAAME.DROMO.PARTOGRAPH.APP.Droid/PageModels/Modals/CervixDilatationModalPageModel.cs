@@ -66,7 +66,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         //    }
         //}
 
-        private string _stageDescription = "Labor not started";
+        private string _stageDescription = "Labour not started";
         public string StageDescription
         {
             get => _stageDescription;
@@ -134,7 +134,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
             else
             {
-                StageDescription = "Labor not started";
+                StageDescription = "Labour not started";
                 DilatationColor = Colors.Gray;
             }
         }

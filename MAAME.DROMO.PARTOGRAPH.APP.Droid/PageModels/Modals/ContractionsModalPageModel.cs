@@ -156,7 +156,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             set { _progressColor = value; OnPropertyChanged(); }
         }
 
-        private string _progressMessage = "Normal labor progress";
+        private string _progressMessage = "Normal labour progress";
         public string ProgressMessage
         {
             get => _progressMessage;
@@ -200,7 +200,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             else if (FrequencyPer10Min >= 2 && FrequencyPer10Min <= 5 && DurationSeconds >= 40 && DurationSeconds <= 60)
             {
                 ProgressColor = Colors.Green;
-                ProgressMessage = "Good labor progress";
+                ProgressMessage = "Good labour progress";
             }
             else if (FrequencyPer10Min > 5)
             {

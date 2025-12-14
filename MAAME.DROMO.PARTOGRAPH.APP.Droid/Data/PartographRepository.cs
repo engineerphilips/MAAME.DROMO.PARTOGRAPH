@@ -425,7 +425,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 if (item.Status == LaborStatus.FirstStage && oldStatus != LaborStatus.FirstStage && !item.LaborStartTime.HasValue)
                 {
                     item.LaborStartTime = DateTime.UtcNow;
-                    _logger.LogInformation($"First stage labor started for partograph {item.ID} at {item.LaborStartTime}");
+                    _logger.LogInformation($"First stage labour started for partograph {item.ID} at {item.LaborStartTime}");
                 }
 
                 // Note: SecondStageStartTime, ThirdStageStartTime, and FourthStageStartTime
@@ -874,12 +874,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     }
                     else if (hoursInLabor > 18)
                     {
-                        reason = $"Prolonged labor ({hoursInLabor}h)";
+                        reason = $"Prolonged labour ({hoursInLabor}h)";
                         severity = AlertSeverity.Critical;
                     }
                     else if (hoursInLabor > 12)
                     {
-                        reason = $"Extended labor ({hoursInLabor}h)";
+                        reason = $"Extended labour ({hoursInLabor}h)";
                         severity = AlertSeverity.Warning;
                     }
                     else if (timeSinceLastCheck > 1)
@@ -1022,7 +1022,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         AlertId = Guid.NewGuid(),
                         PatientId = patientId,
                         PatientName = patientName,
-                        AlertMessage = $"Labor duration: {hoursInLabor} hours",
+                        AlertMessage = $"Labour duration: {hoursInLabor} hours",
                         Type = AlertType.ProlongedLabor,
                         Severity = severity,
                         AlertTime = laborStart,

@@ -20,7 +20,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _password = string.Empty;
         private string _confirmPassword = string.Empty;
         private string _role = "MIDWIFE";
-        private string _department = "Labor Ward";
+        private string _department = "Labour Ward";
         private Facility? _selectedFacility = null;
         private ObservableCollection<Facility> _facilities = new();
         private ObservableCollection<string> _availableRoles = new();

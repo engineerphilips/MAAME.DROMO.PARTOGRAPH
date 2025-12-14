@@ -150,9 +150,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     var midwife = new Guid("cad70e60-b4cb-4621-b3fc-63ad5be6313a").ToString();
                     var admin = new Guid("8d9f9a54-a874-488c-aaa3-d2de2925ac2c").ToString();
                     var device = DeviceIdentity.GetOrCreateDeviceId();
-                    insertCmd.CommandText = @$"INSERT INTO Tbl_Staff (ID, name, staffId, email, role, department, password, active, facility, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted) VALUES ('{super}','Super Administrator', 'SUPER', 'super@emperorsoftware.co', 'SUPER-ADMIN', 'Labor Ward', 'system.password', 1, '{facility}', '{now}', '{now}', '{device}', '{device}', 0, 1, 0, 0),
-                ('{midwife}','Midwife', 'MIDWIFE', 'midwife@emperorsoftware.co', 'MIDWIFE', 'Labor Ward', 'system.password', 1, '{facility}', '{now}', '{now}', '{device}', '{device}', 0, 1, 0, 0),
-                ('{admin}','Administrator', 'ADMINISTRATOR', 'administrator@emperorsoftware.c', 'ADMIN', 'Labor Ward', 'system.password', 1, '{facility}', '{now}', '{now}', '{device}', '{device}', 0, 1, 0, 0);";
+                    insertCmd.CommandText = @$"INSERT INTO Tbl_Staff (ID, name, staffId, email, role, department, password, active, facility, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted) VALUES ('{super}','Super Administrator', 'SUPER', 'super@emperorsoftware.co', 'SUPER-ADMIN', 'Labour Ward', 'system.password', 1, '{facility}', '{now}', '{now}', '{device}', '{device}', 0, 1, 0, 0),
+                ('{midwife}','Midwife', 'MIDWIFE', 'midwife@emperorsoftware.co', 'MIDWIFE', 'Labour Ward', 'system.password', 1, '{facility}', '{now}', '{now}', '{device}', '{device}', 0, 1, 0, 0),
+                ('{admin}','Administrator', 'ADMINISTRATOR', 'administrator@emperorsoftware.c', 'ADMIN', 'Labour Ward', 'system.password', 1, '{facility}', '{now}', '{now}', '{device}', '{device}', 0, 1, 0, 0);";
                     await insertCmd.ExecuteNonQueryAsync();
                 }
             }

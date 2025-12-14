@@ -70,7 +70,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                         Severity = AlertSeverity.Info,
                         Category = AlertCategory.Labor,
                         Title = "Approaching Active Labor",
-                        Message = $"Cervix is {actualDilatation}cm dilated. Active labor begins at 5cm with regular contractions.",
+                        Message = $"Cervix is {actualDilatation}cm dilated. Active labour begins at 5cm with regular contractions.",
                         RecommendedActions = new List<string>
                         {
                             "Continue to monitor progress",
@@ -80,7 +80,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                         },
                         MeasurementType = "Cervical Dilatation",
                         CurrentValue = $"{actualDilatation} cm",
-                        ExpectedRange = "Active labor starts at 5cm"
+                        ExpectedRange = "Active labour starts at 5cm"
                     });
                 }
                 return alerts;
@@ -106,7 +106,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 {
                     Severity = AlertSeverity.Critical,
                     Category = AlertCategory.Labor,
-                    Title = "Labor Progress: Action Line Crossed",
+                    Title = "Labour Progress: Action Line Crossed",
                     Message = $"Cervical dilatation has crossed the action line. Current: {actualDilatation}cm, Expected: ≥{actionLineExpected:F1}cm after {hoursSinceActiveLaborStart:F1} hours in active labor.",
                     RecommendedActions = new List<string>
                     {
@@ -131,12 +131,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 {
                     Severity = AlertSeverity.Warning,
                     Category = AlertCategory.Labor,
-                    Title = "Labor Progress: Alert Line Crossed",
-                    Message = $"Labor is progressing slower than expected. Current: {actualDilatation}cm, Expected: ≥{alertLineExpected:F1}cm after {hoursSinceActiveLaborStart:F1} hours in active labor.",
+                    Title = "Labour Progress: Alert Line Crossed",
+                    Message = $"Labour is progressing slower than expected. Current: {actualDilatation}cm, Expected: ≥{alertLineExpected:F1}cm after {hoursSinceActiveLaborStart:F1} hours in active labor.",
                     RecommendedActions = new List<string>
                     {
                         "Assess contraction pattern (should be 3-5 in 10 minutes, each lasting 40 seconds)",
-                        "Assess for obstructed labor signs: severe pain, maternal distress, bladder distension",
+                        "Assess for obstructed labour signs: severe pain, maternal distress, bladder distension",
                         "Ensure woman is well-hydrated (IV fluids if needed)",
                         "Encourage upright positions and mobility if appropriate",
                         "Consider artificial rupture of membranes if appropriate and no contraindications",
@@ -157,7 +157,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     Severity = AlertSeverity.Critical,
                     Category = AlertCategory.Labor,
                     Title = "Prolonged Active Labor",
-                    Message = $"Active labor has exceeded 12 hours ({hoursSinceActiveLaborStart:F1} hours since 5cm). Current dilatation: {actualDilatation}cm.",
+                    Message = $"Active labour has exceeded 12 hours ({hoursSinceActiveLaborStart:F1} hours since 5cm). Current dilatation: {actualDilatation}cm.",
                     RecommendedActions = new List<string>
                     {
                         "URGENT: Senior obstetrician review required",
@@ -168,7 +168,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                         "Ensure continuous maternal and fetal monitoring",
                         "Provide emotional support and keep woman informed"
                     },
-                    MeasurementType = "Labor Duration",
+                    MeasurementType = "Labour Duration",
                     CurrentValue = $"{hoursSinceActiveLaborStart:F1} hours in active labor",
                     ExpectedRange = "<12 hours from 5cm to full dilatation"
                 });
@@ -181,8 +181,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 {
                     Severity = AlertSeverity.Info,
                     Category = AlertCategory.Labor,
-                    Title = "Normal Labor Progress",
-                    Message = $"Labor is progressing normally. Current: {actualDilatation}cm after {hoursSinceActiveLaborStart:F1} hours in active labor.",
+                    Title = "Normal Labour Progress",
+                    Message = $"Labour is progressing normally. Current: {actualDilatation}cm after {hoursSinceActiveLaborStart:F1} hours in active labor.",
                     RecommendedActions = new List<string>
                     {
                         "Continue supportive care",
@@ -647,7 +647,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                         Message = $"Contractions: {latestContraction.FrequencyPer10Min} in 10 minutes - Below optimal for active labor.",
                         RecommendedActions = new List<string>
                         {
-                            "Assess labor progress",
+                            "Assess labour progress",
                             "Consider augmentation with oxytocin if appropriate",
                             "Ensure adequate hydration",
                             "Encourage mobilization and position changes",

@@ -48,7 +48,7 @@
                     <VerticalStackLayout Grid.Column="1" Margin="15,0" VerticalOptions="Center">
                         <Label Text="{Binding PatientName}" FontSize="18" FontAttributes="Bold" />
                         <Label Text="{Binding PatientInfo}" FontSize="14" Opacity="0.8" />
-                        <Label Text="{Binding LaborDuration, StringFormat='Labor duration: {0}'}" FontSize="12" Opacity="0.7" />
+                        <Label Text="{Binding LaborDuration, StringFormat='Labour duration: {0}'}" FontSize="12" Opacity="0.7" />
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">

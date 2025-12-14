@@ -331,7 +331,7 @@
                             Opacity="0.15" />
                 </Border.Shadow>
                 <VerticalStackLayout Spacing="16">
-                    <Label Text="Labor Statistics"
+                    <Label Text="Labour Statistics"
                            FontSize="18"
                            FontAttributes="Bold"/>
 
