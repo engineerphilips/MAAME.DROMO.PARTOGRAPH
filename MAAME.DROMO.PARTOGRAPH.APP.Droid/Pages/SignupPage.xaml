@@ -1,38 +1,41 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.FacilityOnboardingPage"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.SignupPage"
              xmlns:fonts="clr-namespace:Fonts"
-             Title="Add New Facility"
+             Title="Create New User"
              BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#1A1A1A}">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
 
             <!-- Header -->
-            <Border BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1565C0}"
+            <Border BackgroundColor="{AppThemeBinding Light=#4CAF50, Dark=#388E3C}"
                     Padding="24">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="16" />
                 </Border.StrokeShape>
 
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="&#xE710;"
+                    <Label Text="&#xE8FA;"
                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                           FontSize="48" 
+                           FontSize="48"
+                           TextColor="White"
                            HorizontalOptions="Center" />
-                    <Label Text="Onboard New Facility"
+                    <Label Text="Create New User"
                            FontSize="24"
-                           FontAttributes="Bold" 
+                           FontAttributes="Bold"
+                           TextColor="White"
                            HorizontalOptions="Center" />
-                    <Label Text="Fill in the details below to add a new facility"
-                           FontSize="14" 
+                    <Label Text="Fill in the details below to onboard a new staff member"
+                           FontSize="14"
                            Opacity="0.9"
+                           TextColor="White"
                            HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Border>
 
-            <!-- Basic Information Section -->
+            <!-- Personal Information Section -->
             <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
                     Padding="20"
                     StrokeThickness="0">
@@ -47,14 +50,14 @@
                 </Border.Shadow>
 
                 <VerticalStackLayout Spacing="16">
-                    <Label Text="Basic Information"
+                    <Label Text="Personal Information"
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
 
-                    <!-- Facility Name -->
+                    <!-- Name -->
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Facility Name *"
+                        <Label Text="Full Name *"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
@@ -65,15 +68,15 @@
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
                             <Entry Text="{Binding Name}"
-                                   Placeholder="e.g., Korle Bu Teaching Hospital"
+                                   Placeholder="e.g., John Doe"
                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
                                    PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
                         </Border>
                     </VerticalStackLayout>
 
-                    <!-- Facility Code -->
+                    <!-- Staff ID -->
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Facility Code *"
+                        <Label Text="Staff ID *"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
@@ -83,16 +86,16 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Entry Text="{Binding Code}"
-                                   Placeholder="e.g., KBTH"
+                            <Entry Text="{Binding StaffId}"
+                                   Placeholder="e.g., STAFF001"
                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
                                    PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
                         </Border>
                     </VerticalStackLayout>
 
-                    <!-- Facility Type -->
+                    <!-- Email -->
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Facility Type *"
+                        <Label Text="Email Address *"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
@@ -102,28 +105,17 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Picker SelectedItem="{Binding Type}"
-                                    Title="Select facility type"
-                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}">
-                                <Picker.Items>
-                                    <x:String>Teaching Hospital</x:String>
-                                    <x:String>Regional Hospital</x:String>
-                                    <x:String>District Hospital</x:String>
-                                    <x:String>Hospital</x:String>
-                                    <x:String>Polyclinic</x:String>
-                                    <x:String>Health Center</x:String>
-                                    <x:String>Clinic</x:String>
-                                    <x:String>CHPS Compound</x:String>
-                                    <x:String>Military Hospital</x:String>
-                                    <x:String>Private Hospital</x:String>
-                                </Picker.Items>
-                            </Picker>
+                            <Entry Text="{Binding Email}"
+                                   Placeholder="e.g., john.doe@hospital.gh"
+                                   Keyboard="Email"
+                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
+                                   PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
                         </Border>
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </Border>
 
-            <!-- Location Information Section -->
+            <!-- Role & Department Section -->
             <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
                     Padding="20"
                     StrokeThickness="0">
@@ -138,14 +130,14 @@
                 </Border.Shadow>
 
                 <VerticalStackLayout Spacing="16">
-                    <Label Text="Location Information"
+                    <Label Text="Role & Department"
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
 
-                    <!-- Address -->
+                    <!-- Role -->
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Address"
+                        <Label Text="Role *"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
@@ -155,16 +147,16 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Entry Text="{Binding Address}"
-                                   Placeholder="e.g., Korle Bu Road"
-                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
-                                   PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
+                            <Picker SelectedItem="{Binding Role}"
+                                    ItemsSource="{Binding AvailableRoles}"
+                                    Title="Select role"
+                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
                         </Border>
                     </VerticalStackLayout>
 
-                    <!-- City -->
+                    <!-- Department -->
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="City *"
+                        <Label Text="Department *"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
@@ -174,53 +166,26 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Entry Text="{Binding City}"
-                                   Placeholder="e.g., Accra"
-                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
-                                   PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
-                        </Border>
-                    </VerticalStackLayout>
-
-                    <!-- Region -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Region *"
-                               FontSize="14"
-                               FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
-                        <Border StrokeThickness="1"
-                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
-                            <Picker SelectedItem="{Binding Region}"
-                                    Title="Select region"
+                            <Picker SelectedItem="{Binding Department}"
+                                    Title="Select department"
                                     TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}">
                                 <Picker.Items>
-                                    <x:String>Greater Accra</x:String>
-                                    <x:String>Ashanti</x:String>
-                                    <x:String>Central</x:String>
-                                    <x:String>Eastern</x:String>
-                                    <x:String>Western</x:String>
-                                    <x:String>Western North</x:String>
-                                    <x:String>Volta</x:String>
-                                    <x:String>Northern</x:String>
-                                    <x:String>Upper East</x:String>
-                                    <x:String>Upper West</x:String>
-                                    <x:String>Brong Ahafo</x:String>
-                                    <x:String>Bono East</x:String>
-                                    <x:String>Ahafo</x:String>
-                                    <x:String>Oti</x:String>
-                                    <x:String>Savannah</x:String>
-                                    <x:String>North East</x:String>
+                                    <x:String>Labor Ward</x:String>
+                                    <x:String>Maternity</x:String>
+                                    <x:String>Obstetrics</x:String>
+                                    <x:String>Gynecology</x:String>
+                                    <x:String>Emergency</x:String>
+                                    <x:String>Administration</x:String>
+                                    <x:String>ICU</x:String>
+                                    <x:String>Pediatrics</x:String>
                                 </Picker.Items>
                             </Picker>
                         </Border>
                     </VerticalStackLayout>
 
-                    <!-- Country -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Country *"
+                    <!-- Facility Selection (Only for Super/Maame.Dromo.Admin) -->
+                    <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowFacilitySelection}">
+                        <Label Text="Facility *"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
@@ -230,16 +195,17 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Entry Text="{Binding Country}"
-                                   Placeholder="e.g., Ghana"
-                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
-                                   PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
+                            <Picker SelectedItem="{Binding SelectedFacility}"
+                                    ItemsSource="{Binding Facilities}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Select facility"
+                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
                         </Border>
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </Border>
 
-            <!-- GPS Information Section -->
+            <!-- Security Section -->
             <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
                     Padding="20"
                     StrokeThickness="0">
@@ -255,44 +221,21 @@
 
                 <VerticalStackLayout Spacing="16">
                     <HorizontalStackLayout Spacing="8">
-                        <Label Text="&#xE909;"
+                        <Label Text="&#xE928;"
                                FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                FontSize="20"
                                TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
                                VerticalOptions="Center" />
-                        <Label Text="GPS Information"
+                        <Label Text="Security"
                                FontSize="18"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
 
-                    <!-- Get Current Location Button -->
-                    <Button Text="Get Current Location"
-                            Command="{Binding GetCurrentLocationCommand}"
-                            BackgroundColor="{AppThemeBinding Light=#4CAF50, Dark=#388E3C}"
-                            TextColor="White"
-                            HeightRequest="48"
-                            CornerRadius="10"
-                            FontSize="14"
-                            FontAttributes="Bold">
-                        <Button.ImageSource>
-                            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                           Glyph="&#xE81D;"
-                                           Color="White"
-                                           Size="18" />
-                        </Button.ImageSource>
-                    </Button>
-
-                    <!-- Loading Location Indicator -->
-                    <ActivityIndicator IsRunning="{Binding IsLoadingLocation}"
-                                     IsVisible="{Binding IsLoadingLocation}"
-                                     Color="{AppThemeBinding Light=#4CAF50, Dark=#81C784}"
-                                     HeightRequest="30" />
-
-                    <!-- Latitude -->
+                    <!-- Password -->
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Latitude"
+                        <Label Text="Password *"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
@@ -302,17 +245,17 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Entry Text="{Binding LatitudeText}"
-                                   Placeholder="e.g., 5.5536"
-                                   Keyboard="Numeric"
+                            <Entry Text="{Binding Password}"
+                                   Placeholder="Enter password (min. 6 characters)"
+                                   IsPassword="True"
                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
                                    PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
                         </Border>
                     </VerticalStackLayout>
 
-                    <!-- Longitude -->
+                    <!-- Confirm Password -->
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Longitude"
+                        <Label Text="Confirm Password *"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
@@ -322,99 +265,18 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Entry Text="{Binding LongitudeText}"
-                                   Placeholder="e.g., -0.2192"
-                                   Keyboard="Numeric"
+                            <Entry Text="{Binding ConfirmPassword}"
+                                   Placeholder="Re-enter password"
+                                   IsPassword="True"
                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
                                    PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
                         </Border>
                     </VerticalStackLayout>
 
-                    <!-- GHPost GPS Address -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Ghana Post GPS Address"
-                               FontSize="14"
-                               FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
-                        <Border StrokeThickness="1"
-                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
-                            <Entry Text="{Binding GHPostGPS}"
-                                   Placeholder="e.g., GA-054-1234"
-                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
-                                   PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
-                        </Border>
-                    </VerticalStackLayout>
-
-                    <Label Text="Tip: You can find GPS coordinates and Ghana Post GPS address using Google Maps or the Ghana Post GPS app"
+                    <Label Text="Password will be securely hashed before storage"
                            FontSize="12"
                            TextColor="{AppThemeBinding Light=#888, Dark=#777}"
                            FontAttributes="Italic" />
-                </VerticalStackLayout>
-            </Border>
-
-            <!-- Contact Information Section -->
-            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
-                    Padding="20"
-                    StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16" />
-                </Border.StrokeShape>
-                <Border.Shadow>
-                    <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
-                            Offset="0,2"
-                            Radius="8"
-                            Opacity="0.15" />
-                </Border.Shadow>
-
-                <VerticalStackLayout Spacing="16">
-                    <Label Text="Contact Information"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
-
-                    <!-- Phone -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Phone"
-                               FontSize="14"
-                               FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
-                        <Border StrokeThickness="1"
-                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
-                            <Entry Text="{Binding Phone}"
-                                   Placeholder="e.g., +233-302-674-191"
-                                   Keyboard="Telephone"
-                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
-                                   PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
-                        </Border>
-                    </VerticalStackLayout>
-
-                    <!-- Email -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Email"
-                               FontSize="14"
-                               FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
-                        <Border StrokeThickness="1"
-                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
-                            <Entry Text="{Binding Email}"
-                                   Placeholder="e.g., info@facility.gov.gh"
-                                   Keyboard="Email"
-                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
-                                   PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
-                        </Border>
-                    </VerticalStackLayout>
                 </VerticalStackLayout>
             </Border>
 
@@ -433,16 +295,16 @@
 
                 <!-- Save Button -->
                 <Button Grid.Column="1"
-                        Text="Save Facility"
-                        Command="{Binding SaveCommand}"
-                        BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1565C0}"
+                        Text="Create User"
+                        Command="{Binding SignUpCommand}"
+                        BackgroundColor="{AppThemeBinding Light=#4CAF50, Dark=#388E3C}"
                         TextColor="White"
                         HeightRequest="56"
                         CornerRadius="12"
                         FontSize="16"
                         FontAttributes="Bold">
                     <Button.Shadow>
-                        <Shadow Brush="#402196F3"
+                        <Shadow Brush="#404CAF50"
                                 Offset="0,4"
                                 Radius="12"
                                 Opacity="0.3" />
@@ -453,7 +315,7 @@
             <!-- Loading Indicator -->
             <ActivityIndicator IsRunning="{Binding IsBusy}"
                              IsVisible="{Binding IsBusy}"
-                             Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                             Color="{AppThemeBinding Light=#4CAF50, Dark=#81C784}"
                              HeightRequest="50" />
         </VerticalStackLayout>
     </ScrollView>

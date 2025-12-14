@@ -22,6 +22,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _latitudeText = string.Empty;
         private string _longitudeText = string.Empty;
         private string _ghPostGPS = string.Empty;
+        private bool _isLoadingLocation = false;
 
         public FacilityOnboardingPageModel(FacilityRepository facilityRepository)
         {
@@ -30,6 +31,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             // Initialize commands
             SaveCommand = new Command(async () => await SaveAsync(), CanSave);
             CancelCommand = new Command(async () => await CancelAsync());
+            GetCurrentLocationCommand = new Command(async () => await GetCurrentLocationAsync(), () => !IsLoadingLocation);
         }
 
         #region Properties
@@ -148,12 +150,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             set => SetProperty(ref _isBusy, value);
         }
 
+        public bool IsLoadingLocation
+        {
+            get => _isLoadingLocation;
+            set
+            {
+                if (SetProperty(ref _isLoadingLocation, value))
+                {
+                    ((Command)GetCurrentLocationCommand).ChangeCanExecute();
+                }
+            }
+        }
+
         #endregion
 
         #region Commands
 
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
+        public ICommand GetCurrentLocationCommand { get; }
 
         #endregion
 
@@ -268,6 +283,56 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (confirm)
             {
                 await Application.Current.MainPage.Navigation.PopAsync();
+            }
+        }
+
+        private async Task GetCurrentLocationAsync()
+        {
+            try
+            {
+                IsLoadingLocation = true;
+
+                // Request location permissions
+                var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                if (status != PermissionStatus.Granted)
+                {
+                    await ShowAlertAsync("Permission Denied", "Location permission is required to get current GPS coordinates.");
+                    return;
+                }
+
+                // Get current location with timeout
+                var request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(10));
+                var location = await Geolocation.GetLocationAsync(request);
+
+                if (location != null)
+                {
+                    // Update latitude and longitude
+                    LatitudeText = location.Latitude.ToString("F6");
+                    LongitudeText = location.Longitude.ToString("F6");
+
+                    await ShowAlertAsync("Location Retrieved",
+                        $"Current location loaded successfully!\n\nLatitude: {LatitudeText}\nLongitude: {LongitudeText}");
+                }
+                else
+                {
+                    await ShowAlertAsync("Location Error", "Unable to get current location. Please try again or enter coordinates manually.");
+                }
+            }
+            catch (FeatureNotSupportedException)
+            {
+                await ShowAlertAsync("Not Supported", "Geolocation is not supported on this device.");
+            }
+            catch (PermissionException)
+            {
+                await ShowAlertAsync("Permission Denied", "Location permission is required to get current GPS coordinates.");
+            }
+            catch (Exception ex)
+            {
+                await ShowAlertAsync("Error", $"Failed to get location: {ex.Message}");
+            }
+            finally
+            {
+                IsLoadingLocation = false;
             }
         }
 
