@@ -77,6 +77,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
+                SelectedTabIndex = 0;
                 IsLoading = true;
                 LoadingMessage = "Loading Monthly Delivery Dashboard...";
                 MonthlyDashboard = await _reportService.GenerateMonthlyDeliveryDashboardAsync(StartDate, EndDate);
@@ -96,6 +97,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
+                SelectedTabIndex = 1;
                 IsLoading = true;
                 LoadingMessage = "Loading Maternal Complications Report...";
                 MaternalComplicationsReport = await _reportService.GenerateMaternalComplicationsReportAsync(StartDate, EndDate);
@@ -115,6 +117,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
+                SelectedTabIndex = 2;
                 IsLoading = true;
                 LoadingMessage = "Loading Neonatal Outcomes Report...";
                 NeonatalOutcomesReport = await _reportService.GenerateNeonatalOutcomesReportAsync(StartDate, EndDate);
@@ -134,6 +137,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
+                SelectedTabIndex = 3;
                 IsLoading = true;
                 LoadingMessage = "Loading Alert Response Time Report...";
                 AlertResponseReport = await _reportService.GenerateAlertResponseTimeReportAsync(StartDate, EndDate);
