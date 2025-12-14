@@ -1474,6 +1474,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Action? CloseAssessmentModalPopup { get; set; }
         public Action? OpenPlanModalPopup { get; set; }
         public Action? ClosePlanModalPopup { get; set; }
+        public Action? OpenBishopScoreModalPopup { get; set; }
+        public Action? CloseBishopScoreModalPopup { get; set; }
 
         // Popup Open Commands
         [RelayCommand]
@@ -1745,6 +1747,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 _planModalPageModel.ClosePopup = () => ClosePlanModalPopup?.Invoke();
                 await _planModalPageModel.LoadPatient(Patient.ID);
                 OpenPlanModalPopup?.Invoke();
+            }
+        }
+
+        [RelayCommand]
+        private async Task OpenBishopScorePopup()
+        {
+            if (Patient?.ID != null)
+            {
+                //_planModalPageModel._patient = Patient;
+                //_planModalPageModel.ClosePopup = () => ClosePlanModalPopup?.Invoke();
+                //await _planModalPageModel.LoadPatient(Patient.ID);
+                OpenBishopScoreModalPopup?.Invoke();
             }
         }
 
