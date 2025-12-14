@@ -198,8 +198,8 @@
     <!-- Enhanced Navigation Items -->
     <FlyoutItem Title="Home">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                             Glyph="&#xE8D8;" 
+            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                             Glyph="{x:Static fonts:FluentUI.home_28_regular}"
                              Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
                              Size="20" />
         </FlyoutItem.Icon>
@@ -212,7 +212,7 @@
     <FlyoutItem Title="Patients">
         <FlyoutItem.Icon>
             <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                             Glyph="&#xE77B;"
+                             Glyph="{x:Static fonts:FluentUI.people_28_regular}"
                              Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
                              Size="20" />
         </FlyoutItem.Icon>
@@ -224,8 +224,8 @@
 
     <FlyoutItem Title="Reports">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="MaterialAssets"
-                             Glyph="&#xe775;"
+            <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                             Glyph="{x:Static fonts:FluentUI.document_folder_24_regular}"
                              Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
                              Size="20" />
         </FlyoutItem.Icon>
@@ -239,9 +239,9 @@
                 IsVisible="{Binding ShowFacilitiesMenu}">
         <FlyoutItem.Icon>
             <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                             Glyph="&#xE8DD;"
+                             Glyph="{x:Static fonts:FluentUI.building_32_regular}"
                              Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                             Size="20" />
+                             Size="20" /> 
         </FlyoutItem.Icon>
         <ShellContent Title="Facilities"
                       ContentTemplate="{DataTemplate pages:FacilityListPage}"
@@ -253,7 +253,7 @@
                 IsVisible="{Binding ShowUsersMenu}">
         <FlyoutItem.Icon>
             <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                             Glyph="&#xE716;"
+                             Glyph="{x:Static fonts:FluentUI.person_24_regular}"
                              Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
                              Size="20" />
         </FlyoutItem.Icon>

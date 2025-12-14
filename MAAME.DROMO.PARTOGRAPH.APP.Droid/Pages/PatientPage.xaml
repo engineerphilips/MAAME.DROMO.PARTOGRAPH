@@ -129,7 +129,8 @@
         <StackLayout Spacing="0" Padding="0,0,0,10">
 
             <!-- Header Card -->
-            <Label Text="👤 Demographics" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <!--<Label Text="👤 Demographics" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
+            <Label Text="Demographics" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
             <!-- Patient Demographics Section -->
 
@@ -197,7 +198,8 @@
 
             </StackLayout>
 
-            <Label Text="🚨 Emergency Contact" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <!--<Label Text="🚨 Emergency Contact" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
+            <Label Text="Emergency Contact" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
             <!-- Emergency Contact Section -->
 
@@ -228,7 +230,8 @@
             </StackLayout>
 
             <!-- Obstetric History Section -->
-            <Label Text="🤱 Obstetric History" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <!--<Label Text="🤱 Obstetric History" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
+            <Label Text="Obstetric History" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
             <StackLayout Padding="20" Spacing="0">
 
@@ -297,7 +300,8 @@
             </StackLayout>
 
             <!-- Medical Information Section -->
-            <Label Text="🏥 Medical Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <!--<Label Text="🏥 Medical Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
+            <Label Text="Medical Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
             <StackLayout Padding="20" Spacing="0">
                 <!-- Risk Factors -->
@@ -346,7 +350,8 @@
                 </Grid>
 
                 <!-- Active Labour Diagnosis -->
-                <Label Text="⏱️ Active Labour Diagnosis" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+                <!--<Label Text="⏱️ Active Labour Diagnosis" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
+                <Label Text="Active Labour Diagnosis" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
 
                 <chip:SfChipGroup ItemsSource="{Binding Diagnoses}" 
                   DisplayMemberPath="Name" Margin="0,8,16,8" FlowDirection="MatchParent"  />

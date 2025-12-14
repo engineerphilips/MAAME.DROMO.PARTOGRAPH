@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PatientsPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:fonts="clr-namespace:Fonts"
              xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
@@ -25,7 +26,7 @@
 
         <!-- Header -->
         <Label Grid.Row="0"
-               Text="Patient Registry"
+               Text="Patients"
                FontSize="24"
                FontAttributes="Bold"
                Margin="0,0,0,20" />
@@ -79,8 +80,7 @@
                                     </Border.StrokeShape>
                                     <Label Text="{Binding FirstName, Converter={StaticResource StringInitialsConverter}}"
                                            FontSize="24"
-                                           FontAttributes="Bold"
-                                           TextColor="White"
+                                           FontAttributes="Bold" 
                                            HorizontalOptions="Center"
                                            VerticalOptions="Center" />
                                 </Border>
@@ -95,10 +95,10 @@
                                            TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
                                     <HorizontalStackLayout Spacing="10">
                                         <HorizontalStackLayout Spacing="5" IsVisible="{Binding Age, Converter={StaticResource IsNotNullConverter}}">
-                                            <Label Text="&#xE77B;"
+                                            <!--<Label Text="{x:Static fonts:FluentUI.number_circle_0_24_regular}"
                                                    FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                    FontSize="14"
-                                                   TextColor="#2196F3" />
+                                                   TextColor="#2196F3" />-->
                                             <Label Text="{Binding Age, StringFormat='{0} years'}"
                                                    FontSize="12" />
                                         </HorizontalStackLayout>
@@ -115,10 +115,12 @@
                                 </VerticalStackLayout>
 
                                 <!-- Action Button -->
+                                <!--Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPatientHubCommand}"-->
+
                                 <Button Grid.Column="2"
-                                        Text="&#xE8A5;"
+                                        Text="{x:Static fonts:FluentUI.send_24_regular}"
                                         FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPatientHubCommand}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:PatientsPageModel}}, Path=NavigateToPatientHubCommand, x:DataType=pagemodels:PatientsPageModel}"
                                         CommandParameter="{Binding .}"
                                         BackgroundColor="#2196F3"
                                         TextColor="White"
@@ -139,8 +141,8 @@
                 Command="{Binding AddNewPatientCommand}"
                 BackgroundColor="#4CAF50"
                 TextColor="White"
-                HeightRequest="50"
-                CornerRadius="25"
+                HeightRequest="45"
+                CornerRadius="16"
                 Margin="0,20,0,0"
                 FontSize="16"
                 FontAttributes="Bold" />

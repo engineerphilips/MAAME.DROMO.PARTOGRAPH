@@ -37,17 +37,17 @@
 
                     <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="15">
                         <!-- Patient Avatar and Name -->
-                        <HorizontalStackLayout Grid.Row="0" Spacing="15">
+                        <HorizontalStackLayout Grid.Row="0" Spacing="4">
                             <Border WidthRequest="80"
                                     HeightRequest="80"
                                     BackgroundColor="#2196F3">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="40" />
                                 </Border.StrokeShape>
-                                <Label Text="{Binding Patient.FirstName, Converter={StaticResource StringInitialsConverter}}"
+                                <Label Text="{x:Static fonts:FluentUI.person_32_regular}"
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                        FontSize="32"
-                                       FontAttributes="Bold"
-                                       TextColor="White"
+                                       FontAttributes="Bold" 
                                        HorizontalOptions="Center"
                                        VerticalOptions="Center" />
                             </Border>
@@ -70,7 +70,7 @@
                               RowSpacing="10">
 
                             <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="8">
-                                <Label Text="&#xE7EF;"
+                                <Label Text="{x:Static fonts:FluentUI.book_letter_20_regular}"
                                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                        FontSize="16"
                                        TextColor="#2196F3"
@@ -91,7 +91,7 @@
                             </HorizontalStackLayout>
 
                             <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="8">
-                                <Label Text="&#xE787;"
+                                <Label Text="{x:Static fonts:FluentUI.calendar_date_20_regular}"
                                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                        FontSize="16"
                                        TextColor="#4CAF50"
@@ -130,7 +130,7 @@
                         <!-- Patient Phone -->
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
                             <Label Grid.Column="0"
-                                   Text="&#xE717;"
+                                   Text="{x:Static fonts:FluentUI.call_16_regular}"
                                    FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                    FontSize="18"
                                    TextColor="#4CAF50"
@@ -168,7 +168,7 @@
 
                         <!-- Emergency Contact Name -->
                         <HorizontalStackLayout Spacing="10">
-                            <Label Text="&#xE77B;"
+                            <Label Text="{x:Static fonts:FluentUI.link_person_16_regular}"
                                    FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                    FontSize="18"
                                    TextColor="#FF9800"
@@ -191,7 +191,7 @@
                         <!-- Emergency Contact Phone -->
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
                             <Label Grid.Column="0"
-                                   Text="&#xE717;"
+                                   Text="{x:Static fonts:FluentUI.call_16_regular}"
                                    FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                    FontSize="18"
                                    TextColor="#4CAF50"
@@ -253,9 +253,9 @@
                                             <RoundRectangle CornerRadius="10" />
                                         </Border.StrokeShape>
 
-                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
                                             <!-- Status Badge -->
-                                            <Border Grid.Column="0"
+                                            <!--<Border Grid.Column="0"
                                                     WidthRequest="50"
                                                     HeightRequest="50"
                                                     BackgroundColor="{Binding StatusColor}"
@@ -263,17 +263,18 @@
                                                 <Border.StrokeShape>
                                                     <RoundRectangle CornerRadius="25" />
                                                 </Border.StrokeShape>
-                                                <Label Text="{Binding Status}"
+                                            </Border>-->
+
+                                            <!--<Label Grid.Column="0" Text="{Binding Status}"
                                                        FontSize="10"
                                                        FontAttributes="Bold"
-                                                       TextColor="White"
+                                                       TextColor="#2196F3"
                                                        HorizontalOptions="Center"
                                                        VerticalOptions="Center"
-                                                       HorizontalTextAlignment="Center" />
-                                            </Border>
-
+                                                       HorizontalTextAlignment="Center" Rotation="270" />-->
+                                            
                                             <!-- Partograph Details -->
-                                            <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                            <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center" HorizontalOptions="Start">
                                                 <Label Text="{Binding Status}"
                                                        FontAttributes="Bold"
                                                        FontSize="16" />
@@ -288,7 +289,7 @@
 
                                             <!-- View Button -->
                                             <Button Grid.Column="2"
-                                                    Text="&#xE8A5;"
+                                                    Text="{x:Static fonts:FluentUI.content_view_20_regular}"
                                                     FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToPartographCommand}"
                                                     CommandParameter="{Binding .}"

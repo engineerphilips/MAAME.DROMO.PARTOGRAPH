@@ -4,6 +4,7 @@
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.UsersPage"
              xmlns:model="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
+             xmlns:controls="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls"
              xmlns:fonts="clr-namespace:Fonts"
              Title="User Management"
              BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#1A1A1A}">
@@ -38,7 +39,7 @@
                 </VerticalStackLayout>
 
                 <!-- Add User Button -->
-                <Button Grid.Column="1"
+                <!--<Button Grid.Column="1"
                         Text="&#xE8FA;"
                         FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                         FontSize="20"
@@ -57,7 +58,18 @@
                                 Radius="12"
                                 Opacity="0.25" />
                     </Button.Shadow>
-                </Button>
+                </Button>-->
+                <controls:AddButton Grid.Column="1"
+                                    BackgroundColor="#3B82F6"
+                                    WidthRequest="56"
+                                    HeightRequest="56"
+                                    CornerRadius="28"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="End"
+                                    FontSize="20"
+                                    IsVisible="{Binding CanAddUser}"
+                                    ToolTipProperties.Text="Add New User"
+                                    Command="{Binding AddUserCommand}" />
             </Grid>
         </Border>
 

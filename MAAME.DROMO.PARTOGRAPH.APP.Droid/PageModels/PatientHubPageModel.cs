@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
-    [QueryProperty(nameof(PatientId), "patientId")]
-    public partial class PatientHubPageModel : ObservableObject
+    public partial class PatientHubPageModel : ObservableObject, IQueryAttributable
     {
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
@@ -173,6 +172,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             catch (Exception ex)
             {
                 _errorHandler.HandleError(ex);
+            }
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.ContainsKey("patientId"))
+            {
+                Guid? id = Guid.Parse(Convert.ToString(query["patientId"]));
+                if (id != null)
+                {
+                    PatientId = id.ToString();
+                    LoadData().FireAndForgetSafeAsync(_errorHandler);
+                }
             }
         }
     }

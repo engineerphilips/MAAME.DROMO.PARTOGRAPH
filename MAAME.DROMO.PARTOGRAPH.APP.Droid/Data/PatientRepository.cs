@@ -180,7 +180,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 var selectCmd = connection.CreateCommand();
                 selectCmd.CommandText = "SELECT ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted FROM Tbl_Patient WHERE ID = @id";
-                selectCmd.Parameters.AddWithValue("@id", id);
+                selectCmd.Parameters.AddWithValue("@id", id.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 if (await reader.ReadAsync())

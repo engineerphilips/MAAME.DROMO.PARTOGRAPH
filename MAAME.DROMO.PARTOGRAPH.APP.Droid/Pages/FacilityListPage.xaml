@@ -5,6 +5,7 @@
              xmlns:model="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:fonts="clr-namespace:Fonts"
              Title="Facilities Management"
+             xmlns:controls="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls"
              BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#1A1A1A}">
 
     <Grid RowDefinitions="Auto,*" Padding="0">
@@ -28,7 +29,7 @@
                 </VerticalStackLayout>
 
                 <!-- Add Facility Button -->
-                <Button Grid.Column="1"
+                <!--<Button Grid.Column="1"
                         Text="&#xE710;"
                         FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                         FontSize="20"
@@ -46,7 +47,18 @@
                                 Radius="12"
                                 Opacity="0.25" />
                     </Button.Shadow>
-                </Button>
+                </Button>-->
+
+                <controls:AddButton Grid.Column="1"
+                                    BackgroundColor="#3B82F6"
+                                    WidthRequest="56"
+                                    HeightRequest="56"
+                                    CornerRadius="28"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="End"
+                                    FontSize="20" 
+                                    ToolTipProperties.Text="Add New Facility"
+                                    Command="{Binding AddFacilityCommand}" />
             </Grid>
         </Border>
 
@@ -107,9 +119,9 @@
                                           Opacity="0.15" />
                                 </Border.Shadow>
 
-                                <Grid Padding="20" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                                <Grid Padding="0, 20" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
                                     <!-- Header Row -->
-                                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="4">
                                         <!-- Icon -->
                                         <Border Grid.Column="0"
                                               WidthRequest="56"
@@ -118,8 +130,8 @@
                                             <Border.StrokeShape>
                                                 <RoundRectangle CornerRadius="16" />
                                             </Border.StrokeShape>
-                                            <Label Text="&#xE8DD;"
-                                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                            <Label FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
+                                                 Text="{x:Static fonts:FluentUI.building_32_regular}"
                                                  FontSize="28"
                                                  TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
                                                  HorizontalOptions="Center"
@@ -153,8 +165,8 @@
                                     <Grid Grid.Row="2" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">
                                         <!-- Address -->
                                         <HorizontalStackLayout Grid.Row="0" Spacing="8">
-                                            <Label Text="&#xE81D;"
-                                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                            <Label FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
+                                                 Text="{x:Static fonts:FluentUI.location_16_regular}"
                                                  FontSize="16"
                                                  TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
                                                  VerticalOptions="Center" />
@@ -166,16 +178,16 @@
 
                                         <!-- City, Region -->
                                         <HorizontalStackLayout Grid.Row="1" Spacing="8">
-                                            <Label Text="&#xE707;"
+                                            <!--<Label Text="&#xE707;"
                                                  FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                  FontSize="16"
                                                  TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
-                                                 VerticalOptions="Center" />
+                                                 VerticalOptions="Center" />-->
                                             <Label Text="{Binding City}"
                                                  FontSize="14"
                                                  TextColor="{AppThemeBinding Light=#444, Dark=#CCC}"
-                                                 VerticalOptions="Center" />
-                                            <Label Text=", "
+                                                 VerticalOptions="Center" Margin="24,0,0,0" />
+                                            <Label Text=","
                                                  FontSize="14"
                                                  TextColor="{AppThemeBinding Light=#444, Dark=#CCC}"
                                                  VerticalOptions="Center" />
@@ -187,7 +199,7 @@
 
                                         <!-- GPS Coordinates -->
                                         <HorizontalStackLayout Grid.Row="2" Spacing="8">
-                                            <Label Text="&#xE909;"
+                                            <Label Text="{x:Static fonts:FluentUI.map_16_regular}"
                                                  FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                  FontSize="16"
                                                  TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
@@ -206,23 +218,23 @@
 
                                         <!-- GHPost GPS -->
                                         <HorizontalStackLayout Grid.Row="3" Spacing="8">
-                                            <Label Text="&#xE707;"
+                                            <!--<Label Text="{x:Static fonts:FluentUI.location_16_regular}"
                                                  FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                  FontSize="16"
                                                  TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
-                                                 VerticalOptions="Center" />
+                                                 VerticalOptions="Center" />-->
                                             <Label Text="{Binding GHPostGPS, StringFormat='GHPost GPS: {0}'}"
                                                  FontSize="14"
                                                  FontAttributes="Bold"
                                                  TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                                                 VerticalOptions="Center" />
+                                                 VerticalOptions="Center" Margin="24,0,0,0" />
                                         </HorizontalStackLayout>
                                     </Grid>
 
                                     <!-- Contact Information -->
                                     <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="12">
                                         <HorizontalStackLayout Grid.Column="0" Spacing="6">
-                                            <Label Text="&#xE717;"
+                                            <Label Text="{x:Static fonts:FluentUI.call_16_regular}"
                                                  FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                  FontSize="14"
                                                  TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
@@ -234,7 +246,7 @@
                                         </HorizontalStackLayout>
 
                                         <HorizontalStackLayout Grid.Column="1" Spacing="6">
-                                            <Label Text="&#xE715;"
+                                            <Label Text="{x:Static fonts:FluentUI.mail_16_regular}"
                                                  FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                  FontSize="14"
                                                  TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"

@@ -103,6 +103,30 @@
                 Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}"
                 Size="{StaticResource size240}" />
 
+        <FontImageSource x:Key="IconHome"
+                        Glyph="{x:Static f:FluentUI.home_28_regular}"
+                        FontFamily="{x:Static f:FluentUI.FontFamily}"
+                        Color="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource LightOnDarkBackground}}"
+                        Size="{StaticResource IconSize}" />
+
+    <FontImageSource x:Key="IconPerson"
+                        Glyph="{x:Static f:FluentUI.person_28_regular}"
+                        FontFamily="{x:Static f:FluentUI.FontFamily}"
+                        Color="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource LightOnDarkBackground}}"
+                        Size="{StaticResource IconSize}" />
+
+    <FontImageSource x:Key="IconPeople"
+                        Glyph="{x:Static f:FluentUI.people_12_regular}"
+                        FontFamily="{x:Static f:FluentUI.FontFamily}"
+                        Color="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource LightOnDarkBackground}}"
+                        Size="{StaticResource IconSize}" />
+
+    <FontImageSource x:Key="IconFacility"
+                        Glyph="{x:Static f:FluentUI.building_32_regular}"
+                        FontFamily="{x:Static f:FluentUI.FontFamily}"
+                        Color="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource LightOnDarkBackground}}"
+                        Size="{StaticResource IconSize}" />
+    
     <Style TargetType="Label">
         <Setter Property="TextColor"
                 Value="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
