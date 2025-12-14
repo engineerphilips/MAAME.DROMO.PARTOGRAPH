@@ -1767,6 +1767,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public int SepsisOfCord { get; set; }
         public int OphthalmiaNeonatorum { get; set; }
         public int Others { get; set; }
+        public int Sepsis { get; set; }
     }
 
     public class SiteOfDeliveryData

@@ -21,11 +21,9 @@
                 <VerticalStackLayout Grid.Column="0" Spacing="8">
                     <Label Text="Facilities Management"
                            FontSize="28"
-                           FontAttributes="Bold"
-                           TextColor="White" />
+                           FontAttributes="Bold" />
                     <Label Text="Manage and onboard new facilities"
                            FontSize="14"
-                           TextColor="White"
                            Opacity="0.9" />
                 </VerticalStackLayout>
 
@@ -35,8 +33,8 @@
                         FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                         FontSize="20"
                         Command="{Binding AddFacilityCommand}"
-                        BackgroundColor="White"
-                        TextColor="#2196F3"
+                        BackgroundColor="#2196F3"
+                        TextColor="White"
                         WidthRequest="56"
                         HeightRequest="56"
                         CornerRadius="28"

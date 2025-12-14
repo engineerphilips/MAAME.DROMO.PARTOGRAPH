@@ -22,6 +22,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
 
+            //// Add migration for existing databases to add GPS columns
+            //try
+            //{
+            //    var alterTableCmd = connection.CreateCommand();
+            //    alterTableCmd.CommandText = @"DROP TABLE Tbl_Facility";
+            //    await alterTableCmd.ExecuteNonQueryAsync();
+            //}
+            //catch (SqliteException)
+            //{
+            //    // Columns already exist, ignore error
+            //    throw;
+            //}
+
             try
             {
                 var createTableCmd = connection.CreateCommand();
@@ -80,21 +93,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 END;";
 
                 await createTableCmd.ExecuteNonQueryAsync();
-
-                // Add migration for existing databases to add GPS columns
-                try
-                {
-                    var alterTableCmd = connection.CreateCommand();
-                    alterTableCmd.CommandText = @"
-                        ALTER TABLE Tbl_Facility ADD COLUMN latitude REAL;
-                        ALTER TABLE Tbl_Facility ADD COLUMN longitude REAL;
-                        ALTER TABLE Tbl_Facility ADD COLUMN ghpostgps TEXT;";
-                    await alterTableCmd.ExecuteNonQueryAsync();
-                }
-                catch (SqliteException)
-                {
-                    // Columns already exist, ignore error
-                }
             }
             catch (SqliteException e)
             {
@@ -106,6 +104,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 _logger.LogError(e, "Error creating Facility table");
                 throw;
             }
+
+            _hasBeenInitialized = true;
 
             try
             {
@@ -122,8 +122,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 _logger.LogError(e, "Error checking Facility count");
             }
-
-            _hasBeenInitialized = true;
         }
 
         private async Task InsertDefaultFacilities()

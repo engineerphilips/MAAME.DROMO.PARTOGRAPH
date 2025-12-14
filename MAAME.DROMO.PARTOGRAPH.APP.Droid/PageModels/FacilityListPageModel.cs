@@ -44,7 +44,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             set => SetProperty(ref _isBusy, value);
         }
 
-        public string FacilityCountText => $"{Facilities.Count} {(Facilities.Count == 1 ? "Facility" : "Facilities")} Found";
+        public string FacilityCountText => $"{Facilities.Count} {(Facilities.Count == 1 ? "Facility" : "Facilities")}";
 
         public bool IsEmpty => !IsBusy && Facilities.Count == 0;
 

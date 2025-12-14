@@ -7,4 +7,11 @@ public partial class PatientsPage : ContentPage
         InitializeComponent();
         BindingContext = model;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is PageModels.PatientsPageModel model)
+            await model.AppearingCommand.ExecuteAsync(null);
+    }
 }

@@ -19,17 +19,14 @@
                 <VerticalStackLayout Spacing="8">
                     <Label Text="&#xE710;"
                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                           FontSize="48"
-                           TextColor="White"
+                           FontSize="48" 
                            HorizontalOptions="Center" />
                     <Label Text="Onboard New Facility"
                            FontSize="24"
-                           FontAttributes="Bold"
-                           TextColor="White"
+                           FontAttributes="Bold" 
                            HorizontalOptions="Center" />
                     <Label Text="Fill in the details below to add a new facility"
-                           FontSize="14"
-                           TextColor="White"
+                           FontSize="14" 
                            Opacity="0.9"
                            HorizontalOptions="Center" />
                 </VerticalStackLayout>
