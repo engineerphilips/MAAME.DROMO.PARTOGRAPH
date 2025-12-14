@@ -38,6 +38,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _dateOfBirth, value);
                 OnPropertyChanged(nameof(AgeIsReadOnly));
                 LoadAgeFromDateOfBirth();
+                CalculateRiskAssessment();
             }
         }
 
@@ -58,6 +59,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _gravidity, value);
                 OnPropertyChanged(nameof(AbortionVisibility));
                 LoadAbortion();
+                CalculateRiskAssessment();
             }
         }
 
@@ -71,6 +73,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _parity, value);
                 OnPropertyChanged(nameof(AbortionVisibility));
                 LoadAbortion();
+                CalculateRiskAssessment();
             }
         }
 
@@ -95,6 +98,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _expectedDeliveryDate, value);
                 OnPropertyChanged(nameof(FormattedGestationalAge));
                 OnPropertyChanged(nameof(GestationalAgeVisibility));
+                CalculateRiskAssessment();
             }
         }
 
@@ -107,6 +111,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _lastMenstrualDate, value);
                 OnPropertyChanged(nameof(FormattedGestationalAge));
                 OnPropertyChanged(nameof(GestationalAgeVisibility));
+                CalculateRiskAssessment();
             }
         }
 
@@ -159,6 +164,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 OnPropertyChanged(nameof(FormattedBmi));
                 OnPropertyChanged(nameof(BmiCategory));
                 OnPropertyChanged(nameof(BmiColor));
+                CalculateRiskAssessment();
             }
         }
 
@@ -174,6 +180,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 OnPropertyChanged(nameof(FormattedBmi));
                 OnPropertyChanged(nameof(BmiCategory));
                 OnPropertyChanged(nameof(BmiColor));
+                CalculateRiskAssessment();
             }
         }
 
@@ -197,9 +204,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             < 18.5 => "Underweight ⚠️",
             >= 18.5 and < 25 => "Normal ✅",
             >= 25 and < 30 => "Overweight ⚠️",
-            >= 30 and < 35 => "Obese Class I ⚠️",
-            >= 35 and < 40 => "Obese Class II 🔴",
-            >= 40 => "Obese Class III 🔴🔴",
+            >= 30 and < 35 => "Obese ⚠️",
+            >= 35 and < 40 => "Average Obesity 🔴",
+            >= 40 => "Severe obesity 🔴🔴",
             _ => ""
         };
 
@@ -262,7 +269,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public string LaborStatusIndicator => CervicalDilationOnAdmission switch
         {
             null => "",
-            <= 4 => "⚪ Latent Phase / Not in Active Labor",
+            <= 4 => "⚪ Latent Phase / Not in Active Labour",
             > 4 and <= 7 => "🟡 Active First Stage - Early",
             > 7 and < 10 => "🟠 Active First Stage - Advanced",
             10 => "🔴 Fully Dilated - Second Stage",
@@ -310,6 +317,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _bishopDilatation, value);
                 OnPropertyChanged(nameof(CalculatedBishopScore));
                 OnPropertyChanged(nameof(BishopScoreInterpretation));
+                CalculateRiskAssessment();
             }
         }
 
@@ -322,6 +330,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _bishopEffacement, value);
                 OnPropertyChanged(nameof(CalculatedBishopScore));
                 OnPropertyChanged(nameof(BishopScoreInterpretation));
+                CalculateRiskAssessment();
             }
         }
 
@@ -334,6 +343,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _bishopStation, value);
                 OnPropertyChanged(nameof(CalculatedBishopScore));
                 OnPropertyChanged(nameof(BishopScoreInterpretation));
+                CalculateRiskAssessment();
             }
         }
 
@@ -346,6 +356,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _bishopConsistency, value);
                 OnPropertyChanged(nameof(CalculatedBishopScore));
                 OnPropertyChanged(nameof(BishopScoreInterpretation));
+                CalculateRiskAssessment();
             }
         }
 
@@ -431,7 +442,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             <= 5 => "⚠️ Unfavorable (Induction may be difficult)",
             >= 6 and <= 8 => "⚡ Moderately Favorable",
             >= 9 => "✅ Favorable (Good for induction)",
-            _ => ""
+            //_ => ""
         };
 
         private ObservableCollection<Diagnosis> _diagnoses = new ObservableCollection<Diagnosis>();
@@ -657,7 +668,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (weeks < 37)
                 {
                     score += 3;
-                    RiskAssessmentFactors.Add($"🔴 Preterm labor ({weeks} weeks)");
+                    RiskAssessmentFactors.Add($"🔴 Preterm labour ({weeks} weeks)");
                 }
                 else if (weeks > 42)
                 {
@@ -675,12 +686,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             else if (Bmi >= 30 && Bmi < 35)
             {
                 score += 2;
-                RiskAssessmentFactors.Add($"⚠️ Obesity Class I (BMI {Bmi:F1})");
+                RiskAssessmentFactors.Add($"⚠️ Obesity (BMI {Bmi:F1})");
             }
             else if (Bmi >= 35)
             {
                 score += 3;
-                RiskAssessmentFactors.Add($"🔴 Obesity Class II/III (BMI {Bmi:F1})");
+                RiskAssessmentFactors.Add($"🔴 Severe obesity (BMI {Bmi:F1})");
             }
 
             // Previous C-section
@@ -741,7 +752,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 RiskLevel = "Low Risk";
                 RiskColor = "#4CAF50"; // Green
                 RecommendedActions.Add("✅ Continue routine monitoring");
-                RecommendedActions.Add("✅ Standard labor management");
+                RecommendedActions.Add("✅ Standard labour management");
             }
             else if (score >= 1 && score <= 3)
             {

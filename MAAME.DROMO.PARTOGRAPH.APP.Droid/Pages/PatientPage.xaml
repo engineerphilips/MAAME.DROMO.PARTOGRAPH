@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PatientPage"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              xmlns:cards="clr-namespace:Syncfusion.Maui.Cards;assembly=Syncfusion.Maui.Cards"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
@@ -120,6 +121,10 @@
                 <Setter Property="HorizontalTextAlignment" Value="Start" />
             </Style>
 
+            <converters:InitialsConverter x:Key="StringInitialsConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+            <converters:EqualConverter x:Key="EqualConverter" />
         </ResourceDictionary>
 
         <x:Static Member="system:DateTime.Today" x:Key="Today" />
@@ -130,7 +135,7 @@
 
             <!-- Header Card -->
             <!--<Label Text="👤 Demographics" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Demographics" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <Label Text="Demographics" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
 
             <!-- Patient Demographics Section -->
 
@@ -207,7 +212,7 @@
             </StackLayout>
 
             <!--<Label Text="🚨 Emergency Contact" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Emergency Contact" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <Label Text="Emergency Contact" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
 
             <!-- Emergency Contact Section -->
 
@@ -238,7 +243,8 @@
             </StackLayout>
 
             <!-- Anthropometric Data Section -->
-            <Label Text="⚖️ Anthropometric Data" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <!--<Label Text="⚖️ Anthropometric Data" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
+            <Label Text="Anthropometric Data" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
 
             <StackLayout Padding="20" Spacing="0">
 
@@ -272,13 +278,11 @@
                         StrokeShape="RoundRectangle 8"
                         IsVisible="{Binding HasBmiData}">
                     <StackLayout>
-                        <Label Text="{Binding FormattedBmi}"
-                               TextColor="White"
+                        <Label Text="{Binding FormattedBmi}" 
                                FontSize="16"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center" />
-                        <Label Text="{Binding BmiCategory}"
-                               TextColor="White"
+                        <Label Text="{Binding BmiCategory}" 
                                FontSize="12"
                                HorizontalTextAlignment="Center" />
                     </StackLayout>
@@ -288,7 +292,7 @@
 
             <!-- Obstetric History Section -->
             <!--<Label Text="🤱 Obstetric History" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Obstetric History" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <Label Text="Obstetric History" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
 
             <StackLayout Padding="20" Spacing="0">
 
@@ -423,7 +427,7 @@
 
             <!-- Medical Information Section -->
             <!--<Label Text="🏥 Medical Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Medical Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <Label Text="Medical Information" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
 
             <StackLayout Padding="20" Spacing="0">
                 <!-- Risk Factors -->
@@ -446,7 +450,8 @@
             </StackLayout>
 
             <!-- Labour Information Section -->
-            <Label Text="⏱️ Labour Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+            <!--<Label Text="⏱️ Labour Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
+            <Label Text="Labour Information" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
 
             <StackLayout Padding="20" Spacing="0">
                 <!-- Labour Onset -->
@@ -472,7 +477,7 @@
 
                 <!-- Active Labour Diagnosis -->
                 <!--<Label Text="⏱️ Active Labour Diagnosis" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-                <Label Text="Active Labour Diagnosis" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />
+                <Label Text="Active Labour Diagnosis" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
 
                 <chip:SfChipGroup ItemsSource="{Binding Diagnoses}" 
                   DisplayMemberPath="Name" Margin="0,8,16,8" FlowDirection="MatchParent"  />
@@ -547,8 +552,7 @@
                         Margin="0,8,0,0"
                         StrokeShape="RoundRectangle 8"
                         IsVisible="{Binding HasDilatationValue}">
-                    <Label Text="{Binding LaborStatusIndicator}"
-                           TextColor="White"
+                    <Label Text="{Binding LaborStatusIndicator}" 
                            FontSize="14"
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center" />
@@ -557,9 +561,12 @@
             </StackLayout>
 
             <!-- Bishop Score Calculator Section -->
-            <Label Text="🔬 Bishop Score (Induction Assessment)"
+            <!--<Label Text="🔬 Bishop Score (Induction Assessment)"
                    Style="{StaticResource SectionTitle}"
-                   Margin="10,10,0,0" />
+                   Margin="10,10,0,0" />-->
+            <Label Text="Bishop Score (Induction Assessment)"
+       Style="{StaticResource SectionTitle}"
+       Margin="20,10,0,0" />
 
             <StackLayout Padding="20" Spacing="0">
 
@@ -567,7 +574,7 @@
                     <CheckBox IsChecked="{Binding IsInductionPlanned, Mode=TwoWay}"
                               Color="{StaticResource PrimaryBlue}"
                               VerticalOptions="Center" />
-                    <Label Text="Patient scheduled for labor induction"
+                    <Label Text="Patient scheduled for labour induction"
                            FontSize="14"
                            TextColor="{StaticResource TextPrimary}"
                            VerticalOptions="Center" />
@@ -626,20 +633,20 @@
                         Margin="0,16,0,0"
                         StrokeShape="RoundRectangle 12"
                         IsVisible="{Binding IsInductionPlanned}">
-                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                        <Label Text="Bishop Score: "
-                               TextColor="White"
+                    <VerticalStackLayout>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                            <Label Text="Bishop Score: " 
                                FontSize="18"
-                               FontAttributes="Bold" />
-                        <Label Text="{Binding CalculatedBishopScore}"
-                               TextColor="White"
+                               FontAttributes="Bold" VerticalOptions="End" Margin="0,0,0,2" />
+                            <Label Text="{Binding CalculatedBishopScore}" 
                                FontSize="24"
-                               FontAttributes="Bold" />
+                               FontAttributes="Bold" VerticalOptions="End" />
+                        </StackLayout>
+
                         <Label Text="{Binding BishopScoreInterpretation}"
-                               TextColor="White"
                                FontSize="14"
-                               Margin="8,0,0,0" />
-                    </StackLayout>
+                               Margin="8,0,0,0" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
                 </Border>
 
             </StackLayout>
@@ -657,13 +664,11 @@
                         Margin="0,0,0,12"
                         StrokeShape="RoundRectangle 12">
                     <StackLayout>
-                        <Label Text="{Binding RiskLevel}"
-                               TextColor="White"
+                        <Label Text="{Binding RiskLevel}" 
                                FontSize="20"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center" />
-                        <Label Text="{Binding RiskScore, StringFormat='Risk Score: {0}'}"
-                               TextColor="White"
+                        <Label Text="{Binding RiskScore, StringFormat='Risk Score: {0}'}" 
                                FontSize="14"
                                HorizontalTextAlignment="Center"
                                Margin="0,4,0,0" />
