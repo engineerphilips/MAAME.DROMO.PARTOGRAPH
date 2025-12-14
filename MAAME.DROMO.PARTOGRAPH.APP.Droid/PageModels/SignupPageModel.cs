@@ -200,7 +200,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                var facilities = await _facilityRepository.ListAsync();
+                var facilities = await _facilityRepository.GetAllAsync();
                 Facilities.Clear();
                 foreach (var facility in facilities)
                 {

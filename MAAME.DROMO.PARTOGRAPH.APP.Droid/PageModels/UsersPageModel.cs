@@ -102,7 +102,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 }
 
                 // Load facility names for each staff
-                var facilities = await _facilityRepository.ListAsync();
+                var facilities = await _facilityRepository.GetAllAsync();
                 foreach (var staff in filteredStaff)
                 {
                     var facility = facilities.FirstOrDefault(f => f.ID == staff.Facility);

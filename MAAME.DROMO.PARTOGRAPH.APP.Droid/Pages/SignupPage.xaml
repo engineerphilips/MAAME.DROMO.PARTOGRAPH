@@ -19,18 +19,15 @@
                 <VerticalStackLayout Spacing="8">
                     <Label Text="&#xE8FA;"
                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                           FontSize="48"
-                           TextColor="White"
+                           FontSize="48" 
                            HorizontalOptions="Center" />
                     <Label Text="Create New User"
                            FontSize="24"
-                           FontAttributes="Bold"
-                           TextColor="White"
+                           FontAttributes="Bold" 
                            HorizontalOptions="Center" />
                     <Label Text="Fill in the details below to onboard a new staff member"
                            FontSize="14"
-                           Opacity="0.9"
-                           TextColor="White"
+                           Opacity="0.9" 
                            HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Border>
@@ -68,7 +65,7 @@
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
                             <Entry Text="{Binding Name}"
-                                   Placeholder="e.g., John Doe"
+                                   Placeholder="e.g., Maame Dromo"
                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
                                    PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
                         </Border>
@@ -87,7 +84,7 @@
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
                             <Entry Text="{Binding StaffId}"
-                                   Placeholder="e.g., STAFF001"
+                                   Placeholder="e.g., 123456 OR IGF1234"
                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
                                    PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
                         </Border>
@@ -106,7 +103,7 @@
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
                             <Entry Text="{Binding Email}"
-                                   Placeholder="e.g., john.doe@hospital.gh"
+                                   Placeholder="e.g., maame.dromo@emperorsoftware.co"
                                    Keyboard="Email"
                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
                                    PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
@@ -130,7 +127,7 @@
                 </Border.Shadow>
 
                 <VerticalStackLayout Spacing="16">
-                    <Label Text="Role & Department"
+                    <Label Text="Role &amp; Department"
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
@@ -170,7 +167,7 @@
                                     Title="Select department"
                                     TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}">
                                 <Picker.Items>
-                                    <x:String>Labor Ward</x:String>
+                                    <x:String>Labour Ward</x:String>
                                     <x:String>Maternity</x:String>
                                     <x:String>Obstetrics</x:String>
                                     <x:String>Gynecology</x:String>
@@ -273,10 +270,10 @@
                         </Border>
                     </VerticalStackLayout>
 
-                    <Label Text="Password will be securely hashed before storage"
+                    <!--<Label Text="Password will be securely hashed before storage"
                            FontSize="12"
                            TextColor="{AppThemeBinding Light=#888, Dark=#777}"
-                           FontAttributes="Italic" />
+                           FontAttributes="Italic" />-->
                 </VerticalStackLayout>
             </Border>
 

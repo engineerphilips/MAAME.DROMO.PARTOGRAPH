@@ -210,7 +210,7 @@
                 </Border>
 
                 <!-- Footer -->
-                <Label Text="© 2024 Emperor Software"
+                <Label Text="© 2025 Emperor Software"
                        FontSize="12"
                        TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
                        HorizontalOptions="Center"

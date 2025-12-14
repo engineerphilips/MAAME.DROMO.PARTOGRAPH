@@ -3,10 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.UsersPage"
              xmlns:model="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              xmlns:fonts="clr-namespace:Fonts"
              Title="User Management"
              BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#1A1A1A}">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InitialsConverter x:Key="StringInitialsConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+            <converters:EqualConverter x:Key="EqualConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <Grid RowDefinitions="Auto,*" Padding="0">
 
         <!-- Header with Add Button -->
@@ -21,12 +31,10 @@
                 <VerticalStackLayout Grid.Column="0" Spacing="8">
                     <Label Text="User Management"
                            FontSize="28"
-                           FontAttributes="Bold"
-                           TextColor="White" />
+                           FontAttributes="Bold" />
                     <Label Text="Manage staff and onboard new users"
                            FontSize="14"
-                           Opacity="0.9"
-                           TextColor="White" />
+                           Opacity="0.9" />
                 </VerticalStackLayout>
 
                 <!-- Add User Button -->
@@ -109,7 +117,7 @@
                                             Opacity="0.15" />
                                 </Border.Shadow>
 
-                                <Grid Padding="20" RowSpacing="12" ColumnSpacing="16">
+                                <Grid Padding="0,20" RowSpacing="12" ColumnSpacing="4">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
@@ -132,8 +140,7 @@
                                         </Border.StrokeShape>
                                         <Label Text="&#xE716;"
                                                FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                               FontSize="28"
-                                               TextColor="White"
+                                               FontSize="28" 
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center" />
                                     </Border>
