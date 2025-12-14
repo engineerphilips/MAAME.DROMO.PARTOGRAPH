@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Views.MonthlyMidwivesReturnsView">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="8,20">
+
+            <!-- Header Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1976D2}"
+                    Padding="16">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="MONTHLY MIDWIVES RETURNS - FORM A"
+                           FontSize="20"
+                           FontAttributes="Bold"/>
+                    <Label Text="{Binding ReportTitle}"
+                           FontSize="14"
+                           Opacity="0.9"/>
+                    <HorizontalStackLayout Spacing="16">
+                        <Label Text="{Binding FacilityName, StringFormat='Facility: {0}'}"
+                               FontSize="13"
+                               Opacity="0.85"/>
+                        <Label Text="{Binding ReportMonth, StringFormat='Month: {0:00}'}"
+                               FontSize="13"
+                               Opacity="0.85"/>
+                        <Label Text="{Binding ReportYear, StringFormat='Year: {0}'}"
+                               FontSize="13"
+                               Opacity="0.85"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ANTENATAL DATA Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="16"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
+                    StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="ANTENATAL DATA"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">
+                        <Label Text="Total Registrants:" Grid.Row="0" Grid.Column="0"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                        <Label Text="{Binding Antenatal.TotalRegistrants}" Grid.Row="0" Grid.Column="1"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+
+                        <Label Text="Total Attendances:" Grid.Row="1" Grid.Column="0"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                        <Label Text="{Binding Antenatal.TotalAttendances}" Grid.Row="1" Grid.Column="1"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+
+                        <Label Text="Making 4th Visit:" Grid.Row="2" Grid.Column="0"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                        <Label Text="{Binding Antenatal.Making4thVisit}" Grid.Row="2" Grid.Column="1"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+
+                        <Label Text="Making 8th Visit:" Grid.Row="3" Grid.Column="0"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                        <Label Text="{Binding Antenatal.Making8thVisit}" Grid.Row="3" Grid.Column="1"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                    </Grid>
+
+                    <!-- Age Distribution -->
+                    <Label Text="Age Distribution at Registration"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                           Margin="0,8,0,0"/>
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="8">
+                        <Border Grid.Row="0" Grid.Column="0" Padding="8" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="10-14 years" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.AgeAtRegistration.Age10to14}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="0" Grid.Column="1" Padding="8" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="15-19 years" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.AgeAtRegistration.Age15to19}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="0" Grid.Column="2" Padding="8" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="20-24 years" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.AgeAtRegistration.Age20to24}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="1" Grid.Column="0" Padding="8" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="25-29 years" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.AgeAtRegistration.Age25to29}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="1" Grid.Column="1" Padding="8" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="30-34 years" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.AgeAtRegistration.Age30to34}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="1" Grid.Column="2" Padding="8" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="35+ years" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.AgeAtRegistration.Age35Plus}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Parity Distribution -->
+                    <Label Text="Parity Distribution"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                           Margin="0,8,0,0"/>
+                    <Grid ColumnDefinitions="*,*,*,*" RowSpacing="8" ColumnSpacing="8">
+                        <Border Grid.Column="0" Padding="8" BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1A237E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Parity 0" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.Parity.Parity0}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" Padding="8" BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1A237E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Parity 1-2" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.Parity.Parity1to2}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="2" Padding="8" BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1A237E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Parity 3-4" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.Parity.Parity3to4}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="3" Padding="8" BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1A237E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Parity 5+" FontSize="11" Opacity="0.7"/>
+                                <Label Text="{Binding Antenatal.Parity.Parity5Plus}" FontSize="18" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- DELIVERIES Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="16"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
+                    StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="DELIVERIES"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#4CAF50, Dark=#81C784}"/>
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="8">
+                        <Border Grid.Row="0" Grid.Column="0" Padding="12" BackgroundColor="{AppThemeBinding Light=#4CAF50, Dark=#388E3C}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Normal Deliveries" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding Deliveries.NormalDeliveries}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="0" Grid.Column="1" Padding="12" BackgroundColor="{AppThemeBinding Light=#FF9800, Dark=#F57C00}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Caesarean Sections" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding Deliveries.CaesareanSections}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="1" Grid.Column="0" Padding="12" BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1976D2}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Vacuum Deliveries" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding Deliveries.VacuumDeliveries}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="1" Grid.Column="1" Padding="12" BackgroundColor="{AppThemeBinding Light=#9C27B0, Dark=#7B1FA2}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Forceps Deliveries" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding Deliveries.ForcepsDeliveries}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="2" Grid.ColumnSpan="2" Padding="12" BackgroundColor="{AppThemeBinding Light=#607D8B, Dark=#455A64}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <HorizontalStackLayout Spacing="16" HorizontalOptions="Center">
+                                <Label Text="TOTAL DELIVERIES" FontSize="14" FontAttributes="Bold" Opacity="0.9" VerticalOptions="Center"/>
+                                <Label Text="{Binding Deliveries.TotalDeliveries}" FontSize="32" FontAttributes="Bold"/>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Birth Weight Distribution -->
+                    <Label Text="Birth Weight Distribution"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                           Margin="0,8,0,0"/>
+                    <Grid ColumnDefinitions="*,*,*" RowSpacing="8" ColumnSpacing="8">
+                        <Border Grid.Column="0" Padding="10" BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#E65100}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="&lt; 2.5 kg" FontSize="11" Opacity="0.8"/>
+                                <Label Text="{Binding Deliveries.BirthWeight.Below2_5kg}" FontSize="20" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" Padding="10" BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#2E7D32}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="2.5 - 2.9 kg" FontSize="11" Opacity="0.8"/>
+                                <Label Text="{Binding Deliveries.BirthWeight.Between2_5kgAndAbove}" FontSize="20" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="2" Padding="10" BackgroundColor="{AppThemeBinding Light=#E1F5FE, Dark=#0277BD}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="≥ 2.9 kg" FontSize="11" Opacity="0.8"/>
+                                <Label Text="{Binding Deliveries.BirthWeight.Above2_9kg}" FontSize="20" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- BIRTH OUTCOMES Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="16"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
+                    StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="BIRTH OUTCOMES"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#FF5722, Dark=#FF7043}"/>
+
+                    <Label Text="Live Births by Sex"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"/>
+                    <Grid ColumnDefinitions="*,*,*" RowSpacing="8" ColumnSpacing="8">
+                        <Border Grid.Column="0" Padding="12" BackgroundColor="{AppThemeBinding Light=#2196F3, Dark=#1976D2}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Male" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding BirthOutcomes.TotalBirths.LiveBirths.Male}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" Padding="12" BackgroundColor="{AppThemeBinding Light=#E91E63, Dark=#C2185B}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Female" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding BirthOutcomes.TotalBirths.LiveBirths.Female}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="2" Padding="12" BackgroundColor="{AppThemeBinding Light=#4CAF50, Dark=#388E3C}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Total Live" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding BirthOutcomes.TotalBirths.LiveBirths.Total}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <Label Text="Still Births"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                           Margin="0,8,0,0"/>
+                    <Grid ColumnDefinitions="*,*,*" RowSpacing="8" ColumnSpacing="8">
+                        <Border Grid.Column="0" Padding="12" BackgroundColor="{AppThemeBinding Light=#795548, Dark=#5D4037}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Macerated" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding BirthOutcomes.TotalBirths.StillBirths.Macerated}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" Padding="12" BackgroundColor="{AppThemeBinding Light=#FF5722, Dark=#E64A19}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Fresh" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding BirthOutcomes.TotalBirths.StillBirths.Fresh}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="2" Padding="12" BackgroundColor="{AppThemeBinding Light=#F44336, Dark=#D32F2F}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Total Still" FontSize="12" Opacity="0.9"/>
+                                <Label Text="{Binding BirthOutcomes.TotalBirths.StillBirths.Total}" FontSize="24" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Maternal Deaths -->
+                    <Border Padding="12" BackgroundColor="{AppThemeBinding Light=#F44336, Dark=#C62828}" Margin="0,8,0,0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <HorizontalStackLayout Spacing="16" HorizontalOptions="Center">
+                            <Label Text="MATERNAL DEATHS" FontSize="14" FontAttributes="Bold" Opacity="0.9" VerticalOptions="Center"/>
+                            <Label Text="{Binding BirthOutcomes.MaternalDeaths.TotalMaternalDeaths}" FontSize="32" FontAttributes="Bold"/>
+                        </HorizontalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- COMPLICATIONS Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    Padding="16"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
+                    StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="NEWBORN COMPLICATIONS"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#FF9800, Dark=#FB8C00}"/>
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">
+                        <Label Text="Asphyxia:" Grid.Row="0" Grid.Column="0"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                        <Label Text="{Binding Complications.NewbornComplications.Asphyxia}" Grid.Row="0" Grid.Column="1"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+
+                        <Label Text="Jaundice:" Grid.Row="1" Grid.Column="0"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                        <Label Text="{Binding Complications.NewbornComplications.Jaundice}" Grid.Row="1" Grid.Column="1"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+
+                        <Label Text="Sepsis:" Grid.Row="2" Grid.Column="0"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                        <Label Text="{Binding Complications.NewbornComplications.Sepsis}" Grid.Row="2" Grid.Column="1"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+
+                        <Label Text="Others:" Grid.Row="3" Grid.Column="0"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                        <Label Text="{Binding Complications.NewbornComplications.Others}" Grid.Row="3" Grid.Column="1"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Note -->
+            <Label Text="Note: This is a simplified view. Full report can be exported for detailed analysis."
+                   FontSize="12"
+                   TextColor="{AppThemeBinding Light=#999, Dark=#666}"
+                   HorizontalOptions="Center"
+                   Margin="0,8,0,16"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

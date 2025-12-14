@@ -18,6 +18,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         Task<BirthWeightApgarAnalysis> GenerateBirthWeightApgarAnalysisAsync(DateTime startDate, DateTime endDate);
         Task<TrendAnalyticsReport> GenerateTrendAnalyticsReportAsync(DateTime startDate, DateTime endDate);
         Task<PartographPDFData> GeneratePartographPDFDataAsync(Guid partographId);
+        Task<MonthlyMidwivesReturnsReport> GenerateMonthlyMidwivesReturnsReportAsync(DateTime startDate, DateTime endDate);
     }
 
     public class ReportService : IReportService
@@ -1394,6 +1395,279 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         {
             // Placeholder implementation
             return await Task.FromResult(5);
+        }
+
+        /// <summary>
+        /// Generates the comprehensive Monthly Midwives Returns Report - Form A
+        /// </summary>
+        public async Task<MonthlyMidwivesReturnsReport> GenerateMonthlyMidwivesReturnsReportAsync(DateTime startDate, DateTime endDate)
+        {
+            // Fetch all necessary data
+            var partographs = await _partographRepo.ListAsync();
+            var patients = await _patientRepo.ListAsync();
+            var birthOutcomes = await _birthOutcomeRepo.ListAsync();
+            var babies = await _babyDetailsRepo.ListAsync();
+
+            // Filter by date range
+            var partographsInPeriod = partographs
+                .Where(p => p.AdmissionDate >= startDate && p.AdmissionDate <= endDate)
+                .ToList();
+
+            var deliveriesInPeriod = birthOutcomes
+                .Where(b => b.DeliveryTime.HasValue &&
+                           b.DeliveryTime.Value >= startDate &&
+                           b.DeliveryTime.Value <= endDate)
+                .ToList();
+
+            var babiesInPeriod = babies
+                .Where(b => deliveriesInPeriod.Any(d => d.ID == b.BirthOutcomeID))
+                .ToList();
+
+            var patientsInPeriod = patients
+                .Where(p => partographsInPeriod.Any(pt => pt.PatientID == p.ID))
+                .ToList();
+
+            var report = new MonthlyMidwivesReturnsReport
+            {
+                ReportTitle = $"Monthly Midwives Returns - {startDate:MMMM yyyy}",
+                StartDate = startDate,
+                EndDate = endDate,
+                ReportMonth = startDate.Month,
+                ReportYear = startDate.Year,
+                FacilityName = "Facility Name", // TODO: Get from configuration or facility settings
+                ServiceLevel = EMONCServiceLevel.Basic, // TODO: Get from facility settings
+
+                // ANTENATAL DATA
+                Antenatal = GenerateAntenatalData(partographsInPeriod, patientsInPeriod),
+
+                // DELIVERIES DATA
+                Deliveries = GenerateDeliveriesData(deliveriesInPeriod, babiesInPeriod, patientsInPeriod),
+
+                // POSTNATAL DATA
+                Postnatal = GeneratePostnatalData(partographsInPeriod, patientsInPeriod),
+
+                // BIRTH OUTCOMES
+                BirthOutcomes = GenerateBirthOutcomesData(deliveriesInPeriod, babiesInPeriod),
+
+                // REFERRALS - Placeholder (requires referral data)
+                Referrals = new ReferralsData(),
+
+                // ABORTIONS - Placeholder (requires abortion tracking)
+                Abortions = new AbortionsData(),
+
+                // COMPLICATIONS & MORBIDITIES
+                Complications = GenerateComplicationsData(deliveriesInPeriod, babiesInPeriod),
+
+                // SITE OF DELIVERY - Placeholder (requires site tracking)
+                SiteOfDelivery = new SiteOfDeliveryData(),
+
+                // MALE INVOLVEMENT - Placeholder (requires male involvement tracking)
+                MaleInvolvement = new MaleInvolvementData()
+            };
+
+            return report;
+        }
+
+        private AntenatalData GenerateAntenatalData(List<Partograph> partographs, List<Patient> patients)
+        {
+            var data = new AntenatalData
+            {
+                TotalRegistrants = partographs.Count,
+                TotalAttendances = partographs.Count, // TODO: Track actual attendances
+
+                // Age distribution at registration
+                AgeAtRegistration = new AgeDistributionData
+                {
+                    Age10to14 = patients.Count(p => p.Age >= 10 && p.Age <= 14),
+                    Age15to19 = patients.Count(p => p.Age >= 15 && p.Age <= 19),
+                    Age20to24 = patients.Count(p => p.Age >= 20 && p.Age <= 24),
+                    Age25to29 = patients.Count(p => p.Age >= 25 && p.Age <= 29),
+                    Age30to34 = patients.Count(p => p.Age >= 30 && p.Age <= 34),
+                    Age35Plus = patients.Count(p => p.Age >= 35)
+                },
+
+                // Parity distribution
+                Parity = new ParityData
+                {
+                    Parity0 = partographs.Count(p => p.Parity == 0),
+                    Parity1to2 = partographs.Count(p => p.Parity >= 1 && p.Parity <= 2),
+                    Parity3to4 = partographs.Count(p => p.Parity >= 3 && p.Parity <= 4),
+                    Parity5Plus = partographs.Count(p => p.Parity >= 5)
+                },
+
+                // Duration at registration (calculated from gestational age)
+                DurationAtRegistration = new DurationOfPregnancyData
+                {
+                    // TODO: Calculate based on gestational age at first visit
+                    FirstTrimester = 0,
+                    SecondTrimester = 0,
+                    ThirdTrimester = 0
+                },
+
+                // IPT, IFA, Screening data - Placeholders (require additional tracking)
+                IPT = new IPTData(),
+                IFA = new IFASupplementationData(),
+                SyphilisScreening = new SyphilisScreeningData(),
+                TBScreening = new TBScreeningData(),
+                Anaemia = new AnaemiaData(),
+                PMTCT = new PMTCTData()
+            };
+
+            return data;
+        }
+
+        private DeliveriesData GenerateDeliveriesData(List<BirthOutcome> deliveries, List<BabyDetails> babies, List<Patient> patients)
+        {
+            var data = new DeliveriesData
+            {
+                TotalDeliveries = deliveries.Count,
+                NormalDeliveries = deliveries.Count(d => d.DeliveryMode == DeliveryMode.SpontaneousVaginal),
+                CaesareanSections = deliveries.Count(d => d.DeliveryMode == DeliveryMode.CaesareanSection),
+                VacuumDeliveries = deliveries.Count(d => d.DeliveryMode == DeliveryMode.AssistedVaginal && d.DeliveryModeDetails.Contains("Vacuum")),
+                ForcepsDeliveries = deliveries.Count(d => d.DeliveryMode == DeliveryMode.AssistedVaginal && d.DeliveryModeDetails.Contains("Forceps")),
+
+                // Age distribution at delivery
+                AgeAtDelivery = new AgeDistributionData
+                {
+                    Age10to14 = patients.Count(p => p.Age >= 10 && p.Age <= 14),
+                    Age15to19 = patients.Count(p => p.Age >= 15 && p.Age <= 19),
+                    Age20to24 = patients.Count(p => p.Age >= 20 && p.Age <= 24),
+                    Age25to29 = patients.Count(p => p.Age >= 25 && p.Age <= 29),
+                    Age30to34 = patients.Count(p => p.Age >= 30 && p.Age <= 34),
+                    Age35Plus = patients.Count(p => p.Age >= 35)
+                },
+
+                // Essential Newborn Care
+                EssentialNewbornCare = new EssentialNewbornCareData
+                {
+                    BreastfeedingWithinFirst30Minutes = babies.Count(b => b.EarlyBreastfeedingInitiated),
+                    ExclusiveBreastfeedingAtDischarge = babies.Count(b => b.FeedingMethod == FeedingMethod.Breastfeeding)
+                    // TODO: Track cord care methods
+                },
+
+                // Birth weight
+                BirthWeight = new BirthWeightData
+                {
+                    Below2_5kg = babies.Count(b => b.BirthWeight < 2500),
+                    Between2_5kgAndAbove = babies.Count(b => b.BirthWeight >= 2500 && b.BirthWeight < 2900),
+                    Above2_9kg = babies.Count(b => b.BirthWeight >= 2900),
+                    Total = babies.Count
+                },
+
+                // Primigravidae outcomes - Placeholder (requires gravida tracking)
+                PrimigravaeOutcomes = new PrimigravaeOutcomesData(),
+
+                // First PNC timing - Placeholder (requires PNC tracking)
+                FirstPNCTiming = new PNCTimingData()
+            };
+
+            return data;
+        }
+
+        private PostnatalData GeneratePostnatalData(List<Partograph> partographs, List<Patient> patients)
+        {
+            // Placeholder - requires dedicated postnatal tracking
+            var data = new PostnatalData
+            {
+                TotalRegistrants = 0,
+                AgeDistribution = new AgeDistributionData(),
+                PostPartumFPAcceptors = 0,
+                MotherInfantPairsExclusivelyBreastfeedingAtDischarge = 0,
+                NumberWithIFAGiven = 0
+            };
+
+            return data;
+        }
+
+        private BirthOutcomesData GenerateBirthOutcomesData(List<BirthOutcome> deliveries, List<BabyDetails> babies)
+        {
+            var data = new BirthOutcomesData
+            {
+                // Outcome of delivery - Mothers
+                MothersSingle = deliveries.Count(d => d.NumberOfBabies == 1),
+                MothersTwin = deliveries.Count(d => d.NumberOfBabies == 2),
+                MothersTriplets = deliveries.Count(d => d.NumberOfBabies == 3),
+                MothersOthers = deliveries.Count(d => d.NumberOfBabies > 3),
+                MothersTotal = deliveries.Count,
+
+                // Outcome of delivery - Children
+                ChildrenSingle = babies.Count(b => b.BabyNumber == 1),
+                ChildrenTwin = babies.Count(b => b.BabyNumber == 2),
+                ChildrenTriplets = babies.Count(b => b.BabyNumber == 3),
+                ChildrenOthers = babies.Count(b => b.BabyNumber > 3),
+                ChildrenTotal = babies.Count,
+
+                // Total births breakdown
+                TotalBirths = new TotalBirthsData
+                {
+                    LiveBirths = new LiveBirthsData
+                    {
+                        Male = babies.Count(b => (b.VitalStatus == BabyVitalStatus.LiveBirth || b.VitalStatus == BabyVitalStatus.Survived) && b.Sex == BabySex.Male),
+                        Female = babies.Count(b => (b.VitalStatus == BabyVitalStatus.LiveBirth || b.VitalStatus == BabyVitalStatus.Survived) && b.Sex == BabySex.Female),
+                        Total = babies.Count(b => b.VitalStatus == BabyVitalStatus.LiveBirth || b.VitalStatus == BabyVitalStatus.Survived)
+                    },
+                    StillBirths = new StillBirthsData
+                    {
+                        Macerated = babies.Count(b => b.VitalStatus == BabyVitalStatus.MaceratedStillbirth),
+                        Fresh = babies.Count(b => b.VitalStatus == BabyVitalStatus.FreshStillbirth),
+                        Total = babies.Count(b => b.VitalStatus == BabyVitalStatus.FreshStillbirth || b.VitalStatus == BabyVitalStatus.MaceratedStillbirth)
+                    },
+                    TotalNeonatalDeaths = babies.Count(b => b.VitalStatus == BabyVitalStatus.EarlyNeonatalDeath)
+                },
+
+                // Maternal deaths
+                MaternalDeaths = new MaternalDeathsData
+                {
+                    TotalMaternalDeaths = deliveries.Count(d => d.MaternalStatus == MaternalOutcomeStatus.Died),
+                    AgeDistribution = new AgeDistributionData() // TODO: Calculate from patient ages
+                },
+
+                // Neonatal deaths
+                NeonatalDeaths = new NeonatalDeathsData
+                {
+                    DeathsBelow2_5kg = babies.Count(b => b.VitalStatus == BabyVitalStatus.EarlyNeonatalDeath && b.BirthWeight < 2500),
+                    DeathsAbove2_5kg = babies.Count(b => b.VitalStatus == BabyVitalStatus.EarlyNeonatalDeath && b.BirthWeight >= 2500)
+                },
+
+                // Vesico-vaginal fistula - Placeholder (requires tracking)
+                VVF = new VesicoVaginalFistulaData(),
+
+                // Morbidities - Placeholder (requires tracking)
+                DropFootCases = 0,
+                PuerperalPsychosis = 0,
+                MastitisCases = 0
+            };
+
+            return data;
+        }
+
+        private ComplicationsData GenerateComplicationsData(List<BirthOutcome> deliveries, List<BabyDetails> babies)
+        {
+            var data = new ComplicationsData
+            {
+                // Birth Abnormalities
+                BirthAbnormalities = new BirthAbnormalitiesData
+                {
+                    // TODO: Parse from CongenitalAbnormalitiesDescription field
+                    // For now, just count if abnormalities present
+                    Others = babies.Count(b => b.CongenitalAbnormalitiesPresent)
+                },
+
+                // Newborn Complications
+                NewbornComplications = new NewbornComplicationsData
+                {
+                    Asphyxia = babies.Count(b => b.AsphyxiaNeonatorum),
+                    Jaundice = babies.Count(b => b.Jaundice),
+                    Sepsis = babies.Count(b => b.Sepsis),
+                    Others = babies.Count(b => !string.IsNullOrEmpty(b.OtherComplications))
+                },
+
+                // Endometritis and Mastitis - Placeholder (requires tracking)
+                Endometritis = 0,
+                Mastitis = 0
+            };
+
+            return data;
         }
     }
 }

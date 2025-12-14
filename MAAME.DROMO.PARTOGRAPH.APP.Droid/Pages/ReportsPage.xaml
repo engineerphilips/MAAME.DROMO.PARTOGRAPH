@@ -159,6 +159,16 @@ Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                     <views:NeonatalOutcomesView BindingContext="{Binding NeonatalOutcomesReport}"/>
                 </tabView:SfTabItem>
 
+                <tabView:SfTabItem Header="Alert Response" ImageSource="todo_done_svgrepo.png">
+                    <!-- Alert Response View -->
+                    <views:AlertResponseView BindingContext="{Binding AlertResponseReport}"/>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Monthly Midwives Returns" ImageSource="todo_done_svgrepo.png">
+                    <!-- Monthly Midwives Returns View -->
+                    <views:MonthlyMidwivesReturnsView BindingContext="{Binding MonthlyMidwivesReturnsReport}"/>
+                </tabView:SfTabItem>
+
                 <tabView:SfTabItem Header="WHO Compliance" ImageSource="todo_done_svgrepo.png">
                     <!-- WHO Compliance View -->
                     <views:WHOComplianceView BindingContext="{Binding WhoComplianceReport}"/>
@@ -169,19 +179,14 @@ Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
                     <views:BirthWeightApgarView BindingContext="{Binding BirthWeightApgarReport}"/>
                 </tabView:SfTabItem>
 
-                <tabView:SfTabItem Header="Alert Response" ImageSource="todo_done_svgrepo.png">
-                    <!-- Alert Response View -->
-                    <views:AlertResponseView BindingContext="{Binding AlertResponseReport}"/>
+                <tabView:SfTabItem Header="Sync Status" ImageSource="todo_done_svgrepo.png">
+                    <!-- Sync Status View -->
+                    <views:SyncStatusView BindingContext="{Binding SyncStatusReport}"/>
                 </tabView:SfTabItem>
 
                 <tabView:SfTabItem Header="Staff Performance" ImageSource="todo_done_svgrepo.png">
                     <!-- Staff Performance View -->
                     <views:StaffPerformanceView BindingContext="{Binding StaffPerformanceReport}"/>
-                </tabView:SfTabItem>
-
-                <tabView:SfTabItem Header="Sync Status" ImageSource="todo_done_svgrepo.png">
-                    <!-- Sync Status View -->
-                    <views:SyncStatusView BindingContext="{Binding SyncStatusReport}"/>
                 </tabView:SfTabItem>
 
                 <tabView:SfTabItem Header="Trend Analytics" ImageSource="todo_done_svgrepo.png">
