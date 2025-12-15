@@ -42,6 +42,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly BPRepository _bpRepository;
         private readonly AssessmentRepository _assessmentRepository;
         private readonly PlanRepository _planRepository;
+        private readonly BishopScoreRepository _bishopScoreRepository;
 
         // Alert and Validation Services
         private readonly AlertEngine _alertEngine;
@@ -282,6 +283,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _planStatusText = string.Empty;
 
+        // Bishop Score Properties
+        [ObservableProperty]
+        private string _bishopScoreButtonColor = "LightGray";
+
+        [ObservableProperty]
+        private string _bishopScoreLatestValue = string.Empty;
+
+        [ObservableProperty]
+        private string _bishopScoreInterpretation = string.Empty;
+
+        [ObservableProperty]
+        private string _bishopScoreNotes = string.Empty;
+
+        [ObservableProperty]
+        private string _bishopScoreTotalDisplay = "-";
+
+        [ObservableProperty]
+        private string _bishopScoreStatusColor = "#808080";
+
         // Alert Properties
         [ObservableProperty]
         private ObservableCollection<ClinicalAlert> _activeAlerts = new ObservableCollection<ClinicalAlert>();
@@ -330,6 +350,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             BPRepository bpRepository,
             AssessmentRepository assessmentRepository,
             PlanRepository planRepository,
+            BishopScoreRepository bishopScoreRepository,
             ModalErrorHandler errorHandler,
             CompanionModalPageModel companionModalPageModel,
             PainReliefModalPageModel painReliefModalPageModel,
@@ -376,6 +397,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _bpRepository = bpRepository;
             _assessmentRepository = assessmentRepository;
             _planRepository = planRepository;
+            _bishopScoreRepository = bishopScoreRepository;
             _errorHandler = errorHandler;
             _companionModalPageModel = companionModalPageModel;
             _painReliefModalPageModel = painReliefModalPageModel;
@@ -785,6 +807,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     latestTimes.Add(Patient.Plans.Max(e => e.Time));
                 }
 
+                Patient.BishopScores = await _bishopScoreRepository.ListByPatientAsync(Patient.ID);
+                if (Patient.BishopScores.Any())
+                {
+                    earliestTimes.Add(Patient.BishopScores.Min(e => e.Time));
+                    latestTimes.Add(Patient.BishopScores.Max(e => e.Time));
+                }
+
                 if (latestTimes.Any())
                     LastRecordedTime = latestTimes.Max();
 
@@ -983,6 +1012,125 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             var latestPlan = Patient.Plans?.OrderByDescending(e => e.Time).FirstOrDefault();
             PlanLatestValue = latestPlan?.Notes ?? "";
             PlanStatusText = latestPlan != null ? $"Last: {latestPlan.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPlan.Time - DateTime.Now)}" : "";
+
+            // Bishop Score (with auto-calculation from latest measurables)
+            UpdateBishopScoreDisplay();
+        }
+
+        /// <summary>
+        /// Updates Bishop Score display with either saved score or auto-calculated from latest measurables
+        /// </summary>
+        private void UpdateBishopScoreDisplay()
+        {
+            if (Patient == null)
+                return;
+
+            var latestBishopScore = Patient.BishopScores?.OrderByDescending(e => e.Time).FirstOrDefault();
+
+            // If we have a saved Bishop Score, use it
+            if (latestBishopScore != null)
+            {
+                BishopScoreTotalDisplay = latestBishopScore.TotalScore.ToString();
+                BishopScoreLatestValue = $"Recorded: {latestBishopScore.Time:HH:mm}";
+                BishopScoreInterpretation = latestBishopScore.Interpretation ?? "";
+                BishopScoreNotes = latestBishopScore.Notes ?? "";
+
+                // Color based on score favorability
+                if (latestBishopScore.TotalScore >= 9)
+                {
+                    BishopScoreStatusColor = "#4CAF50"; // Green - Favorable
+                    BishopScoreButtonColor = "#E8F5E9"; // Light green background
+                }
+                else if (latestBishopScore.TotalScore >= 6)
+                {
+                    BishopScoreStatusColor = "#FF9800"; // Orange - Moderately favorable
+                    BishopScoreButtonColor = "#FFF3E0"; // Light orange background
+                }
+                else
+                {
+                    BishopScoreStatusColor = "#F44336"; // Red - Unfavorable
+                    BishopScoreButtonColor = "#FFEBEE"; // Light red background
+                }
+            }
+            else
+            {
+                // Auto-calculate from latest measurables
+                var autoCalculated = CalculateBishopScoreFromMeasurables();
+
+                if (autoCalculated.HasValue)
+                {
+                    var (totalScore, interpretation, _) = autoCalculated.Value;
+
+                    BishopScoreTotalDisplay = $"~{totalScore}";  // ~ indicates estimated
+                    BishopScoreLatestValue = "Auto-calculated";
+                    BishopScoreInterpretation = interpretation;
+                    BishopScoreNotes = "Tap to record complete score";
+
+                    // Color based on score favorability
+                    if (totalScore >= 9)
+                    {
+                        BishopScoreStatusColor = "#4CAF50"; // Green - Favorable
+                        BishopScoreButtonColor = "#E8F5E9"; // Light green background
+                    }
+                    else if (totalScore >= 6)
+                    {
+                        BishopScoreStatusColor = "#FF9800"; // Orange - Moderately favorable
+                        BishopScoreButtonColor = "#FFF3E0"; // Light orange background
+                    }
+                    else
+                    {
+                        BishopScoreStatusColor = "#F44336"; // Red - Unfavorable
+                        BishopScoreButtonColor = "#FFEBEE"; // Light red background
+                    }
+                }
+                else
+                {
+                    // No data available for calculation
+                    BishopScoreTotalDisplay = "-";
+                    BishopScoreLatestValue = "";
+                    BishopScoreInterpretation = "Insufficient data";
+                    BishopScoreNotes = "Tap to record Bishop Score";
+                    BishopScoreStatusColor = "#808080"; // Gray - No data
+                    BishopScoreButtonColor = "LightGray";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Auto-calculates Bishop Score from latest measurables (dilation and head descent)
+        /// Returns null if insufficient data
+        /// </summary>
+        private (int totalScore, string interpretation, bool favorable)? CalculateBishopScoreFromMeasurables()
+        {
+            if (Patient == null)
+                return null;
+
+            // Get latest cervical dilation
+            var latestDilatation = Patient.Dilatations?.OrderByDescending(d => d.Time).FirstOrDefault();
+            if (latestDilatation == null)
+                return null; // Need at least dilation for meaningful calculation
+
+            // Calculate dilation score
+            int dilationScore = BishopScoreCalculator.CalculateDilationScore(latestDilatation.DilatationCm);
+
+            // Default values for unknowns (conservative estimates)
+            int effacementScore = 0;  // Unknown, assume 0
+            int consistencyScore = 0; // Unknown, assume firm
+            int positionScore = 0;    // Unknown, assume posterior
+
+            // Get head descent station if available
+            int stationScore = 0;
+            var latestHeadDescent = Patient.HeadDescents?.OrderByDescending(d => d.Time).FirstOrDefault();
+            if (latestHeadDescent != null)
+            {
+                stationScore = BishopScoreCalculator.CalculateStationScore(latestHeadDescent.Station);
+            }
+
+            // Calculate total score and interpretation
+            var result = BishopScoreCalculator.CalculateTotalScore(
+                dilationScore, effacementScore, consistencyScore, positionScore, stationScore);
+
+            return result;
         }
 
         //private void LoadMeasurablesFromDatabase()
@@ -1489,25 +1637,40 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 // Pre-populate Bishop Score with latest measurable data
                 var latestDilatation = Patient.Dilatations?.OrderByDescending(d => d.Time).FirstOrDefault();
+                var latestHeadDescent = Patient.HeadDescents?.OrderByDescending(d => d.Time).FirstOrDefault();
 
                 int dilationCm = latestDilatation?.DilatationCm ?? 0;
+                string station = latestHeadDescent != null ? latestHeadDescent.Station.ToString() : "-3";
 
                 // Initialize with available data (other fields default to 0/initial values)
                 _bishopScorePopupPageModel.InitializeWithData(
                     dilationCm: dilationCm,
                     effacementPercent: 0,  // Not currently tracked in CervixDilatation
-                    station: "-3",         // Default value
+                    station: station,      // From latest head descent
                     consistency: "Firm",   // Default value
                     position: "Posterior"  // Default value
                 );
 
                 _bishopScorePopupPageModel.ClosePopup = () => CloseBishopScoreModalPopup?.Invoke();
 
-                // Subscribe to save event to refresh data after save
+                // Subscribe to save event to save to repository and refresh
                 _bishopScorePopupPageModel.OnScoreSaved = async (score) =>
                 {
-                    // Save to repository here if needed
-                    await RefreshCommand.ExecuteAsync(null);
+                    try
+                    {
+                        // Set the PartographID for the Bishop Score
+                        score.PartographID = Patient.ID;
+
+                        // Save to repository
+                        await _bishopScoreRepository.AddAsync(score);
+
+                        // Reload patient data to get updated Bishop Score
+                        await RefreshCommand.ExecuteAsync(null);
+                    }
+                    catch (Exception ex)
+                    {
+                        _errorHandler.HandleError(ex);
+                    }
                 };
 
                 OpenBishopScoreModalPopup?.Invoke();

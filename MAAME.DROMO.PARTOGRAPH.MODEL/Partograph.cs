@@ -71,6 +71,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public List<BP> BPs { get; set; }
         public List<Assessment> Assessments { get; set; }
         public List<Plan> Plans { get; set; }
+        public List<BishopScore> BishopScores { get; set; }
         public List<Moulding> Mouldings { get; set; }
         public List<FetalPosition> FetalPositions { get; set; }
         public List<CervixDilatation> Dilatations { get; set; }
