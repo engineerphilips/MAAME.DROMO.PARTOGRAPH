@@ -28,12 +28,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private DateOnly _recordingDate = DateOnly.FromDateTime(DateTime.Now);
         [ObservableProperty]
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-        [ObservableProperty]
-        private int _frequencyPer10Min; 
+
+        private int _frequencyPer10Min;
+        public int FrequencyPer10Min
+        {
+            get => _frequencyPer10Min;
+            set
+            {
+                SetProperty(ref _frequencyPer10Min, value);
+                AutoCalculateContractionPatterns();
+            }
+        }
+
         [ObservableProperty]
         private int _durationSeconds;
-        [ObservableProperty]
+
         private int _rate;
+        public int Rate
+        {
+            get => _rate;
+            set
+            {
+                SetProperty(ref _rate, value);
+                AutoCalculateFHRPatterns();
+            }
+        }
 
         [ObservableProperty]
         private string _contractionDisplay = string.Empty;
@@ -46,6 +65,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         [ObservableProperty]
         private bool _isBusy;
+
+        // Advanced Fields Toggle
+        [ObservableProperty]
+        private bool _showAdvancedFields = false;
 
         // WHO 2020 Enhanced Contraction Assessment Fields
 
@@ -492,6 +515,93 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             FrequencyPer10Min = 0;
             DurationSeconds = 0;
             Notes = string.Empty;
+        }
+
+        /// <summary>
+        /// Auto-calculate FHR pattern indicators based on heart rate
+        /// </summary>
+        private void AutoCalculateFHRPatterns()
+        {
+            // Auto-detect tachycardia (>160 bpm)
+            if (Rate > 160)
+            {
+                Tachycardia = true;
+                if (!TachycardiaStartTime.HasValue)
+                {
+                    TachycardiaStartTime = DateTime.Now;
+                }
+            }
+            else
+            {
+                Tachycardia = false;
+                TachycardiaStartTime = null;
+                TachycardiaDurationMinutes = null;
+            }
+
+            // Auto-detect prolonged bradycardia (<110 bpm)
+            if (Rate < 110 && Rate > 0)
+            {
+                ProlongedBradycardia = true;
+                if (!BradycardiaStartTime.HasValue)
+                {
+                    BradycardiaStartTime = DateTime.Now;
+                }
+            }
+            else
+            {
+                ProlongedBradycardia = false;
+                BradycardiaStartTime = null;
+                BradycardiaDurationMinutes = null;
+            }
+
+            // Set baseline rate for normal FHR (110-160 bpm)
+            if (Rate >= 110 && Rate <= 160)
+            {
+                BaselineRate = Rate;
+            }
+
+            // Auto-flag FHR compromise if abnormal patterns detected
+            FhrCompromise = ProlongedBradycardia || Tachycardia || SinusoidalPattern;
+        }
+
+        /// <summary>
+        /// Auto-calculate contraction pattern indicators
+        /// </summary>
+        private void AutoCalculateContractionPatterns()
+        {
+            // Auto-detect tachysystole (>5 contractions per 10 minutes)
+            Tachysystole = FrequencyPer10Min > 5;
+
+            if (Tachysystole)
+            {
+                if (!TachysystoleStartTime.HasValue)
+                {
+                    TachysystoleStartTime = DateTime.Now;
+                }
+
+                // Auto-detect hyperstimulation (tachysystole + abnormal FHR)
+                Hyperstimulation = Tachysystole && (ProlongedBradycardia || Tachycardia || FhrCompromise);
+
+                // Suggest oxytocin adjustment if on oxytocin
+                if (OnOxytocin)
+                {
+                    OxytocinAdjustmentNeeded = true;
+                    SuggestedOxytocinAction = Hyperstimulation
+                        ? "STOP oxytocin immediately - Hyperstimulation detected"
+                        : "Reduce oxytocin - Tachysystole detected";
+                }
+            }
+            else
+            {
+                Tachysystole = false;
+                TachysystoleStartTime = null;
+                TachysystoleDurationMinutes = null;
+                Hyperstimulation = false;
+            }
+
+            // Auto-flag intervention required for critical patterns
+            ContractionInterventionRequired = Hyperstimulation || Tachysystole;
+            EmergencyConsultRequired = Hyperstimulation || (Tachysystole && FhrCompromise);
         }
     }
 }

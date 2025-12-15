@@ -44,14 +44,34 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // Advanced Fields Toggle
+        [ObservableProperty]
+        private bool _showAdvancedFields = false;
+
         // WHO 2020 Enhanced Amniotic Fluid Assessment Fields
 
         // Original fields
-        [ObservableProperty]
         private string _color = "Clear";
+        public string Color
+        {
+            get => _color;
+            set
+            {
+                SetProperty(ref _color, value);
+                AutoCalculateAmnioticFluidFields();
+            }
+        }
 
-        [ObservableProperty]
         private bool _meconiumStaining;
+        public bool MeconiumStaining
+        {
+            get => _meconiumStaining;
+            set
+            {
+                SetProperty(ref _meconiumStaining, value);
+                AutoCalculateMeconiumFields();
+            }
+        }
 
         [ObservableProperty]
         private string _meconiumGrade = string.Empty;
@@ -243,6 +263,48 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             AmnioticFluidIndex = -1;
             Notes = string.Empty;
+        }
+
+        /// <summary>
+        /// Auto-calculate amniotic fluid fields based on color
+        /// </summary>
+        private void AutoCalculateAmnioticFluidFields()
+        {
+            // Auto-detect meconium staining from color
+            if (Color != null && Color.ToLower().Contains("meconium"))
+            {
+                MeconiumStaining = true;
+                if (Color.ToLower().Contains("thick") || Color.ToLower().Contains("particulate"))
+                {
+                    MeconiumThickParticulate = true;
+                }
+            }
+            else
+            {
+                MeconiumStaining = false;
+                MeconiumThickParticulate = false;
+            }
+        }
+
+        /// <summary>
+        /// Auto-calculate meconium-related fields
+        /// </summary>
+        private void AutoCalculateMeconiumFields()
+        {
+            if (MeconiumStaining)
+            {
+                // Set meconium first noted time if not already set
+                if (!MeconiumFirstNotedTime.HasValue)
+                {
+                    MeconiumFirstNotedTime = DateTime.Now;
+                }
+
+                // Alert neonatal team for thick/particulate meconium
+                if (MeconiumThickParticulate && !NeonatalTeamAlerted)
+                {
+                    NeonatalTeamAlertTime = DateTime.Now;
+                }
+            }
         }
     }
 }

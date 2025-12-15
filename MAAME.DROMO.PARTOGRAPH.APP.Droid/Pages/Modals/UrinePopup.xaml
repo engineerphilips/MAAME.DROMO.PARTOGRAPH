@@ -71,8 +71,28 @@
                         </buttons:SfSegmentedControl.ItemsSource>
                     </buttons:SfSegmentedControl>
 
-                    <!-- WHO 2020 Critical Urine Assessment -->
-                    <Label Text="Urine Output & Oliguria" FontAttributes="Bold" Margin="0,10,0,5" />
+                    <!-- Advanced Fields Toggle -->
+                    <Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                           BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}"
+                           CornerRadius="10"
+                           Padding="15,10"
+                           Margin="0,10,0,10">
+                        <HorizontalStackLayout Spacing="10">
+                            <Switch IsToggled="{Binding ShowAdvancedFields}"
+                                    VerticalOptions="Center"
+                                    OnColor="#4CAF50" />
+                            <Label Text="Show Advanced WHO 2020 Fields"
+                                   VerticalOptions="Center"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#333, Dark=White}" />
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                    <!-- WHO 2020 Advanced Fields Section -->
+                    <VerticalStackLayout IsVisible="{Binding ShowAdvancedFields}" Spacing="10">
+
+                        <!-- WHO 2020 Critical Urine Assessment -->
+                        <Label Text="Urine Output & Oliguria" FontAttributes="Bold" Margin="0,10,0,5" />
 
                     <core:SfTextInputLayout Hint="Output Volume (ml)"
                                         Style="{StaticResource PatientInput}"
@@ -119,6 +139,9 @@
 
                     <CheckBox IsChecked="{Binding CatheterizationPerformed}" />
                     <Label Text="Catheterization Performed" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    </VerticalStackLayout>
+                    <!-- End Advanced Fields Section -->
 
                     <core:SfTextInputLayout Hint="Additional Notes"
                                         Style="{StaticResource PatientInput}"
