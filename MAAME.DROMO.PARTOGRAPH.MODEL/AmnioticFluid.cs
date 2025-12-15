@@ -1,17 +1,5 @@
-﻿namespace MAAME.DROMO.PARTOGRAPH.MODEL
+namespace MAAME.DROMO.PARTOGRAPH.MODEL
 {
-    //// FHR Deceleration (every 30 minutes)
-    //public class FHRDecelerationEntry : BasePartographMeasurement
-    //{
-    //    public bool DecelerationsPresent { get; set; }
-    //    public string DecelerationType { get; set; } = string.Empty; // Early, Late, Variable, Prolonged
-    //    public string Severity { get; set; } = string.Empty; // Mild, Moderate, Severe
-    //    public int Duration { get; set; } // in seconds
-    //    public string Recovery { get; set; } = string.Empty; // Quick, Slow, Poor
-    //    public bool RequiresAction { get; set; }
-    //    public string ActionTaken { get; set; } = string.Empty;
-    //}
-
     // Amniotic Fluid - WHO Labour Care Guide Section 5: Labour Progress / Section 3: Care of Baby
     // Assessed during vaginal examination or when membranes rupture
     // Meconium staining requires neonatal team alert
@@ -58,5 +46,46 @@
         // Grade 2-3 meconium triggers neonatal team notification
         // Offensive odor suggests chorioamnionitis
         // Blood-stained may indicate abruption
+
+        // WHO 2020 Enhanced Amniotic Fluid Assessment
+        // Membrane Rupture Details
+        public string RuptureMethod { get; set; } = string.Empty; // SROM, AROM, PROM, PPROM
+        public string RuptureLocation { get; set; } = string.Empty; // HighLeak, Forewaters, Hindwaters
+        public bool ConfirmedRupture { get; set; }
+        public string ConfirmationMethod { get; set; } = string.Empty; // Visual, Nitrazine, Ferning, Speculum
+
+        // Fluid Volume Assessment
+        public string FluidVolume { get; set; } = string.Empty; // Normal, Oligohydramnios, Polyhydramnios
+        public int? EstimatedVolumeMl { get; set; }
+        public bool PoolingInVagina { get; set; }
+
+        // Meconium Details
+        public DateTime? MeconiumFirstNotedTime { get; set; }
+        public bool MeconiumThickParticulate { get; set; }
+        public bool NeonatalTeamAlerted { get; set; }
+        public DateTime? NeonatalTeamAlertTime { get; set; }
+
+        // Chorioamnionitis Risk
+        public bool ProlongedRupture { get; set; } // >18-24 hours
+        public int? HoursSinceRupture { get; set; }
+        public bool MaternalFever { get; set; }
+        public bool MaternalTachycardia { get; set; }
+        public bool FetalTachycardia { get; set; }
+        public bool UterineTenderness { get; set; }
+
+        // Blood-Stained Fluid
+        public string BloodSource { get; set; } = string.Empty; // Show, Abruption, Vasa Previa, Traumatic
+        public bool ActiveBleeding { get; set; }
+        public string BleedingAmount { get; set; } = string.Empty; // Spotting, Light, Moderate, Heavy
+
+        // Cord Considerations
+        public bool CordProlapse { get; set; }
+        public bool CordPresentation { get; set; }
+        public DateTime? CordComplicationTime { get; set; }
+
+        // Clinical Actions
+        public bool AntibioticsIndicated { get; set; }
+        public bool AmnioinfusionConsidered { get; set; }
+        public bool ExpeditedDeliveryNeeded { get; set; }
     }
 }

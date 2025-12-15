@@ -1,4 +1,4 @@
-﻿namespace MAAME.DROMO.PARTOGRAPH.MODEL
+namespace MAAME.DROMO.PARTOGRAPH.MODEL
 {
     // Cervical Dilatation - WHO Labour Care Guide Section 5: Labour Progress
     // WHO 2020: Active labor starts at 5cm (not 4cm as in old partograph)
@@ -40,5 +40,48 @@
                 return "FullyDilated";
             }
         }
+
+        // WHO 2020 Enhanced Cervical Assessment
+        // Progress Tracking
+        public decimal? DilatationRateCmPerHour { get; set; }
+        public string ProgressionRate { get; set; } = string.Empty; // Normal, Slow, Rapid, Arrested
+        public bool CrossedActionLine { get; set; }
+        public bool CrossedAlertLine { get; set; }
+        public DateTime? ActionLineCrossedTime { get; set; }
+
+        // Cervical Length
+        public decimal? CervicalLengthCm { get; set; }
+
+        // Examination Details
+        public string ExaminerName { get; set; } = string.Empty;
+        public int? ExamDurationMinutes { get; set; }
+        public bool DifficultExam { get; set; }
+        public string ExamDifficulty { get; set; } = string.Empty;
+
+        // Cervical Features
+        public string CervicalThickness { get; set; } = string.Empty; // Thick, Medium, Thin, PaperThin
+        public bool AnteriorCervicalLip { get; set; }
+        public bool PosteriorCervicalLip { get; set; }
+        public string CervicalDilatationPattern { get; set; } = string.Empty; // Uniform, Irregular
+
+        // Presenting Part Relationship
+        public int? StationRelativeToPelvicSpines { get; set; } // -5 to +5
+        public string PresentingPartPosition { get; set; } = string.Empty; // OA, OP, LOA, ROA, etc.
+        public bool PresentingPartWellApplied { get; set; }
+
+        // Membrane Assessment
+        public bool MembranesBulging { get; set; }
+        public bool ForewatersPresent { get; set; }
+        public bool HindwatersPresent { get; set; }
+
+        // Clinical Alerts
+        public string ClinicalAlert { get; set; } = string.Empty;
+        public bool ProlongedLatentPhase { get; set; }
+        public bool ProtractedActivePhase { get; set; }
+        public bool ArrestedDilatation { get; set; }
+        public bool PrecipitousLabor { get; set; }
+
+        // Display Property
+        public string? CervixDisplay => $"{DilatationCm}cm, {EffacementPercent}%";
     }
 }
