@@ -5,11 +5,20 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
     public class AppShellModel : INotifyPropertyChanged
     {
+        public AppShellModel()
+        {
+            // Initialize commands
+            OpenHelpCommand = new Command(async () => await OpenHelpAsync());
+            ShowNotificationsCommand = new Command(async () => await ShowNotificationsAsync());
+            LogoutCommand = new Command(async () => await LogoutAsync());
+        }
+
         public string? Name => Constants.Staff?.Name;
         public string? Role => Constants.Staff?.Role;
         public string? Facility
@@ -47,6 +56,54 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public bool ShowUsersMenu => Constants.Staff?.Role == "SUPER-ADMIN" ||
                                       Constants.Staff?.Role == "Maame.Dromo.Admin" ||
                                       Constants.Staff?.Role == "ADMIN";
+
+        #region Commands
+
+        public ICommand OpenHelpCommand { get; }
+        public ICommand ShowNotificationsCommand { get; }
+        public ICommand LogoutCommand { get; }
+
+        #endregion
+
+        #region Command Methods
+
+        private async Task OpenHelpAsync()
+        {
+            try
+            {
+                await Shell.Current.GoToAsync("//help");
+            }
+            catch (Exception ex)
+            {
+                // Handle navigation error
+                System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
+            }
+        }
+
+        private async Task ShowNotificationsAsync()
+        {
+            // TODO: Implement notifications functionality
+            await AppShell.DisplayToastAsync("Notifications feature coming soon");
+        }
+
+        private async Task LogoutAsync()
+        {
+            try
+            {
+                // Clear user data
+                Constants.Staff = null;
+                Constants.SelectedFacility = null;
+
+                // Navigate to login page
+                await Shell.Current.GoToAsync("//login");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Logout error: {ex.Message}");
+            }
+        }
+
+        #endregion
 
         #region INotifyPropertyChanged
 
