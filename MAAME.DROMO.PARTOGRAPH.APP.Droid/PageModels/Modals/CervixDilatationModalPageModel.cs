@@ -48,6 +48,112 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // WHO 2020 Enhanced Cervical Dilatation Assessment Fields
+
+        // Original fields (DilatationCm already exists above)
+        [ObservableProperty]
+        private int _effacementPercent;
+
+        [ObservableProperty]
+        private string _consistency = "Medium";
+
+        [ObservableProperty]
+        private string _position = "Mid";
+
+        [ObservableProperty]
+        private bool _applicationToHead;
+
+        [ObservableProperty]
+        private string _cervicalEdema = "None";
+
+        [ObservableProperty]
+        private string _membraneStatus = string.Empty;
+
+        [ObservableProperty]
+        private bool _cervicalLip;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
+
+        // Progress Tracking
+        [ObservableProperty]
+        private decimal? _dilatationRateCmPerHour;
+
+        [ObservableProperty]
+        private string _progressionRate = string.Empty;
+
+        [ObservableProperty]
+        private bool _crossedActionLine;
+
+        [ObservableProperty]
+        private bool _crossedAlertLine;
+
+        [ObservableProperty]
+        private DateTime? _actionLineCrossedTime;
+
+        // Cervical Length
+        [ObservableProperty]
+        private decimal? _cervicalLengthCm;
+
+        // Examination Details
+        [ObservableProperty]
+        private string _examinerName = string.Empty;
+
+        [ObservableProperty]
+        private int? _examDurationMinutes;
+
+        [ObservableProperty]
+        private bool _difficultExam;
+
+        [ObservableProperty]
+        private string _examDifficulty = string.Empty;
+
+        // Cervical Features
+        [ObservableProperty]
+        private string _cervicalThickness = string.Empty;
+
+        [ObservableProperty]
+        private bool _anteriorCervicalLip;
+
+        [ObservableProperty]
+        private bool _posteriorCervicalLip;
+
+        [ObservableProperty]
+        private string _cervicalDilatationPattern = string.Empty;
+
+        // Presenting Part Relationship
+        [ObservableProperty]
+        private int? _stationRelativeToPelvicSpines;
+
+        [ObservableProperty]
+        private string _presentingPartPosition = string.Empty;
+
+        [ObservableProperty]
+        private bool _presentingPartWellApplied;
+
+        // Membrane Assessment
+        [ObservableProperty]
+        private bool _membranesBulging;
+
+        [ObservableProperty]
+        private bool _forewatersPresent;
+
+        [ObservableProperty]
+        private bool _hindwatersPresent;
+
+        // Clinical Alerts
+        [ObservableProperty]
+        private bool _prolongedLatentPhase;
+
+        [ObservableProperty]
+        private bool _protractedActivePhase;
+
+        [ObservableProperty]
+        private bool _arrestedDilatation;
+
+        [ObservableProperty]
+        private bool _precipitousLabor;
+
         public CervixDilatationModalPageModel(CervixDilatationRepository cervixDilatationRepository, ModalErrorHandler errorHandler)
         {
             _cervixDilatationRepository = cervixDilatationRepository;

@@ -50,6 +50,164 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // WHO 2020 Enhanced Urine Assessment Fields
+
+        // Original fields
+        [ObservableProperty]
+        private int _outputMl;
+
+        [ObservableProperty]
+        private string _color = "Yellow";
+
+        [ObservableProperty]
+        private string _protein = "Nil";
+
+        [ObservableProperty]
+        private string _ketones = "Nil";
+
+        [ObservableProperty]
+        private string _glucose = "Nil";
+
+        [ObservableProperty]
+        private string _specificGravity = string.Empty;
+
+        [ObservableProperty]
+        private string _voidingMethod = "Spontaneous";
+
+        [ObservableProperty]
+        private bool _bladderPalpable;
+
+        [ObservableProperty]
+        private DateTime? _lastVoided;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
+
+        // Volume and Pattern
+        [ObservableProperty]
+        private DateTime? _voidingTime;
+
+        [ObservableProperty]
+        private int? _timeSinceLastVoidMinutes;
+
+        [ObservableProperty]
+        private int? _cumulativeOutputMl;
+
+        [ObservableProperty]
+        private decimal? _hourlyOutputRate;
+
+        [ObservableProperty]
+        private bool _oliguria;
+
+        [ObservableProperty]
+        private bool _anuria;
+
+        [ObservableProperty]
+        private int? _consecutiveOliguriaHours;
+
+        // Appearance
+        [ObservableProperty]
+        private string _clarity = string.Empty;
+
+        [ObservableProperty]
+        private bool _hematuria;
+
+        [ObservableProperty]
+        private bool _concentrated;
+
+        [ObservableProperty]
+        private bool _dilute;
+
+        [ObservableProperty]
+        private string _odor = string.Empty;
+
+        // Dipstick Results
+        [ObservableProperty]
+        private string _bloodDipstick = "Nil";
+
+        [ObservableProperty]
+        private string _leukocytesDipstick = "Nil";
+
+        [ObservableProperty]
+        private string _nitritesDipstick = "Nil";
+
+        [ObservableProperty]
+        private float? _phLevel;
+
+        // Bladder Management
+        [ObservableProperty]
+        private bool _bladderFullness;
+
+        [ObservableProperty]
+        private string _bladderFullnessLevel = string.Empty;
+
+        [ObservableProperty]
+        private bool _difficultVoiding;
+
+        [ObservableProperty]
+        private bool _urinaryRetention;
+
+        [ObservableProperty]
+        private bool _catheterizationIndicated;
+
+        [ObservableProperty]
+        private DateTime? _lastCatheterizationTime;
+
+        [ObservableProperty]
+        private string _catheterType = string.Empty;
+
+        // Pre-eclampsia Monitoring
+        [ObservableProperty]
+        private bool _proteinuriaNewOnset;
+
+        [ObservableProperty]
+        private bool _proteinuriaWorsening;
+
+        [ObservableProperty]
+        private DateTime? _firstProteinDetectedTime;
+
+        [ObservableProperty]
+        private bool _laboratorySampleSent;
+
+        [ObservableProperty]
+        private string _proteinCreatinineRatio = string.Empty;
+
+        // Dehydration/Ketosis Assessment
+        [ObservableProperty]
+        private bool _signsOfDehydration;
+
+        [ObservableProperty]
+        private bool _prolongedLabor;
+
+        [ObservableProperty]
+        private bool _increasedKetoneTrend;
+
+        [ObservableProperty]
+        private DateTime? _firstKetoneDetectedTime;
+
+        // Fluid Balance
+        [ObservableProperty]
+        private int? _totalOralIntakeMl;
+
+        [ObservableProperty]
+        private int? _totalIVIntakeMl;
+
+        [ObservableProperty]
+        private int? _fluidBalanceMl;
+
+        // Clinical Response
+        [ObservableProperty]
+        private bool _encourageOralFluids;
+
+        [ObservableProperty]
+        private bool _ivFluidsStarted;
+
+        [ObservableProperty]
+        private bool _catheterizationPerformed;
+
+        [ObservableProperty]
+        private bool _nephrologyConsultRequired;
+
         public Action? ClosePopup { get; set; }
 
         internal async Task LoadPatient(Guid? patientId)
