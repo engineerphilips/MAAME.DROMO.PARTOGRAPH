@@ -49,6 +49,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 
             // Settings and profile routes
             Routing.RegisterRoute("settings", typeof(SettingsPage));
+            Routing.RegisterRoute("help", typeof(HelpPage));
             //Routing.RegisterRoute("profile", typeof(ProfilePage));
             //Routing.RegisterRoute("about", typeof(AboutPage));
 

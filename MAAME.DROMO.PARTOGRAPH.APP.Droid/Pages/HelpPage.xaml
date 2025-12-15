@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.HelpPage"
+             Title="Help & Support"
+             BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Modern Card Style -->
+            <Style x:Key="ModernCardStyle" TargetType="Border">
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E293B}" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Margin" Value="0,0,0,16" />
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="12" />
+                </Setter>
+                <Setter Property="Shadow">
+                    <Shadow Brush="{AppThemeBinding Light=#10000000, Dark=#30000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.1" />
+                </Setter>
+            </Style>
+
+            <Style x:Key="CardTitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+            </Style>
+
+            <Style x:Key="CardDescriptionStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                <Setter Property="Margin" Value="0,4,0,0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="24">
+
+            <!-- Report an Issue Card -->
+            <Border Style="{StaticResource ModernCardStyle}">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                    <!-- Icon Container -->
+                    <Border Grid.Column="0"
+                            WidthRequest="56"
+                            HeightRequest="56"
+                            BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#312E81}"
+                            VerticalOptions="Start">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12" />
+                        </Border.StrokeShape>
+                        <Label Text="&#xE946;"
+                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                               FontSize="28"
+                               TextColor="#6366F1"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>
+
+                    <!-- Content -->
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                        <Label Text="Report an Issue"
+                               Style="{StaticResource CardTitleStyle}" />
+                        <Label Text="Get support for issues affecting you."
+                               Style="{StaticResource CardDescriptionStyle}" />
+                    </VerticalStackLayout>
+
+                    <!-- Arrow -->
+                    <Label Grid.Column="2"
+                           Text="&#xE76C;"
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="16"
+                           TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}"
+                           VerticalOptions="Center" />
+                </Grid>
+
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ReportIssueCommand}" />
+                </Border.GestureRecognizers>
+            </Border>
+
+            <!-- View Past Issues Card -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E293B}"
+                    StrokeThickness="2"
+                    Stroke="{AppThemeBinding Light=#6366F1, Dark=#4F46E5}"
+                    Padding="20"
+                    Margin="0,0,0,16">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Label Text="View Past/Ongoing Issues"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#6366F1, Dark=#818CF8}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ViewIssuesCommand}" />
+                </Border.GestureRecognizers>
+            </Border>
+
+            <!-- Customer Support Card -->
+            <Border Style="{StaticResource ModernCardStyle}">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                    <!-- Icon -->
+                    <Label Grid.Column="0"
+                           Text="&#xE95B;"
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="24"
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                           VerticalOptions="Center" />
+
+                    <!-- Title -->
+                    <Label Grid.Column="1"
+                           Text="Customer Support"
+                           FontSize="16"
+                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}"
+                           VerticalOptions="Center" />
+
+                    <!-- Arrow -->
+                    <Label Grid.Column="2"
+                           Text="&#xE76C;"
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="16"
+                           TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}"
+                           VerticalOptions="Center" />
+                </Grid>
+
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ContactSupportCommand}" />
+                </Border.GestureRecognizers>
+            </Border>
+
+            <!-- Terms and Privacy Section -->
+            <Border Style="{StaticResource ModernCardStyle}">
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Terms of Use and Privacy Policy"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+
+                    <Label TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                           FontSize="14"
+                           LineHeight="1.5">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Using the Maame.Dromo Partograph App means that you agree to our " />
+                                <Span Text="general terms of service"
+                                      TextColor="#6366F1"
+                                      TextDecorations="Underline">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding OpenTermsCommand}" />
+                                    </Span.GestureRecognizers>
+                                </Span>
+                                <Span Text=" and " />
+                                <Span Text="privacy policy"
+                                      TextColor="#6366F1"
+                                      TextDecorations="Underline">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding OpenPrivacyCommand}" />
+                                    </Span.GestureRecognizers>
+                                </Span>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <!-- App Version -->
+                    <VerticalStackLayout Spacing="4" Margin="0,16,0,0">
+                        <Label Text="{Binding AppVersion}"
+                               FontSize="13"
+                               TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}" />
+                        <Label Text="{Binding BuildNumber}"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light=#CBD5E1, Dark=#475569}" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Spacer -->
+            <BoxView HeightRequest="32" Color="Transparent" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
