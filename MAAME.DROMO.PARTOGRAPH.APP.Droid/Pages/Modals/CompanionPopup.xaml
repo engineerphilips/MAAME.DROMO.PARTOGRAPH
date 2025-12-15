@@ -60,15 +60,131 @@
                            ReturnType="Next" />
                     </core:SfTextInputLayout>
 
+                    <!-- WHO 2020 Enhanced Assessment -->
+                    <Label Text="WHO 2020 Detailed Assessment" FontAttributes="Bold" FontSize="16" Margin="0,15,0,5"/>
+
+                    <VerticalStackLayout>
+                        <Label Text="Companion Present"/>
+                        <Switch IsToggled="{Binding CompanionPresent}" HorizontalOptions="Start"/>
+                    </VerticalStackLayout>
+
+                    <Label Text="Companion Details" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <core:SfTextInputLayout Hint="Companion Type" Style="{StaticResource PatientInput}"
+                                            HelperText="Partner, family member, doula, etc.">
+                        <Entry Text="{Binding CompanionType}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Number of Companions" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding NumberOfCompanions}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Companion Name" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding CompanionName}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Relationship to Patient" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding CompanionRelationship}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Time Tracking" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <core:SfTextInputLayout Grid.Column="0" Hint="Arrival Time" Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding ArrivalTime}" />
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Grid.Column="1" Hint="Departure Time" Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding DepartureTime}" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Duration (Minutes)" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding DurationMinutes}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Continuous Presence"/>
+                        <Switch IsToggled="{Binding ContinuousPresence}" HorizontalOptions="Start"/>
+                    </VerticalStackLayout>
+
+                    <Label Text="Support and Participation" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <core:SfTextInputLayout Hint="Participation Level" Style="{StaticResource PatientInput}"
+                                            HelperText="Active, observing, limited, etc.">
+                        <Entry Text="{Binding ParticipationLevel}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Support Activities" Style="{StaticResource PatientInput}"
+                                            HelperText="Massage, coaching, emotional support, etc.">
+                        <Entry Text="{Binding SupportActivities}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Patient Preferences" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="10">
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                            <Label Text="Patient Requested Companion"/>
+                            <Switch IsToggled="{Binding PatientRequestedCompanion}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                            <Label Text="Patient Declined Companion"/>
+                            <Switch IsToggled="{Binding PatientDeclinedCompanion}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Reason for No Companion" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding ReasonForNoCompanion}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Clinical Assessment" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="10">
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                            <Label Text="Staff Oriented Companion"/>
+                            <Switch IsToggled="{Binding StaffOrientedCompanion}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                            <Label Text="Involved in Decisions"/>
+                            <Switch IsToggled="{Binding CompanionInvolvedInDecisions}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Label Text="Communication and Cultural Considerations" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="10">
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                            <Label Text="Language Barrier"/>
+                            <Switch IsToggled="{Binding LanguageBarrier}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                            <Label Text="Interpreter Required"/>
+                            <Switch IsToggled="{Binding InterpreterRequired}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                            <Label Text="Cultural Practices"/>
+                            <Switch IsToggled="{Binding CulturalPractices}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Cultural Practices Details" Style="{StaticResource PatientInput}"
+                                            HelperText="Describe specific cultural practices">
+                        <Entry Text="{Binding CulturalPracticesDetails}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Clinical Alert" Style="{StaticResource PatientInput}"
+                                            HelperText="Any alerts or concerns" ContainerBackground="LightYellow">
+                        <Entry Text="{Binding ClinicalAlert}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
                     <!-- Action Buttons -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                        <Button Text="Cancel" 
+                        <Button Text="Cancel"
                     Command="{Binding CancelCommand}"
                     BackgroundColor="#9E9E9E"
                     TextColor="White"
                     Grid.Column="0"/>
 
-                        <Button Text="Save" 
+                        <Button Text="Save"
                     Command="{Binding SaveCommand}"
                     BackgroundColor="#4CAF50"
                     TextColor="White"
@@ -79,5 +195,5 @@
             </ScrollView>
         </DataTemplate>
     </sfPopup:SfPopup.ContentTemplate>
-    
+
 </sfPopup:SfPopup>

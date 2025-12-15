@@ -60,6 +60,120 @@
                            ReturnType="Next" />
                     </core:SfTextInputLayout>
 
+                    <!-- WHO 2020 Enhanced Assessment -->
+                    <Label Text="WHO 2020 Detailed Assessment" FontAttributes="Bold" FontSize="16" Margin="0,15,0,5"/>
+
+                    <Label Text="Fluid Details" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <core:SfTextInputLayout Hint="Fluid Type" Style="{StaticResource PatientInput}"
+                                            HelperText="Water, juice, tea, etc.">
+                        <Entry Text="{Binding FluidType}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Amount (mL)" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding AmountMl}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Running Total Oral Intake (mL)" Style="{StaticResource PatientInput}"
+                                            HelperText="Cumulative amount">
+                        <Entry Text="{Binding RunningTotalOralIntake}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Tolerance Assessment" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Tolerated"/>
+                            <Switch IsToggled="{Binding Tolerated}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Vomiting"/>
+                            <Switch IsToggled="{Binding Vomiting}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2">
+                            <Label Text="Nausea"/>
+                            <Switch IsToggled="{Binding Nausea}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Vomiting Episodes" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding VomitingEpisodes}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Vomit Content" Style="{StaticResource PatientInput}"
+                                            HelperText="Description of vomit">
+                        <Entry Text="{Binding VomitContent}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Food and Nutrition" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Food Offered"/>
+                            <Switch IsToggled="{Binding FoodOffered}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Food Consumed"/>
+                            <Switch IsToggled="{Binding FoodConsumed}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Food Type" Style="{StaticResource PatientInput}"
+                                            HelperText="Type of food consumed">
+                        <Entry Text="{Binding FoodType}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Restrictions" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="NBM (Nil By Mouth)"/>
+                            <Switch IsToggled="{Binding NBM}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Other Restrictions"/>
+                            <Switch IsToggled="{Binding Restrictions}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="NBM Reason" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding NBMReason}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Restriction Reason" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding RestrictionReason}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Patient Preferences" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Patient Requested Fluids"/>
+                            <Switch IsToggled="{Binding PatientRequestedFluids}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Patient Declined Fluids"/>
+                            <Switch IsToggled="{Binding PatientDeclinedFluids}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Label Text="Safety Assessment" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <VerticalStackLayout>
+                        <Label Text="Aspiration Risk Assessed"/>
+                        <Switch IsToggled="{Binding AspirationRiskAssessed}" HorizontalOptions="Start"/>
+                    </VerticalStackLayout>
+
+                    <core:SfTextInputLayout Hint="Aspiration Risk Level" Style="{StaticResource PatientInput}"
+                                            HelperText="Low, moderate, high">
+                        <Entry Text="{Binding AspirationRiskLevel}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Clinical Alert" Style="{StaticResource PatientInput}"
+                                            HelperText="Any alerts or concerns" ContainerBackground="LightYellow">
+                        <Entry Text="{Binding ClinicalAlert}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
                     <!-- Action Buttons -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <Button Text="Cancel"

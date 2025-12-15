@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
@@ -35,6 +35,67 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private string _recordedBy = string.Empty;
 
+        // WHO 2020 Enhancements
+        [ObservableProperty]
+        private string _fluidType = string.Empty;
+
+        [ObservableProperty]
+        private int _amountMl;
+
+        [ObservableProperty]
+        private int _runningTotalOralIntake;
+
+        [ObservableProperty]
+        private bool _tolerated = true;
+
+        [ObservableProperty]
+        private bool _vomiting;
+
+        [ObservableProperty]
+        private bool _nausea;
+
+        [ObservableProperty]
+        private int? _vomitingEpisodes;
+
+        [ObservableProperty]
+        private string _vomitContent = string.Empty;
+
+        [ObservableProperty]
+        private bool _foodOffered;
+
+        [ObservableProperty]
+        private bool _foodConsumed;
+
+        [ObservableProperty]
+        private string _foodType = string.Empty;
+
+        [ObservableProperty]
+        private bool _nbm;
+
+        [ObservableProperty]
+        private string _nbmReason = string.Empty;
+
+        [ObservableProperty]
+        private string _restrictions = string.Empty;
+
+        [ObservableProperty]
+        private string _restrictionReason = string.Empty;
+
+        [ObservableProperty]
+        private bool _patientRequestedFluids;
+
+        [ObservableProperty]
+        private bool _patientDeclinedFluids;
+
+        [ObservableProperty]
+        private bool _aspirationRiskAssessed;
+
+        [ObservableProperty]
+        private string _aspirationRiskLevel = string.Empty;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
+
         [ObservableProperty]
         private bool _isBusy;
 
@@ -44,9 +105,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             _oralFluidRepository = oralFluidRepository;
             _errorHandler = errorHandler;
-
-            // Set default recorded by from preferences
             RecordedBy = Preferences.Get("StaffName", "Staff");
+            Tolerated = true;
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -62,11 +122,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             try
             {
-                // This would typically load from PatientRepository
-                // For now, we'll use the patient ID directly
                 PatientName = $"Patient ID: {patientId}";
-
-                // Load last pain relief entry to prefill some values
                 var lastEntry = await _oralFluidRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
@@ -99,17 +155,34 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     OralFluid = OralFluidIndex == 0 ? "N" : OralFluidIndex == 1 ? "Y" : OralFluidIndex == 2 ? "D" : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
-                    Handler = Constants.Staff?.ID
+                    Handler = Constants.Staff?.ID,
+                    // WHO 2020 Enhancements
+                    FluidType = FluidType,
+                    AmountMl = AmountMl,
+                    RunningTotalOralIntake = RunningTotalOralIntake,
+                    Tolerated = Tolerated,
+                    Vomiting = Vomiting,
+                    Nausea = Nausea,
+                    VomitingEpisodes = VomitingEpisodes,
+                    VomitContent = VomitContent,
+                    FoodOffered = FoodOffered,
+                    FoodConsumed = FoodConsumed,
+                    FoodType = FoodType,
+                    NBM = Nbm,
+                    NBMReason = NbmReason,
+                    Restrictions = Restrictions,
+                    RestrictionReason = RestrictionReason,
+                    PatientRequestedFluids = PatientRequestedFluids,
+                    PatientDeclinedFluids = PatientDeclinedFluids,
+                    AspirationRiskAssessed = AspirationRiskAssessed,
+                    AspirationRiskLevel = AspirationRiskLevel,
+                    ClinicalAlert = ClinicalAlert
                 };
 
                 if (await _oralFluidRepository.SaveItemAsync(entry) != null)
                 {
                     await AppShell.DisplayToastAsync("Oral fluid assessment saved successfully");
-
-                    // Reset fields to default
                     ResetFields();
-
-                    // Close the popup
                     ClosePopup?.Invoke();
                 }
                 else
@@ -140,6 +213,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             OralFluidIndex = -1;
             Notes = string.Empty;
+            // WHO 2020 fields
+            FluidType = string.Empty;
+            AmountMl = 0;
+            RunningTotalOralIntake = 0;
+            Tolerated = true;
+            Vomiting = false;
+            Nausea = false;
+            VomitingEpisodes = null;
+            VomitContent = string.Empty;
+            FoodOffered = false;
+            FoodConsumed = false;
+            FoodType = string.Empty;
+            Nbm = false;
+            NbmReason = string.Empty;
+            Restrictions = string.Empty;
+            RestrictionReason = string.Empty;
+            PatientRequestedFluids = false;
+            PatientDeclinedFluids = false;
+            AspirationRiskAssessed = false;
+            AspirationRiskLevel = string.Empty;
+            ClinicalAlert = string.Empty;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
@@ -34,6 +34,79 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         [ObservableProperty]
         private string _recordedBy = string.Empty;
+
+        // WHO 2020 Enhancements
+        [ObservableProperty]
+        private int? _painScoreBefore;
+
+        [ObservableProperty]
+        private int? _painScoreAfter;
+
+        [ObservableProperty]
+        private string _painAssessmentTool = string.Empty;
+
+        [ObservableProperty]
+        private string _painReliefMethod = string.Empty;
+
+        [ObservableProperty]
+        private string _nonPharmacologicalMethods = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _administeredTime;
+
+        [ObservableProperty]
+        private string _administeredBy = string.Empty;
+
+        [ObservableProperty]
+        private string _dose = string.Empty;
+
+        [ObservableProperty]
+        private string _route = string.Empty;
+
+        [ObservableProperty]
+        private string _effectiveness = string.Empty;
+
+        [ObservableProperty]
+        private int? _timeToEffectMinutes;
+
+        [ObservableProperty]
+        private int? _durationOfEffectHours;
+
+        [ObservableProperty]
+        private bool _sideEffects;
+
+        [ObservableProperty]
+        private string _sideEffectsDescription = string.Empty;
+
+        [ObservableProperty]
+        private bool _continuousMonitoringRequired;
+
+        [ObservableProperty]
+        private bool _bladderCareRequired;
+
+        [ObservableProperty]
+        private DateTime? _lastTopUpTime;
+
+        [ObservableProperty]
+        private int? _topUpCount;
+
+        [ObservableProperty]
+        private bool _contraindicationsChecked;
+
+        [ObservableProperty]
+        private bool _contraindicationsPresent;
+
+        [ObservableProperty]
+        private string _contraindicationDetails = string.Empty;
+
+        [ObservableProperty]
+        private bool _informedConsentObtained;
+
+        [ObservableProperty]
+        private string _patientPreference = string.Empty;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
 
         [ObservableProperty]
         private bool _isBusy;
@@ -99,7 +172,32 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     PainRelief = PainReliefIndex == 0 ? "N" : PainReliefIndex == 1 ? "Y" : PainReliefIndex == 2 ? "D" : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
-                    Handler = Constants.Staff?.ID
+                    Handler = Constants.Staff?.ID,
+                    // WHO 2020 Enhancements
+                    PainScoreBefore = PainScoreBefore,
+                    PainScoreAfter = PainScoreAfter,
+                    PainAssessmentTool = PainAssessmentTool,
+                    PainReliefMethod = PainReliefMethod,
+                    NonPharmacologicalMethods = NonPharmacologicalMethods,
+                    AdministeredTime = AdministeredTime,
+                    AdministeredBy = AdministeredBy,
+                    Dose = Dose,
+                    Route = Route,
+                    Effectiveness = Effectiveness,
+                    TimeToEffectMinutes = TimeToEffectMinutes,
+                    DurationOfEffectHours = DurationOfEffectHours,
+                    SideEffects = SideEffects,
+                    SideEffectsDescription = SideEffectsDescription,
+                    ContinuousMonitoringRequired = ContinuousMonitoringRequired,
+                    BladderCareRequired = BladderCareRequired,
+                    LastTopUpTime = LastTopUpTime,
+                    TopUpCount = TopUpCount,
+                    ContraindicationsChecked = ContraindicationsChecked,
+                    ContraindicationsPresent = ContraindicationsPresent,
+                    ContraindicationDetails = ContraindicationDetails,
+                    InformedConsentObtained = InformedConsentObtained,
+                    PatientPreference = PatientPreference,
+                    ClinicalAlert = ClinicalAlert
                 };
 
                 if (await _painReliefRepository.SaveItemAsync(entry) != null)
@@ -140,6 +238,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             PainReliefIndex = -1;
             Notes = string.Empty;
+            // WHO 2020 fields
+            PainScoreBefore = null;
+            PainScoreAfter = null;
+            PainAssessmentTool = string.Empty;
+            PainReliefMethod = string.Empty;
+            NonPharmacologicalMethods = string.Empty;
+            AdministeredTime = null;
+            AdministeredBy = string.Empty;
+            Dose = string.Empty;
+            Route = string.Empty;
+            Effectiveness = string.Empty;
+            TimeToEffectMinutes = null;
+            DurationOfEffectHours = null;
+            SideEffects = false;
+            SideEffectsDescription = string.Empty;
+            ContinuousMonitoringRequired = false;
+            BladderCareRequired = false;
+            LastTopUpTime = null;
+            TopUpCount = null;
+            ContraindicationsChecked = false;
+            ContraindicationsPresent = false;
+            ContraindicationDetails = string.Empty;
+            InformedConsentObtained = false;
+            PatientPreference = string.Empty;
+            ClinicalAlert = string.Empty;
         }
     }
 }
