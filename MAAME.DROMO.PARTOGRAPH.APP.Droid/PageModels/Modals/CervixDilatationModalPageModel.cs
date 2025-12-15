@@ -48,6 +48,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // Advanced Fields Toggle
+        [ObservableProperty]
+        private bool _showAdvancedFields = false;
+
         // WHO 2020 Enhanced Cervical Dilatation Assessment Fields
 
         // Original fields (DilatationCm already exists above)
@@ -267,6 +271,46 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             {
                 ProgressColor = Colors.Gray;
                 ProgressMessage = "Cervix not dilated";
+            }
+
+            // Auto-calculate labor progress alerts
+            AutoCalculateLaborProgress();
+        }
+
+        /// <summary>
+        /// Auto-calculate labor progress alerts based on dilatation and rate
+        /// </summary>
+        private void AutoCalculateLaborProgress()
+        {
+            // Calculate dilatation rate if available
+            if (DilatationRateCmPerHour.HasValue)
+            {
+                if (DilatationRateCmPerHour < 1.0m && Dilatation >= 4)
+                {
+                    // Protracted active phase (<1 cm/hour in active labor)
+                    ProtractedActivePhase = true;
+                    ProgressionRate = "Slow (<1 cm/hour)";
+                }
+                else if (DilatationRateCmPerHour == 0 && Dilatation >= 4)
+                {
+                    // Arrested dilatation (no progress)
+                    ArrestedDilatation = true;
+                    ProgressionRate = "Arrested (No progress)";
+                }
+                else if (DilatationRateCmPerHour >= 1.0m)
+                {
+                    ProtractedActivePhase = false;
+                    ArrestedDilatation = false;
+                    ProgressionRate = "Normal (≥1 cm/hour)";
+                }
+            }
+
+            // Auto-flag prolonged latent phase if dilatation <4cm for extended time
+            if (Dilatation < 4 && Dilatation > 0)
+            {
+                // This would need historical data to determine if it's truly prolonged
+                // For now, we just note it's in latent phase
+                ProlongedLatentPhase = false; // Would need time tracking
             }
         }
 

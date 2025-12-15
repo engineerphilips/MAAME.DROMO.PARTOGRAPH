@@ -48,8 +48,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         // WHO 2020 Enhanced Temperature Assessment Fields
 
         // Original fields
-        [ObservableProperty]
         private float _temperatureCelsius;
+        public float TemperatureCelsius
+        {
+            get => _temperatureCelsius;
+            set
+            {
+                SetProperty(ref _temperatureCelsius, value);
+                AutoCalculateTemperatureFields();
+            }
+        }
 
         [ObservableProperty]
         private string _measurementSite = "Oral";

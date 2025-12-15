@@ -102,6 +102,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // Advanced Fields Toggle
+        [ObservableProperty]
+        private bool _showAdvancedFields = false;
+
         // WHO 2020 Enhanced BP Assessment Fields
 
         // Original fields (already have Systolic, Diastolic, Pulse above)
@@ -274,22 +278,60 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     BPColor = Colors.Red;
                     BPStatus = "⚠️ Severe hypertension - Immediate action required";
+
+                    // Auto-flag severe hypertension
+                    SevereHypertension = true;
+                    PreeclampsiaRange = true;
+                    BpCategory = "Severe Hypertension (≥160/110)";
+
+                    // Set first elevated BP time if not already set
+                    if (!FirstElevatedBPTime.HasValue)
+                    {
+                        FirstElevatedBPTime = DateTime.Now;
+                        ConsecutiveElevatedReadings = 1;
+                    }
+                    else
+                    {
+                        ConsecutiveElevatedReadings = (ConsecutiveElevatedReadings ?? 0) + 1;
+                    }
                 }
                 else
                 {
                     BPColor = Colors.Orange;
                     BPStatus = "Mild hypertension - Monitor closely";
+
+                    SevereHypertension = false;
+                    PreeclampsiaRange = true;
+                    BpCategory = "Mild Hypertension (140-159/90-109)";
+
+                    if (!FirstElevatedBPTime.HasValue)
+                    {
+                        FirstElevatedBPTime = DateTime.Now;
+                        ConsecutiveElevatedReadings = 1;
+                    }
                 }
             }
             else if (Systolic < 90 || Diastolic < 60)
             {
                 BPColor = Colors.Orange;
                 BPStatus = "Hypotension - Monitor closely";
+
+                SevereHypertension = false;
+                PreeclampsiaRange = false;
+                Hypotension = true;
+                BpCategory = "Hypotension (<90/60)";
             }
             else
             {
                 BPColor = Colors.Green;
                 BPStatus = "Normal blood pressure";
+
+                SevereHypertension = false;
+                PreeclampsiaRange = false;
+                Hypotension = false;
+                BpCategory = "Normal (90-139/60-89)";
+                FirstElevatedBPTime = null;
+                ConsecutiveElevatedReadings = null;
             }
         }
 

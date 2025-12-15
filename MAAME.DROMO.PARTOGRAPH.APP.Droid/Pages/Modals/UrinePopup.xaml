@@ -72,7 +72,7 @@
                     </buttons:SfSegmentedControl>
 
                     <!-- WHO 2020 Critical Urine Assessment -->
-                    <Label Text="Urine Output &amp; Oliguria" FontAttributes="Bold" Margin="0,10,0,5" />
+                    <Label Text="Urine Output & Oliguria" FontAttributes="Bold" Margin="0,10,0,5" />
 
                     <core:SfTextInputLayout Hint="Output Volume (ml)"
                                         Style="{StaticResource PatientInput}"
@@ -119,6 +119,9 @@
 
                     <CheckBox IsChecked="{Binding CatheterizationPerformed}" />
                     <Label Text="Catheterization Performed" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    </VerticalStackLayout>
+                    <!-- End Advanced Fields Section -->
 
                     <core:SfTextInputLayout Hint="Additional Notes"
                                         Style="{StaticResource PatientInput}"
