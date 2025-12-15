@@ -59,6 +59,73 @@
                            ReturnType="Next" />
                     </core:SfTextInputLayout>
 
+                    <!-- WHO 2020 Enhanced Assessment -->
+                    <Label Text="WHO 2020 Detailed Assessment" FontAttributes="Bold" FontSize="16" Margin="0,15,0,5"/>
+
+                    <core:SfTextInputLayout Hint="Posture Category" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding PostureCategory}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <core:SfTextInputLayout Grid.Column="0" Hint="Start Time" Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding StartTime}" />
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Grid.Column="1" Hint="End Time" Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding EndTime}" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Duration (Minutes)" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding DurationMinutes}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Reason" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding Reason}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Effects" FontAttributes="Bold" Margin="0,10,0,5"/>
+                    <core:SfTextInputLayout Hint="Effect on Labor" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding EffectOnLabor}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+                    <core:SfTextInputLayout Hint="Effect on Pain" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding EffectOnPain}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+                    <core:SfTextInputLayout Hint="Effect on Contractions" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding EffectOnContractions}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Assessment" FontAttributes="Bold" Margin="0,10,0,5"/>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                            <Label Text="Patient Choice"/>
+                            <Switch IsToggled="{Binding PatientChoice}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                            <Label Text="Medically Indicated"/>
+                            <Switch IsToggled="{Binding MedicallyIndicated}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                            <Label Text="Mobile and Active"/>
+                            <Switch IsToggled="{Binding MobileAndActive}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                            <Label Text="Restricted Mobility"/>
+                            <Switch IsToggled="{Binding RestrictedMobility}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Mobility Restriction" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding MobilityRestriction}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Support Equipment" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding SupportEquipment}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Clinical Alert" Style="{StaticResource PatientInput}" ContainerBackground="LightYellow">
+                        <Entry Text="{Binding ClinicalAlert}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
                     <!-- Action Buttons -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <Button Text="Cancel"

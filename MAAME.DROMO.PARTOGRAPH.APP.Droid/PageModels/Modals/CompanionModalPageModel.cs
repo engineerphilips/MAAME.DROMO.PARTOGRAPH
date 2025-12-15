@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
@@ -37,6 +37,70 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private string _companionDisplay = string.Empty;
 
+        // WHO 2020 Enhancements
+        [ObservableProperty]
+        private bool _companionPresent;
+
+        [ObservableProperty]
+        private string _companionType = string.Empty;
+
+        [ObservableProperty]
+        private int _numberOfCompanions;
+
+        [ObservableProperty]
+        private string _companionName = string.Empty;
+
+        [ObservableProperty]
+        private string _companionRelationship = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _arrivalTime;
+
+        [ObservableProperty]
+        private DateTime? _departureTime;
+
+        [ObservableProperty]
+        private int? _durationMinutes;
+
+        [ObservableProperty]
+        private bool _continuousPresence;
+
+        [ObservableProperty]
+        private string _participationLevel = string.Empty;
+
+        [ObservableProperty]
+        private string _supportActivities = string.Empty;
+
+        [ObservableProperty]
+        private bool _patientRequestedCompanion;
+
+        [ObservableProperty]
+        private bool _patientDeclinedCompanion;
+
+        [ObservableProperty]
+        private string _reasonForNoCompanion = string.Empty;
+
+        [ObservableProperty]
+        private bool _staffOrientedCompanion;
+
+        [ObservableProperty]
+        private bool _companionInvolvedInDecisions;
+
+        [ObservableProperty]
+        private bool _languageBarrier;
+
+        [ObservableProperty]
+        private bool _interpreterRequired;
+
+        [ObservableProperty]
+        private bool _culturalPractices;
+
+        [ObservableProperty]
+        private string _culturalPracticesDetails = string.Empty;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
+
         [ObservableProperty]
         private bool _isBusy;
 
@@ -44,30 +108,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             _companionRepository = companionRepository;
             _errorHandler = errorHandler;
-
-            // Set default recorded by from preferences
             RecordedBy = Preferences.Get("StaffName", "Staff");
         }
 
-        //public void ApplyQueryAttributes(IDictionary<string, object> query)
-        //{
-        //    if (query.ContainsKey("patientId"))
-        //    {
-        //        Guid? patientId = Guid.Parse(Convert.ToString(query["patientId"]));
-        //        LoadPatient(patientId).FireAndForgetSafeAsync(_errorHandler);
-        //    }
-        //}
-
         public async Task LoadPatient(Guid? patientId)
         {
-
             try
             {
-                // This would typically load from PatientRepository
-                // For now, we'll use the patient ID directly
                 PatientName = $"Patient ID: {patientId}";
-
-                // Load last pain relief entry to prefill some values
                 var lastEntry = await _companionRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
@@ -79,54 +127,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 _errorHandler.HandleError(e);
             }
         }
-
-        //partial void OnPainReliefMethodChanged(string value)
-        //{
-        //    // Show medication details for pharmacological interventions
-        //    ShowMedicationDetails = value is "Paracetamol" or "Codeine" or "Pethidine injection"
-        //                                   or "Gas and air (Entonox)" or "Epidural" or "Spinal block"
-        //                                   or "Combined spinal-epidural";
-        //}
-
-        //partial void OnEffectivenessPoorChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessFair = false;
-        //        EffectivenessGood = false;
-        //        EffectivenessExcellent = false;
-        //    }
-        //}
-
-        //partial void OnEffectivenessFairChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessPoor = false;
-        //        EffectivenessGood = false;
-        //        EffectivenessExcellent = false;
-        //    }
-        //}
-
-        //partial void OnEffectivenessGoodChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessPoor = false;
-        //        EffectivenessFair = false;
-        //        EffectivenessExcellent = false;
-        //    }
-        //}
-
-        //partial void OnEffectivenessExcellentChanged(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        EffectivenessPoor = false;
-        //        EffectivenessFair = false;
-        //        EffectivenessGood = false;
-        //    }
-        //}
 
         [RelayCommand]
         private async Task Save()
@@ -154,17 +154,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Companion = CompanionIndex == 0 ? "N" : CompanionIndex == 1 ? "Y" : CompanionIndex == 2 ? "D" : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
-                    Handler = Constants.Staff?.ID
+                    Handler = Constants.Staff?.ID,
+                    // WHO 2020 Enhancements
+                    CompanionPresent = CompanionPresent,
+                    CompanionType = CompanionType,
+                    NumberOfCompanions = NumberOfCompanions,
+                    CompanionName = CompanionName,
+                    CompanionRelationship = CompanionRelationship,
+                    ArrivalTime = ArrivalTime,
+                    DepartureTime = DepartureTime,
+                    DurationMinutes = DurationMinutes,
+                    ContinuousPresence = ContinuousPresence,
+                    ParticipationLevel = ParticipationLevel,
+                    SupportActivities = SupportActivities,
+                    PatientRequestedCompanion = PatientRequestedCompanion,
+                    PatientDeclinedCompanion = PatientDeclinedCompanion,
+                    ReasonForNoCompanion = ReasonForNoCompanion,
+                    StaffOrientedCompanion = StaffOrientedCompanion,
+                    CompanionInvolvedInDecisions = CompanionInvolvedInDecisions,
+                    LanguageBarrier = LanguageBarrier,
+                    InterpreterRequired = InterpreterRequired,
+                    CulturalPractices = CulturalPractices,
+                    CulturalPracticesDetails = CulturalPracticesDetails,
+                    ClinicalAlert = ClinicalAlert
                 };
 
                 if (await _companionRepository.SaveItemAsync(entry) != null)
                 {
                     await AppShell.DisplayToastAsync("Companion assessment saved successfully");
-
-                    // Reset fields to default
                     ResetFields();
-
-                    // Close the popup
                     ClosePopup?.Invoke();
                 }
                 else
@@ -195,15 +213,28 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             CompanionIndex = -1;
             Notes = string.Empty;
+            // WHO 2020 fields
+            CompanionPresent = false;
+            CompanionType = string.Empty;
+            NumberOfCompanions = 0;
+            CompanionName = string.Empty;
+            CompanionRelationship = string.Empty;
+            ArrivalTime = null;
+            DepartureTime = null;
+            DurationMinutes = null;
+            ContinuousPresence = false;
+            ParticipationLevel = string.Empty;
+            SupportActivities = string.Empty;
+            PatientRequestedCompanion = false;
+            PatientDeclinedCompanion = false;
+            ReasonForNoCompanion = string.Empty;
+            StaffOrientedCompanion = false;
+            CompanionInvolvedInDecisions = false;
+            LanguageBarrier = false;
+            InterpreterRequired = false;
+            CulturalPractices = false;
+            CulturalPracticesDetails = string.Empty;
+            ClinicalAlert = string.Empty;
         }
-
-        //private string GetSelectedEffectiveness()
-        //{
-        //    if (EffectivenessPoor) return "Poor";
-        //    if (EffectivenessFair) return "Fair";
-        //    if (EffectivenessGood) return "Good";
-        //    if (EffectivenessExcellent) return "Excellent";
-        //    return "";
-        //}
     }
 }
