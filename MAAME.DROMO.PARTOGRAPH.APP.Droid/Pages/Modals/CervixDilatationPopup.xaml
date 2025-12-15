@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.CervixDilatationPopup">
 
@@ -38,14 +39,22 @@
                         <TimePicker Time="{Binding RecordingTime, Mode=TwoWay}" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Hint="Cervix Dilatation (cm)"
-                                            Style="{StaticResource PatientInput}"
-                                            HelperText="Dilatation 0-10 cm">
-                        <editors:SfNumericEntry Value="{Binding Dilatation, Mode=TwoWay}"
-                                               Minimum="0" Maximum="10"
-                                               CustomFormat="0"
-                                               ValueChangeMode="OnKeyFocus" />
-                    </core:SfTextInputLayout>
+                    <VerticalStackLayout Padding="10,0,0,0">
+                        <Label Text="Cervix Dilatation (cm)" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+
+                    <buttons:SfSegmentedControl x:Name="dilatationSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="6" SelectedIndex="{Binding DilatationRangeIndex, Mode=TwoWay}">
+                        <buttons:SfSegmentedControl.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>0-2cm</x:String>
+                                <x:String>3-4cm</x:String>
+                                <x:String>5-6cm</x:String>
+                                <x:String>7-8cm</x:String>
+                                <x:String>9cm</x:String>
+                                <x:String>10cm</x:String>
+                            </x:Array>
+                        </buttons:SfSegmentedControl.ItemsSource>
+                    </buttons:SfSegmentedControl>
 
                     <!-- Advanced Fields Toggle -->
                     <Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"

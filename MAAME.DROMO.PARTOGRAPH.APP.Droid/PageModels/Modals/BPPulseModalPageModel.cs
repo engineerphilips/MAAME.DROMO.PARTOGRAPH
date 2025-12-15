@@ -24,6 +24,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
+        // Segmented Control Indices
+        [ObservableProperty]
+        private int _pulseRangeIndex = -1;
+
+        [ObservableProperty]
+        private int _systolicRangeIndex = -1;
+
+        [ObservableProperty]
+        private int _diastolicRangeIndex = -1;
+
         private void InitializeData()
         {
             UpdatePulseStatus();
