@@ -172,27 +172,32 @@
                     Command="{Binding OpenBishopScorePopupCommand}">
                 <buttons:SfButton.Content>
                     <DataTemplate>
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4" VerticalOptions="Center">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4" VerticalOptions="Center" Padding="20,0">
                         <!-- Icon and Title -->
-                            <Label Grid.Column="0" VerticalOptions="Center" Text="Bishop Score"
+                            <!--<Label Grid.Column="0" VerticalOptions="Center" Text="Bishop Score"
                             FontSize="12"
                             FontAttributes="Bold"
-                            HorizontalOptions="Center" />
+                            HorizontalOptions="Center" />-->
 
                             <!-- Latest Score Info -->
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
-                            <Label Text="{Binding BishopScoreLatestValue}"
+                            <!--<Label Text="{Binding BishopScoreLatestValue}"
                                    FontSize="14"
-                                   TextColor="#666" />
-                            <Label Text="{Binding BishopScoreInterpretation}"
+                                   TextColor="#666" />-->
+                                <Label VerticalOptions="Center" Text="Bishop Score"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                             HorizontalOptions="StartAndExpand" />
+                            
+                                <Label Text="{Binding BishopScoreInterpretation}"
                                    FontSize="12"
                                    FontAttributes="Bold"
-                                   TextColor="{Binding BishopScoreStatusColor}" />
-                            <Label Text="{Binding BishopScoreNotes}"
+                                   TextColor="{Binding BishopScoreStatusColor}" HorizontalOptions="StartAndExpand" />
+                            <!--<Label Text="{Binding BishopScoreNotes}"
                                    FontSize="10"
                                    Opacity="0.7"
                                    LineBreakMode="TailTruncation"
-                                   MaxLines="2" />
+                                   MaxLines="2" />-->
                         </VerticalStackLayout>
 
                         <!-- Score Display -->
@@ -203,8 +208,7 @@
                                    TextColor="{Binding BishopScoreStatusColor}"
                                    HorizontalOptions="Center" />
                             <Label Text="out of 13"
-                                   FontSize="10"
-                                   Opacity="0.7"
+                                   FontSize="10" 
                                    HorizontalOptions="Center" />
                         </VerticalStackLayout>
                         </Grid>

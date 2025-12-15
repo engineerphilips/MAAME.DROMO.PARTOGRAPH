@@ -1662,7 +1662,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         score.PartographID = Patient.ID;
 
                         // Save to repository
-                        await _bishopScoreRepository.AddAsync(score);
+                        await _bishopScoreRepository.SaveItemAsync(score);
 
                         // Reload patient data to get updated Bishop Score
                         await RefreshCommand.ExecuteAsync(null);
