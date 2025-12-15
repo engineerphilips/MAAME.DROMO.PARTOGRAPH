@@ -481,14 +481,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             {
                 var latestTemp = patient.Temperatures.OrderByDescending(t => t.Time).First();
 
-                if (latestTemp.Rate >= AlertThresholds.TEMP_CRITICAL_MAX)
+                if (latestTemp.TemperatureCelsius >= AlertThresholds.TEMP_CRITICAL_MAX)
                 {
                     alerts.Add(new ClinicalAlert
                     {
                         Severity = AlertSeverity.Critical,
                         Category = AlertCategory.Maternal,
                         Title = "High Fever Detected",
-                        Message = $"Temperature: {latestTemp.Rate:F1}°C - Significant pyrexia.",
+                        Message = $"Temperature: {latestTemp.TemperatureCelsius:F1}°C - Significant pyrexia.",
                         RecommendedActions = new List<string>
                         {
                             "Assess for chorioamnionitis (if membranes ruptured)",
@@ -499,18 +499,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                             "Monitor fetal heart rate closely"
                         },
                         MeasurementType = "Temperature",
-                        CurrentValue = $"{latestTemp.Rate:F1}°C",
+                        CurrentValue = $"{latestTemp.TemperatureCelsius:F1}°C",
                         ExpectedRange = $"<{AlertThresholds.TEMP_WARNING_MAX}°C"
                     });
                 }
-                else if (latestTemp.Rate >= AlertThresholds.TEMP_WARNING_MAX)
+                else if (latestTemp.TemperatureCelsius >= AlertThresholds.TEMP_WARNING_MAX)
                 {
                     alerts.Add(new ClinicalAlert
                     {
                         Severity = AlertSeverity.Warning,
                         Category = AlertCategory.Maternal,
                         Title = "Elevated Temperature",
-                        Message = $"Temperature: {latestTemp.Rate:F1}°C - Above normal.",
+                        Message = $"Temperature: {latestTemp.TemperatureCelsius:F1}°C - Above normal.",
                         RecommendedActions = new List<string>
                         {
                             "Recheck temperature in 30 minutes",
@@ -520,18 +520,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                             "Inform attending physician"
                         },
                         MeasurementType = "Temperature",
-                        CurrentValue = $"{latestTemp.Rate:F1}°C",
+                        CurrentValue = $"{latestTemp.TemperatureCelsius:F1}°C",
                         ExpectedRange = $"{AlertThresholds.TEMP_NORMAL_MIN}-{AlertThresholds.TEMP_NORMAL_MAX}°C"
                     });
                 }
-                else if (latestTemp.Rate < AlertThresholds.TEMP_NORMAL_MIN)
+                else if (latestTemp.TemperatureCelsius < AlertThresholds.TEMP_NORMAL_MIN)
                 {
                     alerts.Add(new ClinicalAlert
                     {
                         Severity = AlertSeverity.Warning,
                         Category = AlertCategory.Maternal,
                         Title = "Low Temperature",
-                        Message = $"Temperature: {latestTemp.Rate:F1}°C - Below normal.",
+                        Message = $"Temperature: {latestTemp.TemperatureCelsius:F1}°C - Below normal.",
                         RecommendedActions = new List<string>
                         {
                             "Ensure adequate room temperature",
@@ -540,7 +540,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                             "Recheck temperature"
                         },
                         MeasurementType = "Temperature",
-                        CurrentValue = $"{latestTemp.Rate:F1}°C",
+                        CurrentValue = $"{latestTemp.TemperatureCelsius:F1}°C",
                         ExpectedRange = $">{AlertThresholds.TEMP_NORMAL_MIN}°C"
                     });
                 }
@@ -573,14 +573,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     });
                 }
 
-                if (AlertThresholds.URINE_ACETONE_WARNING.Contains(latestUrine.Acetone))
+                if (AlertThresholds.URINE_ACETONE_WARNING.Contains(latestUrine.Ketones))
                 {
                     alerts.Add(new ClinicalAlert
                     {
                         Severity = AlertSeverity.Warning,
                         Category = AlertCategory.Maternal,
                         Title = "Ketonuria Detected",
-                        Message = $"Urine acetone: {latestUrine.Acetone} - May indicate dehydration or starvation ketosis.",
+                        Message = $"Urine acetone: {latestUrine.Ketones} - May indicate dehydration or starvation ketosis.",
                         RecommendedActions = new List<string>
                         {
                             "Assess hydration status",
@@ -590,7 +590,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                             "Monitor for diabetic ketoacidosis if diabetic"
                         },
                         MeasurementType = "Urine Acetone",
-                        CurrentValue = latestUrine.Acetone,
+                        CurrentValue = latestUrine.Ketones,
                         ExpectedRange = "Negative"
                     });
                 }

@@ -207,7 +207,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             var temp = GetMeasurementAtTime(partograph.Temperatures, timePoint);
             if (temp != null)
             {
-                vitals.Add($"temperature {temp.Rate}°C");
+                vitals.Add($"temperature {temp.TemperatureCelsius}°C");
             }
 
             if (vitals.Any())
@@ -389,7 +389,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             bool parametersNormal = true;
             if (fhr != null && (fhr.Rate < 110 || fhr.Rate > 160)) parametersNormal = false;
             if (bp != null && (bp.Systolic > 140 || bp.Diastolic > 90)) parametersNormal = false;
-            if (temp != null && (temp.Rate < 36.5 || temp.Rate > 37.5)) parametersNormal = false;
+            if (temp != null && (temp.TemperatureCelsius < 36.5 || temp.TemperatureCelsius > 37.5)) parametersNormal = false;
 
             if (parametersNormal)
             {

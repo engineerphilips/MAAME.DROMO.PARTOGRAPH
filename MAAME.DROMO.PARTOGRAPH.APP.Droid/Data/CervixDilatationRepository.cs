@@ -64,41 +64,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             CREATE INDEX IF NOT EXISTS idx_cervix_dilatation_sync ON Tbl_CervixDilatation(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_cervix_dilatation_server_version ON Tbl_CervixDilatation(serverversion);
-
-            -- Add WHO 2020 columns to existing tables
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN effacementPercent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN consistency TEXT DEFAULT 'Medium';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN position TEXT DEFAULT 'Mid';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN applicationToHead INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalEdema TEXT DEFAULT 'None';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN membraneStatus TEXT DEFAULT '';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalLip INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN dilatationRateCmPerHour REAL;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN progressionRate TEXT DEFAULT '';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN crossedActionLine INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN crossedAlertLine INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN actionLineCrossedTime TEXT;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalLengthCm REAL;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN examinerName TEXT DEFAULT '';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN examDurationMinutes INTEGER;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN difficultExam INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN examDifficulty TEXT DEFAULT '';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalThickness TEXT DEFAULT '';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN anteriorCervicalLip INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN posteriorCervicalLip INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalDilatationPattern TEXT DEFAULT '';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN stationRelativeToPelvicSpines INTEGER;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN presentingPartPosition TEXT DEFAULT '';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN presentingPartWellApplied INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN membranesBulging INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN forewatersPresent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN hindwatersPresent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN clinicalAlert TEXT DEFAULT '';
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN prolongedLatentPhase INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN protractedActivePhase INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN arrestedDilatation INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_CervixDilatation ADD COLUMN precipitousLabor INTEGER DEFAULT 0;
-
+           
             DROP TRIGGER IF EXISTS trg_cervix_dilatation_insert;
             CREATE TRIGGER trg_cervix_dilatation_insert
             AFTER INSERT ON Tbl_CervixDilatation
@@ -123,6 +89,39 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             END;
             ";
 
+        //-- Add WHO 2020 columns to existing tables
+        //    ALTER TABLE Tbl_CervixDilatation ADD COLUMN effacementPercent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN consistency TEXT DEFAULT 'Medium';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN position TEXT DEFAULT 'Mid';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN applicationToHead INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalEdema TEXT DEFAULT 'None';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN membraneStatus TEXT DEFAULT '';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalLip INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN dilatationRateCmPerHour REAL;
+        //    ALTER TABLE Tbl_CervixDilatation ADD COLUMN progressionRate TEXT DEFAULT '';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN crossedActionLine INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN crossedAlertLine INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN actionLineCrossedTime TEXT;
+        //    ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalLengthCm REAL;
+        //    ALTER TABLE Tbl_CervixDilatation ADD COLUMN examinerName TEXT DEFAULT '';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN examDurationMinutes INTEGER;
+        //    ALTER TABLE Tbl_CervixDilatation ADD COLUMN difficultExam INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN examDifficulty TEXT DEFAULT '';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalThickness TEXT DEFAULT '';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN anteriorCervicalLip INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN posteriorCervicalLip INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN cervicalDilatationPattern TEXT DEFAULT '';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN stationRelativeToPelvicSpines INTEGER;
+        //    ALTER TABLE Tbl_CervixDilatation ADD COLUMN presentingPartPosition TEXT DEFAULT '';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN presentingPartWellApplied INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN membranesBulging INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN forewatersPresent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN hindwatersPresent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN clinicalAlert TEXT DEFAULT '';
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN prolongedLatentPhase INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN protractedActivePhase INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN arrestedDilatation INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_CervixDilatation ADD COLUMN precipitousLabor INTEGER DEFAULT 0;
         public CervixDilatationRepository(ILogger<CervixDilatationRepository> logger) : base(logger) { }
 
         protected override CervixDilatation MapFromReader(SqliteDataReader reader)

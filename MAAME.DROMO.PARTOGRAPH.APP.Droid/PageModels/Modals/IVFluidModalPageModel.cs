@@ -114,7 +114,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var lastEntry = await _ivFluidRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
-                    Rate = lastEntry.Rate;
+                    RateMlPerHour = lastEntry.RateMlPerHour;
                     FluidType = lastEntry.FluidType;
                     VolumeInfused = lastEntry.VolumeInfused;
                 }
@@ -144,7 +144,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
                     FluidType = FluidType,
                     VolumeInfused = VolumeInfused,
-                    Rate = Rate,
+                    //Rate = Rate,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID,

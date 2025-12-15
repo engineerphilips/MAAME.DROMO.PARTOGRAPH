@@ -903,7 +903,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             var latestTemp = Patient.Temperatures?.OrderByDescending(e => e.Time).FirstOrDefault();
             var tempStatus = MeasurementStatusHelper.CalculateStatus<Temperature>(
                 latestTemp?.Time,
-                latestTemp != null ? $"{latestTemp.Rate:F1}°C" : "");
+                latestTemp != null ? $"{latestTemp.TemperatureCelsius:F1}°C" : "");
             TemperatureLatestValue = tempStatus.LatestValue;
             TemperatureStatusText = tempStatus.DueStatusText;
             TemperatureButtonColor = tempStatus.ButtonColor;
@@ -914,7 +914,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 var urineStatus = MeasurementStatusHelper.CalculateStatus<Urine>(
                 latestUrine?.Time,
-                latestUrine != null ? $"P:{latestUrine.Protein}, A:{latestUrine.Acetone}" : "");
+                latestUrine != null ? $"P:{latestUrine.Protein}, A:{latestUrine.Ketones}" : "");
                 UrineLatestValue = urineStatus.LatestValue;
                 UrineStatusText = urineStatus.DueStatusText;
                 UrineButtonColor = urineStatus.ButtonColor;

@@ -302,7 +302,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 var latestTemp = await tempRepo.GetLatestByPatientAsync(Partograph.ID);
                 if (latestTemp != null)
                 {
-                    MaternalTemperature = (decimal) (latestTemp?.Rate ?? 0);
+                    MaternalTemperature = (decimal) (latestTemp?.TemperatureCelsius ?? 0);
                 }
 
                 var latestFHR = await fhrRepo.GetLatestByPatientAsync(Partograph.ID);

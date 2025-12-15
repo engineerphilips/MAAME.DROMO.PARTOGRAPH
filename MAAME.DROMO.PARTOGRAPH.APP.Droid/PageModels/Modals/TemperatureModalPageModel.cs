@@ -29,8 +29,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
-        [ObservableProperty]
-        private float? _rate;
+        //[ObservableProperty]
+        //private float? _rate;
 
         [ObservableProperty]
         private string _notes = string.Empty;
@@ -45,7 +45,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         // Original fields
         [ObservableProperty]
-        private float _temperatureCelsius;
+        private float? _temperatureCelsius;
 
         [ObservableProperty]
         private string _measurementSite = "Oral";
@@ -191,7 +191,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var lastEntry = await _temperatureRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
-                    Rate = lastEntry.Rate;
+                    TemperatureCelsius = lastEntry.TemperatureCelsius;
                 }
             }
             catch (Exception e)
@@ -217,7 +217,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    Rate = Rate ?? 0,
+                    TemperatureCelsius = TemperatureCelsius ?? 0,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
@@ -259,7 +259,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             RecordingDate = DateOnly.FromDateTime(DateTime.Now);
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-            Rate = null;
+            TemperatureCelsius = null;
             Notes = string.Empty;
         }
     }

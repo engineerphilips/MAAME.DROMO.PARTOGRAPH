@@ -556,7 +556,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         e.Time >= slotStartTime && e.Time < slotEndTime);
                     if (temperatureEntry != null)
                     {
-                        timeSlot.Temperature = temperatureEntry.Rate;
+                        timeSlot.Temperature = temperatureEntry.TemperatureCelsius;
                     }
 
                     // Find urine entry for this time slot
@@ -568,9 +568,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         {
                             timeSlot.UrineProtein = urineEntry.Protein;
                         }
-                        if (!string.IsNullOrEmpty(urineEntry.Acetone))
+                        if (!string.IsNullOrEmpty(urineEntry.Ketones))
                         {
-                            timeSlot.UrineAcetone = urineEntry.Acetone;
+                            timeSlot.UrineAcetone = urineEntry.Ketones;
                         }
                     }
 
@@ -593,9 +593,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                             timeSlot.IVFluidType = ivFluidEntry.FluidType;
                         }
                         timeSlot.IVFluidVolume = ivFluidEntry.VolumeInfused;
-                        if (!string.IsNullOrEmpty(ivFluidEntry.Rate))
+                        if (ivFluidEntry.RateMlPerHour != null && ivFluidEntry.RateMlPerHour != 0)
                         {
-                            timeSlot.IVFluidRate = ivFluidEntry.Rate;
+                            timeSlot.IVFluidRate = $"{ivFluidEntry.RateMlPerHour} ml/hr";
                         }
                     }
 

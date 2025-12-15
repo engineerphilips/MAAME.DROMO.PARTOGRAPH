@@ -22,7 +22,7 @@
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
             <StackLayout>
-                <Label Text="Fetal Position" VerticalOptions="Center" Margin="15,15,0,0" />
+                <Label Text="FHR &amp; Contraction" VerticalOptions="Center" Margin="15,15,0,0" />
             </StackLayout>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>

@@ -346,7 +346,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 TemperatureData.Add(new ChartDataPoint
                 {
                     Time = temp.Time,
-                    Value = temp.Rate
+                    Value = temp.TemperatureCelsius
                 });
             }
 

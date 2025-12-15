@@ -27,20 +27,20 @@
             <ScrollView>
                 <VerticalStackLayout Padding="15,10" Spacing="10">
                     <core:SfTextInputLayout Hint="Date"
-                                        Style="{StaticResource PatientInput}"
-                                        HelperText="Recording time">
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Recording time">
                         <DatePicker Date="{Binding RecordingDate, Mode=TwoWay}" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Time"
-                                        Style="{StaticResource PatientInput}"
-                                        HelperText="Recording time">
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Recording time">
                         <TimePicker Time="{Binding RecordingTime, Mode=TwoWay}" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Cervix Dilatation (cm)"
-                                        Style="{StaticResource PatientInput}"
-                                        HelperText="Dilatation 0-10 cm">
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Dilatation 0-10 cm">
                         <editors:SfNumericEntry Value="{Binding Dilatation, Mode=TwoWay}"
                                                Minimum="0" Maximum="10"
                                                CustomFormat="0"
@@ -75,7 +75,7 @@
                     <Label Text="Prolonged Latent Phase" Margin="-30,0,0,0" VerticalOptions="Center" />
 
                     <CheckBox IsChecked="{Binding ProtractedActivePhase}" />
-                    <Label Text="⚠️ Protracted Active Phase (<1 cm/hour)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="OrangeRed" />
+                    <Label Text="⚠️ Protracted Active Phase (&lt;1 cm/hour)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="OrangeRed" />
 
                     <CheckBox IsChecked="{Binding ArrestedDilatation}" />
                     <Label Text="⚠️ Arrested Dilatation (No progress for 4 hours)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" />

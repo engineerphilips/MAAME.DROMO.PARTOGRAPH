@@ -1,6 +1,8 @@
 ﻿using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
+using static SQLite.TableMapping;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
@@ -40,18 +42,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            -- Add new columns to existing tables (WHO 2020 enhancements)
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN palpableabdominally TEXT DEFAULT '';
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN engaged INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN synclitism TEXT DEFAULT 'Normal';
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN flexion TEXT DEFAULT 'Flexed';
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN visibleatintroitus INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN crowning INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN rotation TEXT DEFAULT '';
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN descentrate TEXT DEFAULT '';
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN descentregression INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_HeadDescent ADD COLUMN clinicalalert TEXT DEFAULT '';
-
             CREATE INDEX IF NOT EXISTS idx_headdescent_sync ON Tbl_HeadDescent(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_headdescent_server_version ON Tbl_HeadDescent(serverversion);
 
@@ -78,6 +68,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+                
+        //-- Add new columns to existing tables(WHO 2020 enhancements)
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN palpableabdominally TEXT DEFAULT '';
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN engaged INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN synclitism TEXT DEFAULT 'Normal';
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN flexion TEXT DEFAULT 'Flexed';
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN visibleatintroitus INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN crowning INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN rotation TEXT DEFAULT '';
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN descentrate TEXT DEFAULT '';
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN descentregression INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_HeadDescent ADD COLUMN clinicalalert TEXT DEFAULT '';
 
         public HeadDescentRepository(ILogger<HeadDescentRepository> logger) : base(logger) { }
 

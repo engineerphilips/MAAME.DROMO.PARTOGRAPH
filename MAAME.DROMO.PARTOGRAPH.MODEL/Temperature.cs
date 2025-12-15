@@ -87,6 +87,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public int? MonitoringIntervalMinutes { get; set; }
 
         // Display
-        public string? TemperatureDisplay => $"{TemperatureCelsius:F1}°C ({TemperatureFahrenheit:F1}°F)";
+        //public string? TemperatureDisplay => $"{TemperatureCelsius:F1}°C ({TemperatureFahrenheit:F1}°F)";
+        public string? TemperatureDisplay => $"{TemperatureCelsius:F1}°C";
     }
 }

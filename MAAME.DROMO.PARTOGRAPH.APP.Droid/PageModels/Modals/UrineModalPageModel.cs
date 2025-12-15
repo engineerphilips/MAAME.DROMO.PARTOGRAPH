@@ -222,7 +222,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var lastEntry = await _urineRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
-                    AcetoneDisplay = lastEntry.Acetone;
+                    AcetoneDisplay = lastEntry.Ketones;
                     ProteinDisplay = lastEntry.Protein;
                 }
             }
@@ -250,7 +250,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
                     Protein = ProteinIndex == 0 ? "P-" : ProteinIndex == 1 ? "P" : ProteinIndex == 2 ? "P1+" : ProteinIndex == 3 ? "P2+" : ProteinIndex == 4 ? "P3+" : null,
-                    Acetone = AcetoneIndex == 0 ? "P-" : AcetoneIndex == 1 ? "P" : AcetoneIndex == 2 ? "P1+" : AcetoneIndex == 3 ? "P2+" : AcetoneIndex == 4 ? "P3+" : null,
+                    Ketones = AcetoneIndex == 0 ? "P-" : AcetoneIndex == 1 ? "P" : AcetoneIndex == 2 ? "P1+" : AcetoneIndex == 3 ? "P2+" : AcetoneIndex == 4 ? "P3+" : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID

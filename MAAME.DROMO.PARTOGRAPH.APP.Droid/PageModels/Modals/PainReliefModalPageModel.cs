@@ -191,7 +191,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     ContinuousMonitoringRequired = ContinuousMonitoringRequired,
                     BladderCareRequired = BladderCareRequired,
                     LastTopUpTime = LastTopUpTime,
-                    TopUpCount = TopUpCount,
+                    TopUpCount = TopUpCount ?? 0,
                     ContraindicationsChecked = ContraindicationsChecked,
                     ContraindicationsPresent = ContraindicationsPresent,
                     ContraindicationDetails = ContraindicationDetails,

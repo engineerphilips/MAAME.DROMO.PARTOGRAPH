@@ -1590,7 +1590,7 @@
                              StaysOpen="True"
                              ShowCloseButton="True"
                              WidthRequest="312"
-                             HeightRequest="600"
+                             HeightRequest="500"
                              HeaderHeight="50"
                              Grid.Row="0"
                              Grid.RowSpan="5" />
@@ -1599,7 +1599,7 @@
                              StaysOpen="True"
                              ShowCloseButton="True"
                              WidthRequest="312"
-                             HeightRequest="600"
+                             HeightRequest="500"
                              HeaderHeight="50"
                              Grid.Row="0"
                              Grid.RowSpan="5" />

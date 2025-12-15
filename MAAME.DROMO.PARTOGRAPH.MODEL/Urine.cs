@@ -89,9 +89,9 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public bool EncourageOralFluids { get; set; }
         public bool IVFluidsStarted { get; set; }
         public bool CatheterizationPerformed { get; set; }
-        public bool NephrologyCon sultRequired { get; set; }
+        public bool NephrologyConsultRequired { get; set; }
 
         // Display
-        public string? UrineDisplay => $"{OutputMl}ml, Protein:{Protein}, Ketones:{Ketones}";
+        public string? UrineDisplay => $"{OutputMl}ml, Protein:{Protein}, Acetone:{Ketones}";
     }
 }
