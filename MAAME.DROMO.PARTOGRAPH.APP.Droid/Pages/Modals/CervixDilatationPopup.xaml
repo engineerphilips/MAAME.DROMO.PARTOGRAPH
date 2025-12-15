@@ -39,22 +39,14 @@
                         <TimePicker Time="{Binding RecordingTime, Mode=TwoWay}" />
                     </core:SfTextInputLayout>
 
-                    <VerticalStackLayout Padding="10,0,0,0">
-                        <Label Text="Cervix Dilatation (cm)" FontAttributes="Bold"/>
-                    </VerticalStackLayout>
-
-                    <buttons:SfSegmentedControl x:Name="dilatationSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="6" SelectedIndex="{Binding DilatationRangeIndex, Mode=TwoWay}">
-                        <buttons:SfSegmentedControl.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>0-2cm</x:String>
-                                <x:String>3-4cm</x:String>
-                                <x:String>5-6cm</x:String>
-                                <x:String>7-8cm</x:String>
-                                <x:String>9cm</x:String>
-                                <x:String>10cm</x:String>
-                            </x:Array>
-                        </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>
+                    <core:SfTextInputLayout Hint="Cervix Dilatation (cm)"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Dilatation 0-10 cm">
+                        <editors:SfNumericEntry Value="{Binding Dilatation, Mode=TwoWay}"
+                                               Minimum="0" Maximum="10"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
 
                     <!-- Advanced Fields Toggle -->
                     <Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
@@ -78,6 +70,35 @@
 
                         <!-- WHO 2020 Critical Labor Progress Assessment -->
                         <Label Text="Cervical Assessment" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <VerticalStackLayout Padding="10,0,0,0">
+                        <Label Text="Cervical Consistency" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+
+                    <buttons:SfSegmentedControl x:Name="consistencySegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="3" SelectedIndex="{Binding ConsistencyIndex, Mode=TwoWay}">
+                        <buttons:SfSegmentedControl.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Firm</x:String>
+                                <x:String>Medium</x:String>
+                                <x:String>Soft</x:String>
+                            </x:Array>
+                        </buttons:SfSegmentedControl.ItemsSource>
+                    </buttons:SfSegmentedControl>
+
+                    <VerticalStackLayout Padding="10,0,0,0" Margin="0,10,0,0">
+                        <Label Text="Cervical Position" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+
+                    <buttons:SfSegmentedControl x:Name="positionSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="3" SelectedIndex="{Binding PositionIndex, Mode=TwoWay}">
+                        <buttons:SfSegmentedControl.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Posterior</x:String>
+                                <x:String>Mid</x:String>
+                                <x:String>Anterior</x:String>
+                            </x:Array>
+                        </buttons:SfSegmentedControl.ItemsSource>
+                    </buttons:SfSegmentedControl>
+
 
                     <core:SfTextInputLayout Hint="Effacement (%)"
                                         Style="{StaticResource PatientInput}"

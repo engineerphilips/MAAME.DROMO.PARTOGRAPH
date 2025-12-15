@@ -72,13 +72,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         // Segmented Control Indices
         [ObservableProperty]
-        private int _fHRRangeIndex = -1;
+        private int _strengthIndex = -1;
 
         [ObservableProperty]
-        private int _frequencyRangeIndex = -1;
-
-        [ObservableProperty]
-        private int _durationRangeIndex = -1;
+        private int _decelerationIndex = -1;
 
         // WHO 2020 Enhanced Contraction Assessment Fields
 

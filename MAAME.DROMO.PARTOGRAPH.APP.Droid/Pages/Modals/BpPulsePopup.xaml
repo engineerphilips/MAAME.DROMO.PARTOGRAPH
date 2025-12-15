@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
-             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.BpPulsePopup">
 
@@ -39,53 +38,29 @@
                         <TimePicker Time="{Binding RecordingTime}" />
                     </core:SfTextInputLayout>
 
-                    <VerticalStackLayout Padding="10,0,0,0">
-                        <Label Text="Pulse Rate (bpm)" FontAttributes="Bold"/>
-                    </VerticalStackLayout>
+                    <core:SfTextInputLayout Hint="Pulse"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Recording pulse">
+                        <editors:SfNumericEntry Value="{Binding Pulse, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
 
-                    <buttons:SfSegmentedControl x:Name="pulseSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="5" SelectedIndex="{Binding PulseRangeIndex, Mode=TwoWay}">
-                        <buttons:SfSegmentedControl.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>&lt;60</x:String>
-                                <x:String>60-80</x:String>
-                                <x:String>80-100</x:String>
-                                <x:String>100-120</x:String>
-                                <x:String>>120</x:String>
-                            </x:Array>
-                        </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>
+                    <core:SfTextInputLayout Hint="Systolic pressure"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Recording systolic pressure">
+                        <editors:SfNumericEntry Value="{Binding Systolic, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
 
-                    <VerticalStackLayout Padding="10,0,0,0" Margin="0,10,0,0">
-                        <Label Text="Systolic BP (mmHg)" FontAttributes="Bold"/>
-                    </VerticalStackLayout>
-
-                    <buttons:SfSegmentedControl x:Name="systolicSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="5" SelectedIndex="{Binding SystolicRangeIndex, Mode=TwoWay}">
-                        <buttons:SfSegmentedControl.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>&lt;90</x:String>
-                                <x:String>90-120</x:String>
-                                <x:String>120-140</x:String>
-                                <x:String>140-160</x:String>
-                                <x:String>≥160</x:String>
-                            </x:Array>
-                        </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>
-
-                    <VerticalStackLayout Padding="10,0,0,0" Margin="0,10,0,0">
-                        <Label Text="Diastolic BP (mmHg)" FontAttributes="Bold"/>
-                    </VerticalStackLayout>
-
-                    <buttons:SfSegmentedControl x:Name="diastolicSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="5" SelectedIndex="{Binding DiastolicRangeIndex, Mode=TwoWay}">
-                        <buttons:SfSegmentedControl.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>&lt;60</x:String>
-                                <x:String>60-80</x:String>
-                                <x:String>80-90</x:String>
-                                <x:String>90-110</x:String>
-                                <x:String>≥110</x:String>
-                            </x:Array>
-                        </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>
+                    <core:SfTextInputLayout Hint="Diastolic pressure"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Recording diastolic pressure">
+                        <editors:SfNumericEntry Value="{Binding Diastolic, Mode=TwoWay}"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
 
                     <!-- Advanced Fields Toggle -->
                     <Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"

@@ -52,9 +52,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _showAdvancedFields = false;
 
-        // Segmented Control Index
+        // Segmented Control Indices
         [ObservableProperty]
-        private int _dilatationRangeIndex = -1;
+        private int _consistencyIndex = -1;
+
+        [ObservableProperty]
+        private int _positionIndex = -1;
 
         // WHO 2020 Enhanced Cervical Dilatation Assessment Fields
 

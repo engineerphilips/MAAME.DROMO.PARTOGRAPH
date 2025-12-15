@@ -36,9 +36,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private int _acetoneIndex = -1;
 
         [ObservableProperty]
-        private int _outputVolumeIndex = -1;
-
-        [ObservableProperty]
         private string _proteinDisplay = string.Empty;
 
         [ObservableProperty]

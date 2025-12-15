@@ -45,10 +45,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _showAdvancedFields = false;
 
-        // Segmented Control Index
-        [ObservableProperty]
-        private int _temperatureRangeIndex = -1;
-
         // WHO 2020 Enhanced Temperature Assessment Fields
 
         // Original fields

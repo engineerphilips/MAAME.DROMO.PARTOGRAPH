@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
-             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.TemperaturePopup">
 
@@ -39,21 +38,13 @@
                         <TimePicker Time="{Binding RecordingTime}" />
                     </core:SfTextInputLayout>
 
-                    <VerticalStackLayout Padding="10,0,0,0">
-                        <Label Text="Temperature Range" FontAttributes="Bold"/>
-                    </VerticalStackLayout>
-
-                    <buttons:SfSegmentedControl x:Name="temperatureSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="5" SelectedIndex="{Binding TemperatureRangeIndex, Mode=TwoWay}">
-                        <buttons:SfSegmentedControl.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>&lt;36.0°C</x:String>
-                                <x:String>36.0-36.9°C</x:String>
-                                <x:String>37.0-37.4°C</x:String>
-                                <x:String>37.5-37.9°C</x:String>
-                                <x:String>≥38.0°C</x:String>
-                            </x:Array>
-                        </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>
+                    <core:SfTextInputLayout Hint="Temperature (°C)"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Recording temperature">
+                        <editors:SfNumericEntry Value="{Binding TemperatureCelsius, Mode=TwoWay}" Minimum="0"
+                                               CustomFormat="0.0"
+                                               ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
 
                     <!-- Advanced Fields Toggle -->
                     <Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
