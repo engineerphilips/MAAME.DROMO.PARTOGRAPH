@@ -54,7 +54,7 @@
                     </VerticalStackLayout>
 
                     <!-- Advanced Fields Toggle -->
-                    <Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                    <!--<Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
                            BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}"
                            CornerRadius="10"
                            Padding="15,10"
@@ -68,12 +68,12 @@
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light=#333, Dark=White}" />
                         </HorizontalStackLayout>
-                    </Frame>
+                    </Frame>-->
 
                     <!-- WHO 2020 Advanced Fields Section -->
-                    <VerticalStackLayout IsVisible="{Binding ShowAdvancedFields}" Spacing="10">
+                    <!--<VerticalStackLayout IsVisible="{Binding ShowAdvancedFields}" Spacing="10">
 
-                        <!-- WHO 2020 Critical Meconium Assessment -->
+                        --><!-- WHO 2020 Critical Meconium Assessment --><!--
                         <Label Text="Meconium Assessment" FontAttributes="Bold" Margin="0,10,0,5" />
 
                     <CheckBox IsChecked="{Binding MeconiumStaining}" />
@@ -85,7 +85,7 @@
                     <CheckBox IsChecked="{Binding NeonatalTeamAlerted}" />
                     <Label Text="Neonatal Team Alerted" Margin="-30,0,0,0" VerticalOptions="Center" />
 
-                    <!-- Chorioamnionitis Risk -->
+                    --><!-- Chorioamnionitis Risk --><!--
                     <Label Text="Chorioamnionitis Risk" FontAttributes="Bold" Margin="0,10,0,5" />
 
                     <CheckBox IsChecked="{Binding ProlongedRupture}" />
@@ -103,7 +103,7 @@
                     <CheckBox IsChecked="{Binding UterineTenderness}" />
                     <Label Text="Uterine Tenderness" Margin="-30,0,0,0" VerticalOptions="Center" />
 
-                    <!-- Cord Complications -->
+                    --><!-- Cord Complications --><!--
                     <Label Text="Cord Complications" FontAttributes="Bold" Margin="0,10,0,5" />
 
                     <CheckBox IsChecked="{Binding CordProlapse}" />
@@ -112,7 +112,7 @@
                     <CheckBox IsChecked="{Binding CordPresentation}" />
                     <Label Text="Cord Presentation" Margin="-30,0,0,0" VerticalOptions="Center" />
 
-                    </VerticalStackLayout>
+                    </VerticalStackLayout>-->
                     <!-- End Advanced Fields Section -->
 
                     <core:SfTextInputLayout Hint="Additional Notes"

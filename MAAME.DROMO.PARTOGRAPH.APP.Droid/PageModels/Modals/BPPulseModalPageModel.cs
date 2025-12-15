@@ -30,7 +30,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             UpdateBPStatus();
         }
 
-        private int? _pulse = 80;
+        private int? _pulse;
         public int? Pulse
         {
             get => _pulse;
@@ -53,7 +53,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private int? _diastolic = 80;
+        private int? _diastolic;
         public int? Diastolic
         {
             get => _diastolic;

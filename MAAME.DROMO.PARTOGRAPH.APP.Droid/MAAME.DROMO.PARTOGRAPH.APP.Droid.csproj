@@ -42,38 +42,67 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
+		<Description>MAAME DROMO PARTOGRAPH</Description>
+		<PackageIcon>app-smile1.ico</PackageIcon>
+		<PackageTags>Partograph, Maame, Dromo, Labour</PackageTags>
+		<AssemblyVersion>1.0.0.1</AssemblyVersion>
+		<FileVersion>1.0.0.1</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
+	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	  <JavaMaximumHeapSize>3G</JavaMaximumHeapSize>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
+	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-maccatalyst|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
+	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-windows10.0.19041.0|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
+	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
+	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <AndroidUseAapt2>True</AndroidUseAapt2>
+	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	  <JavaMaximumHeapSize>3G</JavaMaximumHeapSize>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
+	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-maccatalyst|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
+	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-windows10.0.19041.0|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
+	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -205,6 +234,13 @@
 	  <MauiXaml Remove="Pages\ProjectListPage.xaml" />
 	  <MauiXaml Remove="Pages\TaskDetailPage.xaml" />
 	  <MauiXaml Remove="Pages\VitalSignsPage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="D:\repos\source codes\SMILE\EMPEROR.SMILE.VIEW\ASSET\app-smile1.ico">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>

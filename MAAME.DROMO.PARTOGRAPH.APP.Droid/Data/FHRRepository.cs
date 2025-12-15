@@ -74,6 +74,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             CREATE INDEX IF NOT EXISTS idx_fhr_sync ON Tbl_FHR(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_fhr_server_version ON Tbl_FHR(serverversion);
 
+            -- ALTER TABLE Tbl_FHR ADD COLUMN deceleration TEXT DEFAULT '';
+
             DROP TRIGGER IF EXISTS trg_fhr_insert;
             CREATE TRIGGER trg_fhr_insert
             AFTER INSERT ON Tbl_FHR
