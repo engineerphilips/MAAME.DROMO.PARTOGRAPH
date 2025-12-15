@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
@@ -19,6 +19,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             _postureRepository = repository;
             _errorHandler = errorHandler;
+            // Set default for PatientChoice
+            PatientChoice = true;
         }
 
         [ObservableProperty]
@@ -40,6 +42,52 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         [ObservableProperty]
         private string _recordedBy = string.Empty;
+
+        // WHO 2020 Enhancements
+        [ObservableProperty]
+        private string _postureCategory = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _startTime;
+
+        [ObservableProperty]
+        private DateTime? _endTime;
+
+        [ObservableProperty]
+        private int? _durationMinutes;
+
+        [ObservableProperty]
+        private string _reason = string.Empty;
+
+        [ObservableProperty]
+        private string _effectOnLabor = string.Empty;
+
+        [ObservableProperty]
+        private string _effectOnPain = string.Empty;
+
+        [ObservableProperty]
+        private string _effectOnContractions = string.Empty;
+
+        [ObservableProperty]
+        private bool _patientChoice = true;
+
+        [ObservableProperty]
+        private bool _medicallyIndicated;
+
+        [ObservableProperty]
+        private bool _mobileAndActive;
+
+        [ObservableProperty]
+        private bool _restrictedMobility;
+
+        [ObservableProperty]
+        private string _mobilityRestriction = string.Empty;
+
+        [ObservableProperty]
+        private string _supportEquipment = string.Empty;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
 
         [ObservableProperty]
         private bool _isBusy;
@@ -87,7 +135,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Posture = PostureIndex == 0 ? "N" : PostureIndex == 1 ? "Y" : PostureIndex == 2 ? "D" : string.Empty,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
-                    Handler = Constants.Staff?.ID
+                    Handler = Constants.Staff?.ID,
+                    // WHO 2020 Enhancements
+                    PostureCategory = PostureCategory,
+                    StartTime = StartTime,
+                    EndTime = EndTime,
+                    DurationMinutes = DurationMinutes,
+                    Reason = Reason,
+                    EffectOnLabor = EffectOnLabor,
+                    EffectOnPain = EffectOnPain,
+                    EffectOnContractions = EffectOnContractions,
+                    PatientChoice = PatientChoice,
+                    MedicallyIndicated = MedicallyIndicated,
+                    MobileAndActive = MobileAndActive,
+                    RestrictedMobility = RestrictedMobility,
+                    MobilityRestriction = MobilityRestriction,
+                    SupportEquipment = SupportEquipment,
+                    ClinicalAlert = ClinicalAlert
                 };
 
                 if (await _postureRepository.SaveItemAsync(entry) != null)
@@ -128,6 +192,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             PostureIndex = -1;
             Notes = string.Empty;
+            // WHO 2020 fields
+            PostureCategory = string.Empty;
+            StartTime = null;
+            EndTime = null;
+            DurationMinutes = null;
+            Reason = string.Empty;
+            EffectOnLabor = string.Empty;
+            EffectOnPain = string.Empty;
+            EffectOnContractions = string.Empty;
+            PatientChoice = true;
+            MedicallyIndicated = false;
+            MobileAndActive = false;
+            RestrictedMobility = false;
+            MobilityRestriction = string.Empty;
+            SupportEquipment = string.Empty;
+            ClinicalAlert = string.Empty;
         }
     }
 }

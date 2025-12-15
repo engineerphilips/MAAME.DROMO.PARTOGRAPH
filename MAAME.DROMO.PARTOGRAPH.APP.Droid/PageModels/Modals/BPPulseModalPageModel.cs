@@ -102,6 +102,136 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // WHO 2020 Enhanced BP Assessment Fields
+
+        // Original fields (already have Systolic, Diastolic, Pulse above)
+        [ObservableProperty]
+        private string _maternalPosition = "Sitting";
+
+        [ObservableProperty]
+        private string _cuffSize = "Standard";
+
+        [ObservableProperty]
+        private bool _repeatMeasurement;
+
+        [ObservableProperty]
+        private bool _irregularPulse;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
+
+        // Hypertension Classification
+        [ObservableProperty]
+        private string _bpCategory = string.Empty;
+
+        [ObservableProperty]
+        private bool _severeHypertension;
+
+        [ObservableProperty]
+        private bool _preeclampsiaRange;
+
+        [ObservableProperty]
+        private DateTime? _firstElevatedBPTime;
+
+        [ObservableProperty]
+        private int? _consecutiveElevatedReadings;
+
+        // Repeat Measurements
+        [ObservableProperty]
+        private int? _secondSystolic;
+
+        [ObservableProperty]
+        private int? _secondDiastolic;
+
+        [ObservableProperty]
+        private DateTime? _secondReadingTime;
+
+        [ObservableProperty]
+        private int? _thirdSystolic;
+
+        [ObservableProperty]
+        private int? _thirdDiastolic;
+
+        [ObservableProperty]
+        private DateTime? _thirdReadingTime;
+
+        // Pulse Details
+        [ObservableProperty]
+        private string _pulseRhythm = string.Empty;
+
+        [ObservableProperty]
+        private string _pulseVolume = string.Empty;
+
+        [ObservableProperty]
+        private string _pulseCharacter = string.Empty;
+
+        [ObservableProperty]
+        private bool _pulseDeficit;
+
+        // Hypotension Assessment
+        [ObservableProperty]
+        private bool _hypotension;
+
+        [ObservableProperty]
+        private string _hypotensionCause = string.Empty;
+
+        [ObservableProperty]
+        private bool _posturalHypotension;
+
+        [ObservableProperty]
+        private int? _posturalDrop;
+
+        // Pre-eclampsia Screening
+        [ObservableProperty]
+        private bool _newOnsetHypertension;
+
+        [ObservableProperty]
+        private bool _knownHypertension;
+
+        [ObservableProperty]
+        private bool _onAntihypertensives;
+
+        [ObservableProperty]
+        private string _antihypertensiveMedication = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _lastAntihypertensiveDose;
+
+        // Associated Symptoms
+        [ObservableProperty]
+        private bool _headache;
+
+        [ObservableProperty]
+        private bool _visualDisturbances;
+
+        [ObservableProperty]
+        private bool _epigastricPain;
+
+        [ObservableProperty]
+        private bool _hyperreflexia;
+
+        [ObservableProperty]
+        private bool _edema;
+
+        // Clinical Response
+        [ObservableProperty]
+        private bool _emergencyProtocolActivated;
+
+        [ObservableProperty]
+        private bool _antihypertensiveGiven;
+
+        [ObservableProperty]
+        private DateTime? _antihypertensiveGivenTime;
+
+        [ObservableProperty]
+        private bool _magnesiumSulfateGiven;
+
+        [ObservableProperty]
+        private bool _ivFluidsGiven;
+
+        [ObservableProperty]
+        private bool _positionChanged;
+
         public BPPulseModalPageModel(BPRepository bPRepository, ModalErrorHandler errorHandler)
         {
             _bPPulseRepository = bPRepository;

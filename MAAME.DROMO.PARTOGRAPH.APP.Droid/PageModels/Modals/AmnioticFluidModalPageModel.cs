@@ -44,6 +44,121 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // WHO 2020 Enhanced Amniotic Fluid Assessment Fields
+
+        // Original fields
+        [ObservableProperty]
+        private string _color = "Clear";
+
+        [ObservableProperty]
+        private bool _meconiumStaining;
+
+        [ObservableProperty]
+        private string _meconiumGrade = string.Empty;
+
+        [ObservableProperty]
+        private string _consistency = "Normal";
+
+        [ObservableProperty]
+        private string _amount = "Normal";
+
+        [ObservableProperty]
+        private string _odor = "None";
+
+        [ObservableProperty]
+        private string _ruptureStatus = "Intact";
+
+        [ObservableProperty]
+        private DateTime? _ruptureTime;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
+
+        // Membrane Rupture Details
+        [ObservableProperty]
+        private string _ruptureMethod = string.Empty;
+
+        [ObservableProperty]
+        private string _ruptureLocation = string.Empty;
+
+        [ObservableProperty]
+        private bool _confirmedRupture;
+
+        [ObservableProperty]
+        private string _confirmationMethod = string.Empty;
+
+        // Fluid Volume Assessment
+        [ObservableProperty]
+        private string _fluidVolume = string.Empty;
+
+        [ObservableProperty]
+        private int? _estimatedVolumeMl;
+
+        [ObservableProperty]
+        private bool _poolingInVagina;
+
+        // Meconium Details
+        [ObservableProperty]
+        private DateTime? _meconiumFirstNotedTime;
+
+        [ObservableProperty]
+        private bool _meconiumThickParticulate;
+
+        [ObservableProperty]
+        private bool _neonatalTeamAlerted;
+
+        [ObservableProperty]
+        private DateTime? _neonatalTeamAlertTime;
+
+        // Chorioamnionitis Risk
+        [ObservableProperty]
+        private bool _prolongedRupture;
+
+        [ObservableProperty]
+        private int? _hoursSinceRupture;
+
+        [ObservableProperty]
+        private bool _maternalFever;
+
+        [ObservableProperty]
+        private bool _maternalTachycardia;
+
+        [ObservableProperty]
+        private bool _fetalTachycardia;
+
+        [ObservableProperty]
+        private bool _uterineTenderness;
+
+        // Blood-Stained Fluid
+        [ObservableProperty]
+        private string _bloodSource = string.Empty;
+
+        [ObservableProperty]
+        private bool _activeBleeding;
+
+        [ObservableProperty]
+        private string _bleedingAmount = string.Empty;
+
+        // Cord Considerations
+        [ObservableProperty]
+        private bool _cordProlapse;
+
+        [ObservableProperty]
+        private bool _cordPresentation;
+
+        [ObservableProperty]
+        private DateTime? _cordComplicationTime;
+
+        // Clinical Actions
+        [ObservableProperty]
+        private bool _antibioticsIndicated;
+
+        [ObservableProperty]
+        private bool _amnioinfusionConsidered;
+
+        [ObservableProperty]
+        private bool _expeditedDeliveryNeeded;
+
         public Action? ClosePopup { get; set; }
 
         internal async Task LoadPatient(Guid? patientId)

@@ -35,6 +35,52 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private string _recordedBy = string.Empty;
 
+        // WHO 2020 Enhancements
+        [ObservableProperty]
+        private string _location = string.Empty;
+
+        [ObservableProperty]
+        private string _size = string.Empty;
+
+        [ObservableProperty]
+        private string _consistency = string.Empty;
+
+        [ObservableProperty]
+        private bool _increasing;
+
+        [ObservableProperty]
+        private bool _decreasing;
+
+        [ObservableProperty]
+        private bool _stable;
+
+        [ObservableProperty]
+        private string _progressionRate = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _firstDetectedTime;
+
+        [ObservableProperty]
+        private int? _durationHours;
+
+        [ObservableProperty]
+        private bool _mouldingPresent;
+
+        [ObservableProperty]
+        private string _mouldingDegree = string.Empty;
+
+        [ObservableProperty]
+        private bool _suggestsObstruction;
+
+        [ObservableProperty]
+        private bool _suggestionProlongedLabor;
+
+        [ObservableProperty]
+        private string _changeFromPrevious = string.Empty;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
+
         [ObservableProperty]
         private bool _isBusy;
 
@@ -99,7 +145,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Degree = DegreeIndex == 0 ? "0" : DegreeIndex == 1 ? "+" : DegreeIndex == 2 ? "++" : DegreeIndex == 3 ? "+++" : null,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
-                    Handler = Constants.Staff?.ID
+                    Handler = Constants.Staff?.ID,
+                    // WHO 2020 Enhancements
+                    Location = Location,
+                    Size = Size,
+                    Consistency = Consistency,
+                    Increasing = Increasing,
+                    Decreasing = Decreasing,
+                    Stable = Stable,
+                    ProgressionRate = ProgressionRate,
+                    FirstDetectedTime = FirstDetectedTime,
+                    DurationHours = DurationHours,
+                    MouldingPresent = MouldingPresent,
+                    MouldingDegree = MouldingDegree,
+                    SuggestsObstruction = SuggestsObstruction,
+                    SuggestionProlongedLabor = SuggestionProlongedLabor,
+                    ChangeFromPrevious = ChangeFromPrevious,
+                    ClinicalAlert = ClinicalAlert
                 };
 
                 if (await _caputRepository.SaveItemAsync(entry) != null)
@@ -140,6 +202,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             DegreeIndex = -1;
             Notes = string.Empty;
+            // WHO 2020 fields
+            Location = string.Empty;
+            Size = string.Empty;
+            Consistency = string.Empty;
+            Increasing = false;
+            Decreasing = false;
+            Stable = false;
+            ProgressionRate = string.Empty;
+            FirstDetectedTime = null;
+            DurationHours = null;
+            MouldingPresent = false;
+            MouldingDegree = string.Empty;
+            SuggestsObstruction = false;
+            SuggestionProlongedLabor = false;
+            ChangeFromPrevious = string.Empty;
+            ClinicalAlert = string.Empty;
         }
     }
 }

@@ -41,6 +41,64 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private string _recordedBy = string.Empty;
 
+        // WHO 2020 Enhancements
+        [ObservableProperty]
+        private bool _suturesOverlapping;
+
+        [ObservableProperty]
+        private bool _reducible;
+
+        [ObservableProperty]
+        private string _location = string.Empty;
+
+        [ObservableProperty]
+        private bool _sagittalSuture;
+
+        [ObservableProperty]
+        private bool _coronalSuture;
+
+        [ObservableProperty]
+        private bool _lambdoidSuture;
+
+        [ObservableProperty]
+        private string _severity = string.Empty;
+
+        [ObservableProperty]
+        private bool _increasing;
+
+        [ObservableProperty]
+        private bool _reducing;
+
+        [ObservableProperty]
+        private bool _stable;
+
+        [ObservableProperty]
+        private string _progressionRate = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _firstDetectedTime;
+
+        [ObservableProperty]
+        private int? _durationHours;
+
+        [ObservableProperty]
+        private bool _caputPresent;
+
+        [ObservableProperty]
+        private string _caputDegree = string.Empty;
+
+        [ObservableProperty]
+        private bool _suggestsObstruction;
+
+        [ObservableProperty]
+        private bool _suggestsCPD;
+
+        [ObservableProperty]
+        private string _changeFromPrevious = string.Empty;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
+
         [ObservableProperty]
         private bool _isBusy;
 
@@ -88,7 +146,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     Degree = DegreeIndex == 0 ? "0" : DegreeIndex == 1 ? "+" : DegreeIndex == 2 ? "++" : DegreeIndex == 3 ? "+++" : string.Empty,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
-                    Handler = Constants.Staff?.ID
+                    Handler = Constants.Staff?.ID,
+                    // WHO 2020 Enhancements
+                    SuturesOverlapping = SuturesOverlapping,
+                    Reducible = Reducible,
+                    Location = Location,
+                    SagittalSuture = SagittalSuture,
+                    CoronalSuture = CoronalSuture,
+                    LambdoidSuture = LambdoidSuture,
+                    Severity = Severity,
+                    Increasing = Increasing,
+                    Reducing = Reducing,
+                    Stable = Stable,
+                    ProgressionRate = ProgressionRate,
+                    FirstDetectedTime = FirstDetectedTime,
+                    DurationHours = DurationHours,
+                    CaputPresent = CaputPresent,
+                    CaputDegree = CaputDegree,
+                    SuggestsObstruction = SuggestsObstruction,
+                    SuggestsCPD = SuggestsCPD,
+                    ChangeFromPrevious = ChangeFromPrevious,
+                    ClinicalAlert = ClinicalAlert
                 };
 
                 if (await _mouldingRepository.SaveItemAsync(entry) != null)
@@ -129,6 +207,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             DegreeIndex = -1;
             Notes = string.Empty;
+            // WHO 2020 fields
+            SuturesOverlapping = false;
+            Reducible = false;
+            Location = string.Empty;
+            SagittalSuture = false;
+            CoronalSuture = false;
+            LambdoidSuture = false;
+            Severity = string.Empty;
+            Increasing = false;
+            Reducing = false;
+            Stable = false;
+            ProgressionRate = string.Empty;
+            FirstDetectedTime = null;
+            DurationHours = null;
+            CaputPresent = false;
+            CaputDegree = string.Empty;
+            SuggestsObstruction = false;
+            SuggestsCPD = false;
+            ChangeFromPrevious = string.Empty;
+            ClinicalAlert = string.Empty;
         }
     }
 }

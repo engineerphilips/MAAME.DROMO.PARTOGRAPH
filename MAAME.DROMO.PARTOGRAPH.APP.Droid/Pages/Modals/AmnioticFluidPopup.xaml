@@ -53,6 +53,45 @@
                         </buttons:SfSegmentedControl>
                     </VerticalStackLayout>
 
+                    <!-- WHO 2020 Critical Meconium Assessment -->
+                    <Label Text="Meconium Assessment" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding MeconiumStaining}" />
+                    <Label Text="Meconium Staining Present" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding MeconiumThickParticulate}" />
+                    <Label Text="⚠️ Thick/Particulate Meconium (Grade 2-3)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="OrangeRed" />
+
+                    <CheckBox IsChecked="{Binding NeonatalTeamAlerted}" />
+                    <Label Text="Neonatal Team Alerted" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <!-- Chorioamnionitis Risk -->
+                    <Label Text="Chorioamnionitis Risk" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding ProlongedRupture}" />
+                    <Label Text="Prolonged Membrane Rupture (>18-24 hours)" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding MaternalFever}" />
+                    <Label Text="Maternal Fever" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding MaternalTachycardia}" />
+                    <Label Text="Maternal Tachycardia" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding FetalTachycardia}" />
+                    <Label Text="Fetal Tachycardia" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding UterineTenderness}" />
+                    <Label Text="Uterine Tenderness" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <!-- Cord Complications -->
+                    <Label Text="Cord Complications" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding CordProlapse}" />
+                    <Label Text="⚠️ CORD PROLAPSE - EMERGENCY" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" FontAttributes="Bold" />
+
+                    <CheckBox IsChecked="{Binding CordPresentation}" />
+                    <Label Text="Cord Presentation" Margin="-30,0,0,0" VerticalOptions="Center" />
+
                     <core:SfTextInputLayout Hint="Additional Notes"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Any other observations...">

@@ -65,6 +65,138 @@
                                    ReturnType="Next" />
                     </core:SfTextInputLayout>
 
+                    <!-- WHO 2020 Enhanced Assessment -->
+                    <Label Text="WHO 2020 Detailed Assessment" FontAttributes="Bold" FontSize="16" Margin="0,15,0,5"/>
+
+                    <Label Text="Pain Assessment" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <core:SfTextInputLayout Grid.Column="0" Hint="Pain Score Before" Style="{StaticResource PatientInput}"
+                                                HelperText="0-10 scale">
+                            <Entry Text="{Binding PainScoreBefore}" Keyboard="Numeric" />
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Grid.Column="1" Hint="Pain Score After" Style="{StaticResource PatientInput}"
+                                                HelperText="0-10 scale">
+                            <Entry Text="{Binding PainScoreAfter}" Keyboard="Numeric" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Pain Assessment Tool" Style="{StaticResource PatientInput}"
+                                            HelperText="VAS, NRS, Wong-Baker, etc.">
+                        <Entry Text="{Binding PainAssessmentTool}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Pain Relief Administration" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <core:SfTextInputLayout Hint="Pain Relief Method" Style="{StaticResource PatientInput}"
+                                            HelperText="Epidural, spinal, opioid, etc.">
+                        <Entry Text="{Binding PainReliefMethod}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Non-Pharmacological Methods" Style="{StaticResource PatientInput}"
+                                            HelperText="Breathing, massage, positioning, etc.">
+                        <Entry Text="{Binding NonPharmacologicalMethods}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Administered Time" Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding AdministeredTime}" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Administered By" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding AdministeredBy}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <core:SfTextInputLayout Grid.Column="0" Hint="Dose" Style="{StaticResource PatientInput}">
+                            <Entry Text="{Binding Dose}" Keyboard="Text" />
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Grid.Column="1" Hint="Route" Style="{StaticResource PatientInput}"
+                                                HelperText="IV, IM, epidural, oral">
+                            <Entry Text="{Binding Route}" Keyboard="Text" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <Label Text="Effectiveness Monitoring" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <core:SfTextInputLayout Hint="Effectiveness" Style="{StaticResource PatientInput}"
+                                            HelperText="Excellent, good, moderate, poor">
+                        <Entry Text="{Binding Effectiveness}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <core:SfTextInputLayout Grid.Column="0" Hint="Time to Effect (min)" Style="{StaticResource PatientInput}">
+                            <Entry Text="{Binding TimeToEffectMinutes}" Keyboard="Numeric" />
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Grid.Column="1" Hint="Duration of Effect (hrs)" Style="{StaticResource PatientInput}">
+                            <Entry Text="{Binding DurationOfEffectHours}" Keyboard="Numeric" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <Label Text="Side Effects and Monitoring" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Side Effects"/>
+                            <Switch IsToggled="{Binding SideEffects}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Continuous Monitoring"/>
+                            <Switch IsToggled="{Binding ContinuousMonitoringRequired}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2">
+                            <Label Text="Bladder Care"/>
+                            <Switch IsToggled="{Binding BladderCareRequired}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Side Effects Description" Style="{StaticResource PatientInput}"
+                                            HelperText="Describe any side effects">
+                        <Entry Text="{Binding SideEffectsDescription}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Top-Up Management" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <core:SfTextInputLayout Grid.Column="0" Hint="Last Top-Up Time" Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding LastTopUpTime}" />
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Grid.Column="1" Hint="Top-Up Count" Style="{StaticResource PatientInput}">
+                            <Entry Text="{Binding TopUpCount}" Keyboard="Numeric" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <Label Text="Contraindications and Consent" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Contraindications Checked"/>
+                            <Switch IsToggled="{Binding ContraindicationsChecked}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Contraindications Present"/>
+                            <Switch IsToggled="{Binding ContraindicationsPresent}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2">
+                            <Label Text="Informed Consent"/>
+                            <Switch IsToggled="{Binding InformedConsentObtained}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Contraindication Details" Style="{StaticResource PatientInput}"
+                                            HelperText="Describe any contraindications">
+                        <Entry Text="{Binding ContraindicationDetails}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Patient Preference" Style="{StaticResource PatientInput}"
+                                            HelperText="Patient's pain relief preferences">
+                        <Entry Text="{Binding PatientPreference}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Clinical Alert" Style="{StaticResource PatientInput}"
+                                            HelperText="Any alerts or concerns" ContainerBackground="LightYellow">
+                        <Entry Text="{Binding ClinicalAlert}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
                     <!-- Action Buttons -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,40">
                         <Button Grid.Column="0"

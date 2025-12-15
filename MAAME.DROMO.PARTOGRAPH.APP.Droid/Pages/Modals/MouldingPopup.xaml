@@ -61,6 +61,120 @@
                            ReturnType="Next" />
                     </core:SfTextInputLayout>
 
+                    <!-- WHO 2020 Enhanced Assessment -->
+                    <Label Text="WHO 2020 Detailed Assessment" FontAttributes="Bold" FontSize="16" Margin="0,15,0,5"/>
+
+                    <Label Text="Suture Assessment" FontAttributes="Bold" Margin="0,10,0,5"/>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="10">
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                            <Label Text="Sutures Overlapping"/>
+                            <Switch IsToggled="{Binding SuturesOverlapping}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                            <Label Text="Reducible"/>
+                            <Switch IsToggled="{Binding Reducible}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Location"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Anatomical location">
+                        <Entry Text="{Binding Location}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Affected Sutures" FontAttributes="Bold" Margin="0,10,0,5"/>
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Sagittal"/>
+                            <Switch IsToggled="{Binding SagittalSuture}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Coronal"/>
+                            <Switch IsToggled="{Binding CoronalSuture}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2">
+                            <Label Text="Lambdoid"/>
+                            <Switch IsToggled="{Binding LambdoidSuture}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Severity"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Mild, Moderate, Severe">
+                        <Entry Text="{Binding Severity}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Progression" FontAttributes="Bold" Margin="0,10,0,5"/>
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Increasing"/>
+                            <Switch IsToggled="{Binding Increasing}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Reducing"/>
+                            <Switch IsToggled="{Binding Reducing}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2">
+                            <Label Text="Stable"/>
+                            <Switch IsToggled="{Binding Stable}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Progression Rate"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Rate of change">
+                        <Entry Text="{Binding ProgressionRate}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="First Detected (Date/Time)"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="When first detected">
+                        <DatePicker Date="{Binding FirstDetectedTime}" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Duration (Hours)"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Duration in hours">
+                        <Entry Text="{Binding DurationHours}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Caput Assessment" FontAttributes="Bold" Margin="0,10,0,5"/>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Label Grid.Column="0" Text="Caput Present" VerticalOptions="Center"/>
+                        <Switch Grid.Column="1" IsToggled="{Binding CaputPresent}" HorizontalOptions="Start"/>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Caput Degree"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="0, +, ++, +++">
+                        <Entry Text="{Binding CaputDegree}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Clinical Indicators" FontAttributes="Bold" Margin="0,10,0,5"/>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Suggests Obstruction"/>
+                            <Switch IsToggled="{Binding SuggestsObstruction}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Suggests CPD"/>
+                            <Switch IsToggled="{Binding SuggestsCPD}" HorizontalOptions="Start"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Change From Previous"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Describe changes">
+                        <Entry Text="{Binding ChangeFromPrevious}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Clinical Alert"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Any alerts or concerns"
+                                        ContainerBackground="LightYellow">
+                        <Entry Text="{Binding ClinicalAlert}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
                     <!-- Action Buttons -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,40">
                         <Button Grid.Column="0"

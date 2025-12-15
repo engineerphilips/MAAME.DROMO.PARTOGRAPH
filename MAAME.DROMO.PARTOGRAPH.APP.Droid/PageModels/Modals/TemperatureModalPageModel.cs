@@ -41,6 +41,142 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // WHO 2020 Enhanced Temperature Assessment Fields
+
+        // Original fields
+        [ObservableProperty]
+        private float _temperatureCelsius;
+
+        [ObservableProperty]
+        private string _measurementSite = "Oral";
+
+        [ObservableProperty]
+        private int? _feverDurationHours;
+
+        [ObservableProperty]
+        private bool _chillsPresent;
+
+        [ObservableProperty]
+        private string _associatedSymptoms = string.Empty;
+
+        [ObservableProperty]
+        private bool _repeatedMeasurement;
+
+        [ObservableProperty]
+        private string _clinicalAlert = string.Empty;
+
+        // Fever Classification
+        [ObservableProperty]
+        private string _feverCategory = string.Empty;
+
+        [ObservableProperty]
+        private bool _intrapartumFever;
+
+        [ObservableProperty]
+        private DateTime? _feverOnsetTime;
+
+        [ObservableProperty]
+        private float? _peakTemperature;
+
+        [ObservableProperty]
+        private DateTime? _peakTemperatureTime;
+
+        // Repeat Measurements
+        [ObservableProperty]
+        private float? _secondTemperature;
+
+        [ObservableProperty]
+        private DateTime? _secondReadingTime;
+
+        [ObservableProperty]
+        private float? _thirdTemperature;
+
+        [ObservableProperty]
+        private DateTime? _thirdReadingTime;
+
+        // Infection Screening
+        [ObservableProperty]
+        private bool _choriamnionitisRisk;
+
+        [ObservableProperty]
+        private bool _prolongedRupture;
+
+        [ObservableProperty]
+        private int? _hoursSinceRupture;
+
+        [ObservableProperty]
+        private bool _maternalTachycardia;
+
+        [ObservableProperty]
+        private bool _fetalTachycardia;
+
+        [ObservableProperty]
+        private bool _uterineTenderness;
+
+        [ObservableProperty]
+        private bool _offensiveLiquor;
+
+        // Associated Symptoms Details
+        [ObservableProperty]
+        private bool _rigorPresent;
+
+        [ObservableProperty]
+        private bool _sweating;
+
+        [ObservableProperty]
+        private bool _headache;
+
+        [ObservableProperty]
+        private bool _myalgiaArthralgia;
+
+        // Sepsis Screening
+        [ObservableProperty]
+        private bool _sepsisScreeningDone;
+
+        [ObservableProperty]
+        private DateTime? _sepsisScreeningTime;
+
+        [ObservableProperty]
+        private string _sepsisRiskLevel = string.Empty;
+
+        [ObservableProperty]
+        private bool _qsofaPositive;
+
+        [ObservableProperty]
+        private int? _qsofaScore;
+
+        // Clinical Response
+        [ObservableProperty]
+        private bool _antipyreticsGiven;
+
+        [ObservableProperty]
+        private string _antipyreticType = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _antipyreticGivenTime;
+
+        [ObservableProperty]
+        private bool _culturesObtained;
+
+        [ObservableProperty]
+        private bool _antibioticsStarted;
+
+        [ObservableProperty]
+        private DateTime? _antibioticsStartTime;
+
+        [ObservableProperty]
+        private bool _ivFluidsGiven;
+
+        [ObservableProperty]
+        private bool _coolingMeasures;
+
+        // Monitoring Frequency
+        [ObservableProperty]
+        private bool _increasedMonitoring;
+
+        [ObservableProperty]
+        private int? _monitoringIntervalMinutes;
+
         public Action? ClosePopup { get; set; }
 
         internal async Task LoadPatient(Guid? patientId)

@@ -47,6 +47,284 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // WHO 2020 Enhanced Contraction Assessment Fields
+
+        // Original Contraction fields
+        [ObservableProperty]
+        private string _strength = "Moderate";
+
+        [ObservableProperty]
+        private string _regularity = "Regular";
+
+        [ObservableProperty]
+        private bool _palpableAtRest;
+
+        [ObservableProperty]
+        private bool _coordinated = true;
+
+        [ObservableProperty]
+        private string _effectOnCervix = string.Empty;
+
+        [ObservableProperty]
+        private int? _intensityMmHg;
+
+        [ObservableProperty]
+        private string _contractionClinicalAlert = string.Empty;
+
+        // Pattern Analysis
+        [ObservableProperty]
+        private string _contractionPattern = string.Empty;
+
+        [ObservableProperty]
+        private bool _tachysystole;
+
+        [ObservableProperty]
+        private bool _hyperstimulation;
+
+        [ObservableProperty]
+        private DateTime? _tachysystoleStartTime;
+
+        [ObservableProperty]
+        private int? _tachysystoleDurationMinutes;
+
+        // Intensity Details
+        [ObservableProperty]
+        private string _intensityAssessment = string.Empty;
+
+        [ObservableProperty]
+        private bool _indentableDuringContraction;
+
+        [ObservableProperty]
+        private bool _uterusRelaxesBetweenContractions = true;
+
+        [ObservableProperty]
+        private int? _relaxationTimeSeconds;
+
+        // IUPC Measurements
+        [ObservableProperty]
+        private int? _restingToneMmHg;
+
+        [ObservableProperty]
+        private int? _peakPressureMmHg;
+
+        [ObservableProperty]
+        private int? _montevideUnits;
+
+        // Duration Patterns
+        [ObservableProperty]
+        private int? _shortestDurationSeconds;
+
+        [ObservableProperty]
+        private int? _longestDurationSeconds;
+
+        [ObservableProperty]
+        private int? _averageDurationSeconds;
+
+        [ObservableProperty]
+        private bool _prolongedContractions;
+
+        [ObservableProperty]
+        private int? _prolongedContractionCount;
+
+        // Frequency Patterns
+        [ObservableProperty]
+        private string _frequencyTrend = string.Empty;
+
+        [ObservableProperty]
+        private bool _irregularFrequency;
+
+        [ObservableProperty]
+        private decimal? _averageIntervalMinutes;
+
+        // Maternal Response
+        [ObservableProperty]
+        private string _maternalCopingLevel = string.Empty;
+
+        [ObservableProperty]
+        private bool _maternalExhaustion;
+
+        [ObservableProperty]
+        private string _painLocation = string.Empty;
+
+        // Oxytocin Relationship
+        [ObservableProperty]
+        private bool _onOxytocin;
+
+        [ObservableProperty]
+        private string _oxytocinEffect = string.Empty;
+
+        [ObservableProperty]
+        private bool _oxytocinAdjustmentNeeded;
+
+        [ObservableProperty]
+        private string _suggestedOxytocinAction = string.Empty;
+
+        // Clinical Management
+        [ObservableProperty]
+        private bool _contractionInterventionRequired;
+
+        [ObservableProperty]
+        private string _contractionInterventionTaken = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _contractionInterventionTime;
+
+        [ObservableProperty]
+        private bool _oxytocinStopped;
+
+        [ObservableProperty]
+        private bool _oxytocinReduced;
+
+        [ObservableProperty]
+        private bool _tocolyticsGiven;
+
+        // Safety Alerts
+        [ObservableProperty]
+        private bool _hypertonicUterus;
+
+        [ObservableProperty]
+        private bool _uterineRuptureRisk;
+
+        [ObservableProperty]
+        private bool _fhrCompromise;
+
+        [ObservableProperty]
+        private bool _contractionEmergencyConsultRequired;
+
+        // WHO 2020 Enhanced FHR Assessment Fields
+
+        // Original FHR fields (Rate already exists above)
+        [ObservableProperty]
+        private string _deceleration = "None";
+
+        [ObservableProperty]
+        private int _decelerationDurationSeconds;
+
+        [ObservableProperty]
+        private string _variability = string.Empty;
+
+        [ObservableProperty]
+        private bool _accelerations;
+
+        [ObservableProperty]
+        private string _pattern = string.Empty;
+
+        [ObservableProperty]
+        private string _monitoringMethod = string.Empty;
+
+        [ObservableProperty]
+        private int? _baselineRate;
+
+        [ObservableProperty]
+        private string _fhrClinicalAlert = string.Empty;
+
+        // Detailed Variability Assessment
+        [ObservableProperty]
+        private int? _variabilityBpm;
+
+        [ObservableProperty]
+        private string _variabilityTrend = string.Empty;
+
+        [ObservableProperty]
+        private bool _sinusoidalPattern;
+
+        [ObservableProperty]
+        private bool _saltatorPattern;
+
+        // Acceleration Details
+        [ObservableProperty]
+        private int? _accelerationCount;
+
+        [ObservableProperty]
+        private int? _accelerationPeakBpm;
+
+        [ObservableProperty]
+        private int? _accelerationDurationSeconds;
+
+        // Deceleration Details
+        [ObservableProperty]
+        private int? _decelerationNadirBpm;
+
+        [ObservableProperty]
+        private string _decelerationRecovery = string.Empty;
+
+        [ObservableProperty]
+        private int? _decelerationAmplitudeBpm;
+
+        [ObservableProperty]
+        private string _decelerationTiming = string.Empty;
+
+        // Bradycardia/Tachycardia
+        [ObservableProperty]
+        private bool _prolongedBradycardia;
+
+        [ObservableProperty]
+        private DateTime? _bradycardiaStartTime;
+
+        [ObservableProperty]
+        private int? _bradycardiaDurationMinutes;
+
+        [ObservableProperty]
+        private bool _tachycardia;
+
+        [ObservableProperty]
+        private DateTime? _tachycardiaStartTime;
+
+        [ObservableProperty]
+        private int? _tachycardiaDurationMinutes;
+
+        // CTG Interpretation
+        [ObservableProperty]
+        private string _ctgClassification = string.Empty;
+
+        [ObservableProperty]
+        private bool _reactiveNST;
+
+        [ObservableProperty]
+        private DateTime? _lastReactiveTime;
+
+        // Maternal Context
+        [ObservableProperty]
+        private string _maternalPosition = string.Empty;
+
+        [ObservableProperty]
+        private bool _duringContraction;
+
+        [ObservableProperty]
+        private bool _betweenContractions;
+
+        // Clinical Response
+        [ObservableProperty]
+        private bool _fhrInterventionRequired;
+
+        [ObservableProperty]
+        private string _fhrInterventionTaken = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _fhrInterventionTime;
+
+        [ObservableProperty]
+        private bool _changeInPosition;
+
+        [ObservableProperty]
+        private bool _oxygenAdministered;
+
+        [ObservableProperty]
+        private bool _ivFluidsIncreased;
+
+        // Obstetric Emergency Indicators
+        [ObservableProperty]
+        private bool _emergencyConsultRequired;
+
+        [ObservableProperty]
+        private string _consultReason = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _consultTime;
+
+        [ObservableProperty]
+        private bool _prepareForEmergencyDelivery;
+
         public Action? ClosePopup { get; set; }
 
         public FHRContractionModalPageModel(ContractionRepository contractionRepository, FHRRepository fHRRepository, FHRPatternAnalysisService fhrAnalysisService, ModalErrorHandler errorHandler)

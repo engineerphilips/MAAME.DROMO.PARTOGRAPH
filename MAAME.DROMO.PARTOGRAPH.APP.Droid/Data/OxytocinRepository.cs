@@ -27,8 +27,40 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 serverversion INTEGER DEFAULT 0,
                 deleted INTEGER DEFAULT 0,
                 conflictdata TEXT,
-                datahash TEXT
+                datahash TEXT,
+                inuse INTEGER DEFAULT 0,
+                starttime TEXT,
+                stoptime TEXT,
+                concentrationmunitsperml REAL DEFAULT 10,
+                infusionratemlperhour REAL DEFAULT 0,
+                indication TEXT DEFAULT '',
+                contraindicationschecked INTEGER DEFAULT 0,
+                contraindicationspresent INTEGER DEFAULT 0,
+                contraindicationdetails TEXT DEFAULT '',
+                response TEXT DEFAULT '',
+                dosetitration TEXT DEFAULT '',
+                timetonextincrease INTEGER DEFAULT 0,
+                maxdosereached INTEGER DEFAULT 0,
+                stoppedreason TEXT DEFAULT '',
+                clinicalalert TEXT DEFAULT ''
             );
+
+            -- Add new columns to existing tables (WHO 2020 enhancements)
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN inuse INTEGER DEFAULT 0;
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN starttime TEXT;
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN stoptime TEXT;
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN concentrationmunitsperml REAL DEFAULT 10;
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN infusionratemlperhour REAL DEFAULT 0;
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN indication TEXT DEFAULT '';
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN contraindicationschecked INTEGER DEFAULT 0;
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN contraindicationspresent INTEGER DEFAULT 0;
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN contraindicationdetails TEXT DEFAULT '';
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN response TEXT DEFAULT '';
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN dosetitration TEXT DEFAULT '';
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN timetonextincrease INTEGER DEFAULT 0;
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN maxdosereached INTEGER DEFAULT 0;
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN stoppedreason TEXT DEFAULT '';
+            ALTER TABLE Tbl_Oxytocin ADD COLUMN clinicalalert TEXT DEFAULT '';
 
             CREATE INDEX IF NOT EXISTS idx_oxytocin_sync ON Tbl_Oxytocin(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_oxytocin_server_version ON Tbl_Oxytocin(serverversion);
@@ -61,33 +93,110 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         protected override Oxytocin MapFromReader(SqliteDataReader reader)
         {
-            return new Oxytocin
+            var item = new Oxytocin
             {
-                ID = Guid.Parse(reader.GetString(0)),
-                PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
-                Time = reader.GetDateTime(2),
-                //Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
-                HandlerName = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
-                Notes = reader.GetString(4),
-                DoseMUnitsPerMin = (decimal)reader.GetDouble(5),
-                TotalVolumeInfused = (decimal)reader.GetDouble(6),
-                CreatedTime = reader.GetInt64(7),
-                UpdatedTime = reader.GetInt64(8),
-                DeletedTime = reader.IsDBNull(9) ? null : reader.GetInt64(9),
-                DeviceId = reader.GetString(10),
-                OriginDeviceId = reader.GetString(11),
-                SyncStatus = reader.GetInt32(12),
-                Version = reader.GetInt32(13),
-                ServerVersion = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
-                Deleted = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
-                ConflictData = reader.IsDBNull(16) ? string.Empty : reader.GetString(16),
-                DataHash = reader.IsDBNull(17) ? string.Empty : reader.GetString(17)
+                ID = Guid.Parse(reader.GetString(reader.GetOrdinal("ID"))),
+                PartographID = reader.IsDBNull(reader.GetOrdinal("partographid")) ? null : Guid.Parse(reader.GetString(reader.GetOrdinal("partographid"))),
+                Time = reader.GetDateTime(reader.GetOrdinal("time")),
+                HandlerName = reader.IsDBNull(reader.GetOrdinal("handler")) ? string.Empty : reader.GetString(reader.GetOrdinal("handler")),
+                Notes = reader.GetString(reader.GetOrdinal("notes")),
+                DoseMUnitsPerMin = (decimal)reader.GetDouble(reader.GetOrdinal("dosemunitspermin")),
+                TotalVolumeInfused = (decimal)reader.GetDouble(reader.GetOrdinal("totalvolumeinfused")),
+                CreatedTime = reader.GetInt64(reader.GetOrdinal("createdtime")),
+                UpdatedTime = reader.GetInt64(reader.GetOrdinal("updatedtime")),
+                DeletedTime = reader.IsDBNull(reader.GetOrdinal("deletedtime")) ? null : reader.GetInt64(reader.GetOrdinal("deletedtime")),
+                DeviceId = reader.GetString(reader.GetOrdinal("deviceid")),
+                OriginDeviceId = reader.GetString(reader.GetOrdinal("origindeviceid")),
+                SyncStatus = reader.GetInt32(reader.GetOrdinal("syncstatus")),
+                Version = reader.GetInt32(reader.GetOrdinal("version")),
+                ServerVersion = reader.IsDBNull(reader.GetOrdinal("serverversion")) ? 0 : reader.GetInt32(reader.GetOrdinal("serverversion")),
+                Deleted = reader.IsDBNull(reader.GetOrdinal("deleted")) ? 0 : reader.GetInt32(reader.GetOrdinal("deleted")),
+                ConflictData = reader.IsDBNull(reader.GetOrdinal("conflictdata")) ? string.Empty : reader.GetString(reader.GetOrdinal("conflictdata")),
+                DataHash = reader.IsDBNull(reader.GetOrdinal("datahash")) ? string.Empty : reader.GetString(reader.GetOrdinal("datahash"))
             };
+
+            // WHO 2020 enhancements - safely read new columns
+            try
+            {
+                item.InUse = GetBoolFromInt(reader, "inuse");
+                item.StartTime = GetNullableDateTime(reader, "starttime");
+                item.StopTime = GetNullableDateTime(reader, "stoptime");
+                item.ConcentrationMUnitsPerMl = GetDecimalOrDefault(reader, "concentrationmunitsperml", 10);
+                item.InfusionRateMlPerHour = GetDecimalOrDefault(reader, "infusionratemlperhour", 0);
+                item.Indication = GetStringOrDefault(reader, "indication");
+                item.ContraindicationsChecked = GetBoolFromInt(reader, "contraindicationschecked");
+                item.ContraindicationsPresent = GetBoolFromInt(reader, "contraindicationspresent");
+                item.ContraindicationDetails = GetStringOrDefault(reader, "contraindicationdetails");
+                item.Response = GetStringOrDefault(reader, "response");
+                item.DoseTitration = GetStringOrDefault(reader, "dosetitration");
+                item.TimeToNextIncrease = GetIntOrDefault(reader, "timetonextincrease", 0);
+                item.MaxDoseReached = GetBoolFromInt(reader, "maxdosereached");
+                item.StoppedReason = GetStringOrDefault(reader, "stoppedreason");
+                item.ClinicalAlert = GetStringOrDefault(reader, "clinicalalert");
+            }
+            catch { /* Columns don't exist yet in old databases */ }
+
+            return item;
+        }
+
+        private bool GetBoolFromInt(SqliteDataReader reader, string columnName)
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                return !reader.IsDBNull(ordinal) && reader.GetInt32(ordinal) == 1;
+            }
+            catch { return false; }
+        }
+
+        private DateTime? GetNullableDateTime(SqliteDataReader reader, string columnName)
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                if (reader.IsDBNull(ordinal)) return null;
+                return DateTime.Parse(reader.GetString(ordinal));
+            }
+            catch { return null; }
+        }
+
+        private decimal GetDecimalOrDefault(SqliteDataReader reader, string columnName, decimal defaultValue = 0)
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                return reader.IsDBNull(ordinal) ? defaultValue : (decimal)reader.GetDouble(ordinal);
+            }
+            catch { return defaultValue; }
+        }
+
+        private string GetStringOrDefault(SqliteDataReader reader, string columnName, string defaultValue = "")
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                return reader.IsDBNull(ordinal) ? defaultValue : reader.GetString(ordinal);
+            }
+            catch { return defaultValue; }
+        }
+
+        private int GetIntOrDefault(SqliteDataReader reader, string columnName, int defaultValue = 0)
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                return reader.IsDBNull(ordinal) ? defaultValue : reader.GetInt32(ordinal);
+            }
+            catch { return defaultValue; }
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_Oxytocin (ID, partographID, time, handler, notes, dosemunitspermin, totalvolumeinfused, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
-        VALUES (@id, @partographId, @time, @handler, @notes, @dosemunitspermin, @totalvolumeinfused, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
+        INSERT INTO Tbl_Oxytocin (ID, partographID, time, handler, notes, dosemunitspermin, totalvolumeinfused, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash,
+            inuse, starttime, stoptime, concentrationmunitsperml, infusionratemlperhour, indication, contraindicationschecked, contraindicationspresent, contraindicationdetails,
+            response, dosetitration, timetonextincrease, maxdosereached, stoppedreason, clinicalalert)
+        VALUES (@id, @partographId, @time, @handler, @notes, @dosemunitspermin, @totalvolumeinfused, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash,
+            @inuse, @starttime, @stoptime, @concentrationmunitsperml, @infusionratemlperhour, @indication, @contraindicationschecked, @contraindicationspresent, @contraindicationdetails,
+            @response, @dosetitration, @timetonextincrease, @maxdosereached, @stoppedreason, @clinicalalert);";
 
         protected override string GetUpdateSql() => @"
         UPDATE Tbl_Oxytocin
@@ -97,6 +206,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             notes = @notes,
             dosemunitspermin = @dosemunitspermin,
             totalvolumeinfused = @totalvolumeinfused,
+            inuse = @inuse,
+            starttime = @starttime,
+            stoptime = @stoptime,
+            concentrationmunitsperml = @concentrationmunitsperml,
+            infusionratemlperhour = @infusionratemlperhour,
+            indication = @indication,
+            contraindicationschecked = @contraindicationschecked,
+            contraindicationspresent = @contraindicationspresent,
+            contraindicationdetails = @contraindicationdetails,
+            response = @response,
+            dosetitration = @dosetitration,
+            timetonextincrease = @timetonextincrease,
+            maxdosereached = @maxdosereached,
+            stoppedreason = @stoppedreason,
+            clinicalalert = @clinicalalert,
             updatedtime = @updatedtime,
             deletedtime = @deletedtime,
             deviceid = @deviceid,
@@ -136,8 +260,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@version", item.Version);
             cmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
             cmd.Parameters.AddWithValue("@deleted", item.Deleted);
-            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
             cmd.Parameters.AddWithValue("@datahash", item.DataHash);
+
+            // WHO 2020 enhancements
+            cmd.Parameters.AddWithValue("@inuse", item.InUse ? 1 : 0);
+            cmd.Parameters.AddWithValue("@starttime", item.StartTime?.ToString("O") ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@stoptime", item.StopTime?.ToString("O") ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@concentrationmunitsperml", (double)item.ConcentrationMUnitsPerMl);
+            cmd.Parameters.AddWithValue("@infusionratemlperhour", (double)item.InfusionRateMlPerHour);
+            cmd.Parameters.AddWithValue("@indication", item.Indication ?? "");
+            cmd.Parameters.AddWithValue("@contraindicationschecked", item.ContraindicationsChecked ? 1 : 0);
+            cmd.Parameters.AddWithValue("@contraindicationspresent", item.ContraindicationsPresent ? 1 : 0);
+            cmd.Parameters.AddWithValue("@contraindicationdetails", item.ContraindicationDetails ?? "");
+            cmd.Parameters.AddWithValue("@response", item.Response ?? "");
+            cmd.Parameters.AddWithValue("@dosetitration", item.DoseTitration ?? "");
+            cmd.Parameters.AddWithValue("@timetonextincrease", item.TimeToNextIncrease);
+            cmd.Parameters.AddWithValue("@maxdosereached", item.MaxDoseReached ? 1 : 0);
+            cmd.Parameters.AddWithValue("@stoppedreason", item.StoppedReason ?? "");
+            cmd.Parameters.AddWithValue("@clinicalalert", item.ClinicalAlert ?? "");
         }
 
         protected override void AddUpdateParameters(SqliteCommand cmd, Oxytocin item)

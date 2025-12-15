@@ -39,19 +39,6 @@
                         <TimePicker Time="{Binding RecordingTime}" />
                     </core:SfTextInputLayout>
 
-                    <!--<VerticalStackLayout Padding="10,0,0,0">
-                        <Label Text="Is the woman on IV fluids?" FontAttributes="Bold"/>
-                    </VerticalStackLayout>
-
-                    <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" VisibleSegmentsCount="2" SelectedIndex="{Binding IVFluidIndex, Mode=TwoWay}">
-                        <buttons:SfSegmentedControl.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>No</x:String>
-                                <x:String>Yes</x:String>
-                            </x:Array>
-                        </buttons:SfSegmentedControl.ItemsSource>
-                    </buttons:SfSegmentedControl>-->
-
                     <core:SfTextInputLayout Hint="Fluid Type"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="IV Fluid Type...">
@@ -82,6 +69,103 @@
                         <Entry Text="{Binding Notes}"
                            Keyboard="Text"
                            ReturnType="Next" />
+                    </core:SfTextInputLayout>
+
+                    <!-- WHO 2020 Enhanced Assessment -->
+                    <Label Text="WHO 2020 Detailed Assessment" FontAttributes="Bold" FontSize="16" Margin="0,15,0,5"/>
+
+                    <Label Text="Infusion Details" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <core:SfTextInputLayout Hint="Rate (mL/hour)" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding RateMlPerHour}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <core:SfTextInputLayout Grid.Column="0" Hint="Start Time" Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding StartTime}" />
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Grid.Column="1" Hint="End Time" Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding EndTime}" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Duration (Minutes)" Style="{StaticResource PatientInput}">
+                        <Entry Text="{Binding DurationMinutes}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Additives" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <core:SfTextInputLayout Hint="Additive Name" Style="{StaticResource PatientInput}"
+                                            HelperText="Medication or supplement added">
+                        <Entry Text="{Binding Additives}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <core:SfTextInputLayout Grid.Column="0" Hint="Concentration" Style="{StaticResource PatientInput}">
+                            <Entry Text="{Binding AdditiveConcentration}" Keyboard="Text" />
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Grid.Column="1" Hint="Dose" Style="{StaticResource PatientInput}">
+                            <Entry Text="{Binding AdditiveDose}" Keyboard="Text" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <Label Text="IV Site Assessment" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <core:SfTextInputLayout Hint="IV Site Location" Style="{StaticResource PatientInput}"
+                                            HelperText="e.g., Left hand, right forearm">
+                        <Entry Text="{Binding IvSite}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Site Healthy"/>
+                        <Switch IsToggled="{Binding SiteHealthy}" HorizontalOptions="Start"/>
+                    </VerticalStackLayout>
+
+                    <core:SfTextInputLayout Hint="Site Condition" Style="{StaticResource PatientInput}"
+                                            HelperText="Redness, swelling, pain, etc.">
+                        <Entry Text="{Binding SiteCondition}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Phlebitis Score (VIP 0-5)" Style="{StaticResource PatientInput}"
+                                            HelperText="Visual Infusion Phlebitis Score">
+                        <Entry Text="{Binding PhlebitisScore}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Site Care Tracking" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <core:SfTextInputLayout Grid.Column="0" Hint="Last Site Assessment" Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding LastSiteAssessment}" />
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Grid.Column="1" Hint="Last Dressing Change" Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding LastDressingChange}" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <core:SfTextInputLayout Hint="Cannula Insertion Date" Style="{StaticResource PatientInput}">
+                        <DatePicker Date="{Binding CannelaInsertionDate}" />
+                    </core:SfTextInputLayout>
+
+                    <Label Text="Clinical Information" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+                    <core:SfTextInputLayout Hint="Indication" Style="{StaticResource PatientInput}"
+                                            HelperText="Reason for IV therapy">
+                        <Entry Text="{Binding Indication}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Batch Number" Style="{StaticResource PatientInput}"
+                                            HelperText="Fluid batch/lot number">
+                        <Entry Text="{Binding BatchNumber}" Keyboard="Text" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Running Total Input (mL)" Style="{StaticResource PatientInput}"
+                                            HelperText="Cumulative IV fluid intake">
+                        <Entry Text="{Binding RunningTotalInput}" Keyboard="Numeric" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Clinical Alert" Style="{StaticResource PatientInput}"
+                                            HelperText="Any alerts or concerns" ContainerBackground="LightYellow">
+                        <Entry Text="{Binding ClinicalAlert}" Keyboard="Text" />
                     </core:SfTextInputLayout>
 
                     <!-- Action Buttons -->

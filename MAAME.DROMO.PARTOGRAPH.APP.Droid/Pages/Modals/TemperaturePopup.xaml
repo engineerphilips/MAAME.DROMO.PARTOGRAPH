@@ -38,13 +38,58 @@
                         <TimePicker Time="{Binding RecordingTime}" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Hint="Temperature"
+                    <core:SfTextInputLayout Hint="Temperature (°C)"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording temperature">
-                        <editors:SfNumericEntry Value="{Binding Rate, Mode=TwoWay}" Minimum="0"
+                        <editors:SfNumericEntry Value="{Binding TemperatureCelsius, Mode=TwoWay}" Minimum="0"
                                                CustomFormat="0.0"
                                                ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
+
+                    <!-- WHO 2020 Critical Infection Screening -->
+                    <Label Text="Infection Risk Assessment" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding IntrapartumFever}" />
+                    <Label Text="⚠️ Intrapartum Fever (≥38.0°C)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="OrangeRed" />
+
+                    <CheckBox IsChecked="{Binding ChoriamnionitisRisk}" />
+                    <Label Text="Chorioamnionitis Risk" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding ProlongedRupture}" />
+                    <Label Text="Prolonged Membrane Rupture (>18-24 hours)" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding MaternalTachycardia}" />
+                    <Label Text="Maternal Tachycardia (>100 bpm)" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding FetalTachycardia}" />
+                    <Label Text="Fetal Tachycardia (>160 bpm)" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding UterineTenderness}" />
+                    <Label Text="Uterine Tenderness" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding OffensiveLiquor}" />
+                    <Label Text="Offensive/Foul-Smelling Amniotic Fluid" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <!-- Sepsis Screening -->
+                    <Label Text="Sepsis Screening (qSOFA)" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding SepsisScreeningDone}" />
+                    <Label Text="Sepsis Screening Performed" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding QSOFAPositive}" />
+                    <Label Text="⚠️ qSOFA Positive (≥2 criteria)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" />
+
+                    <!-- Clinical Response -->
+                    <Label Text="Clinical Response" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding AntipyreticsGiven}" />
+                    <Label Text="Antipyretics Given" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding AntibioticsStarted}" />
+                    <Label Text="Antibiotics Started" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding CulturesObtained}" />
+                    <Label Text="Blood/Urine Cultures Obtained" Margin="-30,0,0,0" VerticalOptions="Center" />
 
                     <core:SfTextInputLayout Hint="Additional Notes"
                                         Style="{StaticResource PatientInput}"

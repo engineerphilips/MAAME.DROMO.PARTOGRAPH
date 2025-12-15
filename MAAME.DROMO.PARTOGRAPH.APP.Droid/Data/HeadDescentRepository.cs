@@ -16,10 +16,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 time TEXT NOT NULL,
                 handler TEXT,
                 notes TEXT NOT NULL,
-                station INTEGER,                
+                station INTEGER,
                 createdtime INTEGER NOT NULL,
                 updatedtime INTEGER NOT NULL,
-                deletedtime INTEGER, 
+                deletedtime INTEGER,
                 deviceid TEXT NOT NULL,
                 origindeviceid TEXT NOT NULL,
                 syncstatus INTEGER DEFAULT 0,
@@ -27,9 +27,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 serverversion INTEGER DEFAULT 0,
                 deleted INTEGER DEFAULT 0,
                 conflictdata TEXT,
-                datahash TEXT
+                datahash TEXT,
+                palpableabdominally TEXT DEFAULT '',
+                engaged INTEGER DEFAULT 0,
+                synclitism TEXT DEFAULT 'Normal',
+                flexion TEXT DEFAULT 'Flexed',
+                visibleatintroitus INTEGER DEFAULT 0,
+                crowning INTEGER DEFAULT 0,
+                rotation TEXT DEFAULT '',
+                descentrate TEXT DEFAULT '',
+                descentregression INTEGER DEFAULT 0,
+                clinicalalert TEXT DEFAULT ''
             );
-            
+
+            -- Add new columns to existing tables (WHO 2020 enhancements)
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN palpableabdominally TEXT DEFAULT '';
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN engaged INTEGER DEFAULT 0;
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN synclitism TEXT DEFAULT 'Normal';
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN flexion TEXT DEFAULT 'Flexed';
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN visibleatintroitus INTEGER DEFAULT 0;
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN crowning INTEGER DEFAULT 0;
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN rotation TEXT DEFAULT '';
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN descentrate TEXT DEFAULT '';
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN descentregression INTEGER DEFAULT 0;
+            ALTER TABLE Tbl_HeadDescent ADD COLUMN clinicalalert TEXT DEFAULT '';
+
             CREATE INDEX IF NOT EXISTS idx_headdescent_sync ON Tbl_HeadDescent(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_headdescent_server_version ON Tbl_HeadDescent(serverversion);
 
@@ -61,40 +83,89 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         protected override HeadDescent MapFromReader(SqliteDataReader reader)
         {
-            return new HeadDescent
+            var item = new HeadDescent
             {
-                ID = Guid.Parse(reader.GetString(0)),
-                PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
-                Time = reader.GetDateTime(2),
-                //Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
-                HandlerName = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
-                Notes = reader.GetString(4),
-                Station = reader.IsDBNull(5) ? 5 : reader.GetInt32(5),
-                CreatedTime = reader.GetInt64(6),
-                UpdatedTime = reader.GetInt64(7),
-                DeletedTime = reader.IsDBNull(8) ? null : reader.GetInt64(8),
-                DeviceId = reader.GetString(9),
-                OriginDeviceId = reader.GetString(10),
-                SyncStatus = reader.GetInt32(11),
-                Version = reader.GetInt32(12),
-                ServerVersion = reader.IsDBNull(13) ? 0 : reader.GetInt32(13),
-                Deleted = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
-                ConflictData = reader.IsDBNull(15) ? string.Empty : reader.GetString(15),
-                DataHash = reader.IsDBNull(16) ? string.Empty : reader.GetString(16)
+                ID = Guid.Parse(reader.GetString(reader.GetOrdinal("ID"))),
+                PartographID = reader.IsDBNull(reader.GetOrdinal("partographid")) ? null : Guid.Parse(reader.GetString(reader.GetOrdinal("partographid"))),
+                Time = reader.GetDateTime(reader.GetOrdinal("time")),
+                HandlerName = reader.IsDBNull(reader.GetOrdinal("handler")) ? string.Empty : reader.GetString(reader.GetOrdinal("handler")),
+                Notes = reader.GetString(reader.GetOrdinal("notes")),
+                Station = reader.IsDBNull(reader.GetOrdinal("station")) ? 5 : reader.GetInt32(reader.GetOrdinal("station")),
+                CreatedTime = reader.GetInt64(reader.GetOrdinal("createdtime")),
+                UpdatedTime = reader.GetInt64(reader.GetOrdinal("updatedtime")),
+                DeletedTime = reader.IsDBNull(reader.GetOrdinal("deletedtime")) ? null : reader.GetInt64(reader.GetOrdinal("deletedtime")),
+                DeviceId = reader.GetString(reader.GetOrdinal("deviceid")),
+                OriginDeviceId = reader.GetString(reader.GetOrdinal("origindeviceid")),
+                SyncStatus = reader.GetInt32(reader.GetOrdinal("syncstatus")),
+                Version = reader.GetInt32(reader.GetOrdinal("version")),
+                ServerVersion = reader.IsDBNull(reader.GetOrdinal("serverversion")) ? 0 : reader.GetInt32(reader.GetOrdinal("serverversion")),
+                Deleted = reader.IsDBNull(reader.GetOrdinal("deleted")) ? 0 : reader.GetInt32(reader.GetOrdinal("deleted")),
+                ConflictData = reader.IsDBNull(reader.GetOrdinal("conflictdata")) ? string.Empty : reader.GetString(reader.GetOrdinal("conflictdata")),
+                DataHash = reader.IsDBNull(reader.GetOrdinal("datahash")) ? string.Empty : reader.GetString(reader.GetOrdinal("datahash"))
             };
+
+            // WHO 2020 enhancements - safely read new columns
+            try
+            {
+                item.PalpableAbdominally = GetStringOrDefault(reader, "palpableabdominally");
+                item.Engaged = GetBoolFromInt(reader, "engaged");
+                item.Synclitism = GetStringOrDefault(reader, "synclitism", "Normal");
+                item.Flexion = GetStringOrDefault(reader, "flexion", "Flexed");
+                item.VisibleAtIntroitus = GetBoolFromInt(reader, "visibleatintroitus");
+                item.Crowning = GetBoolFromInt(reader, "crowning");
+                item.Rotation = GetStringOrDefault(reader, "rotation");
+                item.DescentRate = GetStringOrDefault(reader, "descentrate");
+                item.DescentRegression = GetBoolFromInt(reader, "descentregression");
+                item.ClinicalAlert = GetStringOrDefault(reader, "clinicalalert");
+            }
+            catch { /* Columns don't exist yet in old databases */ }
+
+            return item;
+        }
+
+        private bool GetBoolFromInt(SqliteDataReader reader, string columnName)
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                return !reader.IsDBNull(ordinal) && reader.GetInt32(ordinal) == 1;
+            }
+            catch { return false; }
+        }
+
+        private string GetStringOrDefault(SqliteDataReader reader, string columnName, string defaultValue = "")
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                return reader.IsDBNull(ordinal) ? defaultValue : reader.GetString(ordinal);
+            }
+            catch { return defaultValue; }
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_HeadDescent (ID, partographID, time, handler, notes, station, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
-        VALUES (@id, @partographId, @time, @handler, @notes, @station, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
+        INSERT INTO Tbl_HeadDescent (ID, partographID, time, handler, notes, station, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash,
+            palpableabdominally, engaged, synclitism, flexion, visibleatintroitus, crowning, rotation, descentrate, descentregression, clinicalalert)
+        VALUES (@id, @partographId, @time, @handler, @notes, @station, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash,
+            @palpableabdominally, @engaged, @synclitism, @flexion, @visibleatintroitus, @crowning, @rotation, @descentrate, @descentregression, @clinicalalert);";
 
         protected override string GetUpdateSql() => @"
         UPDATE Tbl_HeadDescent
         SET partographID = @partographId,
-            time = @time, 
+            time = @time,
             handler = @handler,
             notes = @notes,
             station = @station,
+            palpableabdominally = @palpableabdominally,
+            engaged = @engaged,
+            synclitism = @synclitism,
+            flexion = @flexion,
+            visibleatintroitus = @visibleatintroitus,
+            crowning = @crowning,
+            rotation = @rotation,
+            descentrate = @descentrate,
+            descentregression = @descentregression,
+            clinicalalert = @clinicalalert,
             updatedtime = @updatedtime,
             deletedtime = @deletedtime,
             deviceid = @deviceid,
@@ -133,8 +204,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@version", item.Version);
             cmd.Parameters.AddWithValue("@serverversion", item.ServerVersion);
             cmd.Parameters.AddWithValue("@deleted", item.Deleted);
-            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
             cmd.Parameters.AddWithValue("@datahash", item.DataHash);
+
+            // WHO 2020 enhancements
+            cmd.Parameters.AddWithValue("@palpableabdominally", item.PalpableAbdominally ?? "");
+            cmd.Parameters.AddWithValue("@engaged", item.Engaged ? 1 : 0);
+            cmd.Parameters.AddWithValue("@synclitism", item.Synclitism ?? "Normal");
+            cmd.Parameters.AddWithValue("@flexion", item.Flexion ?? "Flexed");
+            cmd.Parameters.AddWithValue("@visibleatintroitus", item.VisibleAtIntroitus ? 1 : 0);
+            cmd.Parameters.AddWithValue("@crowning", item.Crowning ? 1 : 0);
+            cmd.Parameters.AddWithValue("@rotation", item.Rotation ?? "");
+            cmd.Parameters.AddWithValue("@descentrate", item.DescentRate ?? "");
+            cmd.Parameters.AddWithValue("@descentregression", item.DescentRegression ? 1 : 0);
+            cmd.Parameters.AddWithValue("@clinicalalert", item.ClinicalAlert ?? "");
         }
 
         protected override void AddUpdateParameters(SqliteCommand cmd, HeadDescent item)
@@ -144,7 +226,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             item.UpdatedTime = now;
             item.DeviceId = DeviceIdentity.GetOrCreateDeviceId();
             item.Version++;
-            item.SyncStatus = 0; // Mark as needing sync
+            item.SyncStatus = 0;
             item.DataHash = item.CalculateHash();
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
@@ -158,8 +240,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);
             cmd.Parameters.AddWithValue("@version", item.Version);
-            //cmd.Parameters.AddWithValue("@conflictdata", item.ConflictData);
             cmd.Parameters.AddWithValue("@datahash", item.DataHash);
+
+            // WHO 2020 enhancements
+            cmd.Parameters.AddWithValue("@palpableabdominally", item.PalpableAbdominally ?? "");
+            cmd.Parameters.AddWithValue("@engaged", item.Engaged ? 1 : 0);
+            cmd.Parameters.AddWithValue("@synclitism", item.Synclitism ?? "Normal");
+            cmd.Parameters.AddWithValue("@flexion", item.Flexion ?? "Flexed");
+            cmd.Parameters.AddWithValue("@visibleatintroitus", item.VisibleAtIntroitus ? 1 : 0);
+            cmd.Parameters.AddWithValue("@crowning", item.Crowning ? 1 : 0);
+            cmd.Parameters.AddWithValue("@rotation", item.Rotation ?? "");
+            cmd.Parameters.AddWithValue("@descentrate", item.DescentRate ?? "");
+            cmd.Parameters.AddWithValue("@descentregression", item.DescentRegression ? 1 : 0);
+            cmd.Parameters.AddWithValue("@clinicalalert", item.ClinicalAlert ?? "");
         }
     }
 }
