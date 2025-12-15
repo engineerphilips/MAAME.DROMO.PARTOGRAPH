@@ -73,17 +73,50 @@
                                                 Minimum="0" />
                     </core:SfTextInputLayout>
 
-                    <!--<VerticalStackLayout Padding="10,0,0,0">-->
-                    <!--<Label Text="What are the FHR &amp; contraction?" FontAttributes="Bold"/>-->
+                    <!-- WHO 2020 Critical FHR Assessment -->
+                    <Label Text="FHR Variability &amp; Pattern" FontAttributes="Bold" Margin="0,10,0,5" />
 
-                    <!--<buttons:SfRadioGroup x:Name="radioGroup" Margin="30,0,0,0">
-                        <buttons:SfRadioButton x:Name="no" Text="No" />
-                        <buttons:SfRadioButton x:Name="early" Text="Early"/>
-                        <buttons:SfRadioButton x:Name="late" Text="Late" />
-                        <buttons:SfRadioButton x:Name="variable" Text="Variable" />
-                    </buttons:SfRadioGroup>-->
-                
-                <!--</VerticalStackLayout>-->
+                    <CheckBox IsChecked="{Binding Accelerations}" />
+                    <Label Text="Accelerations Present (reassuring)" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding SinusoidalPattern}" />
+                    <Label Text="⚠️ Sinusoidal Pattern - CRITICAL" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" FontAttributes="Bold" />
+
+                    <CheckBox IsChecked="{Binding ProlongedBradycardia}" />
+                    <Label Text="⚠️ Prolonged Bradycardia (&lt;110 bpm)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" />
+
+                    <CheckBox IsChecked="{Binding Tachycardia}" />
+                    <Label Text="⚠️ Tachycardia (>160 bpm)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="OrangeRed" />
+
+                    <!-- WHO 2020 Critical Contraction Assessment -->
+                    <Label Text="Contraction Pattern &amp; Oxytocin" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding Tachysystole}" />
+                    <Label Text="⚠️ Tachysystole (>5 contractions/10 min)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="OrangeRed" />
+
+                    <CheckBox IsChecked="{Binding Hyperstimulation}" />
+                    <Label Text="⚠️ HYPERSTIMULATION - Tachysystole + Abnormal FHR" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" FontAttributes="Bold" />
+
+                    <CheckBox IsChecked="{Binding OnOxytocin}" />
+                    <Label Text="On Oxytocin Infusion" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding OxytocinStopped}" />
+                    <Label Text="Oxytocin Stopped (due to concerns)" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <!-- Emergency Response -->
+                    <Label Text="Emergency Indicators" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding EmergencyConsultRequired}" />
+                    <Label Text="⚠️ EMERGENCY CONSULT REQUIRED" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" FontAttributes="Bold" />
+
+                    <CheckBox IsChecked="{Binding PrepareForEmergencyDelivery}" />
+                    <Label Text="⚠️ PREPARE FOR EMERGENCY DELIVERY" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" FontAttributes="Bold" />
+
+                    <CheckBox IsChecked="{Binding ChangeInPosition}" />
+                    <Label Text="Maternal Position Changed" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding OxygenAdministered}" />
+                    <Label Text="Oxygen Administered" Margin="-30,0,0,0" VerticalOptions="Center" />
 
                 <core:SfTextInputLayout Hint="Additional Notes"
                                                 Style="{StaticResource PatientInput}"

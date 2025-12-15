@@ -38,13 +38,47 @@
                         <TimePicker Time="{Binding RecordingTime, Mode=TwoWay}" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Hint="Cervix dilatation"
+                    <core:SfTextInputLayout Hint="Cervix Dilatation (cm)"
                                         Style="{StaticResource PatientInput}"
-                                        HelperText="Recording dilatation">
+                                        HelperText="Dilatation 0-10 cm">
                         <editors:SfNumericEntry Value="{Binding Dilatation, Mode=TwoWay}"
+                                               Minimum="0" Maximum="10"
                                                CustomFormat="0"
                                                ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
+
+                    <!-- WHO 2020 Critical Labor Progress Assessment -->
+                    <Label Text="Cervical Assessment" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <core:SfTextInputLayout Hint="Effacement (%)"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Cervical effacement 0-100%">
+                        <editors:SfNumericEntry Value="{Binding EffacementPercent, Mode=TwoWay}"
+                                               Minimum="0" Maximum="100"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
+
+                    <!-- Partograph Alert Lines -->
+                    <Label Text="Partograph Monitoring" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding CrossedAlertLine}" />
+                    <Label Text="⚠️ Crossed Alert Line" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Orange" />
+
+                    <CheckBox IsChecked="{Binding CrossedActionLine}" />
+                    <Label Text="⚠️ Crossed Action Line - Intervention Needed" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" FontAttributes="Bold" />
+
+                    <!-- Labor Dystocia Alerts -->
+                    <Label Text="Labor Progress Alerts" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding ProlongedLatentPhase}" />
+                    <Label Text="Prolonged Latent Phase" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding ProtractedActivePhase}" />
+                    <Label Text="⚠️ Protracted Active Phase (<1 cm/hour)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="OrangeRed" />
+
+                    <CheckBox IsChecked="{Binding ArrestedDilatation}" />
+                    <Label Text="⚠️ Arrested Dilatation (No progress for 4 hours)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" />
 
                     <core:SfTextInputLayout Hint="Additional Notes"
                                         Style="{StaticResource PatientInput}"

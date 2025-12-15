@@ -4,6 +4,7 @@
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.UrinePopup">
 
     <sfPopup:SfPopup.Resources>
@@ -69,6 +70,55 @@
                             </x:Array>
                         </buttons:SfSegmentedControl.ItemsSource>
                     </buttons:SfSegmentedControl>
+
+                    <!-- WHO 2020 Critical Urine Assessment -->
+                    <Label Text="Urine Output & Oliguria" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <core:SfTextInputLayout Hint="Output Volume (ml)"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Urine output in ml">
+                        <editors:SfNumericEntry Value="{Binding OutputMl, Mode=TwoWay}" Minimum="0"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
+
+                    <CheckBox IsChecked="{Binding Oliguria}" />
+                    <Label Text="⚠️ Oliguria (<30 ml/hour)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="OrangeRed" />
+
+                    <CheckBox IsChecked="{Binding Anuria}" />
+                    <Label Text="⚠️ Anuria (No urine output)" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="Red" />
+
+                    <!-- Pre-eclampsia Monitoring -->
+                    <Label Text="Pre-eclampsia Monitoring" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding ProteinuriaNewOnset}" />
+                    <Label Text="⚠️ New-Onset Proteinuria" Margin="-30,0,0,0" VerticalOptions="Center" TextColor="OrangeRed" />
+
+                    <CheckBox IsChecked="{Binding ProteinuriaWorsening}" />
+                    <Label Text="Worsening Proteinuria" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding LaboratorySampleSent}" />
+                    <Label Text="Laboratory Sample Sent (Protein/Creatinine Ratio)" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <!-- Fluid Balance -->
+                    <Label Text="Fluid Balance" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <core:SfTextInputLayout Hint="Total IV Intake (ml)"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Total intravenous fluid intake">
+                        <editors:SfNumericEntry Value="{Binding TotalIVIntakeMl, Mode=TwoWay}" Minimum="0"
+                                               CustomFormat="0"
+                                               ValueChangeMode="OnKeyFocus" />
+                    </core:SfTextInputLayout>
+
+                    <!-- Catheterization -->
+                    <Label Text="Bladder Management" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <CheckBox IsChecked="{Binding UrinaryRetention}" />
+                    <Label Text="Urinary Retention" Margin="-30,0,0,0" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding CatheterizationPerformed}" />
+                    <Label Text="Catheterization Performed" Margin="-30,0,0,0" VerticalOptions="Center" />
 
                     <core:SfTextInputLayout Hint="Additional Notes"
                                         Style="{StaticResource PatientInput}"
