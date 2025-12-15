@@ -67,42 +67,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             CREATE INDEX IF NOT EXISTS idx_amnioticfluid_sync ON Tbl_AmnioticFluid(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_amnioticfluid_server_version ON Tbl_AmnioticFluid(serverversion);
 
-            -- Add WHO 2020 columns to existing tables
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN meconiumStaining INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN meconiumGrade TEXT DEFAULT '';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN consistency TEXT DEFAULT 'Normal';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN amount TEXT DEFAULT 'Normal';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN odor TEXT DEFAULT 'None';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN ruptureStatus TEXT DEFAULT 'Intact';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN ruptureTime TEXT;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN clinicalAlert TEXT DEFAULT '';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN ruptureMethod TEXT DEFAULT '';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN ruptureLocation TEXT DEFAULT '';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN confirmedRupture INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN confirmationMethod TEXT DEFAULT '';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN fluidVolume TEXT DEFAULT '';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN estimatedVolumeMl INTEGER;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN poolingInVagina INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN meconiumFirstNotedTime TEXT;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN meconiumThickParticulate INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN neonatalTeamAlerted INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN neonatalTeamAlertTime TEXT;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN prolongedRupture INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN hoursSinceRupture INTEGER;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN maternalFever INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN maternalTachycardia INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN fetalTachycardia INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN uterineTenderness INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN bloodSource TEXT DEFAULT '';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN activeBleeding INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN bleedingAmount TEXT DEFAULT '';
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN cordProlapse INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN cordPresentation INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN cordComplicationTime TEXT;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN antibioticsIndicated INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN amnioinfusionConsidered INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_AmnioticFluid ADD COLUMN expeditedDeliveryNeeded INTEGER DEFAULT 0;
-
             DROP TRIGGER IF EXISTS trg_amnioticfluid_insert;
             CREATE TRIGGER trg_amnioticfluid_insert
             AFTER INSERT ON Tbl_AmnioticFluid
@@ -126,6 +90,42 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+        
+        //    -- Add WHO 2020 columns to existing tables
+        //    ALTER TABLE Tbl_AmnioticFluid ADD COLUMN meconiumStaining INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN meconiumGrade TEXT DEFAULT '';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN consistency TEXT DEFAULT 'Normal';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN amount TEXT DEFAULT 'Normal';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN odor TEXT DEFAULT 'None';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN ruptureStatus TEXT DEFAULT 'Intact';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN ruptureTime TEXT;
+        //    ALTER TABLE Tbl_AmnioticFluid ADD COLUMN clinicalAlert TEXT DEFAULT '';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN ruptureMethod TEXT DEFAULT '';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN ruptureLocation TEXT DEFAULT '';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN confirmedRupture INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN confirmationMethod TEXT DEFAULT '';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN fluidVolume TEXT DEFAULT '';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN estimatedVolumeMl INTEGER;
+        //    ALTER TABLE Tbl_AmnioticFluid ADD COLUMN poolingInVagina INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN meconiumFirstNotedTime TEXT;
+        //    ALTER TABLE Tbl_AmnioticFluid ADD COLUMN meconiumThickParticulate INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN neonatalTeamAlerted INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN neonatalTeamAlertTime TEXT;
+        //    ALTER TABLE Tbl_AmnioticFluid ADD COLUMN prolongedRupture INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN hoursSinceRupture INTEGER;
+        //    ALTER TABLE Tbl_AmnioticFluid ADD COLUMN maternalFever INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN maternalTachycardia INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN fetalTachycardia INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN uterineTenderness INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN bloodSource TEXT DEFAULT '';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN activeBleeding INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN bleedingAmount TEXT DEFAULT '';
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN cordProlapse INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN cordPresentation INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN cordComplicationTime TEXT;
+        //    ALTER TABLE Tbl_AmnioticFluid ADD COLUMN antibioticsIndicated INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN amnioinfusionConsidered INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_AmnioticFluid ADD COLUMN expeditedDeliveryNeeded INTEGER DEFAULT 0;
 
         public AmnioticFluidRepository(ILogger<AmnioticFluidRepository> logger) : base(logger) { }
 

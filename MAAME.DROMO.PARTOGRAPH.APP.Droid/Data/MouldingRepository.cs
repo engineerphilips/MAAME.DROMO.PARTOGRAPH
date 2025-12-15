@@ -51,27 +51,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            -- Add new columns to existing tables (WHO 2020 enhancements)
-            ALTER TABLE Tbl_Moulding ADD COLUMN suturesoverlapping INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN reducible INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN location TEXT DEFAULT '';
-            ALTER TABLE Tbl_Moulding ADD COLUMN sagittalsuture INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN coronalsuture INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN lambdoidsuture INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN severity TEXT DEFAULT '';
-            ALTER TABLE Tbl_Moulding ADD COLUMN increasing INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN reducing INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN stable INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN progressionrate TEXT DEFAULT '';
-            ALTER TABLE Tbl_Moulding ADD COLUMN firstdetectedtime TEXT;
-            ALTER TABLE Tbl_Moulding ADD COLUMN durationhours INTEGER;
-            ALTER TABLE Tbl_Moulding ADD COLUMN caputpresent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN caputdegree TEXT DEFAULT '';
-            ALTER TABLE Tbl_Moulding ADD COLUMN suggestsobstruction INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN suggestscpd INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Moulding ADD COLUMN changefromprevious TEXT DEFAULT '';
-            ALTER TABLE Tbl_Moulding ADD COLUMN clinicalalert TEXT DEFAULT '';
-
             CREATE INDEX IF NOT EXISTS idx_moulding_sync ON Tbl_Moulding(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_moulding_server_version ON Tbl_Moulding(serverversion);
 
@@ -98,6 +77,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+        
+        //    -- Add new columns to existing tables(WHO 2020 enhancements)
+        //    ALTER TABLE Tbl_Moulding ADD COLUMN suturesoverlapping INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN reducible INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN location TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Moulding ADD COLUMN sagittalsuture INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN coronalsuture INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN lambdoidsuture INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN severity TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Moulding ADD COLUMN increasing INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN reducing INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN stable INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN progressionrate TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Moulding ADD COLUMN firstdetectedtime TEXT;
+        //    ALTER TABLE Tbl_Moulding ADD COLUMN durationhours INTEGER;
+        //    ALTER TABLE Tbl_Moulding ADD COLUMN caputpresent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN caputdegree TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Moulding ADD COLUMN suggestsobstruction INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN suggestscpd INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Moulding ADD COLUMN changefromprevious TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Moulding ADD COLUMN clinicalalert TEXT DEFAULT '';
 
         public MouldingRepository(ILogger<MouldingRepository> logger) : base(logger) { }
 

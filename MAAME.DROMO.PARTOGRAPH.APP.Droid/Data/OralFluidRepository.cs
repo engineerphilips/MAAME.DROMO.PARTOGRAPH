@@ -51,28 +51,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            -- Add new columns to existing tables (WHO 2020 enhancements)
-            ALTER TABLE Tbl_OralFluid ADD COLUMN fluidtype TEXT DEFAULT '';
-            ALTER TABLE Tbl_OralFluid ADD COLUMN amountml INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN runningtotaloralintake INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN tolerated INTEGER DEFAULT 1;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN vomiting INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN nausea INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN vomitingepisodes INTEGER;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN vomitcontent TEXT DEFAULT '';
-            ALTER TABLE Tbl_OralFluid ADD COLUMN foodoffered INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN foodconsumed INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN foodtype TEXT DEFAULT '';
-            ALTER TABLE Tbl_OralFluid ADD COLUMN nbm INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN nbmreason TEXT DEFAULT '';
-            ALTER TABLE Tbl_OralFluid ADD COLUMN restrictions TEXT DEFAULT '';
-            ALTER TABLE Tbl_OralFluid ADD COLUMN restrictionreason TEXT DEFAULT '';
-            ALTER TABLE Tbl_OralFluid ADD COLUMN patientrequestedfluids INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN patientdeclinedfluids INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN aspirationriskassessed INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_OralFluid ADD COLUMN aspirationrisklevel TEXT DEFAULT '';
-            ALTER TABLE Tbl_OralFluid ADD COLUMN clinicalalert TEXT DEFAULT '';
-
             CREATE INDEX IF NOT EXISTS idx_oralfluid_sync ON Tbl_OralFluid(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_oralfluid_server_version ON Tbl_OralFluid(serverversion);
 
@@ -99,7 +77,28 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
-
+        
+        //    -- Add new columns to existing tables(WHO 2020 enhancements)
+        //    ALTER TABLE Tbl_OralFluid ADD COLUMN fluidtype TEXT DEFAULT '';
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN amountml INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN runningtotaloralintake INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN tolerated INTEGER DEFAULT 1;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN vomiting INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN nausea INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN vomitingepisodes INTEGER;
+        //    ALTER TABLE Tbl_OralFluid ADD COLUMN vomitcontent TEXT DEFAULT '';
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN foodoffered INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN foodconsumed INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN foodtype TEXT DEFAULT '';
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN nbm INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN nbmreason TEXT DEFAULT '';
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN restrictions TEXT DEFAULT '';
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN restrictionreason TEXT DEFAULT '';
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN patientrequestedfluids INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN patientdeclinedfluids INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN aspirationriskassessed INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN aspirationrisklevel TEXT DEFAULT '';
+        //ALTER TABLE Tbl_OralFluid ADD COLUMN clinicalalert TEXT DEFAULT '';
         public OralFluidRepository(ILogger<OralFluidRepository> logger) : base(logger) { }
 
         protected override OralFluidEntry MapFromReader(SqliteDataReader reader)

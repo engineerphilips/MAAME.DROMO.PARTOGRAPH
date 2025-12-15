@@ -71,48 +71,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
-            -- Add WHO 2020 columns to existing tables
-            ALTER TABLE Tbl_FHR ADD COLUMN decelerationdurationseconds INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN variability TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN accelerations INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN pattern TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN monitoringmethod TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN baselinerate INTEGER;
-            ALTER TABLE Tbl_FHR ADD COLUMN clinicalalert TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN variabilitybpm INTEGER;
-            ALTER TABLE Tbl_FHR ADD COLUMN variabilitytrend TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN sinusoidalpattern INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN saltatorpattern INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN accelerationcount INTEGER;
-            ALTER TABLE Tbl_FHR ADD COLUMN accelerationpeakbpm INTEGER;
-            ALTER TABLE Tbl_FHR ADD COLUMN accelerationdurationseconds INTEGER;
-            ALTER TABLE Tbl_FHR ADD COLUMN decelerationnadirbpm INTEGER;
-            ALTER TABLE Tbl_FHR ADD COLUMN decelerationrecovery TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN decelerationamplitudebpm INTEGER;
-            ALTER TABLE Tbl_FHR ADD COLUMN decelerationtiming TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN prolongedbradycardia INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN bradycardiastarttime TEXT;
-            ALTER TABLE Tbl_FHR ADD COLUMN bradycardiadurationminutes INTEGER;
-            ALTER TABLE Tbl_FHR ADD COLUMN tachycardia INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN tachycardiastarttime TEXT;
-            ALTER TABLE Tbl_FHR ADD COLUMN tachycardiadurationminutes INTEGER;
-            ALTER TABLE Tbl_FHR ADD COLUMN ctgclassification TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN reactivenst INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN lastreactivetime TEXT;
-            ALTER TABLE Tbl_FHR ADD COLUMN maternalposition TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN duringcontraction INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN betweencontractions INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN interventionrequired INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN interventiontaken TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN interventiontime TEXT;
-            ALTER TABLE Tbl_FHR ADD COLUMN changeinposition INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN oxygenadministered INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN ivfluidsincreased INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN emergencyconsultrequired INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FHR ADD COLUMN consultreason TEXT DEFAULT '';
-            ALTER TABLE Tbl_FHR ADD COLUMN consulttime TEXT;
-            ALTER TABLE Tbl_FHR ADD COLUMN prepareforemergencydelivery INTEGER DEFAULT 0;
-
             CREATE INDEX IF NOT EXISTS idx_fhr_sync ON Tbl_FHR(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_fhr_server_version ON Tbl_FHR(serverversion);
 
@@ -139,6 +97,48 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+        
+        //    -- Add WHO 2020 columns to existing tables
+        //    ALTER TABLE Tbl_FHR ADD COLUMN decelerationdurationseconds INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN variability TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN accelerations INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN pattern TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN monitoringmethod TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN baselinerate INTEGER;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN clinicalalert TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN variabilitybpm INTEGER;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN variabilitytrend TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN sinusoidalpattern INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN saltatorpattern INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN accelerationcount INTEGER;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN accelerationpeakbpm INTEGER;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN accelerationdurationseconds INTEGER;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN decelerationnadirbpm INTEGER;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN decelerationrecovery TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN decelerationamplitudebpm INTEGER;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN decelerationtiming TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN prolongedbradycardia INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN bradycardiastarttime TEXT;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN bradycardiadurationminutes INTEGER;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN tachycardia INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN tachycardiastarttime TEXT;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN tachycardiadurationminutes INTEGER;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN ctgclassification TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN reactivenst INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN lastreactivetime TEXT;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN maternalposition TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN duringcontraction INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN betweencontractions INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN interventionrequired INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN interventiontaken TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN interventiontime TEXT;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN changeinposition INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN oxygenadministered INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN ivfluidsincreased INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN emergencyconsultrequired INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FHR ADD COLUMN consultreason TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FHR ADD COLUMN consulttime TEXT;
+        //    ALTER TABLE Tbl_FHR ADD COLUMN prepareforemergencydelivery INTEGER DEFAULT 0;
 
         public FHRRepository(ILogger<FHRRepository> logger) : base(logger) { }
 

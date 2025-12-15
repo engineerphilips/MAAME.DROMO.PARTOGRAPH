@@ -45,23 +45,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            -- Add new columns to existing tables (WHO 2020 enhancements)
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN inuse INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN starttime TEXT;
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN stoptime TEXT;
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN concentrationmunitsperml REAL DEFAULT 10;
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN infusionratemlperhour REAL DEFAULT 0;
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN indication TEXT DEFAULT '';
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN contraindicationschecked INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN contraindicationspresent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN contraindicationdetails TEXT DEFAULT '';
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN response TEXT DEFAULT '';
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN dosetitration TEXT DEFAULT '';
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN timetonextincrease INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN maxdosereached INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN stoppedreason TEXT DEFAULT '';
-            ALTER TABLE Tbl_Oxytocin ADD COLUMN clinicalalert TEXT DEFAULT '';
-
             CREATE INDEX IF NOT EXISTS idx_oxytocin_sync ON Tbl_Oxytocin(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_oxytocin_server_version ON Tbl_Oxytocin(serverversion);
 
@@ -88,6 +71,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+                
+        //    -- Add new columns to existing tables(WHO 2020 enhancements)
+        //    ALTER TABLE Tbl_Oxytocin ADD COLUMN inuse INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN starttime TEXT;
+        //    ALTER TABLE Tbl_Oxytocin ADD COLUMN stoptime TEXT;
+        //    ALTER TABLE Tbl_Oxytocin ADD COLUMN concentrationmunitsperml REAL DEFAULT 10;
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN infusionratemlperhour REAL DEFAULT 0;
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN indication TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN contraindicationschecked INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN contraindicationspresent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN contraindicationdetails TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN response TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN dosetitration TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN timetonextincrease INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN maxdosereached INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN stoppedreason TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Oxytocin ADD COLUMN clinicalalert TEXT DEFAULT '';
 
         public OxytocinRepository(ILogger<OxytocinRepository> logger) : base(logger) { }
 

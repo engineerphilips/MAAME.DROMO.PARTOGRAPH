@@ -74,50 +74,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             CREATE INDEX IF NOT EXISTS idx_temperature_sync ON Tbl_Temperature(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_temperature_server_version ON Tbl_Temperature(serverversion);
 
-            -- Add WHO 2020 columns to existing tables
-            ALTER TABLE Tbl_Temperature ADD COLUMN temperatureCelsius REAL DEFAULT 0.0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN measurementSite TEXT DEFAULT 'Oral';
-            ALTER TABLE Tbl_Temperature ADD COLUMN feverDurationHours INTEGER;
-            ALTER TABLE Tbl_Temperature ADD COLUMN chillsPresent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN associatedSymptoms TEXT DEFAULT '';
-            ALTER TABLE Tbl_Temperature ADD COLUMN repeatedMeasurement INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN clinicalAlert TEXT DEFAULT '';
-            ALTER TABLE Tbl_Temperature ADD COLUMN feverCategory TEXT DEFAULT '';
-            ALTER TABLE Tbl_Temperature ADD COLUMN intrapartumFever INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN feverOnsetTime TEXT;
-            ALTER TABLE Tbl_Temperature ADD COLUMN peakTemperature REAL;
-            ALTER TABLE Tbl_Temperature ADD COLUMN peakTemperatureTime TEXT;
-            ALTER TABLE Tbl_Temperature ADD COLUMN secondTemperature REAL;
-            ALTER TABLE Tbl_Temperature ADD COLUMN secondReadingTime TEXT;
-            ALTER TABLE Tbl_Temperature ADD COLUMN thirdTemperature REAL;
-            ALTER TABLE Tbl_Temperature ADD COLUMN thirdReadingTime TEXT;
-            ALTER TABLE Tbl_Temperature ADD COLUMN choriamnionitisRisk INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN prolongedRupture INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN hoursSinceRupture INTEGER;
-            ALTER TABLE Tbl_Temperature ADD COLUMN maternalTachycardia INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN fetalTachycardia INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN uterineTenderness INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN offensiveLiquor INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN rigorPresent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN sweating INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN headache INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN myalgiaArthralgia INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN sepsisScreeningDone INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN sepsisScreeningTime TEXT;
-            ALTER TABLE Tbl_Temperature ADD COLUMN sepsisRiskLevel TEXT DEFAULT '';
-            ALTER TABLE Tbl_Temperature ADD COLUMN qsofaPositive INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN qsofaScore INTEGER;
-            ALTER TABLE Tbl_Temperature ADD COLUMN antipyreticsGiven INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN antipyreticType TEXT DEFAULT '';
-            ALTER TABLE Tbl_Temperature ADD COLUMN antipyreticGivenTime TEXT;
-            ALTER TABLE Tbl_Temperature ADD COLUMN culturesObtained INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN antibioticsStarted INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN antibioticsStartTime TEXT;
-            ALTER TABLE Tbl_Temperature ADD COLUMN ivFluidsGiven INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN coolingMeasures INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN increasedMonitoring INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Temperature ADD COLUMN monitoringIntervalMinutes INTEGER;
-
             DROP TRIGGER IF EXISTS trg_temperature_insert;
             CREATE TRIGGER trg_temperature_insert
             AFTER INSERT ON Tbl_Temperature
@@ -141,6 +97,51 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+
+        
+        //    -- Add WHO 2020 columns to existing tables
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN temperatureCelsius REAL DEFAULT 0.0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN measurementSite TEXT DEFAULT 'Oral';
+        //ALTER TABLE Tbl_Temperature ADD COLUMN feverDurationHours INTEGER;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN chillsPresent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN associatedSymptoms TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Temperature ADD COLUMN repeatedMeasurement INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN clinicalAlert TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Temperature ADD COLUMN feverCategory TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Temperature ADD COLUMN intrapartumFever INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN feverOnsetTime TEXT;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN peakTemperature REAL;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN peakTemperatureTime TEXT;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN secondTemperature REAL;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN secondReadingTime TEXT;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN thirdTemperature REAL;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN thirdReadingTime TEXT;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN choriamnionitisRisk INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN prolongedRupture INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN hoursSinceRupture INTEGER;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN maternalTachycardia INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN fetalTachycardia INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN uterineTenderness INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN offensiveLiquor INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN rigorPresent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN sweating INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN headache INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN myalgiaArthralgia INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN sepsisScreeningDone INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN sepsisScreeningTime TEXT;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN sepsisRiskLevel TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Temperature ADD COLUMN qsofaPositive INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN qsofaScore INTEGER;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN antipyreticsGiven INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN antipyreticType TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Temperature ADD COLUMN antipyreticGivenTime TEXT;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN culturesObtained INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN antibioticsStarted INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN antibioticsStartTime TEXT;
+        //    ALTER TABLE Tbl_Temperature ADD COLUMN ivFluidsGiven INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN coolingMeasures INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN increasedMonitoring INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Temperature ADD COLUMN monitoringIntervalMinutes INTEGER;
 
         public TemperatureRepository(ILogger<TemperatureRepository> logger) : base(logger) { }
 

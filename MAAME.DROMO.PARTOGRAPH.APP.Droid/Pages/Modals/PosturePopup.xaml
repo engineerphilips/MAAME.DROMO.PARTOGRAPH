@@ -45,7 +45,16 @@
                             <buttons:SfSegmentedControl.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>Supine</x:String>
+                                    <x:String>Upright</x:String>
+                                    <x:String>Sitting</x:String>
+                                    <x:String>LeftLateral</x:String>
                                     <x:String>Mobile</x:String>
+                                    <x:String>Walking</x:String>
+                                    <x:String>RightLateral</x:String> 
+                                    <x:String>HandsAndKnees</x:String>
+                                    <x:String>Squatting</x:String>
+                                    <x:String>BirthingBall</x:String>
+                                    <x:String>WaterImmersion</x:String>
                                 </x:Array>
                             </buttons:SfSegmentedControl.ItemsSource>
                         </buttons:SfSegmentedControl>

@@ -51,26 +51,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            -- Add new columns to existing tables (WHO 2020 enhancements)
-            ALTER TABLE Tbl_IVFluid ADD COLUMN ratemlperhour REAL DEFAULT 0.0;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN starttime TEXT;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN endtime TEXT;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN durationminutes INTEGER;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN additives TEXT DEFAULT '';
-            ALTER TABLE Tbl_IVFluid ADD COLUMN additiveconcentration TEXT DEFAULT '';
-            ALTER TABLE Tbl_IVFluid ADD COLUMN additivedose TEXT DEFAULT '';
-            ALTER TABLE Tbl_IVFluid ADD COLUMN ivsite TEXT DEFAULT '';
-            ALTER TABLE Tbl_IVFluid ADD COLUMN sitehealthy INTEGER DEFAULT 1;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN sitecondition TEXT DEFAULT '';
-            ALTER TABLE Tbl_IVFluid ADD COLUMN phlebitisscore INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN lastsiteassessment TEXT;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN lastdressingchange TEXT;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN cannelainsertiondate TEXT;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN indication TEXT DEFAULT '';
-            ALTER TABLE Tbl_IVFluid ADD COLUMN batchnumber TEXT DEFAULT '';
-            ALTER TABLE Tbl_IVFluid ADD COLUMN runningtotalinput INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_IVFluid ADD COLUMN clinicalalert TEXT DEFAULT '';
-
             CREATE INDEX IF NOT EXISTS idx_ivfluid_sync ON Tbl_IVFluid(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_ivfluid_server_version ON Tbl_IVFluid(serverversion);
 
@@ -97,6 +77,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+        
+        //    -- Add new columns to existing tables(WHO 2020 enhancements)
+        //    ALTER TABLE Tbl_IVFluid ADD COLUMN ratemlperhour REAL DEFAULT 0.0;
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN starttime TEXT;
+        //    ALTER TABLE Tbl_IVFluid ADD COLUMN endtime TEXT;
+        //    ALTER TABLE Tbl_IVFluid ADD COLUMN durationminutes INTEGER;
+        //    ALTER TABLE Tbl_IVFluid ADD COLUMN additives TEXT DEFAULT '';
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN additiveconcentration TEXT DEFAULT '';
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN additivedose TEXT DEFAULT '';
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN ivsite TEXT DEFAULT '';
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN sitehealthy INTEGER DEFAULT 1;
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN sitecondition TEXT DEFAULT '';
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN phlebitisscore INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN lastsiteassessment TEXT;
+        //    ALTER TABLE Tbl_IVFluid ADD COLUMN lastdressingchange TEXT;
+        //    ALTER TABLE Tbl_IVFluid ADD COLUMN cannelainsertiondate TEXT;
+        //    ALTER TABLE Tbl_IVFluid ADD COLUMN indication TEXT DEFAULT '';
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN batchnumber TEXT DEFAULT '';
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN runningtotalinput INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_IVFluid ADD COLUMN clinicalalert TEXT DEFAULT '';
 
         public IVFluidEntryRepository(ILogger<IVFluidEntryRepository> logger) : base(logger) { }
 

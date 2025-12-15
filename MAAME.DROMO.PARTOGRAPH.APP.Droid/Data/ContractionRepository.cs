@@ -77,52 +77,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             CREATE INDEX IF NOT EXISTS idx_contraction_sync ON Tbl_Contraction(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_contraction_server_version ON Tbl_Contraction(serverversion);
 
-            -- Add WHO 2020 columns to existing tables
-            ALTER TABLE Tbl_Contraction ADD COLUMN strength TEXT DEFAULT 'Moderate';
-            ALTER TABLE Tbl_Contraction ADD COLUMN regularity TEXT DEFAULT 'Regular';
-            ALTER TABLE Tbl_Contraction ADD COLUMN palpableAtRest INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN coordinated INTEGER DEFAULT 1;
-            ALTER TABLE Tbl_Contraction ADD COLUMN effectOnCervix TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN intensityMmHg INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN clinicalAlert TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN contractionPattern TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN tachysystole INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN hyperstimulation INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN tachysystoleStartTime TEXT;
-            ALTER TABLE Tbl_Contraction ADD COLUMN tachysystoleDurationMinutes INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN intensityAssessment TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN indentableDuringContraction INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN uterusRelaxesBetweenContractions INTEGER DEFAULT 1;
-            ALTER TABLE Tbl_Contraction ADD COLUMN relaxationTimeSeconds INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN restingToneMmHg INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN peakPressureMmHg INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN montevideUnits INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN shortestDurationSeconds INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN longestDurationSeconds INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN averageDurationSeconds INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN prolongedContractions INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN prolongedContractionCount INTEGER;
-            ALTER TABLE Tbl_Contraction ADD COLUMN frequencyTrend TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN irregularFrequency INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN averageIntervalMinutes REAL;
-            ALTER TABLE Tbl_Contraction ADD COLUMN maternalCopingLevel TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN maternalExhaustion INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN painLocation TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN onOxytocin INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN oxytocinEffect TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN oxytocinAdjustmentNeeded INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN suggestedOxytocinAction TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN interventionRequired INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN interventionTaken TEXT DEFAULT '';
-            ALTER TABLE Tbl_Contraction ADD COLUMN interventionTime TEXT;
-            ALTER TABLE Tbl_Contraction ADD COLUMN oxytocinStopped INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN oxytocinReduced INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN tocolyticsGiven INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN hypertonicUterus INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN uterineRuptureRisk INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN fhrCompromise INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Contraction ADD COLUMN emergencyConsultRequired INTEGER DEFAULT 0;
-
             DROP TRIGGER IF EXISTS trg_contraction_insert;
             CREATE TRIGGER trg_contraction_insert
             AFTER INSERT ON Tbl_Contraction
@@ -145,7 +99,52 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     syncstatus = 0
                 WHERE ID = NEW.ID;
             END;";
-
+        
+        //    -- Add WHO 2020 columns to existing tables
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN strength TEXT DEFAULT 'Moderate';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN regularity TEXT DEFAULT 'Regular';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN palpableAtRest INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN coordinated INTEGER DEFAULT 1;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN effectOnCervix TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN intensityMmHg INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN clinicalAlert TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN contractionPattern TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN tachysystole INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN hyperstimulation INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN tachysystoleStartTime TEXT;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN tachysystoleDurationMinutes INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN intensityAssessment TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN indentableDuringContraction INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN uterusRelaxesBetweenContractions INTEGER DEFAULT 1;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN relaxationTimeSeconds INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN restingToneMmHg INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN peakPressureMmHg INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN montevideUnits INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN shortestDurationSeconds INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN longestDurationSeconds INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN averageDurationSeconds INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN prolongedContractions INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN prolongedContractionCount INTEGER;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN frequencyTrend TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN irregularFrequency INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN averageIntervalMinutes REAL;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN maternalCopingLevel TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN maternalExhaustion INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN painLocation TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN onOxytocin INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN oxytocinEffect TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN oxytocinAdjustmentNeeded INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN suggestedOxytocinAction TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN interventionRequired INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN interventionTaken TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Contraction ADD COLUMN interventionTime TEXT;
+        //    ALTER TABLE Tbl_Contraction ADD COLUMN oxytocinStopped INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN oxytocinReduced INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN tocolyticsGiven INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN hypertonicUterus INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN uterineRuptureRisk INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN fhrCompromise INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Contraction ADD COLUMN emergencyConsultRequired INTEGER DEFAULT 0;
         public ContractionRepository(ILogger<ContractionRepository> logger) : base(logger) { }
 
         protected override Contraction MapFromReader(SqliteDataReader reader)

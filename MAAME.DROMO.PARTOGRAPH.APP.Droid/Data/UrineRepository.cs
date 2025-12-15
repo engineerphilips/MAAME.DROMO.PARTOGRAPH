@@ -81,56 +81,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             CREATE INDEX IF NOT EXISTS idx_urine_sync ON Tbl_Urine(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_urine_server_version ON Tbl_Urine(serverversion);
 
-            -- Add WHO 2020 columns to existing tables
-            ALTER TABLE Tbl_Urine ADD COLUMN outputMl INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN color TEXT DEFAULT 'Yellow';
-            ALTER TABLE Tbl_Urine ADD COLUMN ketones TEXT DEFAULT 'Nil';
-            ALTER TABLE Tbl_Urine ADD COLUMN glucose TEXT DEFAULT 'Nil';
-            ALTER TABLE Tbl_Urine ADD COLUMN specificGravity TEXT DEFAULT '';
-            ALTER TABLE Tbl_Urine ADD COLUMN voidingMethod TEXT DEFAULT 'Spontaneous';
-            ALTER TABLE Tbl_Urine ADD COLUMN bladderPalpable INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN lastVoided TEXT;
-            ALTER TABLE Tbl_Urine ADD COLUMN clinicalAlert TEXT DEFAULT '';
-            ALTER TABLE Tbl_Urine ADD COLUMN voidingTime TEXT;
-            ALTER TABLE Tbl_Urine ADD COLUMN timeSinceLastVoidMinutes INTEGER;
-            ALTER TABLE Tbl_Urine ADD COLUMN cumulativeOutputMl INTEGER;
-            ALTER TABLE Tbl_Urine ADD COLUMN hourlyOutputRate REAL;
-            ALTER TABLE Tbl_Urine ADD COLUMN oliguria INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN anuria INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN consecutiveOliguriaHours INTEGER;
-            ALTER TABLE Tbl_Urine ADD COLUMN clarity TEXT DEFAULT '';
-            ALTER TABLE Tbl_Urine ADD COLUMN hematuria INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN concentrated INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN dilute INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN odor TEXT DEFAULT '';
-            ALTER TABLE Tbl_Urine ADD COLUMN bloodDipstick TEXT DEFAULT 'Nil';
-            ALTER TABLE Tbl_Urine ADD COLUMN leukocytesDipstick TEXT DEFAULT 'Nil';
-            ALTER TABLE Tbl_Urine ADD COLUMN nitritesDipstick TEXT DEFAULT 'Nil';
-            ALTER TABLE Tbl_Urine ADD COLUMN phLevel REAL;
-            ALTER TABLE Tbl_Urine ADD COLUMN bladderFullness INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN bladderFullnessLevel TEXT DEFAULT '';
-            ALTER TABLE Tbl_Urine ADD COLUMN difficultVoiding INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN urinaryRetention INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN catheterizationIndicated INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN lastCatheterizationTime TEXT;
-            ALTER TABLE Tbl_Urine ADD COLUMN catheterType TEXT DEFAULT '';
-            ALTER TABLE Tbl_Urine ADD COLUMN proteinuriaNewOnset INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN proteinuriaWorsening INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN firstProteinDetectedTime TEXT;
-            ALTER TABLE Tbl_Urine ADD COLUMN laboratorySampleSent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN proteinCreatinineRatio TEXT DEFAULT '';
-            ALTER TABLE Tbl_Urine ADD COLUMN signsOfDehydration INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN prolongedLabor INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN increasedKetoneTrend INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN firstKetoneDetectedTime TEXT;
-            ALTER TABLE Tbl_Urine ADD COLUMN totalOralIntakeMl INTEGER;
-            ALTER TABLE Tbl_Urine ADD COLUMN totalIVIntakeMl INTEGER;
-            ALTER TABLE Tbl_Urine ADD COLUMN fluidBalanceMl INTEGER;
-            ALTER TABLE Tbl_Urine ADD COLUMN encourageOralFluids INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN ivFluidsStarted INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN catheterizationPerformed INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Urine ADD COLUMN nephrologyConsultRequired INTEGER DEFAULT 0;
-
             DROP TRIGGER IF EXISTS trg_urine_insert;
             CREATE TRIGGER trg_urine_insert
             AFTER INSERT ON Tbl_Urine
@@ -154,6 +104,56 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+        
+        //    -- Add WHO 2020 columns to existing tables
+        //    ALTER TABLE Tbl_Urine ADD COLUMN outputMl INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN color TEXT DEFAULT 'Yellow';
+        //ALTER TABLE Tbl_Urine ADD COLUMN ketones TEXT DEFAULT 'Nil';
+        //ALTER TABLE Tbl_Urine ADD COLUMN glucose TEXT DEFAULT 'Nil';
+        //ALTER TABLE Tbl_Urine ADD COLUMN specificGravity TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Urine ADD COLUMN voidingMethod TEXT DEFAULT 'Spontaneous';
+        //ALTER TABLE Tbl_Urine ADD COLUMN bladderPalpable INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN lastVoided TEXT;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN clinicalAlert TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Urine ADD COLUMN voidingTime TEXT;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN timeSinceLastVoidMinutes INTEGER;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN cumulativeOutputMl INTEGER;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN hourlyOutputRate REAL;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN oliguria INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN anuria INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN consecutiveOliguriaHours INTEGER;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN clarity TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Urine ADD COLUMN hematuria INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN concentrated INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN dilute INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN odor TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Urine ADD COLUMN bloodDipstick TEXT DEFAULT 'Nil';
+        //ALTER TABLE Tbl_Urine ADD COLUMN leukocytesDipstick TEXT DEFAULT 'Nil';
+        //ALTER TABLE Tbl_Urine ADD COLUMN nitritesDipstick TEXT DEFAULT 'Nil';
+        //ALTER TABLE Tbl_Urine ADD COLUMN phLevel REAL;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN bladderFullness INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN bladderFullnessLevel TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Urine ADD COLUMN difficultVoiding INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN urinaryRetention INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN catheterizationIndicated INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN lastCatheterizationTime TEXT;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN catheterType TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Urine ADD COLUMN proteinuriaNewOnset INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN proteinuriaWorsening INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN firstProteinDetectedTime TEXT;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN laboratorySampleSent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN proteinCreatinineRatio TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Urine ADD COLUMN signsOfDehydration INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN prolongedLabor INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN increasedKetoneTrend INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN firstKetoneDetectedTime TEXT;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN totalOralIntakeMl INTEGER;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN totalIVIntakeMl INTEGER;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN fluidBalanceMl INTEGER;
+        //    ALTER TABLE Tbl_Urine ADD COLUMN encourageOralFluids INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN ivFluidsStarted INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN catheterizationPerformed INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Urine ADD COLUMN nephrologyConsultRequired INTEGER DEFAULT 0;
 
         public UrineRepository(ILogger<UrineRepository> logger) : base(logger) { }
 

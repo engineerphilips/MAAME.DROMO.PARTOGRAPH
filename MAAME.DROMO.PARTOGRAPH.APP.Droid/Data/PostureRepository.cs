@@ -47,23 +47,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            -- Add new columns to existing tables (WHO 2020 enhancements)
-            ALTER TABLE Tbl_Posture ADD COLUMN posturecategory TEXT DEFAULT '';
-            ALTER TABLE Tbl_Posture ADD COLUMN starttime TEXT;
-            ALTER TABLE Tbl_Posture ADD COLUMN endtime TEXT;
-            ALTER TABLE Tbl_Posture ADD COLUMN durationminutes INTEGER;
-            ALTER TABLE Tbl_Posture ADD COLUMN reason TEXT DEFAULT '';
-            ALTER TABLE Tbl_Posture ADD COLUMN effectonlabor TEXT DEFAULT '';
-            ALTER TABLE Tbl_Posture ADD COLUMN effectonpain TEXT DEFAULT '';
-            ALTER TABLE Tbl_Posture ADD COLUMN effectoncontractions TEXT DEFAULT '';
-            ALTER TABLE Tbl_Posture ADD COLUMN patientchoice INTEGER DEFAULT 1;
-            ALTER TABLE Tbl_Posture ADD COLUMN medicallyindicated INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Posture ADD COLUMN mobileandactive INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Posture ADD COLUMN restrictedmobility INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Posture ADD COLUMN mobilityrestriction TEXT DEFAULT '';
-            ALTER TABLE Tbl_Posture ADD COLUMN supportequipment TEXT DEFAULT '';
-            ALTER TABLE Tbl_Posture ADD COLUMN clinicalalert TEXT DEFAULT '';
-
             CREATE INDEX IF NOT EXISTS idx_posture_sync ON Tbl_Posture(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_posture_server_version ON Tbl_Posture(serverversion);
 
@@ -90,6 +73,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+                
+        //-- Add new columns to existing tables(WHO 2020 enhancements)
+        //ALTER TABLE Tbl_Posture ADD COLUMN posturecategory TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Posture ADD COLUMN starttime TEXT;
+        //    ALTER TABLE Tbl_Posture ADD COLUMN endtime TEXT;
+        //    ALTER TABLE Tbl_Posture ADD COLUMN durationminutes INTEGER;
+        //    ALTER TABLE Tbl_Posture ADD COLUMN reason TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Posture ADD COLUMN effectonlabor TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Posture ADD COLUMN effectonpain TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Posture ADD COLUMN effectoncontractions TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Posture ADD COLUMN patientchoice INTEGER DEFAULT 1;
+        //ALTER TABLE Tbl_Posture ADD COLUMN medicallyindicated INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Posture ADD COLUMN mobileandactive INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Posture ADD COLUMN restrictedmobility INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Posture ADD COLUMN mobilityrestriction TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Posture ADD COLUMN supportequipment TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Posture ADD COLUMN clinicalalert TEXT DEFAULT '';
 
         public PostureRepository(ILogger<PostureRepository> logger) : base(logger) { }
 

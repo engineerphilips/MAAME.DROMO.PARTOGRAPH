@@ -75,48 +75,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             CREATE INDEX IF NOT EXISTS idx_bp_sync ON Tbl_BP(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_bp_server_version ON Tbl_BP(serverversion);
 
-            -- Add WHO 2020 columns to existing tables
-            ALTER TABLE Tbl_BP ADD COLUMN maternalPosition TEXT DEFAULT 'Sitting';
-            ALTER TABLE Tbl_BP ADD COLUMN cuffSize TEXT DEFAULT 'Standard';
-            ALTER TABLE Tbl_BP ADD COLUMN repeatMeasurement INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN irregularPulse INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN clinicalAlert TEXT DEFAULT '';
-            ALTER TABLE Tbl_BP ADD COLUMN bpCategory TEXT DEFAULT '';
-            ALTER TABLE Tbl_BP ADD COLUMN severeHypertension INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN preeclampsiaRange INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN firstElevatedBPTime TEXT;
-            ALTER TABLE Tbl_BP ADD COLUMN consecutiveElevatedReadings INTEGER;
-            ALTER TABLE Tbl_BP ADD COLUMN secondSystolic INTEGER;
-            ALTER TABLE Tbl_BP ADD COLUMN secondDiastolic INTEGER;
-            ALTER TABLE Tbl_BP ADD COLUMN secondReadingTime TEXT;
-            ALTER TABLE Tbl_BP ADD COLUMN thirdSystolic INTEGER;
-            ALTER TABLE Tbl_BP ADD COLUMN thirdDiastolic INTEGER;
-            ALTER TABLE Tbl_BP ADD COLUMN thirdReadingTime TEXT;
-            ALTER TABLE Tbl_BP ADD COLUMN pulseRhythm TEXT DEFAULT '';
-            ALTER TABLE Tbl_BP ADD COLUMN pulseVolume TEXT DEFAULT '';
-            ALTER TABLE Tbl_BP ADD COLUMN pulseCharacter TEXT DEFAULT '';
-            ALTER TABLE Tbl_BP ADD COLUMN pulseDeficit INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN hypotension INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN hypotensionCause TEXT DEFAULT '';
-            ALTER TABLE Tbl_BP ADD COLUMN posturalHypotension INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN posturalDrop INTEGER;
-            ALTER TABLE Tbl_BP ADD COLUMN newOnsetHypertension INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN knownHypertension INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN onAntihypertensives INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN antihypertensiveMedication TEXT DEFAULT '';
-            ALTER TABLE Tbl_BP ADD COLUMN lastAntihypertensiveDose TEXT;
-            ALTER TABLE Tbl_BP ADD COLUMN headache INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN visualDisturbances INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN epigastricPain INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN hyperreflexia INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN edema INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN emergencyProtocolActivated INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN antihypertensiveGiven INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN antihypertensiveGivenTime TEXT;
-            ALTER TABLE Tbl_BP ADD COLUMN magnesiumSulfateGiven INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN ivFluidsGiven INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_BP ADD COLUMN positionChanged INTEGER DEFAULT 0;
-
             DROP TRIGGER IF EXISTS trg_bp_insert;
             CREATE TRIGGER trg_bp_insert
             AFTER INSERT ON Tbl_BP
@@ -140,6 +98,48 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+        
+        //    -- Add WHO 2020 columns to existing tables
+        //    ALTER TABLE Tbl_BP ADD COLUMN maternalPosition TEXT DEFAULT 'Sitting';
+        //ALTER TABLE Tbl_BP ADD COLUMN cuffSize TEXT DEFAULT 'Standard';
+        //ALTER TABLE Tbl_BP ADD COLUMN repeatMeasurement INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN irregularPulse INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN clinicalAlert TEXT DEFAULT '';
+        //ALTER TABLE Tbl_BP ADD COLUMN bpCategory TEXT DEFAULT '';
+        //ALTER TABLE Tbl_BP ADD COLUMN severeHypertension INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN preeclampsiaRange INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN firstElevatedBPTime TEXT;
+        //    ALTER TABLE Tbl_BP ADD COLUMN consecutiveElevatedReadings INTEGER;
+        //    ALTER TABLE Tbl_BP ADD COLUMN secondSystolic INTEGER;
+        //    ALTER TABLE Tbl_BP ADD COLUMN secondDiastolic INTEGER;
+        //    ALTER TABLE Tbl_BP ADD COLUMN secondReadingTime TEXT;
+        //    ALTER TABLE Tbl_BP ADD COLUMN thirdSystolic INTEGER;
+        //    ALTER TABLE Tbl_BP ADD COLUMN thirdDiastolic INTEGER;
+        //    ALTER TABLE Tbl_BP ADD COLUMN thirdReadingTime TEXT;
+        //    ALTER TABLE Tbl_BP ADD COLUMN pulseRhythm TEXT DEFAULT '';
+        //ALTER TABLE Tbl_BP ADD COLUMN pulseVolume TEXT DEFAULT '';
+        //ALTER TABLE Tbl_BP ADD COLUMN pulseCharacter TEXT DEFAULT '';
+        //ALTER TABLE Tbl_BP ADD COLUMN pulseDeficit INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN hypotension INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN hypotensionCause TEXT DEFAULT '';
+        //ALTER TABLE Tbl_BP ADD COLUMN posturalHypotension INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN posturalDrop INTEGER;
+        //    ALTER TABLE Tbl_BP ADD COLUMN newOnsetHypertension INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN knownHypertension INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN onAntihypertensives INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN antihypertensiveMedication TEXT DEFAULT '';
+        //ALTER TABLE Tbl_BP ADD COLUMN lastAntihypertensiveDose TEXT;
+        //    ALTER TABLE Tbl_BP ADD COLUMN headache INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN visualDisturbances INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN epigastricPain INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN hyperreflexia INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN edema INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN emergencyProtocolActivated INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN antihypertensiveGiven INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN antihypertensiveGivenTime TEXT;
+        //    ALTER TABLE Tbl_BP ADD COLUMN magnesiumSulfateGiven INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN ivFluidsGiven INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_BP ADD COLUMN positionChanged INTEGER DEFAULT 0;
 
         public BPRepository(ILogger<BPRepository> logger) : base(logger) { }
 

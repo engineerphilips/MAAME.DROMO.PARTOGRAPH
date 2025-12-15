@@ -47,23 +47,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            -- Add new columns to existing tables (WHO 2020 enhancements)
-            ALTER TABLE Tbl_Caput ADD COLUMN location TEXT DEFAULT '';
-            ALTER TABLE Tbl_Caput ADD COLUMN size TEXT DEFAULT '';
-            ALTER TABLE Tbl_Caput ADD COLUMN consistency TEXT DEFAULT '';
-            ALTER TABLE Tbl_Caput ADD COLUMN increasing INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Caput ADD COLUMN decreasing INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Caput ADD COLUMN stable INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Caput ADD COLUMN progressionrate TEXT DEFAULT '';
-            ALTER TABLE Tbl_Caput ADD COLUMN firstdetectedtime TEXT;
-            ALTER TABLE Tbl_Caput ADD COLUMN durationhours INTEGER;
-            ALTER TABLE Tbl_Caput ADD COLUMN mouldingpresent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Caput ADD COLUMN mouldingdegree TEXT DEFAULT '';
-            ALTER TABLE Tbl_Caput ADD COLUMN suggestsobstruction INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Caput ADD COLUMN suggestionprolongedlabor INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Caput ADD COLUMN changefromprevious TEXT DEFAULT '';
-            ALTER TABLE Tbl_Caput ADD COLUMN clinicalalert TEXT DEFAULT '';
-
             CREATE INDEX IF NOT EXISTS idx_caput_sync ON Tbl_Caput(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_caput_server_version ON Tbl_Caput(serverversion);
 
@@ -90,6 +73,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+        
+        //    -- Add new columns to existing tables(WHO 2020 enhancements)
+        //    ALTER TABLE Tbl_Caput ADD COLUMN location TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Caput ADD COLUMN size TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Caput ADD COLUMN consistency TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Caput ADD COLUMN increasing INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Caput ADD COLUMN decreasing INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Caput ADD COLUMN stable INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Caput ADD COLUMN progressionrate TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Caput ADD COLUMN firstdetectedtime TEXT;
+        //    ALTER TABLE Tbl_Caput ADD COLUMN durationhours INTEGER;
+        //    ALTER TABLE Tbl_Caput ADD COLUMN mouldingpresent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Caput ADD COLUMN mouldingdegree TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Caput ADD COLUMN suggestsobstruction INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Caput ADD COLUMN suggestionprolongedlabor INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Caput ADD COLUMN changefromprevious TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Caput ADD COLUMN clinicalalert TEXT DEFAULT '';
 
         public CaputRepository(ILogger<CaputRepository> logger) : base(logger) { }
 

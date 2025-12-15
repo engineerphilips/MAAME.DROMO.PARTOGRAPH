@@ -229,7 +229,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    TemperatureCelsius = TemperatureCelsius ?? 0,
+                    TemperatureCelsius = TemperatureCelsius,
+                    AntibioticsStarted = AntibioticsStarted,
+                    AntibioticsStartTime = AntibioticsStartTime,
+                    AntipyreticGivenTime = AntipyreticGivenTime,
+                    AntipyreticsGiven = AntipyreticsGiven,
+                    AntipyreticType = AntipyreticType,
+                    AssociatedSymptoms = AssociatedSymptoms,
+                    ChillsPresent = ChillsPresent,
+                    ChoriamnionitisRisk = ChoriamnionitisRisk,
+                    ClinicalAlert = ClinicalAlert,
+                    CoolingMeasures = CoolingMeasures,
+                    CulturesObtained = CulturesObtained,
+                    FetalTachycardia = FetalTachycardia,
+                    FeverCategory = FeverCategory,
+                    FeverDurationHours = FeverDurationHours,
+                    FeverOnsetTime = FeverOnsetTime,
+                    Headache = Headache,
+                    HoursSinceRupture = HoursSinceRupture,
+                    IntrapartumFever = IntrapartumFever,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
@@ -271,7 +289,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             RecordingDate = DateOnly.FromDateTime(DateTime.Now);
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-            TemperatureCelsius = null;
+            TemperatureCelsius = 0;
             Notes = string.Empty;
         }
 

@@ -41,18 +41,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            -- Add new columns to existing tables (WHO 2020 enhancements)
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN lie TEXT DEFAULT 'Longitudinal';
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN presentation TEXT DEFAULT 'Vertex';
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN presentingpart TEXT DEFAULT '';
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN variety TEXT DEFAULT '';
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN flexion TEXT DEFAULT 'Flexed';
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN engaged INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN level TEXT DEFAULT '';
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN assessmentmethod TEXT DEFAULT '';
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN rotationprogress TEXT DEFAULT '';
-            ALTER TABLE Tbl_FetalPosition ADD COLUMN clinicalalert TEXT DEFAULT '';
-
             CREATE INDEX IF NOT EXISTS idx_companion_sync ON Tbl_FetalPosition(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_companion_server_version ON Tbl_FetalPosition(serverversion);
 
@@ -79,6 +67,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
+                
+        //    -- Add new columns to existing tables(WHO 2020 enhancements)
+        //    ALTER TABLE Tbl_FetalPosition ADD COLUMN lie TEXT DEFAULT 'Longitudinal';
+        //ALTER TABLE Tbl_FetalPosition ADD COLUMN presentation TEXT DEFAULT 'Vertex';
+        //ALTER TABLE Tbl_FetalPosition ADD COLUMN presentingpart TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FetalPosition ADD COLUMN variety TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FetalPosition ADD COLUMN flexion TEXT DEFAULT 'Flexed';
+        //ALTER TABLE Tbl_FetalPosition ADD COLUMN engaged INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_FetalPosition ADD COLUMN level TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FetalPosition ADD COLUMN assessmentmethod TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FetalPosition ADD COLUMN rotationprogress TEXT DEFAULT '';
+        //ALTER TABLE Tbl_FetalPosition ADD COLUMN clinicalalert TEXT DEFAULT '';
 
         public FetalPositionRepository(ILogger<FetalPositionRepository> logger) : base(logger) { }
 

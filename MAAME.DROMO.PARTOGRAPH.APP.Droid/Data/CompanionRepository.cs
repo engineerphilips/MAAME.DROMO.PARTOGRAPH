@@ -52,29 +52,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            -- Add new columns to existing tables (WHO 2020 enhancements)
-            ALTER TABLE Tbl_Companion ADD COLUMN companionpresent INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN companiontype TEXT DEFAULT '';
-            ALTER TABLE Tbl_Companion ADD COLUMN numberofcompanions INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN companionname TEXT DEFAULT '';
-            ALTER TABLE Tbl_Companion ADD COLUMN companionrelationship TEXT DEFAULT '';
-            ALTER TABLE Tbl_Companion ADD COLUMN arrivaltime TEXT;
-            ALTER TABLE Tbl_Companion ADD COLUMN departuretime TEXT;
-            ALTER TABLE Tbl_Companion ADD COLUMN durationminutes INTEGER;
-            ALTER TABLE Tbl_Companion ADD COLUMN continuouspresence INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN participationlevel TEXT DEFAULT '';
-            ALTER TABLE Tbl_Companion ADD COLUMN supportactivities TEXT DEFAULT '';
-            ALTER TABLE Tbl_Companion ADD COLUMN patientrequestedcompanion INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN patientdeclinedcompanion INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN reasonfornocompanion TEXT DEFAULT '';
-            ALTER TABLE Tbl_Companion ADD COLUMN stafforientedcompanion INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN companioninvolvedindecisions INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN languagebarrier INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN interpreterrequired INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN culturalpractices INTEGER DEFAULT 0;
-            ALTER TABLE Tbl_Companion ADD COLUMN culturalpracticesdetails TEXT DEFAULT '';
-            ALTER TABLE Tbl_Companion ADD COLUMN clinicalalert TEXT DEFAULT '';
-
             CREATE INDEX IF NOT EXISTS idx_companion_sync ON Tbl_Companion(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_companion_server_version ON Tbl_Companion(serverversion);
 
@@ -101,7 +78,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE ID = NEW.ID;
             END;
             ";
-
+        
+        //    -- Add new columns to existing tables(WHO 2020 enhancements)
+        //    ALTER TABLE Tbl_Companion ADD COLUMN companionpresent INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN companiontype TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Companion ADD COLUMN numberofcompanions INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN companionname TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Companion ADD COLUMN companionrelationship TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Companion ADD COLUMN arrivaltime TEXT;
+        //    ALTER TABLE Tbl_Companion ADD COLUMN departuretime TEXT;
+        //    ALTER TABLE Tbl_Companion ADD COLUMN durationminutes INTEGER;
+        //    ALTER TABLE Tbl_Companion ADD COLUMN continuouspresence INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN participationlevel TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Companion ADD COLUMN supportactivities TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Companion ADD COLUMN patientrequestedcompanion INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN patientdeclinedcompanion INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN reasonfornocompanion TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Companion ADD COLUMN stafforientedcompanion INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN companioninvolvedindecisions INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN languagebarrier INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN interpreterrequired INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN culturalpractices INTEGER DEFAULT 0;
+        //ALTER TABLE Tbl_Companion ADD COLUMN culturalpracticesdetails TEXT DEFAULT '';
+        //ALTER TABLE Tbl_Companion ADD COLUMN clinicalalert TEXT DEFAULT '';
         public CompanionRepository(ILogger<CompanionRepository> logger) : base(logger) { }
 
         protected override CompanionEntry MapFromReader(SqliteDataReader reader)
