@@ -50,11 +50,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // Advanced Fields Toggle
+        [ObservableProperty]
+        private bool _showAdvancedFields = false;
+
         // WHO 2020 Enhanced Urine Assessment Fields
 
         // Original fields
-        [ObservableProperty]
         private int _outputMl;
+        public int OutputMl
+        {
+            get => _outputMl;
+            set
+            {
+                SetProperty(ref _outputMl, value);
+                AutoCalculateUrineFields();
+            }
+        }
 
         [ObservableProperty]
         private string _color = "Yellow";
@@ -295,6 +307,42 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             ProteinIndex = -1;
             AcetoneIndex = -1;
             Notes = string.Empty;
+        }
+
+        /// <summary>
+        /// Auto-calculate urine-related fields based on output volume
+        /// </summary>
+        private void AutoCalculateUrineFields()
+        {
+            // Calculate hourly output rate
+            if (TimeSinceLastVoidMinutes.HasValue && TimeSinceLastVoidMinutes > 0)
+            {
+                HourlyOutputRate = (decimal)OutputMl / ((decimal)TimeSinceLastVoidMinutes.Value / 60);
+            }
+
+            // Auto-detect oliguria (<30 ml/hour)
+            if (HourlyOutputRate.HasValue)
+            {
+                Oliguria = HourlyOutputRate < 30;
+            }
+            else if (OutputMl > 0 && OutputMl < 30)
+            {
+                // If no time interval, assume this is hourly output
+                Oliguria = true;
+            }
+
+            // Auto-detect anuria (no urine output)
+            Anuria = OutputMl == 0;
+
+            // Track consecutive oliguria hours if oliguria detected
+            if (Oliguria && !ConsecutiveOliguriaHours.HasValue)
+            {
+                ConsecutiveOliguriaHours = 1;
+            }
+            else if (!Oliguria)
+            {
+                ConsecutiveOliguriaHours = null;
+            }
         }
     }
 }

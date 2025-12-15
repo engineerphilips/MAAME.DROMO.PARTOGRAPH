@@ -41,11 +41,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _isBusy;
 
+        // Advanced Fields Toggle
+        [ObservableProperty]
+        private bool _showAdvancedFields = false;
+
         // WHO 2020 Enhanced Temperature Assessment Fields
 
         // Original fields
-        [ObservableProperty]
         private float _temperatureCelsius;
+        public float TemperatureCelsius
+        {
+            get => _temperatureCelsius;
+            set
+            {
+                SetProperty(ref _temperatureCelsius, value);
+                AutoCalculateTemperatureFields();
+            }
+        }
 
         [ObservableProperty]
         private string _measurementSite = "Oral";
@@ -261,6 +273,46 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             Rate = null;
             Notes = string.Empty;
+        }
+
+        /// <summary>
+        /// Auto-calculate temperature-related fields based on the primary temperature reading
+        /// </summary>
+        private void AutoCalculateTemperatureFields()
+        {
+            // Auto-detect intrapartum fever (≥38.0°C / 100.4°F)
+            IntrapartumFever = TemperatureCelsius >= 38.0f;
+
+            // Auto-classify fever category
+            if (TemperatureCelsius < 37.5f)
+            {
+                FeverCategory = "Normal";
+            }
+            else if (TemperatureCelsius >= 37.5f && TemperatureCelsius < 38.0f)
+            {
+                FeverCategory = "Low-grade fever";
+            }
+            else if (TemperatureCelsius >= 38.0f && TemperatureCelsius < 39.0f)
+            {
+                FeverCategory = "Moderate fever";
+            }
+            else if (TemperatureCelsius >= 39.0f)
+            {
+                FeverCategory = "High fever";
+            }
+
+            // Auto-set peak temperature if current is higher
+            if (PeakTemperature == null || TemperatureCelsius > PeakTemperature)
+            {
+                PeakTemperature = TemperatureCelsius;
+                PeakTemperatureTime = DateTime.Now;
+            }
+
+            // Auto-set fever onset time if fever just detected
+            if (IntrapartumFever && FeverOnsetTime == null)
+            {
+                FeverOnsetTime = DateTime.Now;
+            }
         }
     }
 }
