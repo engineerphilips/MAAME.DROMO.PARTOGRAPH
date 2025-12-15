@@ -73,6 +73,20 @@
                                                 Minimum="0" />
                     </core:SfTextInputLayout>
 
+                    <VerticalStackLayout Padding="10,0,0,0">
+                        <Label Text="Contraction Strength" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+
+                    <buttons:SfSegmentedControl x:Name="strengthSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="3" SelectedIndex="{Binding StrengthIndex, Mode=TwoWay}">
+                        <buttons:SfSegmentedControl.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Mild</x:String>
+                                <x:String>Moderate</x:String>
+                                <x:String>Strong</x:String>
+                            </x:Array>
+                        </buttons:SfSegmentedControl.ItemsSource>
+                    </buttons:SfSegmentedControl>
+
                     <!-- Advanced Fields Toggle -->
                     <Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
                            BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}"
@@ -95,6 +109,23 @@
 
                         <!-- WHO 2020 Critical FHR Assessment -->
                         <Label Text="FHR Variability &amp; Pattern" FontAttributes="Bold" Margin="0,10,0,5" />
+
+                    <VerticalStackLayout Padding="10,0,0,0">
+                        <Label Text="Deceleration Type" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+
+                    <buttons:SfSegmentedControl x:Name="decelerationSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="5" SelectedIndex="{Binding DecelerationIndex, Mode=TwoWay}">
+                        <buttons:SfSegmentedControl.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>None</x:String>
+                                <x:String>Early</x:String>
+                                <x:String>Late</x:String>
+                                <x:String>Variable</x:String>
+                                <x:String>Prolonged</x:String>
+                            </x:Array>
+                        </buttons:SfSegmentedControl.ItemsSource>
+                    </buttons:SfSegmentedControl>
+
 
                     <CheckBox IsChecked="{Binding Accelerations}" />
                     <Label Text="Accelerations Present (reassuring)" Margin="-30,0,0,0" VerticalOptions="Center" />

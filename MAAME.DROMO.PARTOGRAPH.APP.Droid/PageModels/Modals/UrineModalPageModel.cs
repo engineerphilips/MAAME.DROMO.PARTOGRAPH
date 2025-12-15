@@ -261,8 +261,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    Protein = ProteinIndex == 0 ? "P-" : ProteinIndex == 1 ? "P" : ProteinIndex == 2 ? "P1+" : ProteinIndex == 3 ? "P2+" : ProteinIndex == 4 ? "P3+" : null,
-                    Ketones = AcetoneIndex == 0 ? "P-" : AcetoneIndex == 1 ? "P" : AcetoneIndex == 2 ? "P1+" : AcetoneIndex == 3 ? "P2+" : AcetoneIndex == 4 ? "P3+" : null,
+                    Protein = GetProteinValue(ProteinIndex),
+                    Ketones = GetKetonesValue(AcetoneIndex),
+                    OutputMl = OutputMl,
                     Notes = Notes,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
                     Handler = Constants.Staff?.ID
@@ -306,7 +307,44 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             RecordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             ProteinIndex = -1;
             AcetoneIndex = -1;
+            OutputMl = 0;
             Notes = string.Empty;
+        }
+
+        /// <summary>
+        /// Convert UI index to MODEL Protein value
+        /// UI: P- (0), P (1), P1+ (2), P2+ (3), P3+ (4)
+        /// MODEL: Nil, Trace, Plus1, Plus2, Plus3
+        /// </summary>
+        private string? GetProteinValue(int index)
+        {
+            return index switch
+            {
+                0 => "Nil",      // P-
+                1 => "Trace",    // P
+                2 => "Plus1",    // P1+
+                3 => "Plus2",    // P2+
+                4 => "Plus3",    // P3+
+                _ => null
+            };
+        }
+
+        /// <summary>
+        /// Convert UI index to MODEL Ketones value
+        /// UI: A- (0), A (1), A1+ (2), A2+ (3), A3+ (4)
+        /// MODEL: Nil, Trace, Plus1, Plus2, Plus3
+        /// </summary>
+        private string? GetKetonesValue(int index)
+        {
+            return index switch
+            {
+                0 => "Nil",      // A-
+                1 => "Trace",    // A
+                2 => "Plus1",    // A1+
+                3 => "Plus2",    // A2+
+                4 => "Plus3",    // A3+
+                _ => null
+            };
         }
 
         /// <summary>
