@@ -876,13 +876,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                             stats.PendingLabor = count;
                             break;
                         case LaborStatus.FirstStage:
-                            stats.ActiveLabor = count;
+                            stats.FirstStageCount = count;
+                            stats.ActiveLabor += count;
                             break;
                         case LaborStatus.SecondStage:
-                            stats.ActiveLabor = count;
+                            stats.SecondStageCount = count;
+                            stats.ActiveLabor += count;
                             break;
                         case LaborStatus.ThirdStage:
-                            stats.ActiveLabor = count;
+                            stats.ThirdStageCount = count;
+                            stats.ActiveLabor += count;
+                            break;
+                        case LaborStatus.FourthStage:
+                            stats.FourthStageCount = count;
+                            stats.ActiveLabor += count;
                             break;
                         case LaborStatus.Emergency:
                             stats.EmergencyCases = count;
@@ -894,7 +901,70 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 if (await reader.NextResultAsync() && await reader.ReadAsync())
                 {
                     stats.CompletedToday = reader.GetInt32(0);
+                    stats.TotalDeliveriesToday = stats.CompletedToday;
                 }
+
+                // Get phase breakdown for first stage patients
+                var phaseCmd = connection.CreateCommand();
+                phaseCmd.CommandText = @"
+                SELECT currentPhase, COUNT(*) FROM Tbl_Partograph
+                WHERE status = @firststage AND deleted = 0
+                GROUP BY currentPhase";
+                phaseCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
+
+                await using var phaseReader = await phaseCmd.ExecuteReaderAsync();
+                while (await phaseReader.ReadAsync())
+                {
+                    var phaseStr = phaseReader.IsDBNull(0) ? "NotDetermined" : phaseReader.GetString(0);
+                    var phaseCount = phaseReader.GetInt32(1);
+
+                    if (Enum.TryParse<FirstStagePhase>(phaseStr, out var phase))
+                    {
+                        switch (phase)
+                        {
+                            case FirstStagePhase.Latent:
+                                stats.LatentPhaseCount = phaseCount;
+                                break;
+                            case FirstStagePhase.ActiveEarly:
+                                stats.ActiveEarlyPhaseCount = phaseCount;
+                                break;
+                            case FirstStagePhase.ActiveAdvanced:
+                                stats.ActiveAdvancedPhaseCount = phaseCount;
+                                break;
+                            case FirstStagePhase.Transition:
+                                stats.TransitionPhaseCount = phaseCount;
+                                break;
+                        }
+                    }
+                }
+
+                // Get abnormal FHR count
+                var fhrCmd = connection.CreateCommand();
+                fhrCmd.CommandText = @"
+                SELECT COUNT(DISTINCT p.ID) FROM Tbl_Partograph p
+                INNER JOIN Tbl_FHR f ON f.partographID = p.ID
+                WHERE p.status IN (@firststage, @secondstage, @thirdstage)
+                  AND p.deleted = 0
+                  AND (f.value < 110 OR f.value > 160)
+                  AND f.time = (SELECT MAX(f2.time) FROM Tbl_FHR f2 WHERE f2.partographID = p.ID)";
+                fhrCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
+                fhrCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
+                fhrCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
+                var abnormalFhr = await fhrCmd.ExecuteScalarAsync();
+                stats.AbnormalFHRCount = abnormalFhr != null ? Convert.ToInt32(abnormalFhr) : 0;
+
+                // Get meconium stained liquor count
+                var meconiumCmd = connection.CreateCommand();
+                meconiumCmd.CommandText = @"
+                SELECT COUNT(*) FROM Tbl_Partograph
+                WHERE status IN (@firststage, @secondstage, @thirdstage)
+                  AND deleted = 0
+                  AND (liquorStatus LIKE '%meconium%' OR liquorStatus LIKE '%stained%' OR liquorStatus = 'Thick')";
+                meconiumCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
+                meconiumCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
+                meconiumCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
+                var meconium = await meconiumCmd.ExecuteScalarAsync();
+                stats.MeconiumStainedCount = meconium != null ? Convert.ToInt32(meconium) : 0;
 
                 // Get average delivery time for completed cases today
                 var avgDeliveryCmd = connection.CreateCommand();
