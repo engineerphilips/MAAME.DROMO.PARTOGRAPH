@@ -208,27 +208,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     var staff = new Staff
                     {
-                        ID = Guid.Parse((string)reader["ID"]),
-                        Name = (string)reader["name"],
-                        StaffID = (string)reader["staffid"],
-                        Email = (string)reader["email"],
-                        Role = (string)reader["role"],
-                        Department = (string)reader["department"],
-                        Password = (string)reader["password"],
-                        LastLogin = reader["lastlogin"] is DBNull ? DateTime.Now : DateTime.Parse((string)reader["lastlogin"]),
+                        ID = Guid.Parse(reader["ID"].ToString()),
+                        Name = reader["name"].ToString(),
+                        StaffID = reader["staffid"].ToString(),
+                        Email = reader["email"].ToString(),
+                        Role = reader["role"].ToString(),
+                        Department = reader["department"].ToString(),
+                        Password = reader["password"].ToString(),
+                        LastLogin = reader["lastlogin"] is DBNull ? DateTime.Now : DateTime.Parse(reader["lastlogin"].ToString()),
                         IsActive = Convert.ToBoolean(reader["active"]),
-                        Facility = reader["facility"] is DBNull ? null : Guid.Parse((string)reader["facility"]),
+                        Facility = reader["facility"] is DBNull ? null : Guid.Parse(reader["facility"].ToString()),
                         CreatedTime = Convert.ToInt64(reader["createdtime"]),
                         UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                         DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
-                        DeviceId = (string)reader["deviceid"],
-                        OriginDeviceId = (string)reader["origindeviceid"],
+                        DeviceId = reader["deviceid"].ToString(),
+                        OriginDeviceId = reader["origindeviceid"].ToString(),
                         SyncStatus = Convert.ToInt32(reader["syncstatus"]),
                         Version = Convert.ToInt32(reader["version"]),
                         ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
                         Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
-                        //ConflictData = (string)reader["conflictdata"],
-                        //DataHash = (string)reader["datahash"]
+                        //ConflictData = reader["conflictdata"].ToString(),
+                        //DataHash = reader["datahash"].ToString()
                     };
 
                     // Update last login
@@ -273,27 +273,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     users.Add(new Staff
                     {
-                        ID = Guid.Parse((string)reader["ID"]),
-                        Name = (string)reader["name"],
-                        StaffID = (string)reader["staffid"],
-                        Email = (string)reader["email"],
-                        Role = (string)reader["role"],
-                        Department = (string)reader["department"],
-                        Password = (string)reader["password"],
-                        LastLogin = reader["lastlogin"] is DBNull ? DateTime.Now : DateTime.Parse((string)reader["lastlogin"]),
+                        ID = Guid.Parse(reader["ID"].ToString()),
+                        Name = reader["name"].ToString(),
+                        StaffID = reader["staffid"].ToString(),
+                        Email = reader["email"].ToString(),
+                        Role = reader["role"].ToString(),
+                        Department = reader["department"].ToString(),
+                        Password = reader["password"].ToString(),
+                        LastLogin = reader["lastlogin"] is DBNull ? DateTime.Now : DateTime.Parse(reader["lastlogin"].ToString()),
                         IsActive = Convert.ToBoolean(reader["active"]),
-                        Facility = reader["facility"] is DBNull ? null : Guid.Parse((string)reader["facility"]),
+                        Facility = reader["facility"] is DBNull ? null : Guid.Parse(reader["facility"].ToString()),
                         CreatedTime = Convert.ToInt64(reader["createdtime"]),
                         UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                         DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
-                        DeviceId = (string)reader["deviceid"],
-                        OriginDeviceId = (string)reader["origindeviceid"],
+                        DeviceId = reader["deviceid"].ToString(),
+                        OriginDeviceId = reader["origindeviceid"].ToString(),
                         SyncStatus = Convert.ToInt32(reader["syncstatus"]),
                         Version = Convert.ToInt32(reader["version"]),
                         ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
                         Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
-                        //ConflictData = (string)reader["conflictdata"],
-                        //DataHash = (string)reader["datahash"]
+                        //ConflictData = reader["conflictdata"].ToString(),
+                        //DataHash = reader["datahash"].ToString()
                     });
                 }
             }

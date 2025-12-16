@@ -80,9 +80,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 projects.Add(new Project
                 {
                     ID = Convert.ToInt32(reader["ID"]),
-                    Name = (string)reader["Name"],
-                    Description = (string)reader["Description"],
-                    Icon = (string)reader["Icon"],
+                    Name = reader["Name"].ToString(),
+                    Description = reader["Description"].ToString(),
+                    Icon = reader["Icon"].ToString(),
                     CategoryID = Convert.ToInt32(reader["CategoryID"])
                 });
             }
@@ -117,9 +117,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 var project = new Project
                 {
                     ID = Convert.ToInt32(reader["ID"]),
-                    Name = (string)reader["Name"],
-                    Description = (string)reader["Description"],
-                    Icon = (string)reader["Icon"],
+                    Name = reader["Name"].ToString(),
+                    Description = reader["Description"].ToString(),
+                    Icon = reader["Icon"].ToString(),
                     CategoryID = Convert.ToInt32(reader["CategoryID"])
                 };
 
