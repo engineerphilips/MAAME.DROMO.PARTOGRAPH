@@ -64,26 +64,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             return new MedicationEntry
             {
-                ID = Guid.Parse(reader.GetString(0)),
-                PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
-                Time = reader.GetDateTime(2),
-                //Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
-                HandlerName = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
-                Notes = reader.GetString(4),
-                MedicationName = reader.GetString(5),
-                Dose = reader.GetString(6),
-                Route = reader.GetString(7),
-                CreatedTime = reader.GetInt64(8),
-                UpdatedTime = reader.GetInt64(9),
-                DeletedTime = reader.IsDBNull(10) ? null : reader.GetInt64(10),
-                DeviceId = reader.GetString(11),
-                OriginDeviceId = reader.GetString(12),
-                SyncStatus = reader.GetInt32(13),
-                Version = reader.GetInt32(14),
-                ServerVersion = reader.IsDBNull(15) ? 0 : reader.GetInt32(15),
-                Deleted = reader.IsDBNull(16) ? 0 : reader.GetInt32(16),
-                ConflictData = reader.IsDBNull(17) ? string.Empty : reader.GetString(17),
-                DataHash = reader.IsDBNull(18) ? string.Empty : reader.GetString(18)
+                ID = Guid.Parse((string)reader["ID"]),
+                PartographID = reader["partographid"] is DBNull ? null : Guid.Parse((string)reader["partographid"]),
+                Time = DateTime.Parse((string)reader["time"]),
+                //Handler = reader["handler"] is DBNull ? null : Guid.Parse((string)reader["handler"]),
+                HandlerName = reader["handler"] is DBNull ? string.Empty : (string)reader["handler"],
+                Notes = (string)reader["notes"],
+                MedicationName = (string)reader["medicationname"],
+                Dose = (string)reader["dose"],
+                Route = (string)reader["route"],
+                CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
+                DeviceId = (string)reader["deviceid"],
+                OriginDeviceId = (string)reader["origindeviceid"],
+                SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                Version = Convert.ToInt32(reader["version"]),
+                ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+                Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
+                ConflictData = reader["conflictdata"] is DBNull ? string.Empty : (string)reader["conflictdata"],
+                DataHash = reader["datahash"] is DBNull ? string.Empty : (string)reader["datahash"]
             };
         }
 

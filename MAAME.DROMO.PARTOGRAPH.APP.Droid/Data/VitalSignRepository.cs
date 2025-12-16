@@ -73,18 +73,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 vitalSigns.Add(new VitalSign
                 {
-                    ID = Guid.Parse(reader.GetString(0)),
-                    PatientID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
-                    RecordedTime = DateTime.Parse(reader.GetString(2)),
-                    SystolicBP = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
-                    DiastolicBP = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
-                    Temperature = reader.IsDBNull(5) ? 0 : reader.GetDecimal(5),
-                    PulseRate = reader.IsDBNull(6) ? 0 : reader.GetInt32(6),
-                    RespiratoryRate = reader.IsDBNull(7) ? 0 : reader.GetInt32(7),
-                    UrineOutput = reader.IsDBNull(8) ? "" : reader.GetString(8),
-                    UrineProtein = reader.IsDBNull(9) ? "Nil" : reader.GetString(9),
-                    UrineAcetone = reader.IsDBNull(10) ? "Nil" : reader.GetString(10),
-                    RecordedBy = reader.IsDBNull(11) ? "" : reader.GetString(11)
+                    ID = Guid.Parse((string)reader["ID"]),
+                    PatientID = reader["PatientID"] is DBNull ? null : Guid.Parse((string)reader["PatientID"]),
+                    RecordedTime = DateTime.Parse((string)reader["RecordedTime"]),
+                    SystolicBP = reader["SystolicBP"] is DBNull ? 0 : Convert.ToInt32(reader["SystolicBP"]),
+                    DiastolicBP = reader["DiastolicBP"] is DBNull ? 0 : Convert.ToInt32(reader["DiastolicBP"]),
+                    Temperature = reader["Temperature"] is DBNull ? 0 : Convert.ToDecimal(reader["Temperature"]),
+                    PulseRate = reader["PulseRate"] is DBNull ? 0 : Convert.ToInt32(reader["PulseRate"]),
+                    RespiratoryRate = reader["RespiratoryRate"] is DBNull ? 0 : Convert.ToInt32(reader["RespiratoryRate"]),
+                    UrineOutput = reader["UrineOutput"] is DBNull ? "" : (string)reader["UrineOutput"],
+                    UrineProtein = reader["UrineProtein"] is DBNull ? "Nil" : (string)reader["UrineProtein"],
+                    UrineAcetone = reader["UrineAcetone"] is DBNull ? "Nil" : (string)reader["UrineAcetone"],
+                    RecordedBy = reader["RecordedBy"] is DBNull ? "" : (string)reader["RecordedBy"]
                 });
             }
 

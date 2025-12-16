@@ -79,11 +79,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 projects.Add(new Project
                 {
-                    ID = reader.GetInt32(0),
-                    Name = reader.GetString(1),
-                    Description = reader.GetString(2),
-                    Icon = reader.GetString(3),
-                    CategoryID = reader.GetInt32(4)
+                    ID = Convert.ToInt32(reader["ID"]),
+                    Name = (string)reader["Name"],
+                    Description = (string)reader["Description"],
+                    Icon = (string)reader["Icon"],
+                    CategoryID = Convert.ToInt32(reader["CategoryID"])
                 });
             }
 
@@ -116,11 +116,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 var project = new Project
                 {
-                    ID = reader.GetInt32(0),
-                    Name = reader.GetString(1),
-                    Description = reader.GetString(2),
-                    Icon = reader.GetString(3),
-                    CategoryID = reader.GetInt32(4)
+                    ID = Convert.ToInt32(reader["ID"]),
+                    Name = (string)reader["Name"],
+                    Description = (string)reader["Description"],
+                    Icon = (string)reader["Icon"],
+                    CategoryID = Convert.ToInt32(reader["CategoryID"])
                 };
 
                 project.Tags = await _tagRepository.ListAsync(project.ID);

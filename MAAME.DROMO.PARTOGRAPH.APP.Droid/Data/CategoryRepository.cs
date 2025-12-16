@@ -71,9 +71,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 categories.Add(new Category
                 {
-                    ID = reader.GetInt32(0),
-                    Title = reader.GetString(1),
-                    Color = reader.GetString(2)
+                    ID = Convert.ToInt32(reader["ID"]),
+                    Title = (string)reader["Title"],
+                    Color = (string)reader["Color"]
                 });
             }
 
@@ -100,9 +100,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 return new Category
                 {
-                    ID = reader.GetInt32(0),
-                    Title = reader.GetString(1),
-                    Color = reader.GetString(2)
+                    ID = Convert.ToInt32(reader["ID"]),
+                    Title = (string)reader["Title"],
+                    Color = (string)reader["Color"]
                 };
             }
 
