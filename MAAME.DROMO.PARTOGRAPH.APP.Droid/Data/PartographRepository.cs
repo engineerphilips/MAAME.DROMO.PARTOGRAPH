@@ -136,6 +136,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     patientID TEXT NOT NULL,
                     time TEXT NOT NULL,
                     status TEXT,
+                    currentPhase TEXT DEFAULT 'NotDetermined',
                     gravida INTEGER NOT NULL,
                     parity INTEGER NOT NULL,
                     abortion INTEGER NOT NULL,
@@ -259,6 +260,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 //{
                 //    // Column already exists, ignore
                 //}
+
+                // Migration: Add currentPhase column if it doesn't exist (for existing databases)
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"ALTER TABLE Tbl_Partograph ADD COLUMN currentPhase TEXT DEFAULT 'NotDetermined';";
+                    await alterCmd.ExecuteNonQueryAsync();
+                    _logger.LogInformation("Added currentPhase column to Tbl_Partograph");
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                {
+                    // Column already exists, ignore
+                }
 
                 _logger.LogInformation("WHO Four-Stage System database schema migration completed successfully");
             }
@@ -501,6 +515,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 PatientID = reader["patientID"] is DBNull ? null : Guid.Parse(reader["patientID"].ToString()),
                 Time = DateTime.Parse(reader["time"].ToString()),
                 Status = (LaborStatus)Convert.ToInt32(reader["status"]),
+                CurrentPhase = reader["currentPhase"] is DBNull ? FirstStagePhase.NotDetermined : Enum.TryParse<FirstStagePhase>(reader["currentPhase"].ToString(), out var phase) ? phase : FirstStagePhase.NotDetermined,
                 Gravida = Convert.ToInt32(reader["gravida"]),
                 Parity = Convert.ToInt32(reader["parity"]),
                 Abortion = Convert.ToInt32(reader["abortion"]),
@@ -633,7 +648,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     saveCmd.CommandText = @"
                     INSERT INTO Tbl_Partograph (
-                        ID, patientID, time, status, gravida, parity, abortion, admissionDate,
+                        ID, patientID, time, status, currentPhase, gravida, parity, abortion, admissionDate,
                         expectedDeliveryDate, lastMenstrualDate, laborStartTime, secondStageStartTime,
                         thirdStageStartTime, fourthStageStartTime, deliveryTime, completedTime,
                         rupturedMembraneTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus,
@@ -641,7 +656,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         origindeviceid, syncstatus, version, serverversion, deleted
                     )
                     VALUES (
-                        @ID, @patientID, @time, @status, @gravida, @parity, @abortion, @admissionDate,
+                        @ID, @patientID, @time, @status, @currentPhase, @gravida, @parity, @abortion, @admissionDate,
                         @expectedDeliveryDate, @lastMenstrualDate, @laborStartTime, @secondStageStartTime,
                         @thirdStageStartTime, @fourthStageStartTime, @deliveryTime, @completedTime,
                         @rupturedMembraneTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus,
@@ -655,6 +670,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     UPDATE Tbl_Partograph SET
                         time = @time,
                         status = @status,
+                        currentPhase = @currentPhase,
                         gravida = @gravida,
                         parity = @parity,
                         abortion = @abortion,
@@ -684,6 +700,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 saveCmd.Parameters.AddWithValue("@patientID", item.PatientID?.ToString() ?? "");
                 saveCmd.Parameters.AddWithValue("@time", item.Time.ToString("yyyy-MM-dd HH:mm:ss"));
                 saveCmd.Parameters.AddWithValue("@status", item.Status != null ? (int)item.Status : 0);
+                saveCmd.Parameters.AddWithValue("@currentPhase", item.CurrentPhase.ToString());
                 saveCmd.Parameters.AddWithValue("@gravida", item.Gravida);
                 saveCmd.Parameters.AddWithValue("@parity", item.Parity);
                 saveCmd.Parameters.AddWithValue("@abortion", item.Abortion);
@@ -1613,6 +1630,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 PatientID = reader["patientID"] is DBNull ? null : Guid.Parse(reader["patientID"].ToString()),
                 Time = DateTime.Parse(reader["time"].ToString()),
                 Status = (LaborStatus)Convert.ToInt32(reader["status"]),
+                CurrentPhase = reader["currentPhase"] is DBNull ? FirstStagePhase.NotDetermined : Enum.TryParse<FirstStagePhase>(reader["currentPhase"].ToString(), out var phase) ? phase : FirstStagePhase.NotDetermined,
                 Gravida = Convert.ToInt32(reader["gravida"]),
                 Parity = Convert.ToInt32(reader["parity"]),
                 Abortion = Convert.ToInt32(reader["abortion"]),

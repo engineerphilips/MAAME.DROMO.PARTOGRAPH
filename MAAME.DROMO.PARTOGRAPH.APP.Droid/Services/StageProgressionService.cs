@@ -31,8 +31,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 
             switch (partograph.Status)
             {
+                case LaborStatus.Pending:
+                    return CheckPendingProgression(partograph);
+
                 case LaborStatus.FirstStage:
                     return CheckFirstStageProgression(partograph);
+
+                case LaborStatus.SecondStage:
+                    return CheckSecondStageProgression(partograph);
+
+                case LaborStatus.ThirdStage:
+                    return CheckThirdStageProgression(partograph);
 
                 case LaborStatus.FourthStage:
                     return CheckFourthStageProgression(partograph);
@@ -40,6 +49,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 default:
                     return (false, partograph.Status, "No automatic progression for this stage");
             }
+        }
+
+        /// <summary>
+        /// Checks if labour should start (Pending → FirstStage)
+        /// Auto-progression when: contractions recorded or first cervical dilation recorded
+        /// </summary>
+        private (bool shouldProgress, LaborStatus nextStage, string reason) CheckPendingProgression(Partograph partograph)
+        {
+            // Check if contractions have been recorded
+            var hasContractions = partograph.Contractions?.Any() == true;
+
+            // Check if cervical dilation has been recorded and is >= 4cm (active labour)
+            var latestDilation = partograph.Dilatations
+                ?.OrderByDescending(d => d.Time)
+                .FirstOrDefault();
+
+            if (latestDilation != null && latestDilation.DilatationCm >= 4)
+            {
+                return (true, LaborStatus.FirstStage,
+                    $"Active labour detected: cervical dilation at {latestDilation.DilatationCm}cm");
+            }
+
+            if (hasContractions && latestDilation != null)
+            {
+                return (true, LaborStatus.FirstStage,
+                    "Labour indicators present: contractions and cervical dilation recorded");
+            }
+
+            return (false, LaborStatus.Pending, "No labour indicators detected yet");
         }
 
         private (bool shouldProgress, LaborStatus nextStage, string reason) CheckFirstStageProgression(Partograph partograph)
@@ -55,7 +93,86 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     $"Full cervical dilation achieved (10cm) at {latestDilation.Time:HH:mm}");
             }
 
-            return (false, LaborStatus.FirstStage, "Dilation not yet at 10cm");
+            // Also update the current phase
+            partograph.UpdatePhaseFromDilation();
+
+            var currentPhase = partograph.CurrentPhase;
+            string phaseInfo = currentPhase switch
+            {
+                FirstStagePhase.Latent => "Latent phase (0-4cm)",
+                FirstStagePhase.ActiveEarly => "Active phase - Early (5-7cm)",
+                FirstStagePhase.ActiveAdvanced => "Active phase - Advanced (8-9cm)",
+                _ => "Phase not determined"
+            };
+
+            return (false, LaborStatus.FirstStage, $"Current: {latestDilation?.DilatationCm ?? 0}cm - {phaseInfo}");
+        }
+
+        /// <summary>
+        /// Checks if second stage should progress to third stage (SecondStage → ThirdStage)
+        /// Auto-progression when: baby delivery time is recorded
+        /// </summary>
+        private (bool shouldProgress, LaborStatus nextStage, string reason) CheckSecondStageProgression(Partograph partograph)
+        {
+            // Check if baby has been delivered (DeliveryTime is set)
+            if (partograph.DeliveryTime.HasValue)
+            {
+                return (true, LaborStatus.ThirdStage,
+                    $"Baby delivered at {partograph.DeliveryTime.Value:HH:mm} - ready to monitor placenta delivery");
+            }
+
+            // Calculate time in second stage
+            if (partograph.SecondStageStartTime.HasValue)
+            {
+                var timeInSecondStage = DateTime.Now - partograph.SecondStageStartTime.Value;
+
+                // Warning if second stage exceeds 2 hours (for primigravida) or 1 hour (for multigravida)
+                if (timeInSecondStage.TotalHours >= 2)
+                {
+                    return (false, LaborStatus.SecondStage,
+                        $"⚠️ Second stage duration: {timeInSecondStage.Hours}h {timeInSecondStage.Minutes}m - Consider intervention if no progress");
+                }
+
+                return (false, LaborStatus.SecondStage,
+                    $"Second stage duration: {timeInSecondStage.Hours}h {timeInSecondStage.Minutes}m - Awaiting baby delivery");
+            }
+
+            return (false, LaborStatus.SecondStage, "Monitoring second stage - awaiting baby delivery");
+        }
+
+        /// <summary>
+        /// Checks if third stage should progress to fourth stage (ThirdStage → FourthStage)
+        /// Auto-progression when: placenta delivery time is recorded or 30+ minutes have passed
+        /// </summary>
+        private (bool shouldProgress, LaborStatus nextStage, string reason) CheckThirdStageProgression(Partograph partograph)
+        {
+            // Check if placenta has been delivered (FourthStageStartTime being set indicates placenta delivered)
+            // or check for ThirdStageStartTime + reasonable time
+
+            if (!partograph.ThirdStageStartTime.HasValue)
+            {
+                // If DeliveryTime is set, use that as the start of third stage
+                if (partograph.DeliveryTime.HasValue)
+                {
+                    partograph.ThirdStageStartTime = partograph.DeliveryTime;
+                }
+                else
+                {
+                    return (false, LaborStatus.ThirdStage, "Third stage start time not recorded");
+                }
+            }
+
+            var timeInThirdStage = DateTime.Now - partograph.ThirdStageStartTime.Value;
+
+            // Warning if third stage exceeds 30 minutes (retained placenta risk)
+            if (timeInThirdStage.TotalMinutes >= 30)
+            {
+                return (false, LaborStatus.ThirdStage,
+                    $"⚠️ Third stage duration: {(int)timeInThirdStage.TotalMinutes} minutes - Consider manual removal if placenta not delivered");
+            }
+
+            return (false, LaborStatus.ThirdStage,
+                $"Third stage duration: {(int)timeInThirdStage.TotalMinutes} minutes - Monitoring placenta delivery");
         }
 
         private (bool shouldProgress, LaborStatus nextStage, string reason) CheckFourthStageProgression(Partograph partograph)
@@ -186,8 +303,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             switch (partograph.Status)
             {
                 case LaborStatus.Pending:
-                    suggestions.Add("Start first stage labor when regular contractions begin");
-                    suggestions.Add("Ensure initial assessment is complete");
+                    var (pendingShouldProgress, _, pendingReason) = CheckPendingProgression(partograph);
+                    if (pendingShouldProgress)
+                    {
+                        suggestions.Add($"✓ Ready to start labour: {pendingReason}");
+                        suggestions.Add("Click 'Start Labour' to begin first stage monitoring");
+                    }
+                    else
+                    {
+                        suggestions.Add("Monitor for signs of labour onset");
+                        suggestions.Add("Record cervical dilation when contractions become regular");
+                        suggestions.Add("Ensure initial assessment is complete");
+                    }
                     break;
 
                 case LaborStatus.FirstStage:
@@ -205,21 +332,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     break;
 
                 case LaborStatus.SecondStage:
-                    suggestions.Add("Monitor pushing efforts");
-                    suggestions.Add("Check FHR every 5 minutes");
-                    suggestions.Add("Progress to Third Stage after baby delivery");
-                    var timeInSecondStage = DateTime.UtcNow - (partograph.SecondStageStartTime ?? DateTime.UtcNow);
-                    if (timeInSecondStage.TotalHours > 2)
+                    var (secondShouldProgress, _, secondReason) = CheckSecondStageProgression(partograph);
+                    if (secondShouldProgress)
                     {
-                        suggestions.Add("⚠️ Second stage duration exceeds 2 hours - consider interventions");
+                        suggestions.Add($"✓ Ready for Third Stage: {secondReason}");
+                        suggestions.Add("Click 'Baby Delivered' to record delivery and proceed");
+                    }
+                    else
+                    {
+                        suggestions.Add("Monitor pushing efforts");
+                        suggestions.Add("Check FHR every 5 minutes");
+                        suggestions.Add($"Status: {secondReason}");
                     }
                     break;
 
                 case LaborStatus.ThirdStage:
+                    var (thirdShouldProgress, _, thirdReason) = CheckThirdStageProgression(partograph);
+                    suggestions.Add($"Status: {thirdReason}");
                     suggestions.Add("Monitor for placenta delivery (up to 30 minutes)");
                     suggestions.Add("Watch for signs of excessive bleeding");
-                    suggestions.Add("Record baby details");
-                    suggestions.Add("Progress to Fourth Stage after placenta delivery");
+                    suggestions.Add("Record baby details and birth outcome");
+                    suggestions.Add("Click 'Placenta Delivered' to proceed to Fourth Stage");
                     break;
 
                 case LaborStatus.FourthStage:

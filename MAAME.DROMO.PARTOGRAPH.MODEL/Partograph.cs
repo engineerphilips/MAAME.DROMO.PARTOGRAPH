@@ -27,6 +27,58 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         // Labour Information
         public LaborStatus Status { get; set; } = LaborStatus.Pending;
 
+        /// <summary>
+        /// Current phase within the first stage of labor (Latent, Active Early, Active Advanced, Transition)
+        /// Automatically calculated based on cervical dilation
+        /// </summary>
+        public FirstStagePhase CurrentPhase { get; set; } = FirstStagePhase.NotDetermined;
+
+        /// <summary>
+        /// Gets the display name for the current first stage phase
+        /// </summary>
+        [JsonIgnore]
+        public string CurrentPhaseDisplay => CurrentPhase switch
+        {
+            FirstStagePhase.NotDetermined => "Not Determined",
+            FirstStagePhase.Latent => "Latent Phase (0-4cm)",
+            FirstStagePhase.ActiveEarly => "Active Phase - Early (5-7cm)",
+            FirstStagePhase.ActiveAdvanced => "Active Phase - Advanced (8-9cm)",
+            FirstStagePhase.Transition => "Transition (10cm - Fully Dilated)",
+            _ => "Unknown"
+        };
+
+        /// <summary>
+        /// Gets the color code for the current phase (for UI display)
+        /// </summary>
+        [JsonIgnore]
+        public string CurrentPhaseColor => CurrentPhase switch
+        {
+            FirstStagePhase.NotDetermined => "#808080", // Gray
+            FirstStagePhase.Latent => "#FFFFFF",        // White - Latent phase
+            FirstStagePhase.ActiveEarly => "#FFEB3B",   // Yellow - Early active
+            FirstStagePhase.ActiveAdvanced => "#FF9800", // Orange - Advanced active
+            FirstStagePhase.Transition => "#F44336",     // Red - Transition/Fully dilated
+            _ => "#808080"
+        };
+
+        /// <summary>
+        /// Calculates and returns the appropriate phase based on cervical dilation
+        /// </summary>
+        public static FirstStagePhase CalculatePhaseFromDilation(int? dilationCm)
+        {
+            if (!dilationCm.HasValue)
+                return FirstStagePhase.NotDetermined;
+
+            return dilationCm.Value switch
+            {
+                <= 4 => FirstStagePhase.Latent,
+                <= 7 => FirstStagePhase.ActiveEarly,
+                <= 9 => FirstStagePhase.ActiveAdvanced,
+                >= 10 => FirstStagePhase.Transition,
+                _ => FirstStagePhase.NotDetermined
+            };
+        }
+
         // Stage Timestamps (WHO Four-Stage System)
         public DateTime? LaborStartTime { get; set; }  // Also serves as FirstStageStartTime
         public DateTime? FirstStageStartTime => LaborStartTime;  // Alias for clarity
@@ -46,7 +98,20 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public DateTime? RupturedMembraneTime { get; set; }
         public string RupturedMembraneTimeFormat => RupturedMembraneTime != null ? ElapseTimeCalc.PeriodElapseTimeLower(RupturedMembraneTime.Value, DateTime.Now) : string.Empty;
 
-        public DateTime? DeliveryTime { get; set; }  // Baby delivery time (also serves as ThirdStageStartTime)
+        /// <summary>
+        /// Baby delivery time - marks the moment of baby delivery
+        /// Note: ThirdStageStartTime should be set separately for placenta delivery phase
+        /// </summary>
+        public DateTime? DeliveryTime { get; set; }
+
+        /// <summary>
+        /// Updates the CurrentPhase based on the latest cervical dilation measurement
+        /// </summary>
+        public void UpdatePhaseFromDilation()
+        {
+            var latestDilation = Dilatations?.OrderByDescending(d => d.Time).FirstOrDefault()?.DilatationCm;
+            CurrentPhase = CalculatePhaseFromDilation(latestDilation);
+        }
 
         public int? CervicalDilationOnAdmission { get; set; }
         public string MembraneStatus { get; set; } = "Intact";
