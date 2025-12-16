@@ -6,6 +6,8 @@
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:fonts="clr-namespace:Fonts"
              xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
+             xmlns:modals="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals"
+             xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              Title="Second Stage Partograph">
 
     <ContentPage.Resources>
@@ -618,6 +620,160 @@
                     </CollectionView>
                 </VerticalStackLayout>
             </Border>
+
+            <!-- Modal Popups -->
+            <modals:CompanionPopup x:Name="sfPopupCompanion"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             HeaderHeight="50"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:PainReliefPopup x:Name="sfPopupPainRelief"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="70"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:OralFluidPopup x:Name="sfPopupOralFluid"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:PosturePopup x:Name="sfPopupPosture"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:AmnioticFluidPopup x:Name="sfPopupAmnioticFluid"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="630"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:FetalPositionPopup x:Name="sfPopupFetalPosition"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:CaputPopup x:Name="sfPopupCaput"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:FHRContractionPopup x:Name="sfPopupFHRContraction"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="700"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:UrinePopup x:Name="sfPopupUrine"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="700"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:TemperaturePopup x:Name="sfPopupTemperature"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:BpPulsePopup x:Name="sfPopupBpPulse"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:HeadDescentPopup x:Name="sfPopupHeadDescent"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:OxytocinPopup x:Name="sfPopupOxytocin"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:IVFluidPopup x:Name="sfPopupIVFluid"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:MedicationPopup x:Name="sfPopupMedication"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="600"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:AssessmentPopup x:Name="sfPopupAssessment"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="500"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:PlanPopup x:Name="sfPopupPlan"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="312"
+                             HeightRequest="500"
+                             HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
         </Grid>
     </ScrollView>
 </ContentPage>
