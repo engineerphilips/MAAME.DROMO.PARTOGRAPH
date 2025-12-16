@@ -357,12 +357,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     BirthOutcome = outcome;
                     IsEditMode = true;
 
-                    // Update partograph status to SecondStage
+                    // Update partograph with delivery time and progress to appropriate stage
                     if (Partograph != null)
                     {
-                        Partograph.Status = LaborStatus.SecondStage;
+                        // Set the delivery time (baby delivery time)
+                        Partograph.DeliveryTime = new DateTime(DeliveryDate.Year, DeliveryDate.Month, DeliveryDate.Day).Add(DeliveryTime);
+
+                        // If we're in SecondStage and baby has been delivered, transition to ThirdStage
+                        if (Partograph.Status == LaborStatus.SecondStage)
+                        {
+                            Partograph.Status = LaborStatus.ThirdStage;
+                            Partograph.ThirdStageStartTime = Partograph.DeliveryTime;
+                            _logger.LogInformation($"Updated partograph {Partograph.ID} status to ThirdStage (baby delivered)");
+                        }
+                        // If we're already in ThirdStage or later, just update the delivery time
+                        else if (Partograph.Status == LaborStatus.FirstStage)
+                        {
+                            // If still in FirstStage, move to SecondStage first, then to ThirdStage
+                            // This handles the case where birth outcome is recorded before proper stage transitions
+                            Partograph.Status = LaborStatus.ThirdStage;
+                            Partograph.SecondStageStartTime ??= Partograph.DeliveryTime;
+                            Partograph.ThirdStageStartTime = Partograph.DeliveryTime;
+                            _logger.LogInformation($"Updated partograph {Partograph.ID} status to ThirdStage (from FirstStage - baby delivered)");
+                        }
+
                         await _partographRepository.SaveItemAsync(Partograph);
-                        _logger.LogInformation($"Updated partograph {Partograph.ID} status to SecondStage");
                     }
 
                     // Navigate to baby details entry

@@ -239,6 +239,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private ObservableCollection<BabyDetails> _babies = new();
 
+        // Delivery Status Properties
+        [ObservableProperty]
+        private bool _isBabyDelivered;
+
+        [ObservableProperty]
+        private string _deliveryStatusText = "Awaiting Delivery";
+
+        [ObservableProperty]
+        private string _deliveryStatusColor = "#808080";
+
+        [ObservableProperty]
+        private string _deliveryTimeText = string.Empty;
+
         // Clinical Notes Properties
         [ObservableProperty]
         private string _clinicalNotes = string.Empty;
@@ -492,6 +505,30 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             return DateTime.Now;
         }
 
+        /// <summary>
+        /// Updates delivery status properties based on partograph data
+        /// </summary>
+        private void UpdateDeliveryStatus()
+        {
+            if (Patient == null)
+                return;
+
+            IsBabyDelivered = Patient.DeliveryTime.HasValue;
+
+            if (IsBabyDelivered)
+            {
+                DeliveryStatusText = "Baby Delivered";
+                DeliveryStatusColor = "#4CAF50"; // Green
+                DeliveryTimeText = $"Delivered at {Patient.DeliveryTime.Value:HH:mm}";
+            }
+            else
+            {
+                DeliveryStatusText = "Awaiting Delivery";
+                DeliveryStatusColor = "#FF9800"; // Orange
+                DeliveryTimeText = string.Empty;
+            }
+        }
+
         private void UpdateMeasurementStatuses()
         {
             if (Patient == null)
@@ -681,6 +718,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 // Update all measurement statuses
                 UpdateMeasurementStatuses();
 
+                // Update delivery status
+                UpdateDeliveryStatus();
+
                 // Generate clinical notes
                 GenerateClinicalNotes();
             }
@@ -792,6 +832,104 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private async Task Print()
         {
             await AppShell.DisplayToastAsync("Second stage partograph printing feature coming soon");
+        }
+
+        /// <summary>
+        /// Records baby delivery and transitions to Third Stage
+        /// </summary>
+        [RelayCommand]
+        private async Task RecordBabyDelivery()
+        {
+            if (Patient?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No patient selected");
+                return;
+            }
+
+            try
+            {
+                var shouldProceed = await Application.Current.MainPage.DisplayAlert(
+                    "Record Baby Delivery",
+                    "This will record the baby delivery time and transition to Third Stage (placenta delivery monitoring). Continue?",
+                    "Yes, Baby Delivered", "Cancel");
+
+                if (!shouldProceed)
+                    return;
+
+                // Record delivery time and transition to Third Stage
+                Patient.DeliveryTime = DateTime.Now;
+                Patient.Status = LaborStatus.ThirdStage;
+                Patient.ThirdStageStartTime = DateTime.Now;
+
+                await _partographRepository.SaveItemAsync(Patient);
+
+                await AppShell.DisplayToastAsync("Baby delivery recorded - Transitioned to Third Stage");
+
+                // Ask if user wants to record birth outcome now
+                var recordOutcome = await Application.Current.MainPage.DisplayAlert(
+                    "Record Birth Outcome",
+                    "Do you want to record the birth outcome details now?",
+                    "Yes", "Later");
+
+                if (recordOutcome)
+                {
+                    await NavigateToBirthOutcome();
+                }
+                else
+                {
+                    // Navigate to Third Stage page
+                    await Shell.Current.GoToAsync($"thirdpartograph?patientId={Patient.ID}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to record baby delivery");
+            }
+        }
+
+        /// <summary>
+        /// Transitions directly to Third Stage (if baby delivery was recorded elsewhere)
+        /// </summary>
+        [RelayCommand]
+        private async Task TransitionToThirdStage()
+        {
+            if (Patient?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No patient selected");
+                return;
+            }
+
+            // Check if delivery time is recorded
+            if (!Patient.DeliveryTime.HasValue)
+            {
+                var shouldRecord = await Application.Current.MainPage.DisplayAlert(
+                    "Baby Delivery Required",
+                    "Baby delivery time has not been recorded. Do you want to record baby delivery now?",
+                    "Record Delivery", "Cancel");
+
+                if (shouldRecord)
+                {
+                    await RecordBabyDelivery();
+                }
+                return;
+            }
+
+            try
+            {
+                Patient.Status = LaborStatus.ThirdStage;
+                Patient.ThirdStageStartTime ??= Patient.DeliveryTime ?? DateTime.Now;
+
+                await _partographRepository.SaveItemAsync(Patient);
+
+                await AppShell.DisplayToastAsync("Transitioned to Third Stage");
+                await Shell.Current.GoToAsync($"thirdpartograph?patientId={Patient.ID}");
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to transition to Third Stage");
+            }
         }
 
         [RelayCommand]

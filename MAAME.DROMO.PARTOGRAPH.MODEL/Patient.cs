@@ -93,4 +93,40 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         Completed,    // Care completed, can be discharged
         Emergency     // Requires immediate attention (can occur at any stage)
     }
+
+    /// <summary>
+    /// First Stage Phase - Sub-phases of first stage labor based on cervical dilation
+    /// Reference: WHO recommendations for intrapartum care (2020)
+    /// </summary>
+    public enum FirstStagePhase
+    {
+        /// <summary>
+        /// Not yet in active labor or phase not determined
+        /// </summary>
+        NotDetermined,
+
+        /// <summary>
+        /// Latent Phase: 0-4cm cervical dilation
+        /// Slower progress, irregular contractions
+        /// </summary>
+        Latent,
+
+        /// <summary>
+        /// Early Active Phase: 5-7cm cervical dilation
+        /// Regular contractions, faster progress expected
+        /// </summary>
+        ActiveEarly,
+
+        /// <summary>
+        /// Advanced Active Phase: 8-9cm cervical dilation
+        /// Strong regular contractions, approaching full dilation
+        /// </summary>
+        ActiveAdvanced,
+
+        /// <summary>
+        /// Transition Phase: 10cm cervical dilation
+        /// Full dilation achieved, ready for second stage
+        /// </summary>
+        Transition
+    }
 }

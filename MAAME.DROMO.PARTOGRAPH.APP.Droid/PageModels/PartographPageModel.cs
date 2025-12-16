@@ -111,6 +111,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private DateTime? _lastRecordedTime;
 
+        // Labour Stage Properties
+        [ObservableProperty]
+        private bool _isLaborStarted;
+
+        [ObservableProperty]
+        private string _laborStatusText = "Not Started";
+
+        [ObservableProperty]
+        private string _laborStatusColor = "#808080";
+
+        [ObservableProperty]
+        private string _currentPhaseText = string.Empty;
+
+        [ObservableProperty]
+        private string _currentPhaseColor = "#808080";
+
         [ObservableProperty]
         private int _currentDilation;
 
@@ -1405,6 +1421,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 // Update all measurement statuses with latest values and due times
                 UpdateMeasurementStatuses();
 
+                // Update labor status and phase information
+                UpdateLaborStatus();
+
                 // Analyze patient data and generate clinical alerts
                 AnalyzeAndGenerateAlerts();
 
@@ -1520,6 +1539,169 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             => Shell.Current.GoToAsync($"///partographchart?patientId={Patient?.ID}");
 
         //public Task NavigateToPartograph(Partograph patient) => Shell.Current.GoToAsync($"partograph?patientId={patient.ID}");
+        /// <summary>
+        /// Starts labour - transitions from Pending to FirstStage
+        /// Sets LaborStartTime and updates status
+        /// </summary>
+        [RelayCommand]
+        private async Task StartLabour()
+        {
+            if (Patient?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No patient selected");
+                return;
+            }
+
+            if (Patient.Status != LaborStatus.Pending)
+            {
+                await AppShell.DisplayToastAsync($"Labour already started (Status: {Patient.StatusDisplay})");
+                return;
+            }
+
+            try
+            {
+                var shouldStart = await Application.Current.MainPage.DisplayAlert(
+                    "Start Labour",
+                    "This will mark the beginning of first stage labour and start timing. Continue?",
+                    "Start Labour", "Cancel");
+
+                if (!shouldStart)
+                    return;
+
+                // Update partograph status to FirstStage
+                Patient.Status = LaborStatus.FirstStage;
+                Patient.LaborStartTime = DateTime.Now;
+
+                // Calculate initial phase based on current dilation if available
+                Patient.UpdatePhaseFromDilation();
+
+                await _partographRepository.SaveItemAsync(Patient);
+
+                // Update UI
+                UpdateLaborStatus();
+
+                await AppShell.DisplayToastAsync("Labour started - First Stage begun");
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to start labour");
+            }
+        }
+
+        /// <summary>
+        /// Transitions to Second Stage when dilation reaches 10cm
+        /// </summary>
+        [RelayCommand]
+        private async Task TransitionToSecondStage()
+        {
+            if (Patient?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No patient selected");
+                return;
+            }
+
+            // Validate that we're in first stage
+            if (Patient.Status != LaborStatus.FirstStage)
+            {
+                await AppShell.DisplayToastAsync($"Cannot transition: Current status is {Patient.StatusDisplay}");
+                return;
+            }
+
+            // Check dilation
+            if (CurrentDilation < 10)
+            {
+                var shouldContinue = await Application.Current.MainPage.DisplayAlert(
+                    "Confirm Transition",
+                    $"Current dilation is {CurrentDilation}cm (full dilation is 10cm). Are you sure you want to transition to Second Stage?",
+                    "Yes, Proceed", "Cancel");
+
+                if (!shouldContinue)
+                    return;
+            }
+
+            try
+            {
+                // Update partograph status to SecondStage
+                Patient.Status = LaborStatus.SecondStage;
+                Patient.SecondStageStartTime = DateTime.Now;
+                Patient.CurrentPhase = FirstStagePhase.Transition; // Mark as transition/fully dilated
+
+                await _partographRepository.SaveItemAsync(Patient);
+
+                await AppShell.DisplayToastAsync("Transitioned to Second Stage");
+
+                // Navigate to Second Stage partograph page
+                await Shell.Current.GoToAsync($"secondpartograph?patientId={Patient.ID}");
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to transition to Second Stage");
+            }
+        }
+
+        /// <summary>
+        /// Records birth outcome - navigates to BirthOutcomePage
+        /// Should be called during/after Second Stage
+        /// </summary>
+        [RelayCommand]
+        private async Task RecordBirthOutcome()
+        {
+            if (Patient?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No patient selected");
+                return;
+            }
+
+            try
+            {
+                // Navigate to birth outcome page
+                var parameters = new Dictionary<string, object>
+                {
+                    { "PartographId", Patient.ID.ToString() }
+                };
+
+                await Shell.Current.GoToAsync("BirthOutcomePage", parameters);
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to navigate to birth outcome page");
+            }
+        }
+
+        /// <summary>
+        /// Updates UI properties related to labor status and phase
+        /// </summary>
+        private void UpdateLaborStatus()
+        {
+            if (Patient == null)
+                return;
+
+            IsLaborStarted = Patient.Status != LaborStatus.Pending;
+            LaborStatusText = Patient.StatusDisplay;
+            LaborStatusColor = Patient.StatusColorString;
+
+            // Update phase information
+            if (Patient.Status == LaborStatus.FirstStage)
+            {
+                Patient.UpdatePhaseFromDilation();
+                CurrentPhaseText = Patient.CurrentPhaseDisplay;
+                CurrentPhaseColor = Patient.CurrentPhaseColor;
+            }
+            else
+            {
+                CurrentPhaseText = string.Empty;
+                CurrentPhaseColor = "#808080";
+            }
+        }
+
+        /// <summary>
+        /// [DEPRECATED] Legacy command - Use TransitionToSecondStage instead for proper workflow
+        /// This command navigates to BirthOutcomePage which should only be used AFTER baby delivery
+        /// Kept for backward compatibility with existing UI bindings
+        /// </summary>
         [RelayCommand]
         private async Task SecondStage()
         {
@@ -1529,21 +1711,38 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 return;
             }
 
-            // Check if patient has reached appropriate stage for birth outcome recording
-            if (CurrentDilation < 10 && Patient.Status != LaborStatus.Completed && Patient.Status != LaborStatus.SecondStage)
+            // Guide user to use proper workflow
+            if (Patient.Status == LaborStatus.Pending)
             {
-                var shouldContinue = await Application.Current.MainPage.DisplayAlert(
-                    "Confirm Promotion",
-                    $"Current dilation is {CurrentDilation}cm. Are you sure you want to proceed to birth outcome recording?",
-                    "Yes", "No");
-
-                if (!shouldContinue)
-                    return;
+                await AppShell.DisplayToastAsync("Please start labour first using 'Start Labour' button");
+                return;
             }
 
+            if (Patient.Status == LaborStatus.FirstStage && CurrentDilation < 10)
+            {
+                var action = await Application.Current.MainPage.DisplayActionSheet(
+                    $"Current dilation is {CurrentDilation}cm. What would you like to do?",
+                    "Cancel",
+                    null,
+                    "Transition to Second Stage (Full dilation)",
+                    "Record Birth Outcome (Baby delivered)");
+
+                switch (action)
+                {
+                    case "Transition to Second Stage (Full dilation)":
+                        await TransitionToSecondStage();
+                        return;
+                    case "Record Birth Outcome (Baby delivered)":
+                        await RecordBirthOutcome();
+                        return;
+                    default:
+                        return;
+                }
+            }
+
+            // If already in SecondStage or beyond, navigate to birth outcome
             try
             {
-                // Navigate to birth outcome page
                 var parameters = new Dictionary<string, object>
                 {
                     { "PartographId", Patient.ID.ToString() }
