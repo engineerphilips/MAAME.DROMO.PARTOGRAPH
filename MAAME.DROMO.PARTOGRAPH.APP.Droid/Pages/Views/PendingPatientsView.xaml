@@ -8,28 +8,36 @@
              xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              xmlns:fonts="clr-namespace:Fonts">
 
-    <!--<ContentView.Resources>
+    <ContentView.Resources>
         <ResourceDictionary>
-            <converters:InitialsConverter x:Key="StringInitialsConverter" />
-            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
-            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+            <converters:InitialsConverter x:Key="InitialsConverter" />
         </ResourceDictionary>
-    </ContentView.Resources>-->
+    </ContentView.Resources>
 
     <Grid RowDefinitions="Auto,*" Padding="16">
 
         <!-- Search Bar -->
         <Border Grid.Row="0"
-                StrokeThickness="0"
-                BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}"
+                StrokeThickness="1"
+                Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#374151}"
+                BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1F2937}"
                 Margin="0,0,0,16">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <SearchBar Placeholder="Search by name or hospital number..."
-                       Text="{Binding SearchText}"
-                       BackgroundColor="Transparent"
-                       PlaceholderColor="{AppThemeBinding Light=#999, Dark=#666}" />
+            <Grid ColumnDefinitions="Auto,*" Padding="12,0">
+                <Label Text="&#xF78B;"
+                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                       FontSize="20"
+                       TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                       VerticalOptions="Center"
+                       Margin="0,0,8,0" />
+                <SearchBar Grid.Column="1"
+                           Placeholder="Search by name or hospital number..."
+                           Text="{Binding SearchText}"
+                           BackgroundColor="Transparent"
+                           PlaceholderColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}" />
+            </Grid>
         </Border>
 
         <!-- Patients List -->
@@ -40,40 +48,46 @@
                             ItemsLayout="VerticalList"
                             SelectionMode="None">
 
-                <CollectionView.Resources>
-                    <converters:InitialsConverter x:Key="InitialsConverter" />
-                </CollectionView.Resources>
                 <CollectionView.EmptyView>
-                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20" Padding="40">
-                        <Label Text="&#xE77B;"
-                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                               FontSize="72"
-                               TextColor="{AppThemeBinding Light=#DDD, Dark=#555}"
-                               HorizontalOptions="Center" />
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="16" Padding="40">
+                        <Border WidthRequest="100" HeightRequest="100"
+                                BackgroundColor="{AppThemeBinding Light=#F3E8FF, Dark=#581C87}"
+                                StrokeThickness="0"
+                                HorizontalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="50" />
+                            </Border.StrokeShape>
+                            <Label Text="&#xE77B;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="48"
+                                   TextColor="{AppThemeBinding Light=#A855F7, Dark=#D8B4FE}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
                         <Label Text="No Pending Admissions"
                                FontSize="20"
                                FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light=#888, Dark=#999}"
+                               TextColor="{AppThemeBinding Light=#374151, Dark=#F3F4F6}"
                                HorizontalOptions="Center" />
                         <Label Text="Admitted patients awaiting labour will appear here"
                                FontSize="14"
-                               TextColor="{AppThemeBinding Light=#AAA, Dark=#777}"
+                               TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                HorizontalOptions="Center"
                                HorizontalTextAlignment="Center" />
                         <Button Text="Admit New Patient"
                                 Command="{Binding AddNewPatientCommand}"
-                                BackgroundColor="#2196F3"
+                                BackgroundColor="#8B5CF6"
                                 TextColor="White"
-                                Padding="24,12"
+                                Padding="28,14"
                                 CornerRadius="12"
                                 FontSize="15"
                                 FontAttributes="Bold"
-                                Margin="0,12,0,0">
+                                Margin="0,8,0,0">
                             <Button.Shadow>
-                                <Shadow Brush="#2196F3"
+                                <Shadow Brush="#8B5CF6"
                                         Offset="0,4"
-                                        Radius="8"
-                                        Opacity="0.3" />
+                                        Radius="10"
+                                        Opacity="0.35" />
                             </Button.Shadow>
                         </Button>
                     </VerticalStackLayout>
@@ -85,196 +99,143 @@
                             <SwipeView.RightItems>
                                 <SwipeItems>
                                     <SwipeItem Text="Start Labour"
-                                               BackgroundColor="#4CAF50"
+                                               BackgroundColor="#10B981"
                                                Command="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, x:DataType={x:Null}, Path=BindingContext.StartActiveLaborCommand}"
                                                CommandParameter="{Binding .}" />
                                 </SwipeItems>
                             </SwipeView.RightItems>
 
                             <Border StrokeThickness="0"
-                                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1F2937}"
                                     Margin="0,0,0,12"
                                     Padding="0">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="16" />
                                 </Border.StrokeShape>
                                 <Border.Shadow>
-                                    <Shadow Brush="{AppThemeBinding Light=#40000000, Dark=#80000000}"
-                                            Offset="0,2"
-                                            Radius="8"
-                                            Opacity="0.15" />
+                                    <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
+                                            Offset="0,4"
+                                            Radius="12"
+                                            Opacity="1" />
                                 </Border.Shadow>
 
-                                <Grid RowDefinitions="Auto,Auto,Auto,10,Auto" Padding="16">
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" Padding="16">
 
                                     <!-- Header Row: Patient Info -->
-                                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12">
-                                        <!-- Patient Avatar -->
-                                        <Border Grid.Column="0"
-                                                WidthRequest="56"
-                                                HeightRequest="56"
-                                                BackgroundColor="#FF9800"
-                                                StrokeThickness="3"
-                                                Stroke="#FFF3E0">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="28" />
-                                            </Border.StrokeShape>
-                                            <Label Text="{Binding Name, Converter={StaticResource InitialsConverter}}"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center"
-                                                   FontSize="20"
-                                                   FontAttributes="Bold"
-                                                   TextColor="White" />
-                                        </Border>
+                                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+
+                                        <!-- Patient Avatar with Initials -->
+                                        <Grid WidthRequest="60" HeightRequest="60">
+                                            <!-- Outer ring -->
+                                            <Border WidthRequest="60" HeightRequest="60"
+                                                    BackgroundColor="Transparent"
+                                                    StrokeThickness="3"
+                                                    Stroke="#F59E0B">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="30" />
+                                                </Border.StrokeShape>
+                                            </Border>
+                                            <!-- Inner circle -->
+                                            <Border WidthRequest="52" HeightRequest="52"
+                                                    BackgroundColor="#F59E0B"
+                                                    StrokeThickness="0"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="26" />
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding Name, Converter={StaticResource InitialsConverter}}"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center"
+                                                       FontSize="18"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White" />
+                                            </Border>
+                                        </Grid>
 
                                         <!-- Patient Name & Hospital Number -->
                                         <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
                                             <Label Text="{Binding Name}"
                                                    FontAttributes="Bold"
-                                                   FontSize="18"
+                                                   FontSize="17"
+                                                   TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"
                                                    LineBreakMode="TailTruncation" />
-                                            <Label Text="{Binding HospitalNumber}"
-                                                   FontSize="13"
-                                                   TextColor="{AppThemeBinding Light=#888, Dark=#AAA}"
-                                                   FontFamily="monospace" />
+                                            <HorizontalStackLayout Spacing="6">
+                                                <Label Text="&#xE8B5;"
+                                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                                       VerticalOptions="Center" />
+                                                <Label Text="{Binding HospitalNumber}"
+                                                       FontSize="13"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                                       FontFamily="monospace" />
+                                            </HorizontalStackLayout>
                                         </VerticalStackLayout>
 
-                                        <!-- Status Badge -->
-                                        <!--<Border Grid.Column="2"
-                                                BackgroundColor="#FF9800"
-                                                Padding="10,5"
+                                        <!-- Pending Status Badge -->
+                                        <Border Grid.Column="2"
+                                                BackgroundColor="{AppThemeBinding Light=#FEF3C7, Dark=#78350F}"
+                                                Padding="10,6"
                                                 VerticalOptions="Start">
                                             <Border.StrokeShape>
                                                 <RoundRectangle CornerRadius="8" />
                                             </Border.StrokeShape>
                                             <Label Text="PENDING"
                                                    FontSize="11"
-                                                   FontAttributes="Bold" />
-                                        </Border>-->
-
-                                        <Border BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#252525}"
-        Padding="0,0,10,6"
-        HorizontalOptions="Start" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="6" />
-                                            </Border.StrokeShape>
-                                            <Label Text="{Binding DisplayInfo}"
-           FontSize="12"
-           TextColor="{AppThemeBinding Light=#555, Dark=#BBB}" />
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#B45309, Dark=#FCD34D}" />
                                         </Border>
-
-                                        <Label Text="{Binding AdmissionDate, StringFormat='{0:dddd, dd MMM yyyy HH:mm}'}"
-FontSize="12"
-FontAttributes="Bold"
-TextColor="{AppThemeBinding Light=#888, Dark=#999}"
-Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" HorizontalOptions="Start" />
                                     </Grid>
 
-                                    <!-- Patient Demographics -->
-                                    <!--<HorizontalStackLayout Grid.Row="1" Spacing="16" Margin="0,12,0,0">
-                                        <Border BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#252525}"
-                                                Padding="10,6"
-                                                HorizontalOptions="Start">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="6" />
-                                            </Border.StrokeShape>
-                                            <Label Text="{Binding DisplayInfo}"
+                                    <!-- Patient Info Row -->
+                                    <Border Grid.Row="1"
+                                            BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#374151}"
+                                            Padding="12,8"
+                                            Margin="0,12,0,0"
+                                            StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <Label Text="{Binding DisplayInfo}"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#4B5563, Dark=#D1D5DB}" />
+                                    </Border>
+
+                                    <!-- Admission Time Info -->
+                                    <Grid Grid.Row="2" ColumnDefinitions="Auto,*" ColumnSpacing="8" Margin="0,12,0,0">
+                                        <Label Text="&#xE8B5;"
+                                               FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                               FontSize="14"
+                                               TextColor="{AppThemeBinding Light=#A855F7, Dark=#C084FC}"
+                                               VerticalOptions="Center" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                            <Label Text="Admitted"
+                                                   FontSize="11"
+                                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                            <Label Text="{Binding AdmissionDate, StringFormat='{0:dddd, dd MMM yyyy HH:mm}'}"
                                                    FontSize="12"
-                                                   TextColor="{AppThemeBinding Light=#555, Dark=#BBB}" />
-                                        </Border>
-                                    </HorizontalStackLayout>-->
-
-                                    <!-- Clinical Information -->
-                                    <!--<Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,12,0,12">
-                                        --><!-- Admission Details --><!--
-                                        <Border Grid.Column="0"
-                                                BackgroundColor="{AppThemeBinding Light=#F3E5F5, Dark=#4A148C}"
-                                                Padding="12,10">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="10" />
-                                            </Border.StrokeShape>
-                                            <VerticalStackLayout Spacing="4">
-                                                <HorizontalStackLayout Spacing="6">
-                                                    <Label Text="&#xE8B5;"
-                                                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                                           FontSize="16"
-                                                           TextColor="#9C27B0"
-                                                           VerticalOptions="Center" />
-                                                    <Label Text="Admitted"
-                                                           FontSize="11"
-                                                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
-                                                           VerticalOptions="Center" />
-                                                </HorizontalStackLayout>
-                                                <Label Text="{Binding AdmissionDate, StringFormat='{0:dddd, dd MMM yyyy HH:mm}'}"
-                                                       FontSize="12"
-                                                       FontAttributes="Bold"
-                                                       TextColor="{AppThemeBinding Light=#888, Dark=#999}"
-                                                       Margin="22,0,0,0" />
-                                                --><!--TextColor="{AppThemeBinding Light=#7B1FA2, Dark=#BA68C8}"-->
-
-                                                <!--<Label Text="{Binding AdmissionDate, StringFormat='{0:HH:mm}'}"
-                                                       FontSize="12"
-                                                       TextColor="{AppThemeBinding Light=#888, Dark=#999}"
-                                                       Margin="22,0,0,0" />--><!--
-                                            </VerticalStackLayout>
-                                        </Border>
-
-                                        --><!-- Initial Assessment --><!--
-                                        <Border Grid.Column="1"
-                                                BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B5E20}"
-                                                Padding="12,10">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="10" />
-                                            </Border.StrokeShape>
-                                            <VerticalStackLayout Spacing="4">
-                                                <HorizontalStackLayout Spacing="6">
-                                                    <Label Text="&#xE9E9;"
-                                                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                                           FontSize="16"
-                                                           TextColor="#4CAF50"
-                                                           VerticalOptions="Center" />
-                                                    <Label Text="Cervical Dilation"
-                                                           FontSize="11"
-                                                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
-                                                           VerticalOptions="Center" />
-                                                </HorizontalStackLayout>
-                                                <HorizontalStackLayout Spacing="4" Margin="22,0,0,0">
-                                                    <Label Text="{Binding CervicalDilationOnAdmission, StringFormat='{0}'}"
-                                                           FontSize="20"
-                                                           FontAttributes="Bold"
-                                                           TextColor="{AppThemeBinding Light=#388E3C, Dark=#81C784}"
-                                                           VerticalOptions="Center" />
-                                                    <Label Text="cm"
-                                                           FontSize="12"
-                                                           TextColor="{AppThemeBinding Light=#388E3C, Dark=#81C784}"
-                                                           VerticalOptions="End"
-                                                           Margin="0,0,0,2" />
-                                                </HorizontalStackLayout>
-                                            </VerticalStackLayout>
-                                        </Border>
-                                    </Grid>-->
-
-                                    <!-- Divider -->
-                                    <BoxView Grid.Row="3"
-                                             HeightRequest="1"
-                                             Color="{AppThemeBinding Light=#EEEEEE, Dark=#333333}" 
-                                             Margin="0,10,0,0"/>
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#7C3AED, Dark=#A78BFA}" />
+                                        </VerticalStackLayout>
+                                    </Grid>
 
                                     <!-- Action Button -->
-                                    <Button Grid.Row="4"
+                                    <Button Grid.Row="3"
                                             Text="Start Active Labour"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, x:DataType={x:Null}, Path=BindingContext.StartActiveLaborCommand}"
                                             CommandParameter="{Binding .}"
-                                            BackgroundColor="#4CAF50"
+                                            BackgroundColor="#10B981"
                                             TextColor="White"
-                                            FontSize="15"
-                                            HeightRequest="45"
+                                            FontSize="14"
+                                            FontAttributes="Bold"
+                                            HeightRequest="46"
                                             CornerRadius="12"
-                                            Margin="0,12,0,0">
+                                            Margin="0,16,0,0">
                                         <Button.Shadow>
-                                            <Shadow Brush="#4CAF50"
-                                                    Offset="0,2"
-                                                    Radius="4"
+                                            <Shadow Brush="#10B981"
+                                                    Offset="0,4"
+                                                    Radius="8"
                                                     Opacity="0.3" />
                                         </Button.Shadow>
                                     </Button>
