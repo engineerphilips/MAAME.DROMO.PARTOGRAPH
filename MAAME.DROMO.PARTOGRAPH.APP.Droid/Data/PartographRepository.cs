@@ -194,71 +194,71 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 END;";
                 await createTableCmd.ExecuteNonQueryAsync();
 
-                // Migration: Add WHO Four-Stage System timestamp columns if they don't exist
-                try
-                {
-                    var alterCmd = connection.CreateCommand();
-                    alterCmd.CommandText = @"
-                        -- Add secondStageStartTime if it doesn't exist
-                        ALTER TABLE Tbl_Partograph ADD COLUMN secondStageStartTime TEXT;";
-                    await alterCmd.ExecuteNonQueryAsync();
-                }
-                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
-                {
-                    // Column already exists, ignore
-                }
+                //// Migration: Add WHO Four-Stage System timestamp columns if they don't exist
+                //try
+                //{
+                //    var alterCmd = connection.CreateCommand();
+                //    alterCmd.CommandText = @"
+                //        -- Add secondStageStartTime if it doesn't exist
+                //        ALTER TABLE Tbl_Partograph ADD COLUMN secondStageStartTime TEXT;";
+                //    await alterCmd.ExecuteNonQueryAsync();
+                //}
+                //catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                //{
+                //    // Column already exists, ignore
+                //}
 
-                try
-                {
-                    var alterCmd = connection.CreateCommand();
-                    alterCmd.CommandText = @"
-                        -- Add thirdStageStartTime if it doesn't exist
-                        ALTER TABLE Tbl_Partograph ADD COLUMN thirdStageStartTime TEXT;";
-                    await alterCmd.ExecuteNonQueryAsync();
-                }
-                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
-                {
-                    // Column already exists, ignore
-                }
+                //try
+                //{
+                //    var alterCmd = connection.CreateCommand();
+                //    alterCmd.CommandText = @"
+                //        -- Add thirdStageStartTime if it doesn't exist
+                //        ALTER TABLE Tbl_Partograph ADD COLUMN thirdStageStartTime TEXT;";
+                //    await alterCmd.ExecuteNonQueryAsync();
+                //}
+                //catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                //{
+                //    // Column already exists, ignore
+                //}
 
-                try
-                {
-                    var alterCmd = connection.CreateCommand();
-                    alterCmd.CommandText = @"
-                        -- Add fourthStageStartTime if it doesn't exist
-                        ALTER TABLE Tbl_Partograph ADD COLUMN fourthStageStartTime TEXT;";
-                    await alterCmd.ExecuteNonQueryAsync();
-                }
-                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
-                {
-                    // Column already exists, ignore
-                }
+                //try
+                //{
+                //    var alterCmd = connection.CreateCommand();
+                //    alterCmd.CommandText = @"
+                //        -- Add fourthStageStartTime if it doesn't exist
+                //        ALTER TABLE Tbl_Partograph ADD COLUMN fourthStageStartTime TEXT;";
+                //    await alterCmd.ExecuteNonQueryAsync();
+                //}
+                //catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                //{
+                //    // Column already exists, ignore
+                //}
 
-                try
-                {
-                    var alterCmd = connection.CreateCommand();
-                    alterCmd.CommandText = @"
-                        -- Add completedTime if it doesn't exist
-                        ALTER TABLE Tbl_Partograph ADD COLUMN completedTime TEXT;";
-                    await alterCmd.ExecuteNonQueryAsync();
-                }
-                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
-                {
-                    // Column already exists, ignore
-                }
+                //try
+                //{
+                //    var alterCmd = connection.CreateCommand();
+                //    alterCmd.CommandText = @"
+                //        -- Add completedTime if it doesn't exist
+                //        ALTER TABLE Tbl_Partograph ADD COLUMN completedTime TEXT;";
+                //    await alterCmd.ExecuteNonQueryAsync();
+                //}
+                //catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                //{
+                //    // Column already exists, ignore
+                //}
 
-                try
-                {
-                    var alterCmd = connection.CreateCommand();
-                    alterCmd.CommandText = @"
-                        -- Add rupturedMembraneTime if it doesn't exist
-                        ALTER TABLE Tbl_Partograph ADD COLUMN rupturedMembraneTime TEXT;";
-                    await alterCmd.ExecuteNonQueryAsync();
-                }
-                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
-                {
-                    // Column already exists, ignore
-                }
+                //try
+                //{
+                //    var alterCmd = connection.CreateCommand();
+                //    alterCmd.CommandText = @"
+                //        -- Add rupturedMembraneTime if it doesn't exist
+                //        ALTER TABLE Tbl_Partograph ADD COLUMN rupturedMembraneTime TEXT;";
+                //    await alterCmd.ExecuteNonQueryAsync();
+                //}
+                //catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+                //{
+                //    // Column already exists, ignore
+                //}
 
                 _logger.LogInformation("WHO Four-Stage System database schema migration completed successfully");
             }
@@ -463,8 +463,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = @"SELECT
-                    P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion,
+                selectCmd.CommandText = @"SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion,
                     P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate,
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
