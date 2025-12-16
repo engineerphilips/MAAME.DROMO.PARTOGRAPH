@@ -658,7 +658,8 @@
 
                                 <sf:SfCartesianChart HeightRequest="180">
                                     <sf:SfCartesianChart.XAxes>
-                                        <sf:CategoryAxis ShowMajorGridLines="False" LabelStyle="{StaticResource SmallTextStyle}" />
+                                        <sf:CategoryAxis ShowMajorGridLines="False" />
+                                        <!--LabelStyle="{StaticResource SmallTextStyle}"-->
                                     </sf:SfCartesianChart.XAxes>
 
                                     <sf:SfCartesianChart.YAxes>
