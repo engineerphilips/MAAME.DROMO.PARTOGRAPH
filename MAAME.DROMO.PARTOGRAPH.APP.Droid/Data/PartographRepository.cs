@@ -268,6 +268,187 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 throw;
             }
 
+            // Create Tbl_BirthOutcome table (required for dashboard stats)
+            try
+            {
+                var createBirthOutcomeTableCmd = connection.CreateCommand();
+                createBirthOutcomeTableCmd.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Tbl_BirthOutcome (
+                    ID TEXT PRIMARY KEY,
+                    partographid TEXT NOT NULL,
+                    recordedtime TEXT NOT NULL,
+                    maternalstatus INTEGER NOT NULL,
+                    maternaldeathtime TEXT,
+                    maternaldeathcause TEXT,
+                    maternaldeathcircumstances TEXT,
+                    deliverymode INTEGER NOT NULL,
+                    deliverymodedetails TEXT,
+                    deliverytime TEXT,
+                    numberofbabies INTEGER NOT NULL DEFAULT 1,
+                    perinealstatus INTEGER NOT NULL,
+                    perinealdetails TEXT,
+                    placentadeliverytime TEXT,
+                    placentacomplete INTEGER NOT NULL DEFAULT 1,
+                    estimatedbloodloss INTEGER NOT NULL DEFAULT 0,
+                    maternalcomplications TEXT,
+                    postpartumhemorrhage INTEGER NOT NULL DEFAULT 0,
+                    eclampsia INTEGER NOT NULL DEFAULT 0,
+                    septicshock INTEGER NOT NULL DEFAULT 0,
+                    obstructedlabor INTEGER NOT NULL DEFAULT 0,
+                    ruptureduterus INTEGER NOT NULL DEFAULT 0,
+                    oxytocingiven INTEGER NOT NULL DEFAULT 1,
+                    antibioticsgiven INTEGER NOT NULL DEFAULT 0,
+                    bloodtransfusiongiven INTEGER NOT NULL DEFAULT 0,
+                    handler TEXT,
+                    notes TEXT,
+                    createdtime INTEGER NOT NULL,
+                    updatedtime INTEGER NOT NULL,
+                    deletedtime INTEGER,
+                    deviceid TEXT NOT NULL,
+                    origindeviceid TEXT NOT NULL,
+                    syncstatus INTEGER DEFAULT 0,
+                    version INTEGER DEFAULT 1,
+                    serverversion INTEGER DEFAULT 0,
+                    deleted INTEGER DEFAULT 0,
+                    conflictdata TEXT,
+                    datahash TEXT,
+                    FOREIGN KEY (partographid) REFERENCES Tbl_Partograph(ID)
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_birthoutcome_partographid ON Tbl_BirthOutcome(partographid);
+                CREATE INDEX IF NOT EXISTS idx_birthoutcome_sync ON Tbl_BirthOutcome(updatedtime, syncstatus);
+
+                DROP TRIGGER IF EXISTS trg_birthoutcome_insert;
+                CREATE TRIGGER trg_birthoutcome_insert
+                AFTER INSERT ON Tbl_BirthOutcome
+                WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
+                BEGIN
+                    UPDATE Tbl_BirthOutcome
+                    SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
+                        updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
+                    WHERE ID = NEW.ID;
+                END;
+
+                DROP TRIGGER IF EXISTS trg_birthoutcome_update;
+                CREATE TRIGGER trg_birthoutcome_update
+                AFTER UPDATE ON Tbl_BirthOutcome
+                WHEN NEW.updatedtime = OLD.updatedtime
+                BEGIN
+                    UPDATE Tbl_BirthOutcome
+                    SET updatedtime = (strftime('%s', 'now') * 1000),
+                        version = OLD.version + 1,
+                        syncstatus = 0
+                    WHERE ID = NEW.ID;
+                END;";
+                await createBirthOutcomeTableCmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error creating BirthOutcome table");
+                throw;
+            }
+
+            // Create Tbl_FHR table (required for dashboard stats - critical patients and alerts)
+            try
+            {
+                var createFHRTableCmd = connection.CreateCommand();
+                createFHRTableCmd.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Tbl_FHR (
+                    ID TEXT PRIMARY KEY,
+                    partographid TEXT,
+                    time TEXT NOT NULL,
+                    handler TEXT,
+                    notes TEXT NOT NULL,
+                    rate INTEGER,
+                    value INTEGER,
+                    deceleration TEXT,
+                    decelerationdurationseconds INTEGER DEFAULT 0,
+                    variability TEXT DEFAULT '',
+                    accelerations INTEGER DEFAULT 0,
+                    pattern TEXT DEFAULT '',
+                    monitoringmethod TEXT DEFAULT '',
+                    baselinerate INTEGER,
+                    clinicalalert TEXT DEFAULT '',
+                    variabilitybpm INTEGER,
+                    variabilitytrend TEXT DEFAULT '',
+                    sinusoidalpattern INTEGER DEFAULT 0,
+                    saltatorpattern INTEGER DEFAULT 0,
+                    accelerationcount INTEGER,
+                    accelerationpeakbpm INTEGER,
+                    accelerationdurationseconds INTEGER,
+                    decelerationnadirbpm INTEGER,
+                    decelerationrecovery TEXT DEFAULT '',
+                    decelerationamplitudebpm INTEGER,
+                    decelerationtiming TEXT DEFAULT '',
+                    prolongedbradycardia INTEGER DEFAULT 0,
+                    bradycardiastarttime TEXT,
+                    bradycardiadurationminutes INTEGER,
+                    tachycardia INTEGER DEFAULT 0,
+                    tachycardiastarttime TEXT,
+                    tachycardiadurationminutes INTEGER,
+                    ctgclassification TEXT DEFAULT '',
+                    reactivenst INTEGER DEFAULT 0,
+                    lastreactivetime TEXT,
+                    maternalposition TEXT DEFAULT '',
+                    duringcontraction INTEGER DEFAULT 0,
+                    betweencontractions INTEGER DEFAULT 0,
+                    interventionrequired INTEGER DEFAULT 0,
+                    interventiontaken TEXT DEFAULT '',
+                    interventiontime TEXT,
+                    changeinposition INTEGER DEFAULT 0,
+                    oxygenadministered INTEGER DEFAULT 0,
+                    ivfluidsincreased INTEGER DEFAULT 0,
+                    emergencyconsultrequired INTEGER DEFAULT 0,
+                    consultreason TEXT DEFAULT '',
+                    consulttime TEXT,
+                    prepareforemergencydelivery INTEGER DEFAULT 0,
+                    createdtime INTEGER NOT NULL,
+                    updatedtime INTEGER NOT NULL,
+                    deletedtime INTEGER,
+                    deviceid TEXT NOT NULL,
+                    origindeviceid TEXT NOT NULL,
+                    syncstatus INTEGER DEFAULT 0,
+                    version INTEGER DEFAULT 1,
+                    serverversion INTEGER DEFAULT 0,
+                    deleted INTEGER DEFAULT 0,
+                    conflictdata TEXT,
+                    datahash TEXT
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_fhr_sync ON Tbl_FHR(updatedtime, syncstatus);
+                CREATE INDEX IF NOT EXISTS idx_fhr_server_version ON Tbl_FHR(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_fhr_partographid ON Tbl_FHR(partographid);
+
+                DROP TRIGGER IF EXISTS trg_fhr_insert;
+                CREATE TRIGGER trg_fhr_insert
+                AFTER INSERT ON Tbl_FHR
+                WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
+                BEGIN
+                    UPDATE Tbl_FHR
+                    SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
+                        updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
+                    WHERE ID = NEW.ID;
+                END;
+
+                DROP TRIGGER IF EXISTS trg_fhr_update;
+                CREATE TRIGGER trg_fhr_update
+                AFTER UPDATE ON Tbl_FHR
+                WHEN NEW.updatedtime = OLD.updatedtime
+                BEGIN
+                    UPDATE Tbl_FHR
+                    SET updatedtime = (strftime('%s', 'now') * 1000),
+                        version = OLD.version + 1,
+                        syncstatus = 0
+                    WHERE ID = NEW.ID;
+                END;";
+                await createFHRTableCmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error creating FHR table");
+                throw;
+            }
+
             _hasBeenInitialized = true;
         }
 
@@ -990,7 +1171,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     p.laborStartTime
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
-                WHERE p.status = IN (@firststage, @secondstage, @thirdstage)
+                WHERE p.status IN (@firststage, @secondstage, @thirdstage)
                   AND p.deleted = 0
                   AND pt.deleted = 0
                   AND p.laborStartTime IS NOT NULL
