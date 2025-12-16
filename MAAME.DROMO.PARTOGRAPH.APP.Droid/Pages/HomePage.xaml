@@ -125,7 +125,7 @@
                         <!-- ==================== HEADER SECTION ==================== -->
                         <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
                             <VerticalStackLayout VerticalOptions="Center" Spacing="4">
-                                <Label Text="Labour Ward Dashboard" Style="{StaticResource HeaderStyle}" />
+                                <Label Text="Labour Monitoring Dashboard" Style="{StaticResource HeaderStyle}" />
                                 <HorizontalStackLayout Spacing="8">
                                     <Label Text="{Binding Today, StringFormat='{0:ddd, MMM dd, yyyy}'}"
                                            Style="{StaticResource SubheaderStyle}" />
