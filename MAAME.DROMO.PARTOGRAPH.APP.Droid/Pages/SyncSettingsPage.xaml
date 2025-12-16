@@ -3,8 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.SyncSettingsPage"
              xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              x:DataType="pagemodels:SyncSettingsPageModel"
              Title="Sync Settings">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+            <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+            <converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:PercentageToDecimalConverter x:Key="PercentageToDecimalConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <!--<ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />

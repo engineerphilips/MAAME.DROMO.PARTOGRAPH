@@ -3,7 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.BaselineFHRModalPage"
              xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              Title="Baseline FHR Assessment">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+            <converters:BoolToOrangeConverter x:Key="BoolToOrangeConverter" />
+            <converters:BoolToRedConverter x:Key="BoolToRedConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
