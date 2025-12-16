@@ -2,17 +2,24 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"    
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.LoginPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
-             xmlns:controls="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls"    
-             xmlns:pagemodel="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels" 
-             xmlns:fonts="clr-namespace:Fonts"        
+             xmlns:controls="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls"
+             xmlns:pagemodel="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              Shell.NavBarIsVisible="False"
              BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#121212}"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:BindingContext="{d:DesignInstance pagemodel:LoginPageModel}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:PasswordIconConverter x:Key="PasswordIconConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Grid>
         <Grid.Background>
