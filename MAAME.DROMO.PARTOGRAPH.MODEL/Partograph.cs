@@ -75,7 +75,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
                 <= 7 => FirstStagePhase.ActiveEarly,
                 <= 9 => FirstStagePhase.ActiveAdvanced,
                 >= 10 => FirstStagePhase.Transition,
-                _ => FirstStagePhase.NotDetermined
+                //_ => FirstStagePhase.NotDetermined
             };
         }
 

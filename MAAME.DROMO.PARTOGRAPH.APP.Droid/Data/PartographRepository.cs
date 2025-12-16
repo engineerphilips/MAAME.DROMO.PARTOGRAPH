@@ -15,12 +15,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         }
 
         private async Task Init()
-        {
+        {            
             if (_hasBeenInitialized)
                 return;
 
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
+            //try
+            //{
+            //    var alterCmd = connection.CreateCommand();
+            //    alterCmd.CommandText = @"ALTER TABLE Tbl_Partograph ADD COLUMN currentPhase TEXT DEFAULT 'NotDetermined';";
+            //    await alterCmd.ExecuteNonQueryAsync();
+            //    _logger.LogInformation("Added currentPhase column to Tbl_Partograph");
+            //}
+            //catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+            //{
+            //    // Column already exists, ignore
+            //}
 
             //try
             //{
@@ -262,25 +273,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 //}
 
                 // Migration: Add currentPhase column if it doesn't exist (for existing databases)
-                try
-                {
-                    var alterCmd = connection.CreateCommand();
-                    alterCmd.CommandText = @"ALTER TABLE Tbl_Partograph ADD COLUMN currentPhase TEXT DEFAULT 'NotDetermined';";
-                    await alterCmd.ExecuteNonQueryAsync();
-                    _logger.LogInformation("Added currentPhase column to Tbl_Partograph");
-                }
-                catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
-                {
-                    // Column already exists, ignore
-                }
-
-                _logger.LogInformation("WHO Four-Stage System database schema migration completed successfully");
+                
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error creating PartographEntry table");
                 throw;
             }
+           
+            //_logger.LogInformation("WHO Four-Stage System database schema migration completed successfully");
 
             // Create Tbl_BirthOutcome table (required for dashboard stats)
             try
@@ -1009,6 +1010,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         private async Task<List<CriticalPatientInfo>> GetCriticalPatientsAsync(SqliteConnection connection)
         {
+            await Init();
             var criticalPatients = new List<CriticalPatientInfo>();
 
             try
@@ -1121,6 +1123,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         private async Task<List<PatientAlert>> GetActiveAlertsAsync(SqliteConnection connection)
         {
+            await Init();
             var alerts = new List<PatientAlert>();
 
             try
@@ -1243,6 +1246,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         private async Task<List<ShiftHandoverItem>> GetShiftHandoverItemsAsync(SqliteConnection connection)
         {
+            await Init();
             var handoverItems = new List<ShiftHandoverItem>();
 
             try
@@ -1328,6 +1332,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         private async Task<WHOComplianceMetrics> GetWHOComplianceMetricsAsync(SqliteConnection connection)
         {
+            await Init();
             var metrics = new WHOComplianceMetrics();
 
             try
@@ -1386,6 +1391,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         private async Task<List<RecentActivityItem>> GetRecentActivitiesAsync(SqliteConnection connection)
         {
+            await Init();
             var activities = new List<RecentActivityItem>();
 
             try
@@ -1509,6 +1515,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         private async Task<List<HourlyAdmission>> GetAdmissionTrendsAsync(SqliteConnection connection)
         {
+            await Init();
             var trends = new List<HourlyAdmission>();
 
             try
