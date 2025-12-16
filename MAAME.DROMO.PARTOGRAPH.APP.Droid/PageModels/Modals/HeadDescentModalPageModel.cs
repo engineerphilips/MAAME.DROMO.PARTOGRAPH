@@ -25,7 +25,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
-        private int _station = 0;
+        private int _station = -1;
 
         [ObservableProperty]
         private string _notes = string.Empty;
