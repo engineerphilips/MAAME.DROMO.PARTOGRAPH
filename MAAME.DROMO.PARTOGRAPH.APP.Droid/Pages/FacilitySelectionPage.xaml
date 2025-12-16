@@ -51,7 +51,8 @@
 
                 <!-- Facilities CollectionView -->
                 <CollectionView ItemsSource="{Binding Facilities}"
-                              SelectionMode="None">
+                              SelectionMode="Single"
+                                SelectedItem="{Binding SelectedFacility, Mode=TwoWay}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:Facility">
                             <Border Margin="0,0,0,12"
@@ -68,8 +69,7 @@
                                 </Border.Shadow>
 
                                 <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectFacilityCommand}"
-                                                        CommandParameter="{Binding .}" />
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectFacilityCommand}" CommandParameter="{Binding .}" />
                                 </Border.GestureRecognizers>
 
                                 <Grid Padding="20" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">

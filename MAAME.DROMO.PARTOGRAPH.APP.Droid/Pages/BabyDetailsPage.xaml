@@ -9,9 +9,8 @@
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
-             Title="Baby Details"
-             BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}"
-             Shell.NavBarIsVisible="True">
+             Title="Baby Details">
+    <!--BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}"-->
 
     <Shell.BackButtonBehavior>
         <BackButtonBehavior Command="{Binding GoBackCommand}" />
@@ -139,10 +138,10 @@
 
                 <core:SfTextInputLayout Hint="Birth Weight (KG)" Style="{StaticResource PatientInput}">
                     <editors:SfNumericEntry Value="{Binding BirthWeight, Mode=TwoWay}"
-                                           Minimum="0"
-                                           Maximum="100"
-                                               CustomFormat="0.0"
-                                           ValueChangeMode="OnKeyFocus" />
+                                            Minimum="0"
+                                            Maximum="100"
+                                            CustomFormat="0.0"
+                                            ValueChangeMode="OnKeyFocus" />
                 </core:SfTextInputLayout>
 
                 <core:SfTextInputLayout Hint="Length (cm)" Style="{StaticResource PatientInput}">
@@ -256,7 +255,7 @@
 
                     <core:SfTextInputLayout Hint="Duration (minutes)" Style="{StaticResource PatientInput}">
                         <editors:SfNumericEntry Value="{Binding ResuscitationDuration, Mode=TwoWay}"
-                                               Minimum="0"
+                                                Minimum="0"
                                                Maximum="60"
                                                CustomFormat="0"
                                                ValueChangeMode="OnKeyFocus" />

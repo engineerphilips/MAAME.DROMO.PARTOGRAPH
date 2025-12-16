@@ -731,7 +731,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     { "PartographId", Patient.ID.ToString() },
                     { "BirthOutcomeId", birthOutcome.ID.ToString() },
-                    { "NumberOfBabies", Babies.Count }
+                    { "NumberOfBabies", (Babies.Count == 0 ? 1 : Babies.Count).ToString() }
                 };
 
                 await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
@@ -850,7 +850,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 // Navigate to baby details page
                 var parameters = new Dictionary<string, object>
                 {
-                    { "BirthOutcomeId", birthOutcome.ID.ToString() }
+                    { "PartographId", Patient.ID.ToString() },
+                    { "BirthOutcomeId", birthOutcome.ID.ToString() },
+                    { "NumberOfBabies", (Babies.Count == 0 ? 1 : Babies.Count).ToString() }
                 };
 
                 await Shell.Current.GoToAsync("BabyDetailsPage", parameters);

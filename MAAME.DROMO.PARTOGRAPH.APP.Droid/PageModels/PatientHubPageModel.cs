@@ -179,7 +179,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (query.ContainsKey("patientId"))
             {
-                Guid? id = Guid.Parse(Convert.ToString(query["patientId"]));
+                Guid? id = Guid.Parse(query["patientId"].ToString());
                 if (id != null)
                 {
                     PatientId = id.ToString();

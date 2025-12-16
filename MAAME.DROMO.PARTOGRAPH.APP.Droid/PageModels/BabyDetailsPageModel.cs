@@ -324,7 +324,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
 
                 BirthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(PartographId);
-                Partograph = await _partographRepository.GetCurrentPartographAsync(PartographId);
+                Partograph = await _partographRepository.GetAsync(PartographId);
+
+                //if (BirthOutcome != null)
+                //    NumberOfBabies = BirthOutcome.NumberOfBabies;
 
                 IsMultipleBirth = NumberOfBabies > 1;
 
@@ -869,18 +872,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (query.ContainsKey("PartographId"))
             {
-                PartographId = Guid.Parse(Convert.ToString(query["PartographId"]));
+                PartographId = Guid.Parse(query["PartographId"].ToString());
                 LoadDataAsync().FireAndForgetSafeAsync(_errorHandler);
             }
 
             if (query.ContainsKey("BirthOutcomeId"))
             {
-                BirthOutcomeId = Guid.Parse(Convert.ToString(query["BirthOutcomeId"]));            }
+                BirthOutcomeId = Guid.Parse(query["BirthOutcomeId"].ToString());            }
 
-            if (query.ContainsKey("NumberOfBabies"))
-            {
-                NumberOfBabies = Int32.Parse(Convert.ToString(query["NumberOfBabies"]));
-            }
+            //if (query.ContainsKey("NumberOfBabies"))
+            //{
+            //    NumberOfBabies = Int32.Parse(query["NumberOfBabies"].ToString());
+            //}
         }
     }
 }

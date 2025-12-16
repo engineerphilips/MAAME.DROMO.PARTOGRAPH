@@ -1,6 +1,8 @@
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls;
+using System;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
@@ -21,6 +23,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
+
+            //try
+            //{
+            //    var dropTableCmd = connection.CreateCommand();
+            //    dropTableCmd.CommandText = @"
+            //    DROP TABLE Tbl_Baby;";
+            //    await dropTableCmd.ExecuteNonQueryAsync();
+            //}
+            //catch (Exception e)
+            //{
+            //    _logger.LogError(e, "Error dropping Tbl_Baby table");
+            //    throw;
+            //}
 
             try
             {
@@ -249,17 +264,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 var saveCmd = connection.CreateCommand();
                 if (item.ID == null || item.ID == Guid.Empty)
                 {
-                    item.ID = Guid.NewGuid();
-                    item.CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                    item.UpdatedTime = item.CreatedTime;
+                    var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+                    item.ID = item.ID ?? Guid.NewGuid();
+                    item.CreatedTime = now;
+                    item.UpdatedTime = now;
+                    item.DeviceId = DeviceIdentity.GetOrCreateDeviceId();
+                    item.OriginDeviceId = DeviceIdentity.GetOrCreateDeviceId();
+                    item.Version = 1;
+                    item.ServerVersion = 0;
+                    item.SyncStatus = 0;
+                    item.Deleted = 0;
                     item.DataHash = item.CalculateHash();
 
                     saveCmd.CommandText = GetInsertSql();
                 }
                 else
                 {
-                    item.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+                    item.UpdatedTime = now;
+                    item.DeviceId = DeviceIdentity.GetOrCreateDeviceId();
                     item.Version++;
+                    item.SyncStatus = 0; // Mark as needing sync
                     item.DataHash = item.CalculateHash();
 
                     saveCmd.CommandText = GetUpdateSql();
@@ -300,7 +327,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 requiresspecialcare, specialcarereason,
                 admittedtonicu, nicuadmissiontime, feedingmethod, feedingnotes, asphyxianeonatorum,
                 respiratorydistresssyndrome, sepsis, jaundice, hypothermia, hypoglycemia,
-                othercomplications, handler, notes, createdtime, updatedtime,
+                othercomplications, handler, notes, createdtime, updatedtime, deletedtime,
                 deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash
             ) VALUES (
                 @id, @partographid, @birthoutcomeid, @babynumber, @babytag, @birthtime, @sex, @vitalstatus,
@@ -317,7 +344,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 @requiresspecialcare, @specialcarereason,
                 @admittedtonicu, @nicuadmissiontime, @feedingmethod, @feedingnotes, @asphyxianeonatorum,
                 @respiratorydistresssyndrome, @sepsis, @jaundice, @hypothermia, @hypoglycemia,
-                @othercomplications, @handler, @notes, @createdtime, @updatedtime,
+                @othercomplications, @handler, @notes, @createdtime, @updatedtime, @deletedtime,
                 @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash
             )";
         }
@@ -435,6 +462,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? string.Empty);
             cmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
             cmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
+            cmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
             cmd.Parameters.AddWithValue("@deviceid", item.DeviceId ?? string.Empty);
             cmd.Parameters.AddWithValue("@origindeviceid", item.OriginDeviceId ?? string.Empty);
             cmd.Parameters.AddWithValue("@syncstatus", item.SyncStatus);

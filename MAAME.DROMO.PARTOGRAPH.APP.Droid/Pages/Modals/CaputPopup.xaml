@@ -62,7 +62,7 @@
                     </core:SfTextInputLayout>
 
                     <!-- WHO 2020 Enhanced Assessment -->
-                    <Label Text="WHO 2020 Detailed Assessment" FontAttributes="Bold" FontSize="16" Margin="0,15,0,5"/>
+                    <!--<Label Text="WHO 2020 Detailed Assessment" FontAttributes="Bold" FontSize="16" Margin="0,15,0,5"/>
 
                     <core:SfTextInputLayout Hint="Location"
                                         Style="{StaticResource PatientInput}"
@@ -151,7 +151,7 @@
                                         HelperText="Any alerts or concerns"
                                         ContainerBackground="LightYellow">
                         <Entry Text="{Binding ClinicalAlert}" Keyboard="Text" />
-                    </core:SfTextInputLayout>
+                    </core:SfTextInputLayout>-->
 
                     <!-- Action Buttons -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,40">
