@@ -4,7 +4,8 @@
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
-             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.BishopScorePopup">
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.BishopScorePopup"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters">
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
@@ -22,7 +23,7 @@
             <Style x:Key="HeaderTitle" TargetType="Label">
                 <Setter Property="FontSize" Value="24" />
                 <Setter Property="FontAttributes" Value="Bold" />
-                <Setter Property="TextColor" Value="{StaticResource SurfaceWhite}" />
+                <!--<Setter Property="TextColor" Value="{StaticResource SurfaceWhite}" />-->
                 <Setter Property="HorizontalTextAlignment" Value="Center" />
             </Style>
 
@@ -32,17 +33,21 @@
                 <Setter Property="HorizontalTextAlignment" Value="Center" />
             </Style>
 
-            <Style x:Key="ErrorText" TargetType="Label">
+            <!--<Style x:Key="ErrorText" TargetType="Label">
                 <Setter Property="FontSize" Value="12" />
                 <Setter Property="TextColor" Value="{StaticResource ErrorRed}" />
                 <Setter Property="HorizontalTextAlignment" Value="Start" />
-            </Style>
+            </Style>-->
 
             <Style x:Key="SectionTitle" TargetType="Label">
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="Margin" Value="0,10,0,5" />
             </Style>
+
+            <converters:InitialsConverter x:Key="StringInitialsConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
         </ResourceDictionary>
 
         <!--<x:Static Member="system:DateTime.Today" x:Key="Today" />-->

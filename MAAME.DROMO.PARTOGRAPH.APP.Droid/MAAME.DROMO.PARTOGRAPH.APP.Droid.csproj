@@ -24,7 +24,7 @@
 		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
 
 		<!-- Display name -->
-		<ApplicationTitle>MAAME.DROMO.PARTOGRAPH.APP.Droid</ApplicationTitle>
+		<ApplicationTitle>MAAME.DROMO</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.maame.dromo.partograph.app.droid</ApplicationId>
@@ -48,6 +48,7 @@
 		<PackageTags>Partograph, Maame, Dromo, Labour</PackageTags>
 		<AssemblyVersion>1.0.0.1</AssemblyVersion>
 		<FileVersion>1.0.0.1</FileVersion>
+		<PlatformTarget>ARM64</PlatformTarget>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
@@ -55,25 +56,29 @@
 	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
 	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	  <AndroidKeyStore>False</AndroidKeyStore>
-	  <JavaMaximumHeapSize>3G</JavaMaximumHeapSize>
+	  <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+	  <ApplicationIdGuid>5f021d67-3ceb-44cd-8f55-5b10ca9039e1</ApplicationIdGuid>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
 	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
 	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+	  <ApplicationIdGuid>5f021d67-3ceb-44cd-8f55-5b10ca9039e1</ApplicationIdGuid>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-maccatalyst|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
 	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
 	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+	  <ApplicationIdGuid>5f021d67-3ceb-44cd-8f55-5b10ca9039e1</ApplicationIdGuid>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-windows10.0.19041.0|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
 	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
 	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+	  <ApplicationIdGuid>5f021d67-3ceb-44cd-8f55-5b10ca9039e1</ApplicationIdGuid>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
@@ -84,25 +89,33 @@
 	  <AndroidUseAapt2>True</AndroidUseAapt2>
 	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
 	  <AndroidKeyStore>False</AndroidKeyStore>
-	  <JavaMaximumHeapSize>3G</JavaMaximumHeapSize>
+	  <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+	  <ApplicationIdGuid>5f021d67-3ceb-44cd-8f55-5b10ca9039e1</ApplicationIdGuid>
+	  <PublishTrimmed>False</PublishTrimmed>
+    <RunAOTCompilation>False</RunAOTCompilation>
+    <AndroidLinkMode>None</AndroidLinkMode>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
 	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
 	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+	  <ApplicationIdGuid>5f021d67-3ceb-44cd-8f55-5b10ca9039e1</ApplicationIdGuid>
+	  <MtouchLink>None</MtouchLink>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-maccatalyst|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
 	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
 	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+	  <ApplicationIdGuid>5f021d67-3ceb-44cd-8f55-5b10ca9039e1</ApplicationIdGuid>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-windows10.0.19041.0|AnyCPU'">
 	  <ApplicationId>com.emperorsoftware.maame.dromo.partograph.app</ApplicationId>
 	  <ApplicationTitle>Maame Dromo</ApplicationTitle>
 	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+	  <ApplicationIdGuid>5f021d67-3ceb-44cd-8f55-5b10ca9039e1</ApplicationIdGuid>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -10,7 +10,7 @@ using System.Runtime.Versioning;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 {
-    [SupportedOSPlatform("android21.0")] // Add this attribute to suppress CA1416
+    //[SupportedOSPlatform("android21.0")] // Add this attribute to suppress CA1416
     public static class MauiProgram
     {
         public static MauiApp CreateMauiApp()
@@ -45,6 +45,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
+#if RELEASE
+            builder.Logging.AddDebug();
+            builder.Services.AddLogging(configure => configure.AddDebug());
+#endif
             // Register Repositories
             builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
             builder.Services.AddSingleton<PatientRepository>();

@@ -4,7 +4,7 @@
              xmlns:fonts="clr-namespace:Fonts"
              xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.HelpPage"
-             Title="Help & Support"
+             Title="Help &amp; Support"
              BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}">
 
     <ContentPage.Resources>

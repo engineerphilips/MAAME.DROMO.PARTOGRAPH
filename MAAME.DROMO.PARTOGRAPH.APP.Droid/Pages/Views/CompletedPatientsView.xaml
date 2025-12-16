@@ -6,7 +6,16 @@
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              xmlns:popup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
-             xmlns:fonts="clr-namespace:Fonts">
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:InitialsConverter x:Key="StringInitialsConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
 
     <Grid RowDefinitions="Auto,*" Padding="20">
 
