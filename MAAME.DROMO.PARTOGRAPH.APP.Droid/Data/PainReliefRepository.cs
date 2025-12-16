@@ -59,26 +59,44 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         protected override PainReliefEntry MapFromReader(SqliteDataReader reader)
         {
+            var idOrdinal = reader.GetOrdinal("ID");
+            var partographidOrdinal = reader.GetOrdinal("partographid");
+            var timeOrdinal = reader.GetOrdinal("time");
+            var handlerOrdinal = reader.GetOrdinal("handler");
+            var notesOrdinal = reader.GetOrdinal("notes");
+            var painreliefOrdinal = reader.GetOrdinal("painrelief");
+            var createdtimeOrdinal = reader.GetOrdinal("createdtime");
+            var updatedtimeOrdinal = reader.GetOrdinal("updatedtime");
+            var deletedtimeOrdinal = reader.GetOrdinal("deletedtime");
+            var deviceidOrdinal = reader.GetOrdinal("deviceid");
+            var origindeviceidOrdinal = reader.GetOrdinal("origindeviceid");
+            var syncstatusOrdinal = reader.GetOrdinal("syncstatus");
+            var versionOrdinal = reader.GetOrdinal("version");
+            var serverversionOrdinal = reader.GetOrdinal("serverversion");
+            var deletedOrdinal = reader.GetOrdinal("deleted");
+            var conflictdataOrdinal = reader.GetOrdinal("conflictdata");
+            var datahashOrdinal = reader.GetOrdinal("datahash");
+
             return new PainReliefEntry
             {
-                ID = Guid.Parse(reader.GetString(0)),
-                PartographID = reader.IsDBNull(1) ? null : Guid.Parse(reader.GetString(1)),
-                Time = DateTime.Parse(reader.GetString(2)),  
-                //Handler = reader.IsDBNull(3) ? null : Guid.Parse(reader.GetString(3)),
-                HandlerName = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
-                Notes = reader.GetString(4),
-                PainRelief = reader.GetString(5),
-                CreatedTime = reader.GetInt64(6),
-                UpdatedTime = reader.GetInt64(7),
-                DeletedTime = reader.IsDBNull(8) ? null : reader.GetInt64(8),
-                DeviceId = reader.GetString(9),
-                OriginDeviceId = reader.GetString(10),
-                SyncStatus = reader.GetInt32(11),
-                Version = reader.GetInt32(12),
-                ServerVersion = reader.IsDBNull(13) ? 0 : reader.GetInt32(13),
-                Deleted = reader.IsDBNull(14) ? 0 : reader.GetInt32(14),
-                ConflictData = reader.IsDBNull(15) ? string.Empty : reader.GetString(15),
-                DataHash = reader.IsDBNull(16) ? string.Empty : reader.GetString(16)
+                ID = Guid.Parse(reader.GetString(idOrdinal)),
+                PartographID = reader.IsDBNull(partographidOrdinal) ? null : Guid.Parse(reader.GetString(partographidOrdinal)),
+                Time = DateTime.Parse(reader.GetString(timeOrdinal)),
+                //Handler = reader.IsDBNull(handlerOrdinal) ? null : Guid.Parse(reader.GetString(handlerOrdinal)),
+                HandlerName = reader.IsDBNull(handlerOrdinal) ? string.Empty : reader.GetString(handlerOrdinal),
+                Notes = reader.GetString(notesOrdinal),
+                PainRelief = reader.GetString(painreliefOrdinal),
+                CreatedTime = reader.GetInt64(createdtimeOrdinal),
+                UpdatedTime = reader.GetInt64(updatedtimeOrdinal),
+                DeletedTime = reader.IsDBNull(deletedtimeOrdinal) ? null : reader.GetInt64(deletedtimeOrdinal),
+                DeviceId = reader.GetString(deviceidOrdinal),
+                OriginDeviceId = reader.GetString(origindeviceidOrdinal),
+                SyncStatus = reader.GetInt32(syncstatusOrdinal),
+                Version = reader.GetInt32(versionOrdinal),
+                ServerVersion = reader.IsDBNull(serverversionOrdinal) ? 0 : reader.GetInt32(serverversionOrdinal),
+                Deleted = reader.IsDBNull(deletedOrdinal) ? 0 : reader.GetInt32(deletedOrdinal),
+                ConflictData = reader.IsDBNull(conflictdataOrdinal) ? string.Empty : reader.GetString(conflictdataOrdinal),
+                DataHash = reader.IsDBNull(datahashOrdinal) ? string.Empty : reader.GetString(datahashOrdinal)
             };
         }
 

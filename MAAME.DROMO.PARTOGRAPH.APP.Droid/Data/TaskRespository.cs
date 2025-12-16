@@ -70,12 +70,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var reader = await selectCmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
+                var idOrdinal = reader.GetOrdinal("ID");
+                var titleOrdinal = reader.GetOrdinal("Title");
+                var isCompletedOrdinal = reader.GetOrdinal("IsCompleted");
+                var projectIdOrdinal = reader.GetOrdinal("ProjectID");
+
                 tasks.Add(new ProjectTask
                 {
-                    ID = reader.GetInt32(0),
-                    Title = reader.GetString(1),
-                    IsCompleted = reader.GetBoolean(2),
-                    ProjectID = reader.GetInt32(3)
+                    ID = reader.GetInt32(idOrdinal),
+                    Title = reader.GetString(titleOrdinal),
+                    IsCompleted = reader.GetBoolean(isCompletedOrdinal),
+                    ProjectID = reader.GetInt32(projectIdOrdinal)
                 });
             }
 
@@ -101,12 +106,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var reader = await selectCmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
+                var idOrdinal = reader.GetOrdinal("ID");
+                var titleOrdinal = reader.GetOrdinal("Title");
+                var isCompletedOrdinal = reader.GetOrdinal("IsCompleted");
+                var projectIdOrdinal = reader.GetOrdinal("ProjectID");
+
                 tasks.Add(new ProjectTask
                 {
-                    ID = reader.GetInt32(0),
-                    Title = reader.GetString(1),
-                    IsCompleted = reader.GetBoolean(2),
-                    ProjectID = reader.GetInt32(3)
+                    ID = reader.GetInt32(idOrdinal),
+                    Title = reader.GetString(titleOrdinal),
+                    IsCompleted = reader.GetBoolean(isCompletedOrdinal),
+                    ProjectID = reader.GetInt32(projectIdOrdinal)
                 });
             }
 
@@ -131,12 +141,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var reader = await selectCmd.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
+                var idOrdinal = reader.GetOrdinal("ID");
+                var titleOrdinal = reader.GetOrdinal("Title");
+                var isCompletedOrdinal = reader.GetOrdinal("IsCompleted");
+                var projectIdOrdinal = reader.GetOrdinal("ProjectID");
+
                 return new ProjectTask
                 {
-                    ID = reader.GetInt32(0),
-                    Title = reader.GetString(1),
-                    IsCompleted = reader.GetBoolean(2),
-                    ProjectID = reader.GetInt32(3)
+                    ID = reader.GetInt32(idOrdinal),
+                    Title = reader.GetString(titleOrdinal),
+                    IsCompleted = reader.GetBoolean(isCompletedOrdinal),
+                    ProjectID = reader.GetInt32(projectIdOrdinal)
                 };
             }
 
