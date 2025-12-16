@@ -132,11 +132,11 @@
             <Label Text="Anthropometric Measurements" Style="{StaticResource SectionTitle}" Margin="20,15,0,10" />
             <StackLayout Padding="20,0" Spacing="10">
 
-                <core:SfTextInputLayout Hint="Birth Weight (grams)" Style="{StaticResource PatientInput}">
+                <core:SfTextInputLayout Hint="Birth Weight (KG)" Style="{StaticResource PatientInput}">
                     <editors:SfNumericEntry Value="{Binding BirthWeight, Mode=TwoWay}"
                                            Minimum="0"
-                                           Maximum="10000"
-                                           CustomFormat="0"
+                                           Maximum="100"
+                                               CustomFormat="0.0"
                                            ValueChangeMode="OnKeyFocus" />
                 </core:SfTextInputLayout>
 

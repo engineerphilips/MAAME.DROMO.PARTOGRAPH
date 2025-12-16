@@ -51,7 +51,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private async Task LoadData()
+        public async Task LoadData()
         {
             try
             {

@@ -756,7 +756,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 Patient.HeadDescents = await _headDescentRepository.ListByPatientAsync(Patient.ID);
                 if (Patient.HeadDescents.Any())
+                {
                     earliestTimes.Add(Patient.HeadDescents.Min(e => e.Time));
+                    latestTimes.Add(Patient.HeadDescents.Max(e => e.Time));
+                }
 
                 Patient.FetalPositions = await _fetalPositionRepository.ListByPatientAsync(Patient.ID);
                 if (Patient.FetalPositions.Any())

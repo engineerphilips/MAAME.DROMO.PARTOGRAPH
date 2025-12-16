@@ -121,10 +121,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public bool GestationalAgeVisibility => !string.IsNullOrWhiteSpace(FormattedGestationalAge);
 
-        [ObservableProperty]
-        private DateOnly? _laborStartDate = null;
-        [ObservableProperty]
-        private TimeSpan? _laborStartTime = null;
+        //[ObservableProperty]
+        private DateTime? _laborStartDate = DateTime.Now;
+        public DateTime? LaborStartDate
+        {
+            get => _laborStartDate; 
+            set => SetProperty(ref _laborStartDate, value);
+        }
+        //[ObservableProperty]
+        private TimeSpan? _laborStartTime = DateTime.Now.TimeOfDay;
+        public TimeSpan? LaborStartTime
+        {
+            get => _laborStartTime;
+            set => SetProperty(ref _laborStartTime, value);
+        }
         [ObservableProperty]
         private DateOnly? _rupturedMembraneDate = null;
         [ObservableProperty]
@@ -203,12 +213,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public string BmiCategory => Bmi switch
         {
             null => "",
-            < 18.5 => "Underweight ⚠️",
-            >= 18.5 and < 25 => "Normal ✅",
-            >= 25 and < 30 => "Overweight ⚠️",
-            >= 30 and < 35 => "Obese ⚠️",
-            >= 35 and < 40 => "Average Obesity 🔴",
-            >= 40 => "Severe obesity 🔴🔴",
+            < 18.5 => "Underweight",
+            >= 18.5 and < 25 => "Normal",
+            >= 25 and < 30 => "Overweight",
+            >= 30 and < 35 => "Obese",
+            >= 35 and < 40 => "Average Obesity",
+            >= 40 => "Severe obesity",
             _ => ""
         };
 
@@ -277,10 +287,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public string LaborStatusIndicator => CervicalDilationOnAdmission switch
         {
             null => "",
-            <= 4 => "⚪ Latent Phase / Not in Active Labour",
-            > 4 and <= 7 => "🟡 Active First Stage - Early",
-            > 7 and < 10 => "🟠 Active First Stage - Advanced",
-            10 => "🔴 Fully Dilated - Second Stage",
+            <= 4 => "Latent Phase / Not in Active Labour",
+            > 4 and <= 7 => "Active First Stage - Early",
+            > 7 and < 10 => "Active First Stage - Advanced",
+            10 => "Fully Dilated - Second Stage",
             _ => ""
         };
 
@@ -457,9 +467,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public string BishopScoreInterpretation => CalculatedBishopScore switch
         {
-            <= 5 => "⚠️ Unfavorable (Induction may be difficult)",
-            >= 6 and <= 8 => "⚡ Moderately Favorable",
-            >= 9 => "✅ Favorable (Good for induction)",
+            <= 5 => "Unfavorable (Induction may be difficult)",
+            >= 6 and <= 8 => "Moderately Favorable",
+            >= 9 => "Favorable (Good for induction)",
             //_ => ""
         };
 
@@ -627,8 +637,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (ExpectedDeliveryDate == null && LastMenstrualDate == null)
                 _errors.Add(nameof(ExpectedDeliveryDate), "Either EDD or LMP is required");
 
-            if (LaborStartDate == null || LaborStartTime == null)
-                _errors.Add(nameof(LaborStartDate), "Labor onset date and time are required");
+            if (LaborStartDate == null && LaborStartTime == null)
+                _errors.Add(nameof(LaborStartDate), "Labour onset date and time are required");
 
             // Date logic validation
             if (DateOfBirth != null && DateOfBirth.Value > DateTime.Today)
@@ -663,24 +673,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (Age < 18)
             {
                 score += 2;
-                RiskAssessmentFactors.Add("⚠️ Young maternal age (<18 years)");
+                RiskAssessmentFactors.Add("Young maternal age (<18 years)");
             }
             else if (Age > 35)
             {
                 score += 2;
-                RiskAssessmentFactors.Add("⚠️ Advanced maternal age (>35 years)");
+                RiskAssessmentFactors.Add("Advanced maternal age (>35 years)");
             }
 
             // Parity-based risk
             if (Parity == 0)
             {
                 score += 1;
-                RiskAssessmentFactors.Add("ℹ️ Nulliparous (First pregnancy)");
+                RiskAssessmentFactors.Add("Nulliparous (First pregnancy)");
             }
             else if (Parity >= 5)
             {
                 score += 3;
-                RiskAssessmentFactors.Add("🔴 Grand multiparity (≥5 births)");
+                RiskAssessmentFactors.Add("Grand multiparity (≥5 births)");
             }
 
             // Gestational age risk
@@ -690,12 +700,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (weeks < 37)
                 {
                     score += 3;
-                    RiskAssessmentFactors.Add($"🔴 Preterm labour ({weeks} weeks)");
+                    RiskAssessmentFactors.Add($"Preterm labour ({weeks} weeks)");
                 }
                 else if (weeks > 42)
                 {
                     score += 2;
-                    RiskAssessmentFactors.Add($"⚠️ Post-term pregnancy ({weeks} weeks)");
+                    RiskAssessmentFactors.Add($"Post-term pregnancy ({weeks} weeks)");
                 }
             }
 
@@ -703,28 +713,28 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (Bmi < 18.5)
             {
                 score += 1;
-                RiskAssessmentFactors.Add("⚠️ Underweight (BMI < 18.5)");
+                RiskAssessmentFactors.Add("Underweight (BMI < 18.5)");
             }
             else if (Bmi >= 30 && Bmi < 35)
             {
                 score += 2;
-                RiskAssessmentFactors.Add($"⚠️ Obesity (BMI {Bmi:F1})");
+                RiskAssessmentFactors.Add($"Obesity (BMI {Bmi:F1})");
             }
             else if (Bmi >= 35)
             {
                 score += 3;
-                RiskAssessmentFactors.Add($"🔴 Severe obesity (BMI {Bmi:F1})");
+                RiskAssessmentFactors.Add($"Severe obesity (BMI {Bmi:F1})");
             }
 
             // Previous C-section
             if (HasPreviousCSection)
             {
                 score += 2;
-                RiskAssessmentFactors.Add("⚠️ Previous cesarean (VBAC attempt)");
+                RiskAssessmentFactors.Add("Previous cesarean (VBAC attempt)");
                 if (NumberOfPreviousCsections > 1)
                 {
                     score += 1;
-                    RiskAssessmentFactors.Add($"🔴 Multiple previous C-sections ({NumberOfPreviousCsections})");
+                    RiskAssessmentFactors.Add($"Multiple previous C-sections ({NumberOfPreviousCsections})");
                 }
             }
 
@@ -732,13 +742,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (Stillbirths > 0)
             {
                 score += 2;
-                RiskAssessmentFactors.Add($"🔴 Previous stillbirth(s) ({Stillbirths})");
+                RiskAssessmentFactors.Add($"Previous stillbirth(s) ({Stillbirths})");
             }
 
             if (NeonatalDeaths > 0)
             {
                 score += 2;
-                RiskAssessmentFactors.Add($"🔴 Previous neonatal death(s) ({NeonatalDeaths})");
+                RiskAssessmentFactors.Add($"Previous neonatal death(s) ({NeonatalDeaths})");
             }
 
             // Membrane rupture duration
@@ -752,7 +762,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (rupturedHours > 18)
                 {
                     score += 3;
-                    RiskAssessmentFactors.Add($"🔴 Prolonged rupture ({rupturedHours:F0}h) - Infection risk");
+                    RiskAssessmentFactors.Add($"Prolonged rupture ({rupturedHours:F0}h) - Infection risk");
                 }
             }
 
@@ -762,7 +772,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 score += RiskFactors.Count;
                 foreach (var risk in RiskFactors)
                 {
-                    RiskAssessmentFactors.Add($"⚠️ {risk.Name}");
+                    RiskAssessmentFactors.Add($"{risk.Name}");
                 }
             }
 
@@ -773,39 +783,39 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 RiskLevel = "Low Risk";
                 RiskColor = "#4CAF50"; // Green
-                RecommendedActions.Add("✅ Continue routine monitoring");
-                RecommendedActions.Add("✅ Standard labour management");
+                RecommendedActions.Add("Continue routine monitoring");
+                RecommendedActions.Add("Standard labour management");
             }
             else if (score >= 1 && score <= 3)
             {
                 RiskLevel = "Moderate Risk";
                 RiskColor = "#FFC107"; // Amber
-                RecommendedActions.Add("⚡ Increase monitoring frequency");
-                RecommendedActions.Add("⚡ Notify senior clinician");
-                RecommendedActions.Add("⚡ Ensure emergency equipment ready");
+                RecommendedActions.Add("Increase monitoring frequency");
+                RecommendedActions.Add("Notify senior clinician");
+                RecommendedActions.Add("Ensure emergency equipment ready");
             }
             else if (score >= 4 && score <= 6)
             {
                 RiskLevel = "High Risk";
                 RiskColor = "#FF5722"; // Deep Orange
-                RecommendedActions.Add("🔴 Continuous monitoring required");
-                RecommendedActions.Add("🔴 Senior clinician review mandatory");
-                RecommendedActions.Add("🔴 Prepare for emergency interventions");
-                RecommendedActions.Add("🔴 Consider referral to higher facility");
+                RecommendedActions.Add("Continuous monitoring required");
+                RecommendedActions.Add("Senior clinician review mandatory");
+                RecommendedActions.Add("Prepare for emergency interventions");
+                RecommendedActions.Add("Consider referral to higher facility");
             }
             else
             {
                 RiskLevel = "Critical Risk";
                 RiskColor = "#F44336"; // Red
-                RecommendedActions.Add("🚨 IMMEDIATE senior clinician review");
-                RecommendedActions.Add("🚨 Activate emergency response team");
-                RecommendedActions.Add("🚨 Prepare for emergency cesarean");
-                RecommendedActions.Add("🚨 Notify neonatal team");
+                RecommendedActions.Add("IMMEDIATE senior clinician review");
+                RecommendedActions.Add("Activate emergency response team");
+                RecommendedActions.Add("Prepare for emergency cesarean");
+                RecommendedActions.Add("Notify neonatal team");
             }
 
             if (RiskAssessmentFactors.Count == 0)
             {
-                RiskAssessmentFactors.Add("✅ No significant risk factors identified");
+                RiskAssessmentFactors.Add("No significant risk factors identified");
             }
         }
 
@@ -896,7 +906,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     ExpectedDeliveryDate = ExpectedDeliveryDate != null ? DateOnly.FromDateTime(ExpectedDeliveryDate.Value) : null,
                     LastMenstrualDate = LastMenstrualDate != null ? DateOnly.FromDateTime(LastMenstrualDate.Value) : null,
                     RupturedMembraneTime = RupturedMembraneDate != null && RupturedMembraneTime != null ? new DateTime(RupturedMembraneDate.Value.Year, RupturedMembraneDate.Value.Month, RupturedMembraneDate.Value.Day).Add(RupturedMembraneTime.Value) : null,
-                    Status = CervicalDilationOnAdmission > 4 ? LaborStatus.FirstStage : LaborStatus.Pending,
+                    Status = CervicalDilationOnAdmission > 4 ? LaborStatus.FirstStage : LaborStatus.Pending, 
                     // Risk Assessment Summary
                     RiskScore = RiskScore,
                     RiskLevel = RiskLevel,
@@ -989,19 +999,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         });
 
                         // Record initial head descent from Bishop Station
-                        await _headDescentRepository.SaveItemAsync(new HeadDescent
-                        {
-                            PartographID = partographId.Value,
-                            Time = DateTime.Now,
-                            Station = int.Parse(BishopStation.Replace("+", "")),
-                            HandlerName = Constants.Staff?.Name ?? string.Empty,
-                            Handler = Constants.Staff?.ID
-                        });
+                        //await _headDescentRepository.SaveItemAsync(new HeadDescent
+                        //{
+                        //    PartographID = partographId.Value,
+                        //    Time = DateTime.Now,
+                        //    Station = int.Parse(BishopStation.Replace("+", "")),
+                        //    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                        //    Handler = Constants.Staff?.ID
+                        //});
                     }
 
                     await AppShell.DisplayToastAsync("Patient registered successfully");
-                    //await Shell.Current.GoToAsync("..");
-                    await Shell.Current.GoToAsync($"//partograph?patientId={partographId}");
+                    
+                    if (CervicalDilationOnAdmission > 4)
+                    {
+                        await Shell.Current.GoToAsync($"//partograph?patientId={partographId}");
+                    }
+                    else
+                        await Shell.Current.GoToAsync("..");
                 }
                 else
                 {

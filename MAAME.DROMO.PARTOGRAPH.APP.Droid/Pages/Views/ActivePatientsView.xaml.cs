@@ -10,6 +10,14 @@ public partial class ActivePatientsView : ContentView
 	public ActivePatientsView()
 	{
 		InitializeComponent();
+        Loaded += (s, e) =>
+        {
+            if (BindingContext is ActivePatientsPageModel pageModel)
+            {
+                // Load data when the view is loaded
+                pageModel.LoadData().FireAndForgetSafeAsync();
+            }
+        };
 	}
 
     private void OnShowMenuClicked(object sender, EventArgs e)
