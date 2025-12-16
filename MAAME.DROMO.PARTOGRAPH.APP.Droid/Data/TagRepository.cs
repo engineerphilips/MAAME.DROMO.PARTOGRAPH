@@ -80,8 +80,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 tags.Add(new Tag
                 {
                     ID = Convert.ToInt32(reader["ID"]),
-                    Title = (string)reader["Title"],
-                    Color = (string)reader["Color"]
+                    Title = reader["Title"].ToString(),
+                    Color = reader["Color"].ToString()
                 });
             }
 
@@ -115,8 +115,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 tags.Add(new Tag
                 {
                     ID = Convert.ToInt32(reader["ID"]),
-                    Title = (string)reader["Title"],
-                    Color = (string)reader["Color"]
+                    Title = reader["Title"].ToString(),
+                    Color = reader["Color"].ToString()
                 });
             }
 
@@ -144,8 +144,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 return new Tag
                 {
                     ID = Convert.ToInt32(reader["ID"]),
-                    Title = (string)reader["Title"],
-                    Color = (string)reader["Color"]
+                    Title = reader["Title"].ToString(),
+                    Color = reader["Color"].ToString()
                 };
             }
 

@@ -60,23 +60,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             return new Assessment
             {
-                ID = Guid.Parse((string)reader["ID"]),
-                PartographID = reader["partographid"] is DBNull ? null : Guid.Parse((string)reader["partographid"]),
-                Time = DateTime.Parse((string)reader["time"]),
-                //Handler = reader["handler"] is DBNull ? null : Guid.Parse((string)reader["handler"]),
-                HandlerName = reader["handler"] is DBNull ? string.Empty : (string)reader["handler"],
-                Notes = (string)reader["notes"],
+                ID = Guid.Parse(reader["ID"].ToString()),
+                PartographID = reader["partographid"] is DBNull ? null : Guid.Parse(reader["partographid"].ToString()),
+                Time = DateTime.Parse(reader["time"].ToString()),
+                //Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
+                HandlerName = reader["handler"] is DBNull ? string.Empty : reader["handler"].ToString(),
+                Notes = reader["notes"].ToString(),
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                 DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
-                DeviceId = (string)reader["deviceid"],
-                OriginDeviceId = (string)reader["origindeviceid"],
+                DeviceId = reader["deviceid"].ToString(),
+                OriginDeviceId = reader["origindeviceid"].ToString(),
                 SyncStatus = Convert.ToInt32(reader["syncstatus"]),
                 Version = Convert.ToInt32(reader["version"]),
                 ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
                 Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
-                ConflictData = reader["conflictdata"] is DBNull ? string.Empty : (string)reader["conflictdata"],
-                DataHash = reader["datahash"] is DBNull ? string.Empty : (string)reader["datahash"]
+                ConflictData = reader["conflictdata"] is DBNull ? string.Empty : reader["conflictdata"].ToString(),
+                DataHash = reader["datahash"] is DBNull ? string.Empty : reader["datahash"].ToString()
             };
         }
 

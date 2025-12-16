@@ -73,18 +73,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 vitalSigns.Add(new VitalSign
                 {
-                    ID = Guid.Parse((string)reader["ID"]),
-                    PatientID = reader["PatientID"] is DBNull ? null : Guid.Parse((string)reader["PatientID"]),
-                    RecordedTime = DateTime.Parse((string)reader["RecordedTime"]),
+                    ID = Guid.Parse(reader["ID"].ToString()),
+                    PatientID = reader["PatientID"] is DBNull ? null : Guid.Parse(reader["PatientID"].ToString()),
+                    RecordedTime = DateTime.Parse(reader["RecordedTime"].ToString()),
                     SystolicBP = reader["SystolicBP"] is DBNull ? 0 : Convert.ToInt32(reader["SystolicBP"]),
                     DiastolicBP = reader["DiastolicBP"] is DBNull ? 0 : Convert.ToInt32(reader["DiastolicBP"]),
                     Temperature = reader["Temperature"] is DBNull ? 0 : Convert.ToDecimal(reader["Temperature"]),
                     PulseRate = reader["PulseRate"] is DBNull ? 0 : Convert.ToInt32(reader["PulseRate"]),
                     RespiratoryRate = reader["RespiratoryRate"] is DBNull ? 0 : Convert.ToInt32(reader["RespiratoryRate"]),
-                    UrineOutput = reader["UrineOutput"] is DBNull ? "" : (string)reader["UrineOutput"],
-                    UrineProtein = reader["UrineProtein"] is DBNull ? "Nil" : (string)reader["UrineProtein"],
-                    UrineAcetone = reader["UrineAcetone"] is DBNull ? "Nil" : (string)reader["UrineAcetone"],
-                    RecordedBy = reader["RecordedBy"] is DBNull ? "" : (string)reader["RecordedBy"]
+                    UrineOutput = reader["UrineOutput"] is DBNull ? "" : reader["UrineOutput"].ToString(),
+                    UrineProtein = reader["UrineProtein"] is DBNull ? "Nil" : reader["UrineProtein"].ToString(),
+                    UrineAcetone = reader["UrineAcetone"] is DBNull ? "Nil" : reader["UrineAcetone"].ToString(),
+                    RecordedBy = reader["RecordedBy"] is DBNull ? "" : reader["RecordedBy"].ToString()
                 });
             }
 
