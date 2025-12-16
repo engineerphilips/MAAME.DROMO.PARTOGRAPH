@@ -26,7 +26,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             //try
             //{
             //    var alterTableCmd = connection.CreateCommand();
-            //    alterTableCmd.CommandText = @"DROP TABLE Tbl_Facility";
+            //    alterTableCmd.CommandText = @"UPDATE Tbl_Facility SET ID = '5f021d67-3ceb-44cd-8f55-5b10ca9039e1' WHERE code='KBTH'";
             //    await alterTableCmd.ExecuteNonQueryAsync();
             //}
             //catch (SqliteException)
@@ -130,7 +130,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 new Facility
                 {
-                    ID = Guid.NewGuid(),
+                    ID = new Guid("5f021d67-3ceb-44cd-8f55-5b10ca9039e1"),
                     Name = "Korle Bu Teaching Hospital",
                     Code = "KBTH",
                     Type = "Teaching Hospital",

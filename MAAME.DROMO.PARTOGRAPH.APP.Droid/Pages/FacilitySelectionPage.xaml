@@ -20,19 +20,15 @@
             <VerticalStackLayout Spacing="8">
                 <Label Text="Welcome!"
                        FontSize="32"
-                       FontAttributes="Bold"
-                       TextColor="White" />
+                       FontAttributes="Bold" />
                 <Label Text="{Binding UserName}"
                        FontSize="20"
-                       TextColor="White"
                        Opacity="0.9" />
                 <Label Text="{Binding UserRole, StringFormat='Role: {0}'}"
                        FontSize="16"
-                       TextColor="White"
                        Opacity="0.8" />
                 <Label Text="Please select a facility to continue"
                        FontSize="14"
-                       TextColor="White"
                        Margin="0,16,0,0"
                        Opacity="0.9" />
             </VerticalStackLayout>

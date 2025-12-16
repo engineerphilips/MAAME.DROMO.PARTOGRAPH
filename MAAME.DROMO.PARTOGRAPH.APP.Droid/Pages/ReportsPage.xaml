@@ -22,12 +22,12 @@
             </Style>
 
             <!-- Typography Styles -->
-            <Style x:Key="SectionTitle" TargetType="Label">
+            <!--<Style x:Key="SectionTitle" TargetType="Label">
                 <Setter Property="FontSize" Value="18" />
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
                 <Setter Property="Margin" Value="0,0,0,8" />
-            </Style>
+            </Style>-->
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -58,8 +58,8 @@
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                <Button Text="&#xE72C;"
-                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                <Button FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                        Text="{x:Static fonts:FluentUI.search_24_regular}"
                         FontSize="20" 
                         Grid.Row="0" Grid.Column="1"
                         Grid.RowSpan="2"

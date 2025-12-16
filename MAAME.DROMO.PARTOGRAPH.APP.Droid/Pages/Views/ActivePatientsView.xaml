@@ -79,7 +79,6 @@
                             </Border.Shadow>
 
                             <Grid RowDefinitions="Auto,Auto,Auto,10,Auto" Padding="16">
-
                                 <!-- Header Row: Patient Info & Status -->
                                 <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="12">
                                     <!-- Cervical Dilatation Display -->

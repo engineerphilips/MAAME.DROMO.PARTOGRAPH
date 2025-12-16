@@ -12,28 +12,28 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
         [SupportedOSPlatform("android21.0")]
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            var isAuthenticated = Preferences.Get("IsAuthenticated", false);
+            //var isAuthenticated = Preferences.Get("IsAuthenticated", false);
             var serviceProvider = IPlatformApplication.Current.Services;
             
-            if (isAuthenticated)
-            {
-                // If authenticated, navigate to the main shell
+            //if (isAuthenticated)
+            //{
+            //    // If authenticated, navigate to the main shell
 
-                Constants.Staff = new MODEL.Staff()
-                {
-                    FacilityName = Preferences.Get("StaffName", "Name"),
-                    Role = Preferences.Get("StaffRole", "Role"),
-                    StaffID = Preferences.Get("StaffId", "Id"),
-                    Email = "",
-                    IsActive = true,
-                    Department = "",
-                    LastLogin = DateTime.Now, 
-                };
+            //    Constants.Staff = new MODEL.Staff()
+            //    {
+            //        FacilityName = Preferences.Get("StaffName", "Name"),
+            //        Role = Preferences.Get("StaffRole", "Role"),
+            //        StaffID = Preferences.Get("StaffId", "Id"),
+            //        Email = "",
+            //        IsActive = true,
+            //        Department = "",
+            //        LastLogin = DateTime.Now, 
+            //    };
 
-                Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
-                //var appshell = serviceProvider.GetService<AppShell>();
-                return new Window(new AppShell());
-            }
+            //    //Preferences.Set("LastLogin", DateTime.Now.ToString("O"));
+            //    //var appshell = serviceProvider.GetService<AppShell>();
+            //    return new Window(new AppShell());
+            //}
 
             // If not authenticated, show login page
             var loginPage = serviceProvider.GetService<LoginPage>();

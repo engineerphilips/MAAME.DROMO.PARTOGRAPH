@@ -16,7 +16,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         private async Task Init()
         {
-
             if (_hasBeenInitialized)
                 return;
 
