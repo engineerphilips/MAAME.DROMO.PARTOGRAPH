@@ -151,6 +151,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"
         };
 
+        public List<string> RelationshipOptions => new()
+        {
+            "Spouse", "Partner", "Mother", "Father", "Sister", "Brother",
+            "Daughter", "Son", "Aunt", "Uncle", "Grandmother", "Grandfather",
+            "Mother-in-law", "Father-in-law", "Friend", "Neighbor", "Other"
+        };
+
         [ObservableProperty]
         private string _phoneNumber = string.Empty;
 

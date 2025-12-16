@@ -133,643 +133,968 @@
     <ScrollView>
         <StackLayout Spacing="0" Padding="0,0,0,10">
 
-            <!-- Header Card -->
-            <!--<Label Text="👤 Demographics" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Demographics" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
-
             <!-- Patient Demographics Section -->
+            <cards:SfCardView Style="{StaticResource SectionCard}" Margin="16,16,16,8">
+                <StackLayout Padding="16" Spacing="8">
+                    <!-- Section Header with Icon -->
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource PrimaryBlue}"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 10">
+                            <Label Text="&#xE7FD;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Patient Demographics"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="Basic patient identification and contact details"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </StackLayout>
+                    </Grid>
 
-            <StackLayout Padding="20" Spacing="0">
-
-                <!-- Patient ID -->
-                <core:SfTextInputLayout Hint="MRN *"
+                    <!-- Patient ID -->
+                    <core:SfTextInputLayout Hint="MRN *"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Medical Record Number/Folder Number">
-                    <Entry Text="{Binding HospitalNumber, Mode=TwoWay}"
-                           ReturnType="Next" />
-                </core:SfTextInputLayout>
+                        <Entry Text="{Binding HospitalNumber, Mode=TwoWay}"
+                               ReturnType="Next" />
+                    </core:SfTextInputLayout>
 
-                <!-- Name Fields -->
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                    <core:SfTextInputLayout Grid.Column="0"
+                    <!-- Name Fields -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="First Name *"
                                                 Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding FirstName, Mode=TwoWay}"
+                            <Entry Text="{Binding FirstName, Mode=TwoWay}"
                                    ReturnType="Next" />
-                    </core:SfTextInputLayout>
+                        </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="1" Hint="Last Name *" Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding LastName, Mode=TwoWay}"
+                        <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Last Name *"
+                                                Style="{StaticResource PatientInput}">
+                            <Entry Text="{Binding LastName, Mode=TwoWay}"
                                    ReturnType="Next" />
-                    </core:SfTextInputLayout>
-                </Grid>
+                        </core:SfTextInputLayout>
+                    </Grid>
 
-                <!-- Date of Birth / Age -->
-                <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
-                    <core:SfTextInputLayout Grid.Column="0"
+                    <!-- Date of Birth / Age -->
+                    <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
+                        <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Date of Birth *"
                                                 Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding DateOfBirth, Mode=TwoWay}"
-                                       Format="dd-MM-yyyy" MinimumDate="01/01/1950" MaximumDate="{StaticResource Today}" />
-                    </core:SfTextInputLayout>
+                            <DatePicker Date="{Binding DateOfBirth, Mode=TwoWay}"
+                                        Format="dd-MM-yyyy"
+                                        MinimumDate="01/01/1950"
+                                        MaximumDate="{StaticResource Today}" />
+                        </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="1" Hint="Age *"
+                        <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Age *"
                                                 Style="{StaticResource PatientInput}">
-                        <editors:SfNumericEntry Value="{Binding Age, Mode=TwoWay}"
-                                                ReturnType="Next"
-                                                IsEditable="{Binding AgeIsReadOnly}"
+                            <editors:SfNumericEntry Value="{Binding Age, Mode=TwoWay}"
+                                                    ReturnType="Next"
+                                                    IsEditable="{Binding AgeIsReadOnly}"
                                                     Minimum="0"
-                                                Maximum="60"
-                                                MaximumNumberDecimalDigits="0" />
-                    </core:SfTextInputLayout>
-                </Grid>
+                                                    Maximum="60"
+                                                    MaximumNumberDecimalDigits="0" />
+                        </core:SfTextInputLayout>
+                    </Grid>
 
-                <!-- Blood Group -->
-                <core:SfTextInputLayout Hint="Blood Group *"
+                    <!-- Blood Group -->
+                    <core:SfTextInputLayout Hint="Blood Group *"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Patient's blood type">
-                    <Picker ItemsSource="{Binding BloodGroupOptions}"
-                            SelectedItem="{Binding BloodGroup, Mode=TwoWay}" />
-                </core:SfTextInputLayout>
+                        <Picker ItemsSource="{Binding BloodGroupOptions}"
+                                SelectedItem="{Binding BloodGroup, Mode=TwoWay}"
+                                Title="Select Blood Group" />
+                    </core:SfTextInputLayout>
 
-                <!-- Contact Information -->
-                <core:SfTextInputLayout Hint="Phone Number"
+                    <!-- Contact Information -->
+                    <core:SfTextInputLayout Hint="Phone Number"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Primary contact number">
-                    <Entry Text="{Binding PhoneNumber, Mode=TwoWay}"
+                        <Entry Text="{Binding PhoneNumber, Mode=TwoWay}"
                                Keyboard="Telephone"
                                ReturnType="Next" />
-                </core:SfTextInputLayout>
+                    </core:SfTextInputLayout>
 
-                <!-- Address -->
-                <core:SfTextInputLayout Hint="Address"
+                    <!-- Address -->
+                    <core:SfTextInputLayout Hint="Address"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Complete residential address">
-                    <Entry Text="{Binding Address, Mode=TwoWay}"
+                        <Entry Text="{Binding Address, Mode=TwoWay}"
                                ReturnType="Next" />
-                </core:SfTextInputLayout>
-
-            </StackLayout>
-
-            <!--<Label Text="🚨 Emergency Contact" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Emergency Contact" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
+                    </core:SfTextInputLayout>
+                </StackLayout>
+            </cards:SfCardView>
 
             <!-- Emergency Contact Section -->
+            <cards:SfCardView Style="{StaticResource SectionCard}">
+                <StackLayout Padding="16" Spacing="8">
+                    <!-- Section Header with Icon -->
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource ErrorRed}"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 10">
+                            <Label Text="&#xE7EE;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Emergency Contact"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="Person to contact in case of emergency"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </StackLayout>
+                    </Grid>
 
-            <StackLayout Padding="20" Spacing="0">
-                <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
-                    <core:SfTextInputLayout Grid.Column="0"
-                                                Hint="Emergency Contact Name"
-                                                Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding EmergencyContactName, Mode=TwoWay}"
-                                   ReturnType="Next" />
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Relationship"
-                                                Style="{StaticResource PatientInput}">
-                        <Entry Text="{Binding EmergencyContactRelationship, Mode=TwoWay}"
-                                   ReturnType="Next" />
-                    </core:SfTextInputLayout>
-                </Grid>
-
-                <core:SfTextInputLayout Hint="Emergency Contact Phone"
+                    <!-- Contact Name -->
+                    <core:SfTextInputLayout Hint="Contact Name"
                                             Style="{StaticResource PatientInput}"
-                                            HelperText="Available 24/7">
-                    <Entry Text="{Binding EmergencyContactPhone, Mode=TwoWay}"
+                                            HelperText="Full name of emergency contact">
+                        <Entry Text="{Binding EmergencyContactName, Mode=TwoWay}"
+                               ReturnType="Next" />
+                    </core:SfTextInputLayout>
+
+                    <!-- Relationship Picker -->
+                    <core:SfTextInputLayout Hint="Relationship *"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Select relationship to patient">
+                        <Picker ItemsSource="{Binding RelationshipOptions}"
+                                SelectedItem="{Binding EmergencyContactRelationship, Mode=TwoWay}"
+                                Title="Select Relationship" />
+                    </core:SfTextInputLayout>
+
+                    <!-- Contact Phone -->
+                    <core:SfTextInputLayout Hint="Phone Number"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Available 24/7 for emergencies">
+                        <Entry Text="{Binding EmergencyContactPhone, Mode=TwoWay}"
                                Keyboard="Telephone"
                                ReturnType="Next" />
-                </core:SfTextInputLayout>
-            </StackLayout>
+                    </core:SfTextInputLayout>
+                </StackLayout>
+            </cards:SfCardView>
 
             <!-- Anthropometric Data Section -->
-            <!--<Label Text="⚖️ Anthropometric Data" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Anthropometric Data" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
+            <cards:SfCardView Style="{StaticResource SectionCard}">
+                <StackLayout Padding="16" Spacing="8">
+                    <!-- Section Header with Icon -->
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource AccentTeal}"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 10">
+                            <Label Text="&#xE915;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Anthropometric Data"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="Physical measurements for BMI calculation"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </StackLayout>
+                    </Grid>
 
-            <StackLayout Padding="20" Spacing="0">
-
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-
-                    <core:SfTextInputLayout Grid.Column="0"
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Weight (kg)"
                                                 Style="{StaticResource PatientInput}">
-                        <editors:SfNumericEntry Value="{Binding Weight, Mode=TwoWay}"
-                                                Minimum="30"
-                                                Maximum="200"
-                                                MaximumNumberDecimalDigits="1"
-                                                ReturnType="Next" />
-                    </core:SfTextInputLayout>
+                            <editors:SfNumericEntry Value="{Binding Weight, Mode=TwoWay}"
+                                                    Minimum="30"
+                                                    Maximum="200"
+                                                    MaximumNumberDecimalDigits="1"
+                                                    ReturnType="Next" />
+                        </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="1"
+                        <core:SfTextInputLayout Grid.Column="1"
                                                 Hint="Height (cm)"
                                                 Style="{StaticResource PatientInput}">
-                        <editors:SfNumericEntry Value="{Binding Height, Mode=TwoWay}"
-                                                Minimum="100"
-                                                Maximum="220"
-                                                MaximumNumberDecimalDigits="0"
-                                                ReturnType="Next" />
-                    </core:SfTextInputLayout>
-                </Grid>
+                            <editors:SfNumericEntry Value="{Binding Height, Mode=TwoWay}"
+                                                    Minimum="100"
+                                                    Maximum="220"
+                                                    MaximumNumberDecimalDigits="0"
+                                                    ReturnType="Next" />
+                        </core:SfTextInputLayout>
+                    </Grid>
 
-                <!-- Calculated BMI Display -->
-                <Border BackgroundColor="{Binding BmiColor}"
-                        Padding="12"
-                        Margin="0,8,0,0"
-                        StrokeShape="RoundRectangle 8"
-                        IsVisible="{Binding HasBmiData}">
-                    <StackLayout>
-                        <Label Text="{Binding FormattedBmi}" 
-                               FontSize="16"
-                               FontAttributes="Bold"
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="{Binding BmiCategory}" 
-                               FontSize="12"
-                               HorizontalTextAlignment="Center" />
-                    </StackLayout>
-                </Border>
-
-            </StackLayout>
+                    <!-- Calculated BMI Display -->
+                    <Border BackgroundColor="{Binding BmiColor}"
+                            Padding="16"
+                            Margin="0,8,0,0"
+                            StrokeShape="RoundRectangle 12"
+                            IsVisible="{Binding HasBmiData}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="White"
+                                    Opacity="0.3"
+                                    WidthRequest="50"
+                                    HeightRequest="50"
+                                    StrokeShape="RoundRectangle 25">
+                                <Label Text="&#xE915;"
+                                       FontFamily="MaterialIcons"
+                                       FontSize="24"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+                            <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="{Binding FormattedBmi}"
+                                       FontSize="18"
+                                       FontAttributes="Bold"
+                                       TextColor="White" />
+                                <Label Text="{Binding BmiCategory}"
+                                       FontSize="14"
+                                       TextColor="White"
+                                       Opacity="0.9" />
+                            </StackLayout>
+                        </Grid>
+                    </Border>
+                </StackLayout>
+            </cards:SfCardView>
 
             <!-- Obstetric History Section -->
-            <!--<Label Text="🤱 Obstetric History" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Obstetric History" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
+            <cards:SfCardView Style="{StaticResource SectionCard}">
+                <StackLayout Padding="16" Spacing="8">
+                    <!-- Section Header with Icon -->
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
+                        <Border Grid.Column="0"
+                                BackgroundColor="#E91E63"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 10">
+                            <Label Text="&#xEA35;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Obstetric History"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="Pregnancy history and expected delivery information"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </StackLayout>
+                    </Grid>
 
-            <StackLayout Padding="20" Spacing="0">
-
-                <!-- Gravida and Para -->
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto" ColumnSpacing="12">
-                    
+                    <!-- Gravida and Para -->
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto" ColumnSpacing="12">
                         <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Gravida (G)"
                                                 Style="{StaticResource PatientInput}"
                                                 HelperText="Total pregnancies">
-                       
-                        <editors:SfNumericEntry Value="{Binding Gravidity, Mode=TwoWay}" 
-                                                    ReturnType="Next" 
-                                                    Maximum="20"
-                                                    Minimum="0" 
-                                                MaximumNumberDecimalDigits="0"/>
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Parity (P)"
-                                                Style="{StaticResource PatientInput}"
-                                                HelperText="Previous births">
-                        
-                        <editors:SfNumericEntry Value="{Binding Parity, Mode=TwoWay}" 
-                                                    ReturnType="Next" 
-                                                    Maximum="20"
-                                                    Minimum="0"
-                                                MaximumNumberDecimalDigits="0"/>
-                        </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Grid.Column="0" Grid.Row="1"
-                            Hint="Abortion"
-                            Style="{StaticResource PatientInput}"
-                            HelperText="Number of abortions"
-                                            IsVisible="{Binding AbortionVisibility, Mode=OneWay}">
-
-                        <editors:SfNumericEntry Value="{Binding Abortion, Mode=TwoWay}"
+                            <editors:SfNumericEntry Value="{Binding Gravidity, Mode=TwoWay}"
                                                     ReturnType="Next"
                                                     Maximum="20"
                                                     Minimum="0"
-                                                MaximumNumberDecimalDigits="0"/>
+                                                    MaximumNumberDecimalDigits="0" />
                         </core:SfTextInputLayout>
-                </Grid>
 
-                <!-- Previous Pregnancy Outcomes -->
-                <Label Text="📋 Previous Pregnancy Outcomes"
-                       FontSize="14"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}"
-                       Margin="0,12,0,4"
-                       IsVisible="{Binding HasPreviousPregnancies}" />
+                        <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Parity (P)"
+                                                Style="{StaticResource PatientInput}"
+                                                HelperText="Previous births">
+                            <editors:SfNumericEntry Value="{Binding Parity, Mode=TwoWay}"
+                                                    ReturnType="Next"
+                                                    Maximum="20"
+                                                    Minimum="0"
+                                                    MaximumNumberDecimalDigits="0" />
+                        </core:SfTextInputLayout>
 
-                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" IsVisible="{Binding HasPreviousPregnancies}">
+                        <core:SfTextInputLayout Grid.Column="0"
+                                                Grid.Row="1"
+                                                Hint="Abortion"
+                                                Style="{StaticResource PatientInput}"
+                                                HelperText="Number of abortions"
+                                                IsVisible="{Binding AbortionVisibility, Mode=OneWay}">
+                            <editors:SfNumericEntry Value="{Binding Abortion, Mode=TwoWay}"
+                                                    ReturnType="Next"
+                                                    Maximum="20"
+                                                    Minimum="0"
+                                                    MaximumNumberDecimalDigits="0" />
+                        </core:SfTextInputLayout>
+                    </Grid>
 
-                    <core:SfTextInputLayout Grid.Column="0"
-                                                Hint="Live Births"
-                                                Style="{StaticResource PatientInput}">
-                        <editors:SfNumericEntry Value="{Binding LiveBirths, Mode=TwoWay}"
-                                                Minimum="0"
-                                                Maximum="20"
-                                                MaximumNumberDecimalDigits="0"
-                                                ReturnType="Next" />
-                    </core:SfTextInputLayout>
+                    <!-- Previous Pregnancy Outcomes -->
+                    <Border BackgroundColor="#FFF3E0"
+                            Padding="12"
+                            Margin="0,8,0,0"
+                            StrokeShape="RoundRectangle 8"
+                            IsVisible="{Binding HasPreviousPregnancies}">
+                        <StackLayout Spacing="8">
+                            <Label Text="Previous Pregnancy Outcomes"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
 
-                    <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Stillbirths"
-                                                Style="{StaticResource PatientInput}">
-                        <editors:SfNumericEntry Value="{Binding Stillbirths, Mode=TwoWay}"
-                                                Minimum="0"
-                                                Maximum="20"
-                                                MaximumNumberDecimalDigits="0"
-                                                ReturnType="Next" />
-                    </core:SfTextInputLayout>
+                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                                <core:SfTextInputLayout Grid.Column="0"
+                                                        Hint="Live Births"
+                                                        Style="{StaticResource PatientInput}">
+                                    <editors:SfNumericEntry Value="{Binding LiveBirths, Mode=TwoWay}"
+                                                            Minimum="0"
+                                                            Maximum="20"
+                                                            MaximumNumberDecimalDigits="0"
+                                                            ReturnType="Next" />
+                                </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="2"
-                                                Hint="Neo. Deaths"
-                                                Style="{StaticResource PatientInput}">
-                        <editors:SfNumericEntry Value="{Binding NeonatalDeaths, Mode=TwoWay}"
-                                                Minimum="0"
-                                                Maximum="20"
-                                                MaximumNumberDecimalDigits="0"
-                                                ReturnType="Next" />
-                    </core:SfTextInputLayout>
-                </Grid>
+                                <core:SfTextInputLayout Grid.Column="1"
+                                                        Hint="Stillbirths"
+                                                        Style="{StaticResource PatientInput}">
+                                    <editors:SfNumericEntry Value="{Binding Stillbirths, Mode=TwoWay}"
+                                                            Minimum="0"
+                                                            Maximum="20"
+                                                            MaximumNumberDecimalDigits="0"
+                                                            ReturnType="Next" />
+                                </core:SfTextInputLayout>
 
-                <!-- Previous C-Section -->
-                <StackLayout Orientation="Horizontal" Spacing="12" Margin="0,8,0,0" IsVisible="{Binding HasPreviousPregnancies}">
-                    <CheckBox IsChecked="{Binding HasPreviousCSection, Mode=TwoWay}"
-                              Color="{StaticResource ErrorRed}"
-                              VerticalOptions="Center" />
-                    <Label Text="Previous Cesarean Section (VBAC Risk)"
-                           FontSize="14"
-                           TextColor="{StaticResource ErrorRed}"
-                           FontAttributes="Bold"
-                           VerticalOptions="Center" />
-                </StackLayout>
+                                <core:SfTextInputLayout Grid.Column="2"
+                                                        Hint="Neo. Deaths"
+                                                        Style="{StaticResource PatientInput}">
+                                    <editors:SfNumericEntry Value="{Binding NeonatalDeaths, Mode=TwoWay}"
+                                                            Minimum="0"
+                                                            Maximum="20"
+                                                            MaximumNumberDecimalDigits="0"
+                                                            ReturnType="Next" />
+                                </core:SfTextInputLayout>
+                            </Grid>
+                        </StackLayout>
+                    </Border>
 
-                <core:SfTextInputLayout Hint="Number of Previous C-Sections"
+                    <!-- Previous C-Section Warning -->
+                    <Border BackgroundColor="#FFEBEE"
+                            Padding="12"
+                            Margin="0,8,0,0"
+                            StrokeShape="RoundRectangle 8"
+                            Stroke="{StaticResource ErrorRed}"
+                            StrokeThickness="1"
+                            IsVisible="{Binding HasPreviousPregnancies}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <CheckBox Grid.Column="0"
+                                      IsChecked="{Binding HasPreviousCSection, Mode=TwoWay}"
+                                      Color="{StaticResource ErrorRed}"
+                                      VerticalOptions="Center" />
+                            <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="Previous Cesarean Section"
+                                       FontSize="14"
+                                       TextColor="{StaticResource ErrorRed}"
+                                       FontAttributes="Bold" />
+                                <Label Text="VBAC Risk - Requires close monitoring"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </StackLayout>
+                        </Grid>
+                    </Border>
+
+                    <core:SfTextInputLayout Hint="Number of Previous C-Sections"
                                             Style="{StaticResource PatientInput}"
                                             IsVisible="{Binding HasPreviousCSection}">
-                    <editors:SfNumericEntry Value="{Binding NumberOfPreviousCsections, Mode=TwoWay}"
-                                            Minimum="1"
-                                            Maximum="5"
-                                            MaximumNumberDecimalDigits="0"
-                                            ReturnType="Next" />
-                </core:SfTextInputLayout>
-
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                    <core:SfTextInputLayout Grid.Column="0"
-                            Hint="Estimated Delivery Date *"
-                            Style="{StaticResource PatientInput}"
-                            HelperText="EDD or LMP required">
-                        <DatePicker Date="{Binding ExpectedDeliveryDate, Mode=TwoWay}" Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
+                        <editors:SfNumericEntry Value="{Binding NumberOfPreviousCsections, Mode=TwoWay}"
+                                                Minimum="1"
+                                                Maximum="5"
+                                                MaximumNumberDecimalDigits="0"
+                                                ReturnType="Next" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Grid.Column="1"
-                            Hint="Last Menstrual Date *"
-                            Style="{StaticResource PatientInput}"
-                            HelperText="EDD or LMP required">
-                        <DatePicker Date="{Binding LastMenstrualDate, Mode=TwoWay}" Format="dd-MM-yyyy" MinimumDate="01/01/1950" MaximumDate="{StaticResource Today}" />
-                    </core:SfTextInputLayout>
-                </Grid>
-                
-                <Label Text="{Binding FormattedGestationalAge}"
-                           FontSize="18"
-                           TextColor="{StaticResource AccentTeal}"
-                           FontAttributes="Bold"
-                           Margin="0,4,0,0"
-                       Visual="{Binding GestationalAgeVisibility}"/>
+                    <!-- Delivery Dates -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                        <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Estimated Delivery Date *"
+                                                Style="{StaticResource PatientInput}"
+                                                HelperText="EDD or LMP required">
+                            <DatePicker Date="{Binding ExpectedDeliveryDate, Mode=TwoWay}"
+                                        Format="dd-MM-yyyy"
+                                        MinimumDate="01/01/1950" />
+                        </core:SfTextInputLayout>
 
-            </StackLayout>
+                        <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Last Menstrual Date *"
+                                                Style="{StaticResource PatientInput}"
+                                                HelperText="EDD or LMP required">
+                            <DatePicker Date="{Binding LastMenstrualDate, Mode=TwoWay}"
+                                        Format="dd-MM-yyyy"
+                                        MinimumDate="01/01/1950"
+                                        MaximumDate="{StaticResource Today}" />
+                        </core:SfTextInputLayout>
+                    </Grid>
 
-            <!-- Medical Information Section -->
-            <!--<Label Text="🏥 Medical Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Medical Information" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
-
-            <StackLayout Padding="20" Spacing="0">
-                <!-- Risk Factors -->
-                <!--<core:SfTextInputLayout Hint="Risk Factors"
-                                            Style="{StaticResource PatientInput}"
-                                            HelperText="High-risk conditions or complications">
-                    <Entry Text="{Binding RiskFactors, Mode=TwoWay}" ReturnType="Next" />
-                </core:SfTextInputLayout>-->
-
-                <chip:SfChipGroup ItemsSource="{Binding RiskFactors}" 
-                  DisplayMemberPath="Name" Margin="0,8,16,8" FlowDirection="MatchParent"  />
-
-                <core:SfTextInputLayout Hint="Risk Factors"
-                            Style="{StaticResource PatientInput}"
-                            HelperText="Clinical assessment of risk factors" >
-                    <!--<Entry ReturnType="Next" />-->
-                    <Entry Completed="RiskFactorsEntry_Completed" Unfocused="RiskFactorsEntry_Completed"
-                                   ReturnType="Next" />
-                </core:SfTextInputLayout>
-            </StackLayout>
-
-            <!-- Labour Information Section -->
-            <!--<Label Text="⏱️ Labour Information" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-            <Label Text="Labour Information" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
-
-            <StackLayout Padding="20" Spacing="0">
-                <!-- Labour Onset -->
-                <Label Text="Labour Onset Date &amp; Time" 
-                           FontSize="14" 
-                           FontAttributes="Bold" 
-                           TextColor="{StaticResource TextPrimary}"
-                           Margin="0,0,0,4" />
-
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                    <core:SfTextInputLayout Grid.Column="0"
-                                                Hint="Date *"
-                                                Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding LaborStartDate, Mode=TwoWay}" Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Time *"
-                                                Style="{StaticResource PatientInput}">
-                        <TimePicker Time="{Binding LaborStartTime, Mode=TwoWay}" Format="HH:mm" />
-                    </core:SfTextInputLayout>
-                </Grid>
-
-                <!-- Active Labour Diagnosis -->
-                <!--<Label Text="⏱️ Active Labour Diagnosis" Style="{StaticResource SectionTitle}" Margin="10,10,0,0" />-->
-                <Label Text="Active Labour Diagnosis" Style="{StaticResource SectionTitle}" Margin="20,10,0,0" />
-
-                <chip:SfChipGroup ItemsSource="{Binding Diagnoses}" 
-                  DisplayMemberPath="Name" Margin="0,8,16,8" FlowDirection="MatchParent"  />
-
-                <core:SfTextInputLayout Hint="Active Labour Diagnosis"
-                            Style="{StaticResource PatientInput}"
-                            HelperText="Clinical assessment of active labour" >
-                    <!--<Entry ReturnType="Next" />-->
-                    <Entry Text="{Binding ActiveLabourDiagnosis}"
-                                Completed="Entry_Completed" Unfocused="Entry_Completed"
-                                   ReturnType="Next" />
-
-                </core:SfTextInputLayout>
-
-
-                <!-- Ruptured Membrane -->
-                <Label Text="Ruptured Membrane Date &amp; Time" 
-                           FontSize="14" 
-                           FontAttributes="Bold" 
-                           TextColor="{StaticResource TextPrimary}"
-                           Margin="0,8,0,4" />
-
-                <StackLayout Orientation="Horizontal" Spacing="12">
-                    <CheckBox IsChecked="{Binding HasRupturedMembrane}"
-                                  Color="{StaticResource PrimaryBlue}"
-                                  VerticalOptions="Center" />
-                    <Label Text="Membrane has ruptured"
-                               FontSize="14"
-                               TextColor="{StaticResource TextPrimary}"
-                               VerticalOptions="Center" />
-                </StackLayout>
-
-                <Grid ColumnDefinitions="*,*"
-                          ColumnSpacing="12"
-                          IsVisible="{Binding HasRupturedMembrane}">
-                    <core:SfTextInputLayout Grid.Column="0"
-                                                Hint="Rupture Date"
-                                                Style="{StaticResource PatientInput}">
-                        <DatePicker Date="{Binding RupturedMembraneDate, Mode=TwoWay}"
-                                       Format="dd-MM-yyyy" MinimumDate="01/01/1950" />
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Grid.Column="1"
-                                            Hint="Rupture Time"
-                                            Style="{StaticResource PatientInput}">
-                        <TimePicker Time="{Binding RupturedMembraneTime, Mode=TwoWay}"
-                                       Format="HH:mm" />
-                    </core:SfTextInputLayout>
-                </Grid>
-
-                <!-- Cervical Dilatation on Admission (CRITICAL) -->
-                <Label Text="Cervical Dilatation Assessment"
-                       FontSize="14"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}"
-                       Margin="0,12,0,4" />
-
-                <core:SfTextInputLayout Hint="Dilatation on Arrival (cm) *"
-                                            Style="{StaticResource PatientInput}"
-                                            HelperText="Cervical dilatation at admission (0-10 cm)">
-                    <editors:SfNumericEntry Value="{Binding CervicalDilationOnAdmission, Mode=TwoWay}"
-                                            ReturnType="Next"
-                                            Minimum="0"
-                                            Maximum="10"
-                                            MaximumNumberDecimalDigits="0"
-                                            Placeholder="Enter dilatation in cm" />
-                </core:SfTextInputLayout>
-
-                <!-- Labor Status Indicator -->
-                <Border BackgroundColor="{Binding LaborStatusColor}"
-                        Padding="12"
-                        Margin="0,8,0,0"
-                        StrokeShape="RoundRectangle 8"
-                        IsVisible="{Binding HasDilatationValue}">
-                    <Label Text="{Binding LaborStatusIndicator}" 
-                           FontSize="14"
-                           FontAttributes="Bold"
-                           HorizontalTextAlignment="Center" />
-                </Border>
-
-            </StackLayout>
-
-            <!-- Bishop Score Calculator Section -->
-            <!--<Label Text="🔬 Bishop Score (Induction Assessment)"
-                   Style="{StaticResource SectionTitle}"
-                   Margin="10,10,0,0" />-->
-            <Label Text="Bishop Score (Induction Assessment)"
-       Style="{StaticResource SectionTitle}"
-       Margin="20,10,0,0" />
-
-            <StackLayout Padding="20" Spacing="0">
-
-                <StackLayout Orientation="Horizontal" Spacing="12" Margin="0,0,0,8">
-                    <CheckBox IsChecked="{Binding IsInductionPlanned, Mode=TwoWay}"
-                              Color="{StaticResource PrimaryBlue}"
-                              VerticalOptions="Center" />
-                    <Label Text="Patient scheduled for labour induction"
-                           FontSize="14"
-                           TextColor="{StaticResource TextPrimary}"
-                           VerticalOptions="Center" />
-                </StackLayout>
-
-                <!-- Bishop Score Components -->
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" IsVisible="{Binding IsInductionPlanned}">
-
-                    <!-- Row 0: Dilatation and Effacement -->
-                    <core:SfTextInputLayout Grid.Row="0" Grid.Column="0"
-                                                Hint="Dilatation (cm)"
-                                                Style="{StaticResource PatientInput}">
-                        <editors:SfNumericEntry Value="{Binding BishopDilatation, Mode=TwoWay}"
-                                                Minimum="0"
-                                                Maximum="10"
-                                                MaximumNumberDecimalDigits="0" />
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Grid.Row="0" Grid.Column="1"
-                                                Hint="Effacement (%)"
-                                                Style="{StaticResource PatientInput}">
-                        <editors:SfNumericEntry Value="{Binding BishopEffacement, Mode=TwoWay}"
-                                                Minimum="0"
-                                                Maximum="100"
-                                                MaximumNumberDecimalDigits="0" />
-                    </core:SfTextInputLayout>
-
-                    <!-- Row 1: Station and Consistency -->
-                    <core:SfTextInputLayout Grid.Row="1" Grid.Column="0"
-                                                Hint="Station"
-                                                Style="{StaticResource PatientInput}">
-                        <Picker ItemsSource="{Binding StationOptions}"
-                                SelectedItem="{Binding BishopStation, Mode=TwoWay}" />
-                    </core:SfTextInputLayout>
-
-                    <core:SfTextInputLayout Grid.Row="1" Grid.Column="1"
-                                                Hint="Consistency"
-                                                Style="{StaticResource PatientInput}">
-                        <Picker ItemsSource="{Binding ConsistencyOptions}"
-                                SelectedItem="{Binding BishopConsistency, Mode=TwoWay}" />
-                    </core:SfTextInputLayout>
-
-                    <!-- Row 2: Position -->
-                    <core:SfTextInputLayout Grid.Row="2" Grid.Column="0"
-                                                Hint="Position"
-                                                Style="{StaticResource PatientInput}">
-                        <Picker ItemsSource="{Binding PositionOptions}"
-                                SelectedItem="{Binding BishopPosition, Mode=TwoWay}" />
-                    </core:SfTextInputLayout>
-
-                </Grid>
-
-                <!-- Calculated Bishop Score Display -->
-                <Border BackgroundColor="{StaticResource PrimaryBlue}"
-                        Padding="16"
-                        Margin="0,16,0,0"
-                        StrokeShape="RoundRectangle 12"
-                        IsVisible="{Binding IsInductionPlanned}">
-                    <VerticalStackLayout>
-                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                            <Label Text="Bishop Score: " 
-                               FontSize="18"
-                               FontAttributes="Bold" VerticalOptions="End" Margin="0,0,0,2" />
-                            <Label Text="{Binding CalculatedBishopScore}" 
-                               FontSize="24"
-                               FontAttributes="Bold" VerticalOptions="End" />
-                        </StackLayout>
-
-                        <Label Text="{Binding BishopScoreInterpretation}"
-                               FontSize="14"
-                               Margin="8,0,0,0" HorizontalOptions="Center" />
-                    </VerticalStackLayout>
-                </Border>
-
-            </StackLayout>
-
-            <!-- Risk Assessment Display Section -->
-            <Label Text="⚠️ Risk Assessment"
-                   Style="{StaticResource SectionTitle}"
-                   Margin="10,10,0,0" />
-
-            <StackLayout Padding="20" Spacing="0">
-
-                <!-- Risk Level Card -->
-                <Border BackgroundColor="{Binding RiskColor}"
-                        Padding="16"
-                        Margin="0,0,0,12"
-                        StrokeShape="RoundRectangle 12">
-                    <StackLayout>
-                        <Label Text="{Binding RiskLevel}" 
-                               FontSize="20"
+                    <!-- Gestational Age Display -->
+                    <Border BackgroundColor="{StaticResource AccentTeal}"
+                            Padding="12"
+                            Margin="0,8,0,0"
+                            StrokeShape="RoundRectangle 8"
+                            IsVisible="{Binding GestationalAgeVisibility}">
+                        <Label Text="{Binding FormattedGestationalAge}"
+                               FontSize="16"
+                               TextColor="White"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center" />
-                        <Label Text="{Binding RiskScore, StringFormat='Risk Score: {0}'}" 
-                               FontSize="14"
-                               HorizontalTextAlignment="Center"
-                               Margin="0,4,0,0" />
-                    </StackLayout>
-                </Border>
+                    </Border>
+                </StackLayout>
+            </cards:SfCardView>
 
-                <!-- Risk Factors List -->
-                <Label Text="Risk Factors Identified:"
-                       FontSize="14"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}"
-                       Margin="0,0,0,8" />
-
-                <CollectionView ItemsSource="{Binding RiskAssessmentFactors}"
-                                Margin="0,0,0,12">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Label Text="{Binding .}"
-                                   FontSize="12"
-                                   TextColor="{StaticResource TextSecondary}"
-                                   Margin="0,2" />
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-
-                <!-- Recommended Actions List -->
-                <Label Text="Recommended Actions:"
-                       FontSize="14"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}"
-                       Margin="0,8,0,8" />
-
-                <CollectionView ItemsSource="{Binding RecommendedActions}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Label Text="{Binding .}"
-                                   FontSize="12"
-                                   TextColor="{StaticResource TextSecondary}"
+            <!-- Medical Information Section -->
+            <cards:SfCardView Style="{StaticResource SectionCard}">
+                <StackLayout Padding="16" Spacing="8">
+                    <!-- Section Header with Icon -->
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource WarningOrange}"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 10">
+                            <Label Text="&#xE8E8;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Medical Information"
+                                   FontSize="18"
                                    FontAttributes="Bold"
-                                   Margin="0,2" />
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="Risk factors and clinical conditions"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </StackLayout>
+                    </Grid>
 
-            </StackLayout>
+                    <!-- Risk Factors Chips -->
+                    <chip:SfChipGroup ItemsSource="{Binding RiskFactors}"
+                                      DisplayMemberPath="Name"
+                                      Margin="0,8,0,8"
+                                      FlowDirection="MatchParent" />
 
-            <!-- Action Buttons -->
-            <StackLayout Padding="16" Spacing="12">
+                    <core:SfTextInputLayout Hint="Add Risk Factor"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Type and press Enter to add risk factors">
+                        <Entry Completed="RiskFactorsEntry_Completed"
+                               Unfocused="RiskFactorsEntry_Completed"
+                               ReturnType="Next"
+                               Placeholder="e.g., Hypertension, Diabetes, etc." />
+                    </core:SfTextInputLayout>
+                </StackLayout>
+            </cards:SfCardView>
 
-                <!-- Error Messages -->
-                <Label Text="{Binding ErrorMessage}"
-                   Style="{StaticResource ErrorText}"
-                   IsVisible="{Binding HasError}"
-                   Margin="0,0,0,8" />
+            <!-- Labour Information Section -->
+            <cards:SfCardView Style="{StaticResource SectionCard}">
+                <StackLayout Padding="16" Spacing="8">
+                    <!-- Section Header with Icon -->
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
+                        <Border Grid.Column="0"
+                                BackgroundColor="#9C27B0"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 10">
+                            <Label Text="&#xE425;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Labour Information"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="Labour onset and cervical assessment details"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </StackLayout>
+                    </Grid>
 
-                <!-- Save and Continue Button -->
-                <buttons:SfButton Text="Save Patient &amp; Start Partograph" 
-                              Style="{StaticResource PrimaryButton}"
-                              Command="{Binding SaveCommand}">
-                    <buttons:SfButton.ImageSource>
-                        <FontImageSource FontFamily="MaterialIcons"
-                                   Glyph="&#xe161;"
-                                   Size="20"
-                                   Color="{StaticResource SurfaceWhite}" />
-                    </buttons:SfButton.ImageSource>
-                </buttons:SfButton>
+                    <!-- Labour Onset -->
+                    <Label Text="Labour Onset Date and Time"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"
+                           Margin="0,4,0,4" />
 
-                <!-- Save Draft Button -->
-                <buttons:SfButton Text="Save as Draft" 
-                              Style="{StaticResource SecondaryButton}"
-                              Command="{Binding SaveDraftCommand}">
-                    <buttons:SfButton.ImageSource>
-                        <FontImageSource FontFamily="MaterialIcons"
-                                   Glyph="&#xe161;"
-                                   Size="18"
-                                   Color="{StaticResource PrimaryBlue}" />
-                    </buttons:SfButton.ImageSource>
-                </buttons:SfButton>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Date *"
+                                                Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding LaborStartDate, Mode=TwoWay}"
+                                        Format="dd-MM-yyyy"
+                                        MinimumDate="01/01/1950" />
+                        </core:SfTextInputLayout>
 
-                <!-- Quick Action Grid -->
-                <!--<Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,16,0,0">
-                    <buttons:SfButton Grid.Column="0"
-                                 Text="📋 View Template"
-                                 FontSize="12"
-                                 HeightRequest="40"
-                                 CornerRadius="8"
-                                 Background="{StaticResource AccentTeal}"
-                                 TextColor="{StaticResource SurfaceWhite}"
-                                 Command="{Binding ViewTemplateCommand}" />
+                        <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Time *"
+                                                Style="{StaticResource PatientInput}">
+                            <TimePicker Time="{Binding LaborStartTime, Mode=TwoWay}"
+                                        Format="HH:mm" />
+                        </core:SfTextInputLayout>
+                    </Grid>
 
-                    <buttons:SfButton Grid.Column="1"
-                                 Text="🔄 Reset Form"
-                                 FontSize="12"
-                                 HeightRequest="40"
-                                 CornerRadius="8"
-                                 Background="{StaticResource WarningOrange}"
-                                 TextColor="{StaticResource SurfaceWhite}"
-                                 Command="{Binding ResetFormCommand}" />
-                </Grid>-->
+                    <!-- Active Labour Diagnosis -->
+                    <Border BackgroundColor="#F3E5F5"
+                            Padding="12"
+                            Margin="0,8,0,0"
+                            StrokeShape="RoundRectangle 8">
+                        <StackLayout Spacing="8">
+                            <Label Text="Active Labour Diagnosis"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
 
-            </StackLayout>
+                            <chip:SfChipGroup ItemsSource="{Binding Diagnoses}"
+                                              DisplayMemberPath="Name"
+                                              Margin="0,4,0,4"
+                                              FlowDirection="MatchParent" />
+
+                            <core:SfTextInputLayout Hint="Add Diagnosis"
+                                                    Style="{StaticResource PatientInput}"
+                                                    HelperText="Clinical assessment of active labour">
+                                <Entry Text="{Binding ActiveLabourDiagnosis}"
+                                       Completed="Entry_Completed"
+                                       Unfocused="Entry_Completed"
+                                       ReturnType="Next"
+                                       Placeholder="Type and press Enter to add" />
+                            </core:SfTextInputLayout>
+                        </StackLayout>
+                    </Border>
+
+                    <!-- Ruptured Membrane -->
+                    <Border BackgroundColor="#E3F2FD"
+                            Padding="12"
+                            Margin="0,8,0,0"
+                            StrokeShape="RoundRectangle 8">
+                        <StackLayout Spacing="8">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <CheckBox Grid.Column="0"
+                                          IsChecked="{Binding HasRupturedMembrane}"
+                                          Color="{StaticResource PrimaryBlue}"
+                                          VerticalOptions="Center" />
+                                <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="Membrane has ruptured"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label Text="Record date and time of rupture"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </StackLayout>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*"
+                                  ColumnSpacing="12"
+                                  IsVisible="{Binding HasRupturedMembrane}">
+                                <core:SfTextInputLayout Grid.Column="0"
+                                                        Hint="Rupture Date"
+                                                        Style="{StaticResource PatientInput}">
+                                    <DatePicker Date="{Binding RupturedMembraneDate, Mode=TwoWay}"
+                                                Format="dd-MM-yyyy"
+                                                MinimumDate="01/01/1950" />
+                                </core:SfTextInputLayout>
+
+                                <core:SfTextInputLayout Grid.Column="1"
+                                                        Hint="Rupture Time"
+                                                        Style="{StaticResource PatientInput}">
+                                    <TimePicker Time="{Binding RupturedMembraneTime, Mode=TwoWay}"
+                                                Format="HH:mm" />
+                                </core:SfTextInputLayout>
+                            </Grid>
+                        </StackLayout>
+                    </Border>
+
+                    <!-- Cervical Dilatation on Admission -->
+                    <Label Text="Cervical Dilatation Assessment"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"
+                           Margin="0,12,0,4" />
+
+                    <core:SfTextInputLayout Hint="Dilatation on Arrival (cm) *"
+                                            Style="{StaticResource PatientInput}"
+                                            HelperText="Cervical dilatation at admission (0-10 cm)">
+                        <editors:SfNumericEntry Value="{Binding CervicalDilationOnAdmission, Mode=TwoWay}"
+                                                ReturnType="Next"
+                                                Minimum="0"
+                                                Maximum="10"
+                                                MaximumNumberDecimalDigits="0"
+                                                Placeholder="Enter dilatation in cm" />
+                    </core:SfTextInputLayout>
+
+                    <!-- Labor Status Indicator -->
+                    <Border BackgroundColor="{Binding LaborStatusColor}"
+                            Padding="16"
+                            Margin="0,8,0,0"
+                            StrokeShape="RoundRectangle 12"
+                            IsVisible="{Binding HasDilatationValue}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="White"
+                                    Opacity="0.3"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    StrokeShape="RoundRectangle 20">
+                                <Label Text="&#xE425;"
+                                       FontFamily="MaterialIcons"
+                                       FontSize="20"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+                            <Label Grid.Column="1"
+                                   Text="{Binding LaborStatusIndicator}"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </StackLayout>
+            </cards:SfCardView>
+
+            <!-- Bishop Score Calculator Section -->
+            <cards:SfCardView Style="{StaticResource SectionCard}">
+                <StackLayout Padding="16" Spacing="8">
+                    <!-- Section Header with Icon -->
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
+                        <Border Grid.Column="0"
+                                BackgroundColor="#3F51B5"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 10">
+                            <Label Text="&#xE6DD;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Bishop Score Calculator"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="Induction assessment and cervical readiness"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </StackLayout>
+                    </Grid>
+
+                    <!-- Induction Checkbox -->
+                    <Border BackgroundColor="#E8EAF6"
+                            Padding="12"
+                            Margin="0,0,0,8"
+                            StrokeShape="RoundRectangle 8">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <CheckBox Grid.Column="0"
+                                      IsChecked="{Binding IsInductionPlanned, Mode=TwoWay}"
+                                      Color="#3F51B5"
+                                      VerticalOptions="Center" />
+                            <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="Patient scheduled for labour induction"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}" />
+                                <Label Text="Enable to calculate Bishop Score"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </StackLayout>
+                        </Grid>
+                    </Border>
+
+                    <!-- Bishop Score Components -->
+                    <Grid ColumnDefinitions="*,*"
+                          RowDefinitions="Auto,Auto,Auto"
+                          ColumnSpacing="12"
+                          IsVisible="{Binding IsInductionPlanned}">
+
+                        <!-- Row 0: Dilatation and Effacement -->
+                        <core:SfTextInputLayout Grid.Row="0"
+                                                Grid.Column="0"
+                                                Hint="Dilatation (cm)"
+                                                Style="{StaticResource PatientInput}">
+                            <editors:SfNumericEntry Value="{Binding BishopDilatation, Mode=TwoWay}"
+                                                    Minimum="0"
+                                                    Maximum="10"
+                                                    MaximumNumberDecimalDigits="0" />
+                        </core:SfTextInputLayout>
+
+                        <core:SfTextInputLayout Grid.Row="0"
+                                                Grid.Column="1"
+                                                Hint="Effacement (%)"
+                                                Style="{StaticResource PatientInput}">
+                            <editors:SfNumericEntry Value="{Binding BishopEffacement, Mode=TwoWay}"
+                                                    Minimum="0"
+                                                    Maximum="100"
+                                                    MaximumNumberDecimalDigits="0" />
+                        </core:SfTextInputLayout>
+
+                        <!-- Row 1: Station and Consistency -->
+                        <core:SfTextInputLayout Grid.Row="1"
+                                                Grid.Column="0"
+                                                Hint="Station"
+                                                Style="{StaticResource PatientInput}">
+                            <Picker ItemsSource="{Binding StationOptions}"
+                                    SelectedItem="{Binding BishopStation, Mode=TwoWay}"
+                                    Title="Select Station" />
+                        </core:SfTextInputLayout>
+
+                        <core:SfTextInputLayout Grid.Row="1"
+                                                Grid.Column="1"
+                                                Hint="Consistency"
+                                                Style="{StaticResource PatientInput}">
+                            <Picker ItemsSource="{Binding ConsistencyOptions}"
+                                    SelectedItem="{Binding BishopConsistency, Mode=TwoWay}"
+                                    Title="Select Consistency" />
+                        </core:SfTextInputLayout>
+
+                        <!-- Row 2: Position -->
+                        <core:SfTextInputLayout Grid.Row="2"
+                                                Grid.Column="0"
+                                                Hint="Position"
+                                                Style="{StaticResource PatientInput}">
+                            <Picker ItemsSource="{Binding PositionOptions}"
+                                    SelectedItem="{Binding BishopPosition, Mode=TwoWay}"
+                                    Title="Select Position" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+
+                    <!-- Calculated Bishop Score Display -->
+                    <Border BackgroundColor="#3F51B5"
+                            Padding="20"
+                            Margin="0,8,0,0"
+                            StrokeShape="RoundRectangle 12"
+                            IsVisible="{Binding IsInductionPlanned}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="White"
+                                    WidthRequest="60"
+                                    HeightRequest="60"
+                                    StrokeShape="RoundRectangle 30">
+                                <Label Text="{Binding CalculatedBishopScore}"
+                                       FontSize="28"
+                                       FontAttributes="Bold"
+                                       TextColor="#3F51B5"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+                            <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="Bishop Score"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="White" />
+                                <Label Text="{Binding BishopScoreInterpretation}"
+                                       FontSize="13"
+                                       TextColor="White"
+                                       Opacity="0.9" />
+                            </StackLayout>
+                        </Grid>
+                    </Border>
+                </StackLayout>
+            </cards:SfCardView>
+
+            <!-- Risk Assessment Display Section -->
+            <cards:SfCardView Style="{StaticResource SectionCard}">
+                <StackLayout Padding="16" Spacing="8">
+                    <!-- Section Header with Icon -->
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource ErrorRed}"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 10">
+                            <Label Text="&#xE002;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Risk Assessment"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="Calculated risk level and recommended actions"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </StackLayout>
+                    </Grid>
+
+                    <!-- Risk Level Card -->
+                    <Border BackgroundColor="{Binding RiskColor}"
+                            Padding="20"
+                            Margin="0,8,0,12"
+                            StrokeShape="RoundRectangle 12">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="White"
+                                    WidthRequest="60"
+                                    HeightRequest="60"
+                                    StrokeShape="RoundRectangle 30">
+                                <Label Text="{Binding RiskScore}"
+                                       FontSize="28"
+                                       FontAttributes="Bold"
+                                       TextColor="{Binding RiskColor}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+                            <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="{Binding RiskLevel}"
+                                       FontSize="18"
+                                       FontAttributes="Bold"
+                                       TextColor="White" />
+                                <Label Text="Based on clinical assessment"
+                                       FontSize="12"
+                                       TextColor="White"
+                                       Opacity="0.9" />
+                            </StackLayout>
+                        </Grid>
+                    </Border>
+
+                    <!-- Risk Factors List -->
+                    <Border BackgroundColor="#FFF8E1"
+                            Padding="12"
+                            StrokeShape="RoundRectangle 8">
+                        <StackLayout Spacing="8">
+                            <Label Text="Risk Factors Identified"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+
+                            <CollectionView ItemsSource="{Binding RiskAssessmentFactors}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="0,2">
+                                            <Label Grid.Column="0"
+                                                   Text="•"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource WarningOrange}"
+                                                   VerticalOptions="Start" />
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding .}"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextSecondary}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </Border>
+
+                    <!-- Recommended Actions List -->
+                    <Border BackgroundColor="#E8F5E9"
+                            Padding="12"
+                            Margin="0,8,0,0"
+                            StrokeShape="RoundRectangle 8">
+                        <StackLayout Spacing="8">
+                            <Label Text="Recommended Actions"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+
+                            <CollectionView ItemsSource="{Binding RecommendedActions}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="0,2">
+                                            <Label Grid.Column="0"
+                                                   Text="&#xE5CA;"
+                                                   FontFamily="MaterialIcons"
+                                                   FontSize="14"
+                                                   TextColor="{StaticResource SecondaryGreen}"
+                                                   VerticalOptions="Start" />
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding .}"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextSecondary}"
+                                                   FontAttributes="Bold" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </Border>
+                </StackLayout>
+            </cards:SfCardView>
+
+            <!-- Action Buttons Section -->
+            <cards:SfCardView Style="{StaticResource SectionCard}" Margin="16,8,16,16">
+                <StackLayout Padding="16" Spacing="12">
+                    <!-- Error Messages -->
+                    <Border BackgroundColor="#FFEBEE"
+                            Padding="12"
+                            StrokeShape="RoundRectangle 8"
+                            Stroke="{StaticResource ErrorRed}"
+                            StrokeThickness="1"
+                            IsVisible="{Binding HasError}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   Text="&#xE000;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="{StaticResource ErrorRed}"
+                                   VerticalOptions="Start" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding ErrorMessage}"
+                                   Style="{StaticResource ErrorText}"
+                                   FontSize="13" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Save and Continue Button -->
+                    <buttons:SfButton Text="Save Patient and Start Partograph"
+                                      Style="{StaticResource PrimaryButton}"
+                                      Command="{Binding SaveCommand}"
+                                      HeightRequest="56">
+                        <buttons:SfButton.ImageSource>
+                            <FontImageSource FontFamily="MaterialIcons"
+                                             Glyph="&#xe161;"
+                                             Size="22"
+                                             Color="{StaticResource SurfaceWhite}" />
+                        </buttons:SfButton.ImageSource>
+                    </buttons:SfButton>
+
+                    <!-- Save Draft Button -->
+                    <buttons:SfButton Text="Save as Draft"
+                                      Style="{StaticResource SecondaryButton}"
+                                      Command="{Binding SaveDraftCommand}"
+                                      HeightRequest="50">
+                        <buttons:SfButton.ImageSource>
+                            <FontImageSource FontFamily="MaterialIcons"
+                                             Glyph="&#xe161;"
+                                             Size="18"
+                                             Color="{StaticResource PrimaryBlue}" />
+                        </buttons:SfButton.ImageSource>
+                    </buttons:SfButton>
+                </StackLayout>
+            </cards:SfCardView>
 
         </StackLayout>
     </ScrollView>
