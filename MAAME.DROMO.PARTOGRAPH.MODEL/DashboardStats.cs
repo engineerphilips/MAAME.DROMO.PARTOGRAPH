@@ -15,12 +15,41 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public int EmergencyCases { get; set; }
         public List<LaborProgressData> RecentProgress { get; set; } = [];
 
+        // Labor Stage Breakdown (WHO Four-Stage System)
+        public int FirstStageCount { get; set; }
+        public int SecondStageCount { get; set; }
+        public int ThirdStageCount { get; set; }
+        public int FourthStageCount { get; set; }
+
+        // Phase Breakdown (First Stage phases)
+        public int LatentPhaseCount { get; set; }
+        public int ActiveEarlyPhaseCount { get; set; }
+        public int ActiveAdvancedPhaseCount { get; set; }
+        public int TransitionPhaseCount { get; set; }
+
+        // Delivery Statistics
+        public int VaginalDeliveriesToday { get; set; }
+        public int CsectionDeliveriesToday { get; set; }
+        public int AssistedDeliveriesToday { get; set; }
+
+        // Mother & Baby Outcomes
+        public int HealthyMothersToday { get; set; }
+        public int HealthyBabiestoday { get; set; }
+        public int NICUAdmissionsToday { get; set; }
+
         // Enhanced metrics
         public double AvgDeliveryTime { get; set; } // Average delivery time in hours
         public double AvgActiveLaborTime { get; set; } // Average time in active labor
+        public double AvgFirstStageHours { get; set; } // Average first stage duration
+        public double AvgSecondStageMinutes { get; set; } // Average second stage duration
         public int ProlongedLaborCount { get; set; } // Patients in labor > 12 hours
         public int HighRiskCount { get; set; } // High-risk patients count
         public int OverdueChecksCount { get; set; } // Patients overdue for checks
+
+        // Quick Stats
+        public int TotalDeliveriesToday { get; set; }
+        public int AbnormalFHRCount { get; set; } // Patients with abnormal FHR
+        public int MeconiumStainedCount { get; set; } // Patients with meconium-stained liquor
 
         // Critical patients list (top 5 requiring attention)
         public List<CriticalPatientInfo> CriticalPatients { get; set; } = [];

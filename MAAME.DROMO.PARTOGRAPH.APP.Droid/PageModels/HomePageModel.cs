@@ -25,7 +25,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         bool _isRefreshing;
 
         [ObservableProperty]
-        private string _today = DateTime.Now.ToString("dddd, MMM d");
+        private DateTime _today = DateTime.Now;
 
         [ObservableProperty]
         private string _currentShift = GetCurrentShift();
