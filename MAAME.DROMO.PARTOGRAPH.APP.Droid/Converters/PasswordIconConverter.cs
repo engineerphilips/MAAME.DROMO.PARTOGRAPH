@@ -13,9 +13,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters
         {
             if (value is bool isVisible && isVisible)
             {
-                return "\uE7B3"; // Eye closed icon
+                return "\ue5f6"; // eye_off_24_regular - Password visible, show "hide" icon
             }
-            return "\uE890"; // Eye open icon
+            return "\ue5f3"; // eye_24_regular - Password hidden, show "reveal" icon
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
