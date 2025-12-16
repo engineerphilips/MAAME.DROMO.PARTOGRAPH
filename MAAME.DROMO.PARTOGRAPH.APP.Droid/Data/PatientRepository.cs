@@ -129,51 +129,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
-                    var idOrdinal = reader.GetOrdinal("ID");
-                    var firstNameOrdinal = reader.GetOrdinal("firstName");
-                    var lastNameOrdinal = reader.GetOrdinal("lastName");
-                    var hospitalNumberOrdinal = reader.GetOrdinal("hospitalNumber");
-                    var dateofbirthOrdinal = reader.GetOrdinal("dateofbirth");
-                    var ageOrdinal = reader.GetOrdinal("age");
-                    var bloodGroupOrdinal = reader.GetOrdinal("bloodGroup");
-                    var phoneNumberOrdinal = reader.GetOrdinal("phoneNumber");
-                    var emergencyContactNameOrdinal = reader.GetOrdinal("emergencyContactName");
-                    var emergencyContactRelationshipOrdinal = reader.GetOrdinal("emergencyContactRelationship");
-                    var emergencyContactPhoneOrdinal = reader.GetOrdinal("emergencyContactPhone");
-                    var handlerOrdinal = reader.GetOrdinal("handler");
-                    var createdtimeOrdinal = reader.GetOrdinal("createdtime");
-                    var updatedtimeOrdinal = reader.GetOrdinal("updatedtime");
-                    var deletedtimeOrdinal = reader.GetOrdinal("deletedtime");
-                    var deviceidOrdinal = reader.GetOrdinal("deviceid");
-                    var origindeviceidOrdinal = reader.GetOrdinal("origindeviceid");
-                    var syncstatusOrdinal = reader.GetOrdinal("syncstatus");
-                    var versionOrdinal = reader.GetOrdinal("version");
-                    var serverversionOrdinal = reader.GetOrdinal("serverversion");
-                    var deletedOrdinal = reader.GetOrdinal("deleted");
-
                     var patient = new Patient
                     {
-                        ID = Guid.Parse(reader.GetString(idOrdinal)),
-                        FirstName = reader.GetString(firstNameOrdinal),
-                        LastName = reader.GetString(lastNameOrdinal),
-                        HospitalNumber = reader.GetString(hospitalNumberOrdinal),
-                        DateOfBirth = reader.IsDBNull(dateofbirthOrdinal) ? null : DateOnly.Parse(reader.GetString(dateofbirthOrdinal)),
-                        Age = reader.IsDBNull(ageOrdinal) ? null : int.Parse(reader.GetString(ageOrdinal)),
-                        BloodGroup = reader.IsDBNull(bloodGroupOrdinal) ? "" : reader.GetString(bloodGroupOrdinal),
-                        PhoneNumber = reader.IsDBNull(phoneNumberOrdinal) ? "" : reader.GetString(phoneNumberOrdinal),
-                        EmergencyContactName = reader.IsDBNull(emergencyContactNameOrdinal) ? "" : reader.GetString(emergencyContactNameOrdinal),
-                        EmergencyContactRelationship = reader.IsDBNull(emergencyContactRelationshipOrdinal) ? "" : reader.GetString(emergencyContactRelationshipOrdinal),
-                        EmergencyContactPhone = reader.IsDBNull(emergencyContactPhoneOrdinal) ? "" : reader.GetString(emergencyContactPhoneOrdinal),
-                        Handler = reader.IsDBNull(handlerOrdinal) ? null : Guid.Parse(reader.GetString(handlerOrdinal)),
-                        CreatedTime = reader.GetInt64(createdtimeOrdinal),
-                        UpdatedTime = reader.GetInt64(updatedtimeOrdinal),
-                        DeletedTime = reader.IsDBNull(deletedtimeOrdinal) ? null : reader.GetInt64(deletedtimeOrdinal),
-                        DeviceId = reader.GetString(deviceidOrdinal),
-                        OriginDeviceId = reader.GetString(origindeviceidOrdinal),
-                        SyncStatus = reader.GetInt32(syncstatusOrdinal),
-                        Version = reader.GetInt32(versionOrdinal),
-                        ServerVersion = reader.IsDBNull(serverversionOrdinal) ? 0 : reader.GetInt32(serverversionOrdinal),
-                        Deleted = reader.IsDBNull(deletedOrdinal) ? 0 : reader.GetInt32(deletedOrdinal)
+                        ID = Guid.Parse((string)reader["ID"]),
+                        FirstName = (string)reader["firstName"],
+                        LastName = (string)reader["lastName"],
+                        HospitalNumber = (string)reader["hospitalNumber"],
+                        DateOfBirth = reader["dateofbirth"] is DBNull ? null : DateOnly.Parse((string)reader["dateofbirth"]),
+                        Age = reader["age"] is DBNull ? null : int.Parse((string)reader["age"]),
+                        BloodGroup = reader["bloodGroup"] is DBNull ? "" : (string)reader["bloodGroup"],
+                        PhoneNumber = reader["phoneNumber"] is DBNull ? "" : (string)reader["phoneNumber"],
+                        EmergencyContactName = reader["emergencyContactName"] is DBNull ? "" : (string)reader["emergencyContactName"],
+                        EmergencyContactRelationship = reader["emergencyContactRelationship"] is DBNull ? "" : (string)reader["emergencyContactRelationship"],
+                        EmergencyContactPhone = reader["emergencyContactPhone"] is DBNull ? "" : (string)reader["emergencyContactPhone"],
+                        Handler = reader["handler"] is DBNull ? null : Guid.Parse((string)reader["handler"]),
+                        CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                        UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                        DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
+                        DeviceId = (string)reader["deviceid"],
+                        OriginDeviceId = (string)reader["origindeviceid"],
+                        SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                        Version = Convert.ToInt32(reader["version"]),
+                        ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+                        Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"])
                     };
 
                     // Load related data
@@ -207,51 +185,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 if (await reader.ReadAsync())
                 {
-                    var idOrdinal = reader.GetOrdinal("ID");
-                    var firstNameOrdinal = reader.GetOrdinal("firstName");
-                    var lastNameOrdinal = reader.GetOrdinal("lastName");
-                    var hospitalNumberOrdinal = reader.GetOrdinal("hospitalNumber");
-                    var dateofbirthOrdinal = reader.GetOrdinal("dateofbirth");
-                    var ageOrdinal = reader.GetOrdinal("age");
-                    var bloodGroupOrdinal = reader.GetOrdinal("bloodGroup");
-                    var phoneNumberOrdinal = reader.GetOrdinal("phoneNumber");
-                    var emergencyContactNameOrdinal = reader.GetOrdinal("emergencyContactName");
-                    var emergencyContactRelationshipOrdinal = reader.GetOrdinal("emergencyContactRelationship");
-                    var emergencyContactPhoneOrdinal = reader.GetOrdinal("emergencyContactPhone");
-                    var handlerOrdinal = reader.GetOrdinal("handler");
-                    var createdtimeOrdinal = reader.GetOrdinal("createdtime");
-                    var updatedtimeOrdinal = reader.GetOrdinal("updatedtime");
-                    var deletedtimeOrdinal = reader.GetOrdinal("deletedtime");
-                    var deviceidOrdinal = reader.GetOrdinal("deviceid");
-                    var origindeviceidOrdinal = reader.GetOrdinal("origindeviceid");
-                    var syncstatusOrdinal = reader.GetOrdinal("syncstatus");
-                    var versionOrdinal = reader.GetOrdinal("version");
-                    var serverversionOrdinal = reader.GetOrdinal("serverversion");
-                    var deletedOrdinal = reader.GetOrdinal("deleted");
-
                     var patient = new Patient
                     {
-                        ID = Guid.Parse(reader.GetString(idOrdinal)),
-                        FirstName = reader.GetString(firstNameOrdinal),
-                        LastName = reader.GetString(lastNameOrdinal),
-                        HospitalNumber = reader.GetString(hospitalNumberOrdinal),
-                        DateOfBirth = reader.IsDBNull(dateofbirthOrdinal) ? null : DateOnly.Parse(reader.GetString(dateofbirthOrdinal)),
-                        Age = reader.IsDBNull(ageOrdinal) ? null : int.Parse(reader.GetString(ageOrdinal)),
-                        BloodGroup = reader.IsDBNull(bloodGroupOrdinal) ? "" : reader.GetString(bloodGroupOrdinal),
-                        PhoneNumber = reader.IsDBNull(phoneNumberOrdinal) ? "" : reader.GetString(phoneNumberOrdinal),
-                        EmergencyContactName = reader.IsDBNull(emergencyContactNameOrdinal) ? "" : reader.GetString(emergencyContactNameOrdinal),
-                        EmergencyContactRelationship = reader.IsDBNull(emergencyContactRelationshipOrdinal) ? "" : reader.GetString(emergencyContactRelationshipOrdinal),
-                        EmergencyContactPhone = reader.IsDBNull(emergencyContactPhoneOrdinal) ? "" : reader.GetString(emergencyContactPhoneOrdinal),
-                        Handler = reader.IsDBNull(handlerOrdinal) ? null : Guid.Parse(reader.GetString(handlerOrdinal)),
-                        CreatedTime = reader.GetInt64(createdtimeOrdinal),
-                        UpdatedTime = reader.GetInt64(updatedtimeOrdinal),
-                        DeletedTime = reader.IsDBNull(deletedtimeOrdinal) ? null : reader.GetInt64(deletedtimeOrdinal),
-                        DeviceId = reader.GetString(deviceidOrdinal),
-                        OriginDeviceId = reader.GetString(origindeviceidOrdinal),
-                        SyncStatus = reader.GetInt32(syncstatusOrdinal),
-                        Version = reader.GetInt32(versionOrdinal),
-                        ServerVersion = reader.IsDBNull(serverversionOrdinal) ? 0 : reader.GetInt32(serverversionOrdinal),
-                        Deleted = reader.IsDBNull(deletedOrdinal) ? 0 : reader.GetInt32(deletedOrdinal)
+                        ID = Guid.Parse((string)reader["ID"]),
+                        FirstName = (string)reader["firstName"],
+                        LastName = (string)reader["lastName"],
+                        HospitalNumber = (string)reader["hospitalNumber"],
+                        DateOfBirth = reader["dateofbirth"] is DBNull ? null : DateOnly.Parse((string)reader["dateofbirth"]),
+                        Age = reader["age"] is DBNull ? null : int.Parse((string)reader["age"]),
+                        BloodGroup = reader["bloodGroup"] is DBNull ? "" : (string)reader["bloodGroup"],
+                        PhoneNumber = reader["phoneNumber"] is DBNull ? "" : (string)reader["phoneNumber"],
+                        EmergencyContactName = reader["emergencyContactName"] is DBNull ? "" : (string)reader["emergencyContactName"],
+                        EmergencyContactRelationship = reader["emergencyContactRelationship"] is DBNull ? "" : (string)reader["emergencyContactRelationship"],
+                        EmergencyContactPhone = reader["emergencyContactPhone"] is DBNull ? "" : (string)reader["emergencyContactPhone"],
+                        Handler = reader["handler"] is DBNull ? null : Guid.Parse((string)reader["handler"]),
+                        CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                        UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                        DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
+                        DeviceId = (string)reader["deviceid"],
+                        OriginDeviceId = (string)reader["origindeviceid"],
+                        SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                        Version = Convert.ToInt32(reader["version"]),
+                        ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+                        Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"])
                     };
 
                     // Load related data

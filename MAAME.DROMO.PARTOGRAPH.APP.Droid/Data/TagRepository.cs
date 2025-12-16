@@ -77,15 +77,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var reader = await selectCmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                var idOrdinal = reader.GetOrdinal("ID");
-                var titleOrdinal = reader.GetOrdinal("Title");
-                var colorOrdinal = reader.GetOrdinal("Color");
-
                 tags.Add(new Tag
                 {
-                    ID = reader.GetInt32(idOrdinal),
-                    Title = reader.GetString(titleOrdinal),
-                    Color = reader.GetString(colorOrdinal)
+                    ID = Convert.ToInt32(reader["ID"]),
+                    Title = (string)reader["Title"],
+                    Color = (string)reader["Color"]
                 });
             }
 
@@ -116,15 +112,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var reader = await selectCmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                var idOrdinal = reader.GetOrdinal("ID");
-                var titleOrdinal = reader.GetOrdinal("Title");
-                var colorOrdinal = reader.GetOrdinal("Color");
-
                 tags.Add(new Tag
                 {
-                    ID = reader.GetInt32(idOrdinal),
-                    Title = reader.GetString(titleOrdinal),
-                    Color = reader.GetString(colorOrdinal)
+                    ID = Convert.ToInt32(reader["ID"]),
+                    Title = (string)reader["Title"],
+                    Color = (string)reader["Color"]
                 });
             }
 
@@ -149,15 +141,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var reader = await selectCmd.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
-                var idOrdinal = reader.GetOrdinal("ID");
-                var titleOrdinal = reader.GetOrdinal("Title");
-                var colorOrdinal = reader.GetOrdinal("Color");
-
                 return new Tag
                 {
-                    ID = reader.GetInt32(idOrdinal),
-                    Title = reader.GetString(titleOrdinal),
-                    Color = reader.GetString(colorOrdinal)
+                    ID = Convert.ToInt32(reader["ID"]),
+                    Title = (string)reader["Title"],
+                    Color = (string)reader["Color"]
                 };
             }
 

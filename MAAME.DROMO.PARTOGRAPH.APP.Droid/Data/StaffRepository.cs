@@ -206,49 +206,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 if (await reader.ReadAsync())
                 {
-                    var idOrdinal = reader.GetOrdinal("ID");
-                    var nameOrdinal = reader.GetOrdinal("name");
-                    var staffidOrdinal = reader.GetOrdinal("staffid");
-                    var emailOrdinal = reader.GetOrdinal("email");
-                    var roleOrdinal = reader.GetOrdinal("role");
-                    var departmentOrdinal = reader.GetOrdinal("department");
-                    var passwordOrdinal = reader.GetOrdinal("password");
-                    var lastloginOrdinal = reader.GetOrdinal("lastlogin");
-                    var activeOrdinal = reader.GetOrdinal("active");
-                    var facilityOrdinal = reader.GetOrdinal("facility");
-                    var createdtimeOrdinal = reader.GetOrdinal("createdtime");
-                    var updatedtimeOrdinal = reader.GetOrdinal("updatedtime");
-                    var deletedtimeOrdinal = reader.GetOrdinal("deletedtime");
-                    var deviceidOrdinal = reader.GetOrdinal("deviceid");
-                    var origindeviceidOrdinal = reader.GetOrdinal("origindeviceid");
-                    var syncstatusOrdinal = reader.GetOrdinal("syncstatus");
-                    var versionOrdinal = reader.GetOrdinal("version");
-                    var serverversionOrdinal = reader.GetOrdinal("serverversion");
-                    var deletedOrdinal = reader.GetOrdinal("deleted");
-
                     var staff = new Staff
                     {
-                        ID = Guid.Parse(reader.GetString(idOrdinal)),
-                        Name = reader.GetString(nameOrdinal),
-                        StaffID = reader.GetString(staffidOrdinal),
-                        Email = reader.GetString(emailOrdinal),
-                        Role = reader.GetString(roleOrdinal),
-                        Department = reader.GetString(departmentOrdinal),
-                        Password = reader.GetString(passwordOrdinal),
-                        LastLogin = reader.IsDBNull(lastloginOrdinal) ? DateTime.Now : DateTime.Parse(reader.GetString(lastloginOrdinal)),
-                        IsActive = reader.GetBoolean(activeOrdinal),
-                        Facility = reader.IsDBNull(facilityOrdinal) ? null : Guid.Parse(reader.GetString(facilityOrdinal)),
-                        CreatedTime = reader.GetInt64(createdtimeOrdinal),
-                        UpdatedTime = reader.GetInt64(updatedtimeOrdinal),
-                        DeletedTime = reader.IsDBNull(deletedtimeOrdinal) ? null : reader.GetInt64(deletedtimeOrdinal),
-                        DeviceId = reader.GetString(deviceidOrdinal),
-                        OriginDeviceId = reader.GetString(origindeviceidOrdinal),
-                        SyncStatus = reader.GetInt32(syncstatusOrdinal),
-                        Version = reader.GetInt32(versionOrdinal),
-                        ServerVersion = reader.IsDBNull(serverversionOrdinal) ? 0 : reader.GetInt32(serverversionOrdinal),
-                        Deleted = reader.IsDBNull(deletedOrdinal) ? 0 : reader.GetInt32(deletedOrdinal),
-                        //ConflictData = reader.GetString(conflictdataOrdinal),
-                        //DataHash = reader.GetString(datahashOrdinal)
+                        ID = Guid.Parse((string)reader["ID"]),
+                        Name = (string)reader["name"],
+                        StaffID = (string)reader["staffid"],
+                        Email = (string)reader["email"],
+                        Role = (string)reader["role"],
+                        Department = (string)reader["department"],
+                        Password = (string)reader["password"],
+                        LastLogin = reader["lastlogin"] is DBNull ? DateTime.Now : DateTime.Parse((string)reader["lastlogin"]),
+                        IsActive = Convert.ToBoolean(reader["active"]),
+                        Facility = reader["facility"] is DBNull ? null : Guid.Parse((string)reader["facility"]),
+                        CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                        UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                        DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
+                        DeviceId = (string)reader["deviceid"],
+                        OriginDeviceId = (string)reader["origindeviceid"],
+                        SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                        Version = Convert.ToInt32(reader["version"]),
+                        ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+                        Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
+                        //ConflictData = (string)reader["conflictdata"],
+                        //DataHash = (string)reader["datahash"]
                     };
 
                     // Update last login
@@ -291,49 +271,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
-                    var idOrdinal = reader.GetOrdinal("ID");
-                    var nameOrdinal = reader.GetOrdinal("name");
-                    var staffidOrdinal = reader.GetOrdinal("staffid");
-                    var emailOrdinal = reader.GetOrdinal("email");
-                    var roleOrdinal = reader.GetOrdinal("role");
-                    var departmentOrdinal = reader.GetOrdinal("department");
-                    var passwordOrdinal = reader.GetOrdinal("password");
-                    var lastloginOrdinal = reader.GetOrdinal("lastlogin");
-                    var activeOrdinal = reader.GetOrdinal("active");
-                    var facilityOrdinal = reader.GetOrdinal("facility");
-                    var createdtimeOrdinal = reader.GetOrdinal("createdtime");
-                    var updatedtimeOrdinal = reader.GetOrdinal("updatedtime");
-                    var deletedtimeOrdinal = reader.GetOrdinal("deletedtime");
-                    var deviceidOrdinal = reader.GetOrdinal("deviceid");
-                    var origindeviceidOrdinal = reader.GetOrdinal("origindeviceid");
-                    var syncstatusOrdinal = reader.GetOrdinal("syncstatus");
-                    var versionOrdinal = reader.GetOrdinal("version");
-                    var serverversionOrdinal = reader.GetOrdinal("serverversion");
-                    var deletedOrdinal = reader.GetOrdinal("deleted");
-
                     users.Add(new Staff
                     {
-                        ID = Guid.Parse(reader.GetString(idOrdinal)),
-                        Name = reader.GetString(nameOrdinal),
-                        StaffID = reader.GetString(staffidOrdinal),
-                        Email = reader.GetString(emailOrdinal),
-                        Role = reader.GetString(roleOrdinal),
-                        Department = reader.GetString(departmentOrdinal),
-                        Password = reader.GetString(passwordOrdinal),
-                        LastLogin = reader.IsDBNull(lastloginOrdinal) ? DateTime.Now : DateTime.Parse(reader.GetString(lastloginOrdinal)),
-                        IsActive = reader.GetBoolean(activeOrdinal),
-                        Facility = reader.IsDBNull(facilityOrdinal) ? null : Guid.Parse(reader.GetString(facilityOrdinal)),
-                        CreatedTime = reader.GetInt64(createdtimeOrdinal),
-                        UpdatedTime = reader.GetInt64(updatedtimeOrdinal),
-                        DeletedTime = reader.IsDBNull(deletedtimeOrdinal) ? null : reader.GetInt64(deletedtimeOrdinal),
-                        DeviceId = reader.GetString(deviceidOrdinal),
-                        OriginDeviceId = reader.GetString(origindeviceidOrdinal),
-                        SyncStatus = reader.GetInt32(syncstatusOrdinal),
-                        Version = reader.GetInt32(versionOrdinal),
-                        ServerVersion = reader.IsDBNull(serverversionOrdinal) ? 0 : reader.GetInt32(serverversionOrdinal),
-                        Deleted = reader.IsDBNull(deletedOrdinal) ? 0 : reader.GetInt32(deletedOrdinal),
-                        //ConflictData = reader.GetString(conflictdataOrdinal),
-                        //DataHash = reader.GetString(datahashOrdinal)
+                        ID = Guid.Parse((string)reader["ID"]),
+                        Name = (string)reader["name"],
+                        StaffID = (string)reader["staffid"],
+                        Email = (string)reader["email"],
+                        Role = (string)reader["role"],
+                        Department = (string)reader["department"],
+                        Password = (string)reader["password"],
+                        LastLogin = reader["lastlogin"] is DBNull ? DateTime.Now : DateTime.Parse((string)reader["lastlogin"]),
+                        IsActive = Convert.ToBoolean(reader["active"]),
+                        Facility = reader["facility"] is DBNull ? null : Guid.Parse((string)reader["facility"]),
+                        CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                        UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                        DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
+                        DeviceId = (string)reader["deviceid"],
+                        OriginDeviceId = (string)reader["origindeviceid"],
+                        SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                        Version = Convert.ToInt32(reader["version"]),
+                        ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+                        Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
+                        //ConflictData = (string)reader["conflictdata"],
+                        //DataHash = (string)reader["datahash"]
                     });
                 }
             }

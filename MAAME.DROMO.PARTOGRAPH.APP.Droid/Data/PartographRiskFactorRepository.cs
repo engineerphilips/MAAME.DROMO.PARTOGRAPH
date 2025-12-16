@@ -59,42 +59,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         protected override PartographRiskFactor MapFromReader(SqliteDataReader reader)
         {
-            var idOrdinal = reader.GetOrdinal("ID");
-            var partographidOrdinal = reader.GetOrdinal("partographid");
-            var timeOrdinal = reader.GetOrdinal("time");
-            var nameOrdinal = reader.GetOrdinal("name");
-            var handlerOrdinal = reader.GetOrdinal("handler");
-            var createdtimeOrdinal = reader.GetOrdinal("createdtime");
-            var updatedtimeOrdinal = reader.GetOrdinal("updatedtime");
-            var deletedtimeOrdinal = reader.GetOrdinal("deletedtime");
-            var deviceidOrdinal = reader.GetOrdinal("deviceid");
-            var origindeviceidOrdinal = reader.GetOrdinal("origindeviceid");
-            var syncstatusOrdinal = reader.GetOrdinal("syncstatus");
-            var versionOrdinal = reader.GetOrdinal("version");
-            var serverversionOrdinal = reader.GetOrdinal("serverversion");
-            var deletedOrdinal = reader.GetOrdinal("deleted");
-            var conflictdataOrdinal = reader.GetOrdinal("conflictdata");
-            var datahashOrdinal = reader.GetOrdinal("datahash");
-
             return new PartographRiskFactor
             {
-                ID = Guid.Parse(reader.GetString(idOrdinal)),
-                PartographID = reader.IsDBNull(partographidOrdinal) ? null : Guid.Parse(reader.GetString(partographidOrdinal)),
-                Time = reader.GetDateTime(timeOrdinal),
-                //Handler = reader.IsDBNull(handlerOrdinal) ? null : Guid.Parse(reader.GetString(handlerOrdinal)),
-                HandlerName = reader.IsDBNull(handlerOrdinal) ? string.Empty : reader.GetString(handlerOrdinal),
-                Name = reader.GetString(nameOrdinal),
-                CreatedTime = reader.GetInt64(createdtimeOrdinal),
-                UpdatedTime = reader.GetInt64(updatedtimeOrdinal),
-                DeletedTime = reader.IsDBNull(deletedtimeOrdinal) ? null : reader.GetInt64(deletedtimeOrdinal),
-                DeviceId = reader.GetString(deviceidOrdinal),
-                OriginDeviceId = reader.GetString(origindeviceidOrdinal),
-                SyncStatus = reader.GetInt32(syncstatusOrdinal),
-                Version = reader.GetInt32(versionOrdinal),
-                ServerVersion = reader.IsDBNull(serverversionOrdinal) ? 0 : reader.GetInt32(serverversionOrdinal),
-                Deleted = reader.IsDBNull(deletedOrdinal) ? 0 : reader.GetInt32(deletedOrdinal),
-                ConflictData = reader.IsDBNull(conflictdataOrdinal) ? string.Empty : reader.GetString(conflictdataOrdinal),
-                DataHash = reader.IsDBNull(datahashOrdinal) ? string.Empty : reader.GetString(datahashOrdinal)
+                ID = Guid.Parse((string)reader["ID"]),
+                PartographID = reader["partographid"] is DBNull ? null : Guid.Parse((string)reader["partographid"]),
+                Time = DateTime.Parse((string)reader["time"]),
+                //Handler = reader["handler"] is DBNull ? null : Guid.Parse((string)reader["handler"]),
+                HandlerName = reader["handler"] is DBNull ? string.Empty : (string)reader["handler"],
+                Name = (string)reader["name"],
+                CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
+                DeviceId = (string)reader["deviceid"],
+                OriginDeviceId = (string)reader["origindeviceid"],
+                SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                Version = Convert.ToInt32(reader["version"]),
+                ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+                Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
+                ConflictData = reader["conflictdata"] is DBNull ? string.Empty : (string)reader["conflictdata"],
+                DataHash = reader["datahash"] is DBNull ? string.Empty : (string)reader["datahash"]
             };
         }
 

@@ -77,19 +77,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var reader = await selectCmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                var idOrdinal = reader.GetOrdinal("ID");
-                var nameOrdinal = reader.GetOrdinal("Name");
-                var descriptionOrdinal = reader.GetOrdinal("Description");
-                var iconOrdinal = reader.GetOrdinal("Icon");
-                var categoryIdOrdinal = reader.GetOrdinal("CategoryID");
-
                 projects.Add(new Project
                 {
-                    ID = reader.GetInt32(idOrdinal),
-                    Name = reader.GetString(nameOrdinal),
-                    Description = reader.GetString(descriptionOrdinal),
-                    Icon = reader.GetString(iconOrdinal),
-                    CategoryID = reader.GetInt32(categoryIdOrdinal)
+                    ID = Convert.ToInt32(reader["ID"]),
+                    Name = (string)reader["Name"],
+                    Description = (string)reader["Description"],
+                    Icon = (string)reader["Icon"],
+                    CategoryID = Convert.ToInt32(reader["CategoryID"])
                 });
             }
 
@@ -120,19 +114,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var reader = await selectCmd.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
-                var idOrdinal = reader.GetOrdinal("ID");
-                var nameOrdinal = reader.GetOrdinal("Name");
-                var descriptionOrdinal = reader.GetOrdinal("Description");
-                var iconOrdinal = reader.GetOrdinal("Icon");
-                var categoryIdOrdinal = reader.GetOrdinal("CategoryID");
-
                 var project = new Project
                 {
-                    ID = reader.GetInt32(idOrdinal),
-                    Name = reader.GetString(nameOrdinal),
-                    Description = reader.GetString(descriptionOrdinal),
-                    Icon = reader.GetString(iconOrdinal),
-                    CategoryID = reader.GetInt32(categoryIdOrdinal)
+                    ID = Convert.ToInt32(reader["ID"]),
+                    Name = (string)reader["Name"],
+                    Description = (string)reader["Description"],
+                    Icon = (string)reader["Icon"],
+                    CategoryID = Convert.ToInt32(reader["CategoryID"])
                 };
 
                 project.Tags = await _tagRepository.ListAsync(project.ID);

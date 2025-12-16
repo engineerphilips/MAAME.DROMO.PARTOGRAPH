@@ -71,33 +71,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await using var reader = await selectCmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                var idOrdinal = reader.GetOrdinal("ID");
-                var patientIdOrdinal = reader.GetOrdinal("PatientID");
-                var recordedTimeOrdinal = reader.GetOrdinal("RecordedTime");
-                var systolicBPOrdinal = reader.GetOrdinal("SystolicBP");
-                var diastolicBPOrdinal = reader.GetOrdinal("DiastolicBP");
-                var temperatureOrdinal = reader.GetOrdinal("Temperature");
-                var pulseRateOrdinal = reader.GetOrdinal("PulseRate");
-                var respiratoryRateOrdinal = reader.GetOrdinal("RespiratoryRate");
-                var urineOutputOrdinal = reader.GetOrdinal("UrineOutput");
-                var urineProteinOrdinal = reader.GetOrdinal("UrineProtein");
-                var urineAcetoneOrdinal = reader.GetOrdinal("UrineAcetone");
-                var recordedByOrdinal = reader.GetOrdinal("RecordedBy");
-
                 vitalSigns.Add(new VitalSign
                 {
-                    ID = Guid.Parse(reader.GetString(idOrdinal)),
-                    PatientID = reader.IsDBNull(patientIdOrdinal) ? null : Guid.Parse(reader.GetString(patientIdOrdinal)),
-                    RecordedTime = DateTime.Parse(reader.GetString(recordedTimeOrdinal)),
-                    SystolicBP = reader.IsDBNull(systolicBPOrdinal) ? 0 : reader.GetInt32(systolicBPOrdinal),
-                    DiastolicBP = reader.IsDBNull(diastolicBPOrdinal) ? 0 : reader.GetInt32(diastolicBPOrdinal),
-                    Temperature = reader.IsDBNull(temperatureOrdinal) ? 0 : reader.GetDecimal(temperatureOrdinal),
-                    PulseRate = reader.IsDBNull(pulseRateOrdinal) ? 0 : reader.GetInt32(pulseRateOrdinal),
-                    RespiratoryRate = reader.IsDBNull(respiratoryRateOrdinal) ? 0 : reader.GetInt32(respiratoryRateOrdinal),
-                    UrineOutput = reader.IsDBNull(urineOutputOrdinal) ? "" : reader.GetString(urineOutputOrdinal),
-                    UrineProtein = reader.IsDBNull(urineProteinOrdinal) ? "Nil" : reader.GetString(urineProteinOrdinal),
-                    UrineAcetone = reader.IsDBNull(urineAcetoneOrdinal) ? "Nil" : reader.GetString(urineAcetoneOrdinal),
-                    RecordedBy = reader.IsDBNull(recordedByOrdinal) ? "" : reader.GetString(recordedByOrdinal)
+                    ID = Guid.Parse((string)reader["ID"]),
+                    PatientID = reader["PatientID"] is DBNull ? null : Guid.Parse((string)reader["PatientID"]),
+                    RecordedTime = DateTime.Parse((string)reader["RecordedTime"]),
+                    SystolicBP = reader["SystolicBP"] is DBNull ? 0 : Convert.ToInt32(reader["SystolicBP"]),
+                    DiastolicBP = reader["DiastolicBP"] is DBNull ? 0 : Convert.ToInt32(reader["DiastolicBP"]),
+                    Temperature = reader["Temperature"] is DBNull ? 0 : Convert.ToDecimal(reader["Temperature"]),
+                    PulseRate = reader["PulseRate"] is DBNull ? 0 : Convert.ToInt32(reader["PulseRate"]),
+                    RespiratoryRate = reader["RespiratoryRate"] is DBNull ? 0 : Convert.ToInt32(reader["RespiratoryRate"]),
+                    UrineOutput = reader["UrineOutput"] is DBNull ? "" : (string)reader["UrineOutput"],
+                    UrineProtein = reader["UrineProtein"] is DBNull ? "Nil" : (string)reader["UrineProtein"],
+                    UrineAcetone = reader["UrineAcetone"] is DBNull ? "Nil" : (string)reader["UrineAcetone"],
+                    RecordedBy = reader["RecordedBy"] is DBNull ? "" : (string)reader["RecordedBy"]
                 });
             }
 
