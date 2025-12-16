@@ -149,7 +149,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (patient?.PatientId != null)
             {
-                await Shell.Current.GoToAsync($"partograph?id={patient.PatientId}");
+                await Shell.Current.GoToAsync($"partograph?patientId={patient.PatientId}");
             }
         }
 
@@ -158,7 +158,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (alert?.PatientId != null)
             {
-                await Shell.Current.GoToAsync($"partograph?id={alert.PatientId}");
+                await Shell.Current.GoToAsync($"partograph?patientId={alert.PatientId}");
             }
         }
 
