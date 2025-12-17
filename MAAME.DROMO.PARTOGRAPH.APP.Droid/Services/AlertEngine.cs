@@ -40,6 +40,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             // Analyze risk factors
             newAlerts.AddRange(AnalyzeRiskFactors(patient));
 
+            // Analyze gestational age for post-term pregnancy
+            newAlerts.AddRange(AnalyzeGestationalAge(patient));
+
             // Update active alerts list
             UpdateActiveAlerts(newAlerts);
 
@@ -874,6 +877,103 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     MeasurementType = "Risk Assessment",
                     CurrentValue = string.Join(", ", allFactors),
                     ExpectedRange = "Standard monitoring"
+                });
+            }
+
+            return alerts;
+        }
+
+        /// <summary>
+        /// Analyzes gestational age for post-term pregnancy alerts
+        /// Based on WHO guidelines:
+        /// - >40W (280 days): Prolonged pregnancy - requires monitoring
+        /// - ≥41W (287 days): Post Date - consider induction or CS
+        /// - >41W5D (292 days): Post Date Critical - SVD not recommended, CS required
+        /// </summary>
+        private List<ClinicalAlert> AnalyzeGestationalAge(Partograph patient)
+        {
+            var alerts = new List<ClinicalAlert>();
+
+            // Check if we have EDD or LMP to calculate gestational age
+            if (patient.ExpectedDeliveryDate == null && patient.LastMenstrualDate == null)
+                return alerts;
+
+            var (weeks, days) = patient.GestationalWeeksAndDays;
+            int totalDays = patient.GestationalTotalDays;
+            string egaDisplay = $"{weeks}W{days}D";
+
+            // > 41W5D (292 days) - CRITICAL: SVD not allowed, CS required
+            if (totalDays > 292)
+            {
+                alerts.Add(new ClinicalAlert
+                {
+                    Severity = AlertSeverity.Critical,
+                    Category = AlertCategory.Maternal,
+                    Title = "Post Date Critical - CS Required",
+                    Message = $"Gestational age is {egaDisplay} (>41W5D). Spontaneous vaginal delivery (SVD) is NOT recommended at this gestational age due to increased risk of stillbirth and fetal distress.",
+                    RecommendedActions = new List<string>
+                    {
+                        "CESAREAN SECTION IS THE RECOMMENDED MODE OF DELIVERY",
+                        "SVD is contraindicated at EGA >41W5D",
+                        "URGENT: Senior obstetrician review required",
+                        "Ensure continuous fetal monitoring",
+                        "Prepare for immediate operative delivery",
+                        "Ensure blood products are available",
+                        "Inform neonatal team",
+                        "Document patient consent and counseling"
+                    },
+                    MeasurementType = "Gestational Age",
+                    CurrentValue = egaDisplay,
+                    ExpectedRange = "≤41W5D for SVD eligibility"
+                });
+            }
+            // ≥ 41W (287 days) - Post Date
+            else if (totalDays >= 287)
+            {
+                alerts.Add(new ClinicalAlert
+                {
+                    Severity = AlertSeverity.Warning,
+                    Category = AlertCategory.Maternal,
+                    Title = "Post Date Pregnancy",
+                    Message = $"Gestational age is {egaDisplay} (≥41W). Post-date pregnancy carries increased risk of adverse outcomes.",
+                    RecommendedActions = new List<string>
+                    {
+                        "Senior obstetrician review recommended",
+                        "Consider induction of labour if cervix favourable",
+                        "Consider cesarean section if induction not appropriate",
+                        "Ensure increased fetal monitoring (NST, BPP)",
+                        "Discuss delivery options with patient",
+                        "Monitor amniotic fluid volume",
+                        "Assess fetal wellbeing closely",
+                        "Plan delivery before 42 weeks (294 days)"
+                    },
+                    MeasurementType = "Gestational Age",
+                    CurrentValue = egaDisplay,
+                    ExpectedRange = "<41W (term delivery)"
+                });
+            }
+            // > 40W (280 days) - Prolonged pregnancy
+            else if (totalDays > 280)
+            {
+                alerts.Add(new ClinicalAlert
+                {
+                    Severity = AlertSeverity.Info,
+                    Category = AlertCategory.Maternal,
+                    Title = "Prolonged Pregnancy",
+                    Message = $"Gestational age is {egaDisplay} (>40W). Pregnancy has exceeded the estimated delivery date.",
+                    RecommendedActions = new List<string>
+                    {
+                        "Increase monitoring frequency",
+                        "Assess fetal wellbeing (fetal movements, NST)",
+                        "Consider membrane sweep to encourage spontaneous labour",
+                        "Discuss induction planning with patient",
+                        "Monitor for signs of post-term complications",
+                        "Schedule follow-up within 3-4 days if not delivered",
+                        "Plan delivery by 41W if no spontaneous onset"
+                    },
+                    MeasurementType = "Gestational Age",
+                    CurrentValue = egaDisplay,
+                    ExpectedRange = "≤40W (estimated delivery)"
                 });
             }
 
