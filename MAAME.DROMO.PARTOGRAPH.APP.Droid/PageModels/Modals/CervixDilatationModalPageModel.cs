@@ -1,5 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
@@ -12,9 +14,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
     {
         public Partograph? _patient;
         private readonly CervixDilatationRepository _cervixDilatationRepository;
+        private readonly PartographRepository _partographRepository;
+        private readonly StageProgressionService _stageProgressionService;
         private readonly ModalErrorHandler _errorHandler;
 
         public Action? ClosePopup { get; set; }
+
+        /// <summary>
+        /// Event raised when stage should be progressed to SecondStage
+        /// </summary>
+        public event EventHandler<Guid>? OnProgressToSecondStage;
 
         [ObservableProperty]
         private string _patientName = string.Empty;
@@ -165,9 +174,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private bool _precipitousLabor;
 
-        public CervixDilatationModalPageModel(CervixDilatationRepository cervixDilatationRepository, ModalErrorHandler errorHandler)
+        public CervixDilatationModalPageModel(
+            CervixDilatationRepository cervixDilatationRepository,
+            PartographRepository partographRepository,
+            StageProgressionService stageProgressionService,
+            ModalErrorHandler errorHandler)
         {
             _cervixDilatationRepository = cervixDilatationRepository;
+            _partographRepository = partographRepository;
+            _stageProgressionService = stageProgressionService;
             _errorHandler = errorHandler;
 
             // Set default recorded by from preferences
@@ -376,6 +391,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     await AppShell.DisplayToastAsync("Dilatation assessment saved successfully");
 
+                    // Check if dilation is 10 and should auto-progress to SecondStage
+                    if (Dilatation >= 10 && _patient.ID.HasValue)
+                    {
+                        await CheckAndProgressToSecondStageAsync(_patient.ID.Value);
+                    }
+
                     // Reset fields to default
                     ResetFields();
 
@@ -394,6 +415,56 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the partograph is in FirstStage and automatically progresses to SecondStage when dilation is 10
+        /// </summary>
+        private async Task CheckAndProgressToSecondStageAsync(Guid partographId)
+        {
+            try
+            {
+                // Reload the partograph to get current status
+                var partograph = await _partographRepository.GetAsync(partographId);
+                if (partograph == null) return;
+
+                // Only auto-progress if currently in FirstStage or Pending
+                if (partograph.Status == LaborStatus.FirstStage || partograph.Status == LaborStatus.Pending)
+                {
+                    // Use StageProgressionService to check and progress
+                    var (shouldProgress, nextStage, reason) = _stageProgressionService.CheckAutomaticProgression(partograph);
+
+                    if (shouldProgress && nextStage == LaborStatus.SecondStage)
+                    {
+                        var (success, message) = await _stageProgressionService.ProgressToNextStage(partograph, LaborStatus.SecondStage);
+
+                        if (success)
+                        {
+                            await AppShell.DisplayToastAsync("Full dilation (10cm) - Automatically progressed to Second Stage");
+
+                            // Notify listeners about the stage change
+                            OnProgressToSecondStage?.Invoke(this, partographId);
+
+                            // Ask user if they want to navigate to Second Stage page
+                            var navigate = await Application.Current.MainPage.DisplayAlert(
+                                "Second Stage Started",
+                                "Cervix is fully dilated (10cm). The labor has progressed to Second Stage. Would you like to go to the Second Stage monitoring page?",
+                                "Yes, Go to Second Stage",
+                                "Stay Here");
+
+                            if (navigate)
+                            {
+                                await Shell.Current.GoToAsync($"secondpartograph?id={partographId}");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log but don't fail the main save operation
+                System.Diagnostics.Debug.WriteLine($"Error checking stage progression: {ex.Message}");
             }
         }
 
