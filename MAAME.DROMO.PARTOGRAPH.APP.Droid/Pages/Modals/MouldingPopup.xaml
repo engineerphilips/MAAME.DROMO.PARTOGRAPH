@@ -8,18 +8,24 @@
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
+            <Color x:Key="PrimaryBlue">#0078D4</Color>
             <!-- Input Styles -->
             <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
                 <Setter Property="ContainerType" Value="Outlined" />
                 <Setter Property="OutlineCornerRadius" Value="8" />
+                <Setter Property="Stroke" Value="{StaticResource PrimaryBlue}" />
             </Style>
         </ResourceDictionary>
     </sfPopup:SfPopup.Resources>
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
-            <StackLayout>
-                <Label Text="Moulding" VerticalOptions="Center" Margin="15,15,0,0" />
-            </StackLayout>
+            <Grid BackgroundColor="{StaticResource PrimaryBlue}" Padding="15,12">
+                <Label Text="Moulding"
+                       VerticalOptions="Center"
+                       FontAttributes="Bold"
+                       FontSize="18"
+                       TextColor="White" />
+            </Grid>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>
     <sfPopup:SfPopup.ContentTemplate>
@@ -236,7 +242,7 @@
                         <Button Grid.Column="1"
                             Text="Save Assessment"
                             Command="{Binding SaveCommand}"
-                            BackgroundColor="#4CAF50"
+                            BackgroundColor="{StaticResource PrimaryBlue}"
                             TextColor="White"
                             HeightRequest="50"
                             CornerRadius="10" />
