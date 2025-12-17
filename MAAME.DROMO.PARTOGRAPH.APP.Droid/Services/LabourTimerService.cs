@@ -441,10 +441,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
     /// <summary>
     /// Alert severity levels
     /// </summary>
-    public enum AlertSeverity
-    {
-        Info,
-        Warning,
-        Critical
-    }
+    //public enum AlertSeverity
+    //{
+    //    Info,
+    //    Warning,
+    //    Critical
+    //}
 }

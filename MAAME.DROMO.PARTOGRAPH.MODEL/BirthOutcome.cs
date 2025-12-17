@@ -84,6 +84,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [JsonIgnore]
         public bool NeedsSync => SyncStatus == 0;
 
+        public bool OxytocinGivenPostDelivery { get; set; }
+
         public string CalculateHash()
         {
             var data = $"{ID}|{PartographID}|{MaternalStatus}|{NumberOfBabies}";

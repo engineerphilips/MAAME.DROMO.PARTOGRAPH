@@ -397,21 +397,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     birthOutcome.EstimatedBloodLoss = data.EstimatedBloodLossMl;
                     birthOutcome.PerinealStatus = data.PerinealStatus switch
                     {
-                        "Intact" => BirthOutcome.PerinealStatusType.Intact,
-                        "1st Degree Tear" => BirthOutcome.PerinealStatusType.FirstDegreeTear,
-                        "2nd Degree Tear" => BirthOutcome.PerinealStatusType.SecondDegreeTear,
-                        "3rd Degree Tear" => BirthOutcome.PerinealStatusType.ThirdDegreeTear,
-                        "4th Degree Tear" => BirthOutcome.PerinealStatusType.FourthDegreeTear,
-                        "Episiotomy" => BirthOutcome.PerinealStatusType.Episiotomy,
-                        _ => BirthOutcome.PerinealStatusType.Intact
+                        "Intact" => PerinealStatus.Intact,
+                        "1st Degree Tear" => PerinealStatus.FirstDegreeTear,
+                        "2nd Degree Tear" => PerinealStatus.SecondDegreeTear,
+                        "3rd Degree Tear" => PerinealStatus.ThirdDegreeTear,
+                        "4th Degree Tear" => PerinealStatus.FourthDegreeTear,
+                        "Episiotomy" => PerinealStatus.Episiotomy,
+                        _ => PerinealStatus.Intact
                     };
                     birthOutcome.OxytocinGivenPostDelivery = data.OxytocinGiven;
-                    birthOutcome.UpdatedAt = DateTime.UtcNow;
+                    birthOutcome.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                     // Set complication if PPH detected
                     if (data.IsSeverePPH)
                     {
-                        birthOutcome.MaternalComplication = BirthOutcome.MaternalComplicationType.PPH;
+                        //birthOutcome.MaternalComplications = BirthOutcome.MaternalComplicationType.PPH;
                     }
 
                     await _birthOutcomeRepository.SaveItemAsync(birthOutcome);

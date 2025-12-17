@@ -232,7 +232,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (latestBP != null)
                 {
                     LatestBP = $"{latestBP.Systolic}/{latestBP.Diastolic}";
-                    LatestPulse = latestBP.Pulse?.ToString() ?? "--";
+                    LatestPulse = latestBP.Pulse.ToString() ?? "--";
                     LastVitalSignsTime = latestBP.Time.ToString("HH:mm");
 
                     // Calculate next due time (15 min intervals)
@@ -413,9 +413,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     PartographID = Patient.ID.Value,
                     Systolic = systolic,
                     Diastolic = diastolic,
-                    Pulse = pulse,
+                    Pulse = pulse ?? 0,
                     Time = DateTime.Now,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
                 };
 
                 await _bpRepository.SaveItemAsync(bp);
