@@ -28,6 +28,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly BabyDetailsRepository _babyDetailsRepository;
         private readonly PatientRepository _patientRepository;
         private readonly PartographRepository _partographRepository;
+        private readonly CervixDilatationRepository _cervixDilatationRepository;
+        private readonly FHRRepository _fhrRepository;
+        private readonly ContractionRepository _contractionRepository;
+        private readonly HeadDescentRepository _headDescentRepository;
         private readonly ModalErrorHandler _errorHandler;
         private readonly ILogger<BirthOutcomePageModel> _logger;
 
@@ -36,6 +40,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             BabyDetailsRepository babyDetailsRepository,
             PatientRepository patientRepository,
             PartographRepository partographRepository,
+            CervixDilatationRepository cervixDilatationRepository,
+            FHRRepository fhrRepository,
+            ContractionRepository contractionRepository,
+            HeadDescentRepository headDescentRepository,
             ModalErrorHandler errorHandler,
             ILogger<BirthOutcomePageModel> logger)
         {
@@ -43,6 +51,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _babyDetailsRepository = babyDetailsRepository;
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
+            _cervixDilatationRepository = cervixDilatationRepository;
+            _fhrRepository = fhrRepository;
+            _contractionRepository = contractionRepository;
+            _headDescentRepository = headDescentRepository;
             _errorHandler = errorHandler;
             _logger = logger;
 
@@ -74,6 +86,34 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private int _currentDilation;
+
+        // Additional labor parameters for outcome summary
+        [ObservableProperty]
+        private int _latestFHR;
+
+        [ObservableProperty]
+        private string _latestFHRDisplay = string.Empty;
+
+        [ObservableProperty]
+        private int _latestContractions;
+
+        [ObservableProperty]
+        private string _latestContractionsDisplay = string.Empty;
+
+        [ObservableProperty]
+        private int _latestHeadDescent;
+
+        [ObservableProperty]
+        private string _latestHeadDescentDisplay = string.Empty;
+
+        [ObservableProperty]
+        private string _laborStage = string.Empty;
+
+        [ObservableProperty]
+        private string _secondStageDuration = string.Empty;
+
+        [ObservableProperty]
+        private bool _hasSecondStageDuration;
 
         //[ObservableProperty]
         //private Patient? _patient;
@@ -224,6 +264,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     LaborDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
                 }
 
+                // Load current labor parameters
+                await LoadLaborParametersAsync(partographId);
+
                 // Check if birth outcome already exists
                 var existingOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(partographId);
                 if (existingOutcome != null)
@@ -252,6 +295,88 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Loads the latest labor parameters (dilation, FHR, contractions, head descent) for display on the outcome page
+        /// </summary>
+        private async Task LoadLaborParametersAsync(Guid? partographId)
+        {
+            try
+            {
+                // Load latest cervical dilation
+                var latestDilation = await _cervixDilatationRepository.GetLatestByPatientAsync(partographId);
+                if (latestDilation != null)
+                {
+                    CurrentDilation = latestDilation.DilatationCm;
+                }
+                else
+                {
+                    CurrentDilation = 10; // Default to 10 if on outcome page (likely fully dilated)
+                }
+
+                // Load latest FHR
+                var latestFhr = await _fhrRepository.GetLatestByPatientAsync(partographId);
+                if (latestFhr != null)
+                {
+                    LatestFHR = latestFhr.Rate ?? latestFhr.BaselineRate ?? 0;
+                    LatestFHRDisplay = LatestFHR > 0 ? $"{LatestFHR} bpm" : "Not recorded";
+                }
+                else
+                {
+                    LatestFHRDisplay = "Not recorded";
+                }
+
+                // Load latest contractions
+                var latestContraction = await _contractionRepository.GetLatestByPatientAsync(partographId);
+                if (latestContraction != null)
+                {
+                    LatestContractions = latestContraction.FrequencyPer10Min;
+                    LatestContractionsDisplay = $"{latestContraction.FrequencyPer10Min} in 10 min";
+                }
+                else
+                {
+                    LatestContractionsDisplay = "Not recorded";
+                }
+
+                // Load latest head descent
+                var latestHeadDescent = await _headDescentRepository.GetLatestByPatientAsync(partographId);
+                if (latestHeadDescent != null)
+                {
+                    LatestHeadDescent = latestHeadDescent.Station;
+                    LatestHeadDescentDisplay = !string.IsNullOrEmpty(latestHeadDescent.PalpableAbdominally)
+                        ? latestHeadDescent.PalpableAbdominally
+                        : $"Station {latestHeadDescent.Station}";
+                }
+                else
+                {
+                    LatestHeadDescentDisplay = "Not recorded";
+                }
+
+                // Set labor stage display
+                if (Partograph != null)
+                {
+                    LaborStage = Partograph.Status.ToString();
+
+                    // Calculate second stage duration if applicable
+                    if (Partograph.SecondStageStartTime.HasValue)
+                    {
+                        var endTime = Partograph.DeliveryTime ?? DateTime.Now;
+                        var secondStageDuration = endTime - Partograph.SecondStageStartTime.Value;
+                        SecondStageDuration = $"{(int)secondStageDuration.TotalMinutes} min";
+                        HasSecondStageDuration = true;
+                    }
+                    else
+                    {
+                        HasSecondStageDuration = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading labor parameters");
+                // Continue without failing - these are supplementary data
             }
         }
 

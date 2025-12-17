@@ -68,22 +68,87 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
-                <Grid ColumnDefinitions="*,Auto">
-                    <VerticalStackLayout>
-                        <Label Text="{Binding PatientName}" FontSize="18" FontAttributes="Bold" />
-                        <Label Text="{Binding PatientInfo}" FontSize="12" Opacity="0.8" />
-                        <Label Text="{Binding LaborDuration, StringFormat='Labour Duration: {0}'}" FontSize="11" />
-                    </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                        <Label Text="{Binding CurrentDilation, StringFormat='{0} cm'}"
-                               FontSize="24"
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center" />
-                        <Label Text="Current Dilation"
-                               FontSize="9"
-                               HorizontalOptions="Center" />
-                    </VerticalStackLayout>
-                </Grid>
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding PatientName}" FontSize="18" FontAttributes="Bold" />
+                            <Label Text="{Binding PatientInfo}" FontSize="12" Opacity="0.8" />
+                            <Label Text="{Binding LaborDuration, StringFormat='Labour Duration: {0}'}" FontSize="11" />
+                            <Label Text="{Binding LaborStage, StringFormat='Stage: {0}'}" FontSize="11" FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="{Binding CurrentDilation, StringFormat='{0} cm'}"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Dilation"
+                                   FontSize="9"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <!-- Labor Parameters Summary -->
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2D2D2D}"
+                                StrokeThickness="0" Padding="8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="{Binding LatestFHRDisplay}"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center" />
+                                <Label Text="FHR"
+                                       FontSize="9"
+                                       HorizontalOptions="Center"
+                                       Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2D2D2D}"
+                                StrokeThickness="0" Padding="8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="{Binding LatestContractionsDisplay}"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Contractions"
+                                       FontSize="9"
+                                       HorizontalOptions="Center"
+                                       Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Column="2"
+                                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2D2D2D}"
+                                StrokeThickness="0" Padding="8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="{Binding LatestHeadDescentDisplay}"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Head Descent"
+                                       FontSize="9"
+                                       HorizontalOptions="Center"
+                                       Opacity="0.7" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Second Stage Duration (if applicable) -->
+                    <Label Text="{Binding SecondStageDuration, StringFormat='Second Stage Duration: {0}'}"
+                           FontSize="11"
+                           FontAttributes="Italic"
+                           IsVisible="{Binding HasSecondStageDuration}" />
+                </VerticalStackLayout>
             </Border>
 
             <!-- Maternal Outcome Section -->
