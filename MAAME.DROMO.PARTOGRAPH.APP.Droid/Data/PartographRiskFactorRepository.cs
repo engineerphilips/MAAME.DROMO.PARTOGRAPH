@@ -65,7 +65,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 PartographID = reader["partographid"] is DBNull ? null : Guid.Parse(reader["partographid"].ToString()),
                 Time = DateTime.Parse(reader["time"].ToString()),
                 //Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
-                HandlerName = reader["handler"] is DBNull ? string.Empty : reader["handler"].ToString(),
+                HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
                 Name = reader["name"].ToString(),
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
