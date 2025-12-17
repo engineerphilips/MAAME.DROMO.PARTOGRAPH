@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
@@ -108,8 +109,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 Preferences.Set("SelectedFacilityId", SelectedFacility.ID.ToString());
                 Preferences.Set("SelectedFacilityName", SelectedFacility.Name);
 
-                // Navigate to AppShell (main app)
-                Application.Current.MainPage = new AppShell();
+                // Navigate to AppShell (main app) with loading transition
+                await TransitionLoadingPage.TransitionToAsync(
+                    () => new AppShell(),
+                    "Loading Dashboard...",
+                    $"Setting up {SelectedFacility.Name}...");
             }
             catch (Exception ex)
             {

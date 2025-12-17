@@ -168,22 +168,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     // If no, redirect to AppShell
                     if (Constants.IsSuperOrAdmin())
                     {
-                        // Navigate to FacilitySelectionPage for facility selection
-                        var facilitySelectionPage = IPlatformApplication.Current!.Services.GetService<FacilitySelectionPage>();
-                        if (facilitySelectionPage != null)
-                        {
-                            Application.Current.MainPage = facilitySelectionPage;
-                        }
-                        else
-                        {
-                            // Fallback if service not registered
-                            Application.Current.MainPage = new AppShell();
-                        }
+                        // Navigate to FacilitySelectionPage for facility selection with loading transition
+                        await TransitionLoadingPage.TransitionToAsync(
+                            () =>
+                            {
+                                var facilitySelectionPage = IPlatformApplication.Current!.Services.GetService<FacilitySelectionPage>();
+                                return facilitySelectionPage ?? (Page)new AppShell();
+                            },
+                            "Signing In...",
+                            "Loading your facilities...");
                     }
                     else
                     {
-                        // Navigate directly to AppShell for non-Super/Admin users
-                        Application.Current.MainPage = new AppShell();
+                        // Navigate directly to AppShell for non-Super/Admin users with loading transition
+                        await TransitionLoadingPage.TransitionToAsync(
+                            () => new AppShell(),
+                            "Signing In...",
+                            "Loading dashboard...");
                     }
                 }
                 else
