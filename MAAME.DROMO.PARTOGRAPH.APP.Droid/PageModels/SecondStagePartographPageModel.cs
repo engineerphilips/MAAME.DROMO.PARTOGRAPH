@@ -910,13 +910,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 birthOutcome.DeliveryTime = data.DeliveryTime;
                 birthOutcome.DeliveryMode = data.DeliveryMode switch
                 {
-                    "Spontaneous Vaginal" => BirthOutcome.DeliveryModeType.SVD,
-                    "Assisted (Vacuum)" => BirthOutcome.DeliveryModeType.AssistedVacuum,
-                    "Assisted (Forceps)" => BirthOutcome.DeliveryModeType.AssistedForceps,
-                    "Breech Vaginal" => BirthOutcome.DeliveryModeType.BreechVaginal,
-                    "Emergency C-Section" => BirthOutcome.DeliveryModeType.EmergencyCSection,
-                    "Elective C-Section" => BirthOutcome.DeliveryModeType.ElectiveCSection,
-                    _ => BirthOutcome.DeliveryModeType.SVD
+                    "Spontaneous Vaginal" => DeliveryMode.SpontaneousVaginal,
+                    "Assisted (Vacuum)" => DeliveryMode.AssistedVaginal,
+                    "Assisted (Forceps)" => DeliveryMode.AssistedVaginal,
+                    "Breech Vaginal" => DeliveryMode.BreechDelivery,
+                    "Emergency C-Section" => DeliveryMode.CaesareanSection,
+                    "Elective C-Section" => DeliveryMode.CaesareanSection,
+                    _ => DeliveryMode.SpontaneousVaginal
                 };
                 birthOutcome.UpdatedAt = DateTime.UtcNow;
 
