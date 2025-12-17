@@ -63,7 +63,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 FavorableForDelivery = Convert.ToBoolean(reader["FavorableForDelivery"]),
                 Notes = reader["Notes"]?.ToString() ?? string.Empty,
                 RecordedBy = reader["RecordedBy"]?.ToString() ?? string.Empty,
-                HandlerName = reader["HandlerName"]?.ToString() ?? string.Empty,
+                HandlerName = reader["staffname"]?.ToString() ?? string.Empty,
                 Handler = reader["Handler"] == DBNull.Value ? null : Guid.Parse(reader["Handler"].ToString())
             };
         }

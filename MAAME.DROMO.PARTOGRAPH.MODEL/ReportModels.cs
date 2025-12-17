@@ -523,6 +523,12 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public int PartographsWithFullData { get; set; }
         public decimal DocumentationAccuracy { get; set; }
 
+        // Staff-Specific Measurement Counts (measurements recorded by this staff member)
+        public int FHRMeasurementsRecorded { get; set; }
+        public int CervixMeasurementsRecorded { get; set; }
+        public int BPMeasurementsRecorded { get; set; }
+        public int TotalMeasurementsRecorded => FHRMeasurementsRecorded + CervixMeasurementsRecorded + BPMeasurementsRecorded;
+
         // Compliance Metrics
         public decimal WHOProtocolCompliance { get; set; } // Percentage
         public decimal FHRMonitoringCompliance { get; set; }

@@ -151,7 +151,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT * FROM Tbl_Referral WHERE partographid = @partographid AND deleted = 0 ORDER BY referraltime DESC";
+                selectCmd.CommandText = @"SELECT r.*, s.name as staffname
+                    FROM Tbl_Referral r
+                    LEFT JOIN Tbl_Staff s ON r.handler = s.ID
+                    WHERE r.partographid = @partographid AND r.deleted = 0 ORDER BY r.referraltime DESC";
                 selectCmd.Parameters.AddWithValue("@partographid", partographId.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -179,7 +182,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT * FROM Tbl_Referral WHERE ID = @id AND deleted = 0";
+                selectCmd.CommandText = @"SELECT r.*, s.name as staffname
+                    FROM Tbl_Referral r
+                    LEFT JOIN Tbl_Staff s ON r.handler = s.ID
+                    WHERE r.ID = @id AND r.deleted = 0";
                 selectCmd.Parameters.AddWithValue("@id", id.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -525,6 +531,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ReferralFormGenerated = Convert.ToBoolean(reader["referralformgenerated"]),
                 FormGenerationTime = reader["formgenerationtime"] == DBNull.Value ? null : DateTime.Parse(reader["formgenerationtime"].ToString()),
                 Handler = reader["handler"] == DBNull.Value ? null : Guid.Parse(reader["handler"].ToString()),
+                HandlerName = reader["staffname"] == DBNull.Value ? string.Empty : reader["staffname"].ToString(),
                 Notes = reader["notes"]?.ToString() ?? string.Empty,
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),

@@ -152,7 +152,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 ID = Guid.Parse(reader.GetString(reader.GetOrdinal("ID"))),
                 PartographID = reader.IsDBNull(reader.GetOrdinal("partographid")) ? null : Guid.Parse(reader.GetString(reader.GetOrdinal("partographid"))),
                 Time = reader.GetDateTime(reader.GetOrdinal("time")),
-                HandlerName = GetStringOrDefault(reader, "handler", ""),
+                HandlerName = GetStringOrDefault(reader, "staffname", ""),
                 Notes = GetStringOrDefault(reader, "notes", ""),
                 TemperatureCelsius = GetFloatOrDefault(reader, "temperatureCelsius", 0.0f),
                 CreatedTime = reader.GetInt64(reader.GetOrdinal("createdtime")),

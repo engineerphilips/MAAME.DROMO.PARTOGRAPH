@@ -601,14 +601,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     report.ActiveStaff++;
 
                 // Calculate documentation completeness based on partograph data
+                // Now using Handler field on measurements to count staff-specific recordings
                 decimal docCompleteness = 0;
                 int partographsWithFullData = 0;
+                int totalFHRByStaff = 0;
+                int totalCervixByStaff = 0;
+                int totalBPByStaff = 0;
 
                 foreach (var partograph in staffPartographs.Where(p => staffBirthOutcomes.Any(b => b.PartographID == p.ID)))
                 {
-                    var fhrCount = (await _fhrRepo.ListByPatientAsync(partograph.ID.Value)).Count();
-                    var cervixCount = (await _cervixDilatationRepo.ListByPatientAsync(partograph.ID.Value)).Count();
-                    var bpCount = (await _bpRepo.ListByPatientAsync(partograph.ID.Value)).Count();
+                    var fhrMeasurements = await _fhrRepo.ListByPatientAsync(partograph.ID.Value);
+                    var cervixMeasurements = await _cervixDilatationRepo.ListByPatientAsync(partograph.ID.Value);
+                    var bpMeasurements = await _bpRepo.ListByPatientAsync(partograph.ID.Value);
+
+                    // Count measurements specifically recorded by this staff member
+                    var fhrByStaff = fhrMeasurements.Count(f => f.Handler == staffMember.ID);
+                    var cervixByStaff = cervixMeasurements.Count(c => c.Handler == staffMember.ID);
+                    var bpByStaff = bpMeasurements.Count(b => b.Handler == staffMember.ID);
+
+                    totalFHRByStaff += fhrByStaff;
+                    totalCervixByStaff += cervixByStaff;
+                    totalBPByStaff += bpByStaff;
+
+                    var fhrCount = fhrMeasurements.Count;
+                    var cervixCount = cervixMeasurements.Count;
+                    var bpCount = bpMeasurements.Count;
 
                     var laborHours = partograph.DeliveryTime.HasValue && partograph.LaborStartTime.HasValue
                         ? (partograph.DeliveryTime.Value - partograph.LaborStartTime.Value).TotalHours
@@ -648,6 +665,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     // Documentation quality
                     DocumentationCompleteness = avgDocCompleteness,
                     DocumentationAccuracy = 95.0m, // Placeholder
+
+                    // Staff-specific measurement counts (measurements recorded by this staff member)
+                    FHRMeasurementsRecorded = totalFHRByStaff,
+                    CervixMeasurementsRecorded = totalCervixByStaff,
+                    BPMeasurementsRecorded = totalBPByStaff,
 
                     // Compliance metrics
                     WHOProtocolCompliance = avgDocCompleteness * 0.9m, // Approximate based on documentation
