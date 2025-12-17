@@ -125,7 +125,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        public string FormattedGestationalAge => ExpectedDeliveryDate != null ? new EMPEROR.COMMON.GestationalAge().Age(DateTime.Now, ExpectedDeliveryDate.Value, true) : LastMenstrualDate != null ? new EMPEROR.COMMON.GestationalAge().Age(LastMenstrualDate.Value, DateTime.Now, false) : string.Empty;
+        public string FormattedGestationalAge => ExpectedDeliveryDate != null ? new EMPEROR.COMMON.GestationalAge().Age(ExpectedDeliveryDate.Value, DateTime.Now, true) : LastMenstrualDate != null ? new EMPEROR.COMMON.GestationalAge().Age(LastMenstrualDate.Value, DateTime.Now, false) : string.Empty;
 
         public bool GestationalAgeVisibility => !string.IsNullOrWhiteSpace(FormattedGestationalAge);
 

@@ -22,7 +22,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public DateOnly? ExpectedDeliveryDate { get; set; }
         public DateOnly? LastMenstrualDate { get; set; }
 
-        public string GestationalAge => ExpectedDeliveryDate != null ? new EMPEROR.COMMON.GestationalAge().Age(DateTime.Now, new DateTime(ExpectedDeliveryDate.Value.Year, ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day), true) : LastMenstrualDate != null ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(LastMenstrualDate.Value.Year, LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day), DateTime.Now, false) : string.Empty;
+        public string GestationalAge => ExpectedDeliveryDate != null ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(ExpectedDeliveryDate.Value.Year, ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day), DateTime.Now, true) : LastMenstrualDate != null ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(LastMenstrualDate.Value.Year, LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day), DateTime.Now, false) : string.Empty;
 
         /// <summary>
         /// Calculates gestational age in weeks and days for precise assessment.
