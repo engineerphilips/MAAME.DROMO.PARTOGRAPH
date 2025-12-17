@@ -98,86 +98,121 @@
                                         Opacity="1" />
                             </Border.Shadow>
 
-                            <Grid RowDefinitions="Auto,Auto,Auto,Auto" Padding="16">
+                            <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*,Auto" Padding="16">
 
-                                <!-- Header Row: Patient Info & Status -->
-                                <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
-
-                                    <!-- Cervical Dilatation Circle -->
-                                    <Grid WidthRequest="60" HeightRequest="60">
-                                        <!-- Outer ring -->
-                                        <Border WidthRequest="60" HeightRequest="60"
+                                <!-- Cervical Dilatation Circle -->
+                                <Grid WidthRequest="60" HeightRequest="60" Margin="0,0,8,0">
+                                    <!-- Outer ring -->
+                                    <Border WidthRequest="60" HeightRequest="60"
                                                 BackgroundColor="Transparent"
                                                 StrokeThickness="3"
                                                 Stroke="#F59E0B">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="30" />
-                                            </Border.StrokeShape>
-                                        </Border>
-                                        <!-- Inner circle -->
-                                        <Border WidthRequest="52" HeightRequest="52"
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="30" />
+                                        </Border.StrokeShape>
+                                    </Border>
+                                    <!-- Inner circle -->
+                                    <Border WidthRequest="52" HeightRequest="52"
                                                 BackgroundColor="#F59E0B"
                                                 StrokeThickness="0"
                                                 HorizontalOptions="Center"
-                                                VerticalOptions="Center">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="26" />
-                                            </Border.StrokeShape>
-                                            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="-2">
-                                                <Label Text="{Binding CurrentDilatation, StringFormat='{0}'}"
-                                                       FontSize="22"
+                                                VerticalOptions="Center"
+                                                Padding="-10"
+                                            Margin="0,0,8,0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="26" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="-5">
+                                            <Label FontSize="22"
                                                        FontAttributes="Bold"
                                                        TextColor="White"
-                                                       HorizontalOptions="Center" />
-                                                <Label Text="cm"
-                                                       FontSize="9"
-                                                       TextColor="White"
-                                                       Opacity="0.9"
-                                                       HorizontalOptions="Center" />
-                                            </VerticalStackLayout>
-                                        </Border>
-                                    </Grid>
+                                                       HorizontalOptions="Center">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding CurrentDilatation}" FontAttributes="Bold" />
+                                                        <Span Text="cm" FontSize="14" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </Grid>
 
-                                    <!-- Patient Name & Details -->
-                                    <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                                        <Label Text="{Binding Name}"
+                                <!-- Patient Name & Details -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}"
                                                FontAttributes="Bold"
                                                FontSize="17"
                                                TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"
                                                LineBreakMode="TailTruncation" />
-                                        <HorizontalStackLayout Spacing="6">
-                                            <Label Text="&#xE8B5;"
+                                    <HorizontalStackLayout Spacing="6">
+                                        <!--<Label Text="&#xE8B5;"
                                                    FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                    FontSize="12"
                                                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
-                                                   VerticalOptions="Center" />
-                                            <Label Text="{Binding HospitalNumber}"
+                                                   VerticalOptions="Center" />-->
+                                        <Label Text="{Binding HospitalNumber}"
                                                    FontSize="13"
                                                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                                    FontFamily="monospace" />
-                                        </HorizontalStackLayout>
-                                    </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
 
-                                    <!-- Status Badge -->
-                                    <Border Grid.Column="2"
+                                <!-- Status Badge -->
+                                <Border Grid.Column="2"
                                             BackgroundColor="{AppThemeBinding Light=#ECFDF5, Dark=#064E3B}"
                                             Padding="10,6"
                                             VerticalOptions="Start">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="8" />
-                                        </Border.StrokeShape>
-                                        <Label Text="{Binding StatusDisplay, Mode=OneWay}"
-                                               FontSize="11"
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding StatusDisplay, Mode=OneWay}" 
                                                FontAttributes="Bold"
                                                TextColor="{Binding StatusColorString, Mode=OneWay}" />
+                                </Border>
+
+                                <Grid Grid.Row="1" Grid.RowSpan="2" WidthRequest="60" HeightRequest="60" Margin="0,0,8,0">
+                                    <!-- Outer ring -->
+                                    <Border WidthRequest="60" HeightRequest="60"
+                                                BackgroundColor="Transparent"
+                                                StrokeThickness="3"
+                                                Stroke="#F59E0B">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="30" />
+                                        </Border.StrokeShape>
+                                    </Border>
+                                    <!-- Inner circle -->
+                                    <Border WidthRequest="52" HeightRequest="52"
+                                                BackgroundColor="#F59E0B"
+                                                StrokeThickness="0"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center"
+                                                Padding="-10"
+                                            Margin="0,0,8,0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="26" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="-5">
+                                            <Label FontSize="22"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White"
+                                                       HorizontalOptions="Center">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding CurrentHeadDescent}" FontAttributes="Bold" />
+                                                        <Span Text="descent" FontSize="10" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </VerticalStackLayout>
                                     </Border>
                                 </Grid>
-
+                                
                                 <!-- Patient Info Row -->
-                                <Border Grid.Row="1"
+                                <!--<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                                         BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#374151}"
-                                        Padding="12,8"
-                                        Margin="0,12,0,0"
+                                        Padding="0,8,12,8"
+                                        Margin="0,5,0,0"
                                         StrokeThickness="0">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="8" />
@@ -199,15 +234,15 @@
                                                    VerticalOptions="Center" />
                                         </HorizontalStackLayout>
                                     </Grid>
-                                </Border>
+                                </Border>-->
 
                                 <!-- Labor Time Info -->
-                                <Grid Grid.Row="2" ColumnDefinitions="Auto,*" ColumnSpacing="8" Margin="0,12,0,0">
-                                    <Label Text="&#xE917;"
+                                <Grid Grid.Row="2" Grid.Column="1">
+                                    <!--<Label Text="&#xE917;"
                                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                            FontSize="14"
                                            TextColor="{AppThemeBinding Light=#3B82F6, Dark=#60A5FA}"
-                                           VerticalOptions="Center" />
+                                           VerticalOptions="Center" />-->
                                     <VerticalStackLayout Grid.Column="1" Spacing="2">
                                         <Label Text="{Binding LaborStartTime, StringFormat='{0:dddd, dd MMM, HH:mm}'}"
                                                FontSize="12"
@@ -220,7 +255,7 @@
                                 </Grid>
 
                                 <!-- Action Button -->
-                                <Button Grid.Row="3"
+                                <Button Grid.Row="3" Grid.ColumnSpan="3"
                                         Text="View Partograph"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:ActivePatientsPageModel}}, Path=NavigateToPartographCommand, x:DataType=pagemodels:ActivePatientsPageModel}"
                                         CommandParameter="{Binding .}"

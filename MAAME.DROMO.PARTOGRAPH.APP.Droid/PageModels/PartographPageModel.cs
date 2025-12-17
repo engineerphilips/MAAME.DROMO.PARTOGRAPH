@@ -827,11 +827,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 }
 
                 Patient.BishopScores = await _bishopScoreRepository.ListByPatientAsync(Patient.ID);
-                if (Patient.BishopScores.Any())
-                {
-                    earliestTimes.Add(Patient.BishopScores.Min(e => e.Time));
-                    latestTimes.Add(Patient.BishopScores.Max(e => e.Time));
-                }
+                //if (Patient.BishopScores.Any())
+                //{
+                //    earliestTimes.Add(Patient.BishopScores.Min(e => e.Time));
+                //    latestTimes.Add(Patient.BishopScores.Max(e => e.Time));
+                //}
 
                 if (latestTimes.Any())
                     LastRecordedTime = latestTimes.Max();

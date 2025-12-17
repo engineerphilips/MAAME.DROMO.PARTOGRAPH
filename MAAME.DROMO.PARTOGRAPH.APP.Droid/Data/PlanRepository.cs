@@ -81,11 +81,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         }
 
         protected override string GetInsertSql() => @"
-            INSERT INTO Tbl_BP (ID, partographID, time, handler, notes, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
+            INSERT INTO Tbl_Plan (ID, partographID, time, handler, notes, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
         VALUES (@id, @partographId, @time, @handler, @notes, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted, @datahash);";
 
         protected override string GetUpdateSql() => @"
-            UPDATE Tbl_BP SET time = @time, handler = @handler, notes = @notes, 
+            UPDATE Tbl_Plan SET time = @time, handler = @handler, notes = @notes, 
                 updatedtime = @updatedtime, deletedtime = @deletedtime, deviceid = @deviceid,
                 origindeviceid = @origindeviceid, syncstatus = @syncstatus, version = @version,
                 serverversion = @serverversion, deleted = @deleted, datahash = @datahash

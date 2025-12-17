@@ -25,7 +25,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         [ObservableProperty]
-        private int _station = -1;
+        private int _station;
 
         [ObservableProperty]
         private string _notes = string.Empty;
@@ -42,7 +42,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             _errorHandler = errorHandler;
 
             // Set default recorded by from preferences
-            RecordedBy = Preferences.Get("StaffName", "Staff");
+            //RecordedBy = Preferences.Get("StaffName", "Staff");
         }
 
         //public void ApplyQueryAttributes(IDictionary<string, object> query)

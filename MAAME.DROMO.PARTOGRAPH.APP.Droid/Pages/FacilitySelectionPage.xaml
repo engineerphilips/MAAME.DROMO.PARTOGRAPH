@@ -73,6 +73,11 @@
                                 </Border.GestureRecognizers>
 
                                 <Grid Padding="20" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16" InputTransparent="True" CascadeInputTransparent="True">
+
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectFacilityCommand}" CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+
                                     <!-- Icon -->
                                     <Border Grid.Column="0"
                                           WidthRequest="56"
@@ -81,7 +86,7 @@
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="16" />
                                         </Border.StrokeShape>
-                                        <Label Text="&#xE8DD;"
+                                        <Label Text="{x:Static fonts:FluentUI.building_32_regular}"
                                              FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                              FontSize="28"
                                              TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
@@ -106,13 +111,13 @@
                                     </VerticalStackLayout>
 
                                     <!-- Selection Indicator -->
-                                    <Label Grid.Column="2"
+                                    <!--<Label Grid.Column="2"
                                          Text="&#xE73E;"
                                          FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                          FontSize="24"
                                          TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
                                          VerticalOptions="Center"
-                                         HorizontalOptions="Center" />
+                                         HorizontalOptions="Center" />-->
                                 </Grid>
                             </Border>
                         </DataTemplate>

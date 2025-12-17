@@ -433,7 +433,7 @@
                 </HorizontalStackLayout>
             </Grid>-->
 
-            <Grid Grid.Row="4" ColumnDefinitions="25,65,35,*">
+            <Grid Grid.Row="4" ColumnDefinitions="20,70,35,*">
                 <Grid.RowDefinitions>
                     <!-- Control Row -->
                     <RowDefinition Height="Auto" />

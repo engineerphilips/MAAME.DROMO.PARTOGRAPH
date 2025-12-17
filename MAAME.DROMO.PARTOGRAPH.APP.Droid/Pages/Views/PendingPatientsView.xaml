@@ -149,7 +149,7 @@
                                                        VerticalOptions="Center"
                                                        FontSize="18"
                                                        FontAttributes="Bold"
-                                                       TextColor="White" />
+                                                       TextColor="#F59E0B" />
                                             </Border>
                                         </Grid>
 
@@ -161,11 +161,11 @@
                                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"
                                                    LineBreakMode="TailTruncation" />
                                             <HorizontalStackLayout Spacing="6">
-                                                <Label Text="&#xE8B5;"
+                                                <!--<Label Text="&#xE8B5;"
                                                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                        FontSize="12"
                                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
-                                                       VerticalOptions="Center" />
+                                                       VerticalOptions="Center" />-->
                                                 <Label Text="{Binding HospitalNumber}"
                                                        FontSize="13"
                                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
@@ -191,7 +191,7 @@
                                     <!-- Patient Info Row -->
                                     <Border Grid.Row="1"
                                             BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#374151}"
-                                            Padding="12,8"
+                                            Padding="12,0,0,8"
                                             Margin="0,12,0,0"
                                             StrokeThickness="0">
                                         <Border.StrokeShape>
@@ -203,16 +203,16 @@
                                     </Border>
 
                                     <!-- Admission Time Info -->
-                                    <Grid Grid.Row="2" ColumnDefinitions="Auto,*" ColumnSpacing="8" Margin="0,12,0,0">
-                                        <Label Text="&#xE8B5;"
+                                    <Grid Grid.Row="2" ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                        <!--<Label Text="&#xE8B5;"
                                                FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                FontSize="14"
                                                TextColor="{AppThemeBinding Light=#A855F7, Dark=#C084FC}"
-                                               VerticalOptions="Center" />
+                                               VerticalOptions="Center" />-->
                                         <VerticalStackLayout Grid.Column="1" Spacing="2">
-                                            <Label Text="Admitted"
+                                            <!--<Label Text="Admitted"
                                                    FontSize="11"
-                                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />-->
                                             <Label Text="{Binding AdmissionDate, StringFormat='{0:dddd, dd MMM yyyy HH:mm}'}"
                                                    FontSize="12"
                                                    FontAttributes="Bold"

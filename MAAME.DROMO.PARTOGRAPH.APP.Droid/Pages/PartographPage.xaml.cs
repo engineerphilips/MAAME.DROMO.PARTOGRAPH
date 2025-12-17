@@ -35,7 +35,7 @@ public partial class PartographPage : ContentPage
         sfPopupPlan.BindingContext = pageModel.PlanModalPageModel;
         sfPopupBishopScore.BindingContext = pageModel.BishopScorePopupPageModel;
 
-        Loaded += async (s, e) =>
+        Loaded += (s, e) =>
         {
             if (BindingContext is PartographPageModel pageModel)
             {

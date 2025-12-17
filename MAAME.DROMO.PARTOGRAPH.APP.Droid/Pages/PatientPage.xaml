@@ -25,7 +25,6 @@
         --><!--IconImageSource="{FontImageSource FontFamily={x:Static fonts:FluentUI.FontFamily}, Glyph=&#xE74D;, Color=White}"--><!--
     </ContentPage.ToolbarItems>-->
 
-
     <ContentPage.Resources>
         <ResourceDictionary>
             <!-- Hospital Theme Colors -->
@@ -47,6 +46,14 @@
                 <GradientStop Color="#0078D4" Offset="0.0" />
                 <GradientStop Color="#40E0FF" Offset="1.0" />
             </LinearGradientBrush>
+
+            <!-- Card Styles -->
+            <Style x:Key="SectionBorder" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{StaticResource SurfaceWhite}" />
+                <!--<Setter Property="CornerRadius" Value="16" />-->
+                <!--<Setter Property="Shadow" Value="True" />-->
+                <Setter Property="Margin" Value="16,8" />
+            </Style>
 
             <!-- Card Styles -->
             <Style x:Key="SectionCard" TargetType="cards:SfCardView">
@@ -88,6 +95,7 @@
             <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
                 <Setter Property="ContainerType" Value="Outlined" />
                 <Setter Property="OutlineCornerRadius" Value="8" />
+                <Setter Property="Stroke" Value="{StaticResource PrimaryBlue}" />
                 <!--<Setter Property="Stroke" Value="{StaticResource BorderLight}" />-->
                 <!--<Setter Property="FocusedStroke" Value="{StaticResource PrimaryBlue}" />-->
                 <!--<Setter Property="ContainerBackground" Value="{StaticResource SurfaceWhite}" />-->
@@ -134,11 +142,11 @@
         <StackLayout Spacing="0" Padding="0,0,0,10">
 
             <!-- Patient Demographics Section -->
-            <cards:SfCardView Style="{StaticResource SectionCard}" Margin="16,16,16,8">
+            <Border Style="{StaticResource SectionBorder}" Margin="16,16,16,8">
                 <StackLayout Padding="16" Spacing="8">
                     <!-- Section Header with Icon -->
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
-                        <Border Grid.Column="0"
+                        <!--<Border Grid.Column="0"
                                 BackgroundColor="{StaticResource PrimaryBlue}"
                                 WidthRequest="40"
                                 HeightRequest="40"
@@ -149,7 +157,7 @@
                                    TextColor="White"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                        </Border>
+                        </Border>-->
                         <StackLayout Grid.Column="1" VerticalOptions="Center">
                             <Label Text="Patient Demographics"
                                    FontSize="18"
@@ -190,13 +198,17 @@
                     <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
                         <core:SfTextInputLayout Grid.Column="0"
                                                 Hint="Date of Birth *"
-                                                Style="{StaticResource PatientInput}">
-                            <DatePicker Date="{Binding DateOfBirth, Mode=TwoWay}"
-                                        Format="dd-MM-yyyy"
-                                        MinimumDate="01/01/1950"
-                                        MaximumDate="{StaticResource Today}" />
+                                                Style="{StaticResource PatientInput}" >
+                            <DatePicker Date="{Binding DateOfBirth, Mode=TwoWay, StringFormat='{0:dd-MM-yyyy}'}" />
+                            <!--<Entry Text="{Binding DateOfBirth, Mode=TwoWay, StringFormat='{0:dd-MM-yyyy}'}"  
+       ReturnType="Next" IsReadOnly="True" />-->
+                            <!--<Label Text="{Binding DateOfBirth, Mode=TwoWay, StringFormat='{0:dd-MM-yyyy}'}"     VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+                                </Label.GestureRecognizers>
+                            </Label>-->
                         </core:SfTextInputLayout>
-
+                        
                         <core:SfTextInputLayout Grid.Column="1"
                                                 Hint="Age *"
                                                 Style="{StaticResource PatientInput}">
@@ -208,7 +220,12 @@
                                                     MaximumNumberDecimalDigits="0" />
                         </core:SfTextInputLayout>
                     </Grid>
-
+                    
+                    <!--<picker:SfDatePicker Grid.Column="0" Grid.ColumnSpan="3" SelectedDate="{Binding DateOfBirth, Mode=TwoWay}"
+                Format="dd_MM_yyyy"
+                MinimumDate="01/01/1950"
+                MaximumDate="{StaticResource Today}" Mode="Dialog" PopupHeight="500" />-->
+                    
                     <!-- Blood Group -->
                     <core:SfTextInputLayout Hint="Blood Group *"
                                             Style="{StaticResource PatientInput}"
@@ -235,14 +252,14 @@
                                ReturnType="Next" />
                     </core:SfTextInputLayout>
                 </StackLayout>
-            </cards:SfCardView>
+            </Border>
 
             <!-- Emergency Contact Section -->
-            <cards:SfCardView Style="{StaticResource SectionCard}">
+            <Border Style="{StaticResource SectionBorder}">
                 <StackLayout Padding="16" Spacing="8">
                     <!-- Section Header with Icon -->
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
-                        <Border Grid.Column="0"
+                        <!--<Border Grid.Column="0"
                                 BackgroundColor="{StaticResource ErrorRed}"
                                 WidthRequest="40"
                                 HeightRequest="40"
@@ -253,7 +270,7 @@
                                    TextColor="White"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                        </Border>
+                        </Border>-->
                         <StackLayout Grid.Column="1" VerticalOptions="Center">
                             <Label Text="Emergency Contact"
                                    FontSize="18"
@@ -291,14 +308,14 @@
                                ReturnType="Next" />
                     </core:SfTextInputLayout>
                 </StackLayout>
-            </cards:SfCardView>
+            </Border>
 
             <!-- Anthropometric Data Section -->
-            <cards:SfCardView Style="{StaticResource SectionCard}">
+            <Border Style="{StaticResource SectionBorder}">
                 <StackLayout Padding="16" Spacing="8">
                     <!-- Section Header with Icon -->
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
-                        <Border Grid.Column="0"
+                        <!--<Border Grid.Column="0"
                                 BackgroundColor="{StaticResource AccentTeal}"
                                 WidthRequest="40"
                                 HeightRequest="40"
@@ -309,7 +326,7 @@
                                    TextColor="White"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                        </Border>
+                        </Border>-->
                         <StackLayout Grid.Column="1" VerticalOptions="Center">
                             <Label Text="Anthropometric Data"
                                    FontSize="18"
@@ -350,8 +367,7 @@
                             StrokeShape="RoundRectangle 12"
                             IsVisible="{Binding HasBmiData}">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <Border Grid.Column="0"
-                                    BackgroundColor="White"
+                            <!--<Border Grid.Column="0"
                                     Opacity="0.3"
                                     WidthRequest="50"
                                     HeightRequest="50"
@@ -359,31 +375,28 @@
                                 <Label Text="&#xE915;"
                                        FontFamily="MaterialIcons"
                                        FontSize="24"
-                                       TextColor="White"
                                        HorizontalOptions="Center"
                                        VerticalOptions="Center" />
-                            </Border>
+                            </Border>-->
                             <StackLayout Grid.Column="1" VerticalOptions="Center">
                                 <Label Text="{Binding FormattedBmi}"
                                        FontSize="18"
-                                       FontAttributes="Bold"
-                                       TextColor="White" />
+                                       FontAttributes="Bold" HorizontalOptions="Center" />
                                 <Label Text="{Binding BmiCategory}"
                                        FontSize="14"
-                                       TextColor="White"
-                                       Opacity="0.9" />
+                                       Opacity="0.9" HorizontalOptions="Center" />
                             </StackLayout>
                         </Grid>
                     </Border>
                 </StackLayout>
-            </cards:SfCardView>
+            </Border>
 
             <!-- Obstetric History Section -->
-            <cards:SfCardView Style="{StaticResource SectionCard}">
+            <Border Style="{StaticResource SectionBorder}">
                 <StackLayout Padding="16" Spacing="8">
                     <!-- Section Header with Icon -->
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
-                        <Border Grid.Column="0"
+                        <!--<Border Grid.Column="0"
                                 BackgroundColor="#E91E63"
                                 WidthRequest="40"
                                 HeightRequest="40"
@@ -394,7 +407,7 @@
                                    TextColor="White"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                        </Border>
+                        </Border>-->
                         <StackLayout Grid.Column="1" VerticalOptions="Center">
                             <Label Text="Obstetric History"
                                    FontSize="18"
@@ -554,20 +567,19 @@
                             StrokeShape="RoundRectangle 8"
                             IsVisible="{Binding GestationalAgeVisibility}">
                         <Label Text="{Binding FormattedGestationalAge}"
-                               FontSize="16"
-                               TextColor="White"
+                               FontSize="16" 
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center" />
                     </Border>
                 </StackLayout>
-            </cards:SfCardView>
+            </Border>
 
             <!-- Medical Information Section -->
-            <cards:SfCardView Style="{StaticResource SectionCard}">
+            <Border Style="{StaticResource SectionBorder}">
                 <StackLayout Padding="16" Spacing="8">
                     <!-- Section Header with Icon -->
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
-                        <Border Grid.Column="0"
+                        <!--<Border Grid.Column="0"
                                 BackgroundColor="{StaticResource WarningOrange}"
                                 WidthRequest="40"
                                 HeightRequest="40"
@@ -578,7 +590,7 @@
                                    TextColor="White"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                        </Border>
+                        </Border>-->
                         <StackLayout Grid.Column="1" VerticalOptions="Center">
                             <Label Text="Medical Information"
                                    FontSize="18"
@@ -605,14 +617,14 @@
                                Placeholder="e.g., Hypertension, Diabetes, etc." />
                     </core:SfTextInputLayout>
                 </StackLayout>
-            </cards:SfCardView>
+            </Border>
 
             <!-- Labour Information Section -->
-            <cards:SfCardView Style="{StaticResource SectionCard}">
+            <Border Style="{StaticResource SectionBorder}">
                 <StackLayout Padding="16" Spacing="8">
                     <!-- Section Header with Icon -->
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
-                        <Border Grid.Column="0"
+                        <!--<Border Grid.Column="0"
                                 BackgroundColor="#9C27B0"
                                 WidthRequest="40"
                                 HeightRequest="40"
@@ -623,7 +635,7 @@
                                    TextColor="White"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                        </Border>
+                        </Border>-->
                         <StackLayout Grid.Column="1" VerticalOptions="Center">
                             <Label Text="Labour Information"
                                    FontSize="18"
@@ -755,7 +767,7 @@
                             StrokeShape="RoundRectangle 12"
                             IsVisible="{Binding HasDilatationValue}">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <Border Grid.Column="0"
+                            <!--<Border Grid.Column="0"
                                     BackgroundColor="White"
                                     Opacity="0.3"
                                     WidthRequest="40"
@@ -767,24 +779,23 @@
                                        TextColor="White"
                                        HorizontalOptions="Center"
                                        VerticalOptions="Center" />
-                            </Border>
+                            </Border>-->
                             <Label Grid.Column="1"
                                    Text="{Binding LaborStatusIndicator}"
                                    FontSize="14"
                                    FontAttributes="Bold"
-                                   TextColor="White"
                                    VerticalOptions="Center" />
                         </Grid>
                     </Border>
                 </StackLayout>
-            </cards:SfCardView>
+            </Border>
 
             <!-- Bishop Score Calculator Section -->
-            <cards:SfCardView Style="{StaticResource SectionCard}">
+            <Border Style="{StaticResource SectionBorder}">
                 <StackLayout Padding="16" Spacing="8">
                     <!-- Section Header with Icon -->
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
-                        <Border Grid.Column="0"
+                        <!--<Border Grid.Column="0"
                                 BackgroundColor="#3F51B5"
                                 WidthRequest="40"
                                 HeightRequest="40"
@@ -795,7 +806,7 @@
                                    TextColor="White"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                        </Border>
+                        </Border>-->
                         <StackLayout Grid.Column="1" VerticalOptions="Center">
                             <Label Text="Bishop Score Calculator"
                                    FontSize="18"
@@ -894,7 +905,6 @@
                             IsVisible="{Binding IsInductionPlanned}">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
                             <Border Grid.Column="0"
-                                    BackgroundColor="White"
                                     WidthRequest="60"
                                     HeightRequest="60"
                                     StrokeShape="RoundRectangle 30">
@@ -908,24 +918,22 @@
                             <StackLayout Grid.Column="1" VerticalOptions="Center">
                                 <Label Text="Bishop Score"
                                        FontSize="16"
-                                       FontAttributes="Bold"
-                                       TextColor="White" />
+                                       FontAttributes="Bold" />
                                 <Label Text="{Binding BishopScoreInterpretation}"
                                        FontSize="13"
-                                       TextColor="White"
                                        Opacity="0.9" />
                             </StackLayout>
                         </Grid>
                     </Border>
                 </StackLayout>
-            </cards:SfCardView>
+            </Border>
 
             <!-- Risk Assessment Display Section -->
-            <cards:SfCardView Style="{StaticResource SectionCard}">
+            <Border Style="{StaticResource SectionBorder}">
                 <StackLayout Padding="16" Spacing="8">
                     <!-- Section Header with Icon -->
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,8">
-                        <Border Grid.Column="0"
+                    <Grid ColumnSpacing="12" Margin="0,0,0,8">
+                        <!--<Border Grid.Column="0"
                                 BackgroundColor="{StaticResource ErrorRed}"
                                 WidthRequest="40"
                                 HeightRequest="40"
@@ -933,11 +941,10 @@
                             <Label Text="&#xE002;"
                                    FontFamily="MaterialIcons"
                                    FontSize="20"
-                                   TextColor="White"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                        </Border>
-                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                        </Border>-->
+                        <StackLayout Grid.Column="0" VerticalOptions="Center">
                             <Label Text="Risk Assessment"
                                    FontSize="18"
                                    FontAttributes="Bold"
@@ -955,7 +962,6 @@
                             StrokeShape="RoundRectangle 12">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
                             <Border Grid.Column="0"
-                                    BackgroundColor="White"
                                     WidthRequest="60"
                                     HeightRequest="60"
                                     StrokeShape="RoundRectangle 30">
@@ -969,11 +975,9 @@
                             <StackLayout Grid.Column="1" VerticalOptions="Center">
                                 <Label Text="{Binding RiskLevel}"
                                        FontSize="18"
-                                       FontAttributes="Bold"
-                                       TextColor="White" />
+                                       FontAttributes="Bold" />
                                 <Label Text="Based on clinical assessment"
                                        FontSize="12"
-                                       TextColor="White"
                                        Opacity="0.9" />
                             </StackLayout>
                         </Grid>
@@ -1025,8 +1029,8 @@
                                     <DataTemplate>
                                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="0,2">
                                             <Label Grid.Column="0"
-                                                   Text="&#xE5CA;"
-                                                   FontFamily="MaterialIcons"
+                                                   Text="&#xE5CA;" 
+                                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                                    FontSize="14"
                                                    TextColor="{StaticResource SecondaryGreen}"
                                                    VerticalOptions="Start" />
@@ -1042,10 +1046,10 @@
                         </StackLayout>
                     </Border>
                 </StackLayout>
-            </cards:SfCardView>
+            </Border>
 
             <!-- Action Buttons Section -->
-            <cards:SfCardView Style="{StaticResource SectionCard}" Margin="16,8,16,16">
+            <Border Style="{StaticResource SectionBorder}" Margin="16,8,16,16">
                 <StackLayout Padding="16" Spacing="12">
                     <!-- Error Messages -->
                     <Border BackgroundColor="#FFEBEE"
@@ -1055,12 +1059,12 @@
                             StrokeThickness="1"
                             IsVisible="{Binding HasError}">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <Label Grid.Column="0"
+                            <!--<Label Grid.Column="0"
                                    Text="&#xE000;"
                                    FontFamily="MaterialIcons"
                                    FontSize="20"
                                    TextColor="{StaticResource ErrorRed}"
-                                   VerticalOptions="Start" />
+                                   VerticalOptions="Start" />-->
                             <Label Grid.Column="1"
                                    Text="{Binding ErrorMessage}"
                                    Style="{StaticResource ErrorText}"
@@ -1082,7 +1086,7 @@
                     </buttons:SfButton>
 
                     <!-- Save Draft Button -->
-                    <buttons:SfButton Text="Save as Draft"
+                    <!--<buttons:SfButton Text="Save as Draft"
                                       Style="{StaticResource SecondaryButton}"
                                       Command="{Binding SaveDraftCommand}"
                                       HeightRequest="50">
@@ -1092,9 +1096,9 @@
                                              Size="18"
                                              Color="{StaticResource PrimaryBlue}" />
                         </buttons:SfButton.ImageSource>
-                    </buttons:SfButton>
+                    </buttons:SfButton>-->
                 </StackLayout>
-            </cards:SfCardView>
+            </Border>
 
         </StackLayout>
     </ScrollView>

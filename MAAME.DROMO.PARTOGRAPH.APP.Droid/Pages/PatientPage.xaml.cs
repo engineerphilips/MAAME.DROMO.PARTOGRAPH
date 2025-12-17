@@ -33,4 +33,9 @@ public partial class PatientPage : ContentPage
             }
         }
     }
+
+    private void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+    {
+
+    }
 }

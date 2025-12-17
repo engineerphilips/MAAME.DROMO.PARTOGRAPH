@@ -478,7 +478,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = @"SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion,
+                selectCmd.CommandText = @"SELECT P.ID, P.patientID, P.time, P.status, p.currentPhase, P.gravida, P.parity, P.abortion,
                     P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate,
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
@@ -761,7 +761,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 // Reusable SELECT query with all WHO Four-Stage System columns
                 const string baseQuery = @"SELECT
-                    P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion,
+                    P.ID, P.patientID, P.time, P.status, p.currentPhase, P.gravida, P.parity, P.abortion,
                     P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate,
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
@@ -813,7 +813,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 var selectCmd = connection.CreateCommand();
                 selectCmd.CommandText = @"SELECT
-                    P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion,
+                    P.ID, P.patientID, P.time, P.status, p.currentPhase, P.gravida, P.parity, P.abortion,
                     P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate,
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
@@ -1654,7 +1654,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 // First try to find an active partograph
                 var selectCmd = connection.CreateCommand();
                 selectCmd.CommandText = @"
-                SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted
+                SELECT P.ID, P.patientID, P.time, P.status, P.currentPhase, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted
                 FROM Tbl_Partograph P
                 WHERE P.patientID = @patientID
                   AND P.deleted = 0
@@ -1675,7 +1675,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     selectCmd = connection.CreateCommand();
                     selectCmd.CommandText = @"
-                    SELECT P.ID, P.patientID, P.time, P.status, P.gravida, P.parity, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted
+                    SELECT P.ID, P.patientID, P.time, P.status, P.currentPhase, P.gravida, P.parity, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted
                     FROM Tbl_Partograph P
                     WHERE P.patientID = @patientID
                       AND P.deleted = 0
