@@ -62,6 +62,54 @@
                                                ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
 
+                    <!-- Measurement History Section -->
+                    <Frame IsVisible="{Binding HasHistory}"
+                           BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}"
+                           BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                           CornerRadius="10"
+                           Padding="12"
+                           Margin="0,5,0,10">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Previous Measurements"
+                                   FontAttributes="Bold"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=#333, Dark=White}" />
+                            <CollectionView ItemsSource="{Binding MeasurementHistory}"
+                                            HeightRequest="120">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="Auto,*,Auto"
+                                              Padding="8,6"
+                                              ColumnSpacing="10">
+                                            <Frame Grid.Column="0"
+                                                   BackgroundColor="#FFEBEE"
+                                                   CornerRadius="15"
+                                                   Padding="8,4"
+                                                   HasShadow="False">
+                                                <Label Text="{Binding Value}"
+                                                       FontAttributes="Bold"
+                                                       FontSize="12"
+                                                       TextColor="#C62828"
+                                                       VerticalOptions="Center" />
+                                            </Frame>
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding DateTimeDisplay}"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                                   VerticalOptions="Center" />
+                                            <Label Grid.Column="2"
+                                                   Text="{Binding RecordedBy}"
+                                                   FontSize="11"
+                                                   FontAttributes="Italic"
+                                                   TextColor="{AppThemeBinding Light=#888, Dark=#888}"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Frame>
+
                     <!-- Advanced Fields Toggle -->
                     <!--<Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
                            BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}"

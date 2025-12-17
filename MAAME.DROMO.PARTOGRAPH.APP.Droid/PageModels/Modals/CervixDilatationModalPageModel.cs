@@ -4,6 +4,7 @@ using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -33,7 +34,37 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
-        //[ObservableProperty]
+        /// <summary>
+        /// Collection of measurement history items for display
+        /// </summary>
+        [ObservableProperty]
+        private ObservableCollection<MeasurementHistoryItem> _measurementHistory = new();
+
+        /// <summary>
+        /// Indicates whether there is any history to display
+        /// </summary>
+        [ObservableProperty]
+        private bool _hasHistory;
+
+        /// <summary>
+        /// The minimum allowed dilatation value based on previous measurements.
+        /// Labor should not regress - dilatation can only increase or stay the same.
+        /// </summary>
+        [ObservableProperty]
+        private int _minimumDilatation;
+
+        /// <summary>
+        /// Validation message shown when user tries to enter invalid value
+        /// </summary>
+        [ObservableProperty]
+        private string _validationMessage = string.Empty;
+
+        /// <summary>
+        /// Whether the validation message should be shown
+        /// </summary>
+        [ObservableProperty]
+        private bool _showValidationMessage;
+
         private int _dilatation;
 
         public int Dilatation
@@ -41,6 +72,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             get => _dilatation;
             set
             {
+                // Validate that dilatation doesn't decrease (labor progression rule)
+                if (value < MinimumDilatation && value >= 0)
+                {
+                    ValidationMessage = $"Dilatation cannot decrease. Last recorded value was {MinimumDilatation} cm. Labor should only progress forward.";
+                    ShowValidationMessage = true;
+                    return;
+                }
+                ShowValidationMessage = false;
+                ValidationMessage = string.Empty;
                 SetProperty(ref _dilatation, value);
             }
         }
@@ -345,12 +385,49 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 // For now, we'll use the patient ID directly
                 PatientName = $"Patient ID: {patientId}";
 
-                // Load last pain relief entry to prefill some values
+                // Load measurement history
+                await LoadMeasurementHistory(patientId);
+
+                // Load last entry to set minimum dilatation (labor progression rule)
                 var lastEntry = await _cervixDilatationRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
-                    Dilatation = lastEntry.DilatationCm;
+                    // Set minimum dilatation - labor should not regress
+                    MinimumDilatation = lastEntry.DilatationCm;
+                    // Pre-fill with last known value
+                    _dilatation = lastEntry.DilatationCm;
+                    OnPropertyChanged(nameof(Dilatation));
                 }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
+        /// <summary>
+        /// Loads the measurement history for display in the modal.
+        /// Shows values, date/time (time only if today), and who recorded it.
+        /// </summary>
+        private async Task LoadMeasurementHistory(Guid? patientId)
+        {
+            try
+            {
+                var historyEntries = await _cervixDilatationRepository.ListByPatientAsync(patientId);
+
+                MeasurementHistory.Clear();
+
+                foreach (var entry in historyEntries.Take(10)) // Show last 10 entries
+                {
+                    var historyItem = new MeasurementHistoryItem(
+                        $"{entry.DilatationCm} cm",
+                        entry.Time,
+                        entry.HandlerName ?? "Unknown"
+                    );
+                    MeasurementHistory.Add(historyItem);
+                }
+
+                HasHistory = MeasurementHistory.Count > 0;
             }
             catch (Exception e)
             {

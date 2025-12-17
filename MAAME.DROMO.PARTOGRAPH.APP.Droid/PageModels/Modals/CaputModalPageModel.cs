@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         public Partograph? _patient;
         private readonly CaputRepository _caputRepository;
         private readonly ModalErrorHandler _errorHandler;
+
+        /// <summary>
+        /// Collection of measurement history items for display
+        /// </summary>
+        [ObservableProperty]
+        private ObservableCollection<MeasurementHistoryItem> _measurementHistory = new();
+
+        /// <summary>
+        /// Indicates whether there is any history to display
+        /// </summary>
+        [ObservableProperty]
+        private bool _hasHistory;
 
         [ObservableProperty]
         private string _patientName = string.Empty;
@@ -112,12 +125,45 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 // For now, we'll use the patient ID directly
                 PatientName = $"Patient ID: {patientId}";
 
+                // Load measurement history
+                await LoadMeasurementHistory(patientId);
+
                 // Load last pain relief entry to prefill some values
                 var lastEntry = await _caputRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
                     CaputDisplay = lastEntry.CaputDisplay;
                 }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
+        /// <summary>
+        /// Loads the measurement history for display in the modal.
+        /// Shows values, date/time (time only if today), and who recorded it.
+        /// </summary>
+        private async Task LoadMeasurementHistory(Guid? patientId)
+        {
+            try
+            {
+                var historyEntries = await _caputRepository.ListByPatientAsync(patientId);
+
+                MeasurementHistory.Clear();
+
+                foreach (var entry in historyEntries.Take(10)) // Show last 10 entries
+                {
+                    var historyItem = new MeasurementHistoryItem(
+                        entry.Degree ?? "N/A",
+                        entry.Time,
+                        entry.HandlerName ?? "Unknown"
+                    );
+                    MeasurementHistory.Add(historyItem);
+                }
+
+                HasHistory = MeasurementHistory.Count > 0;
             }
             catch (Exception e)
             {
