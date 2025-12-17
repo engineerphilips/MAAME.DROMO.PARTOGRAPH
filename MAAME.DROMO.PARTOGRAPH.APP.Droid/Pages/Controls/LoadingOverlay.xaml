@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:fonts="clr-namespace:Fonts"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls.LoadingOverlay"
+             x:Name="loadingOverlayControl"
+             IsVisible="{Binding IsLoading, Source={x:Reference loadingOverlayControl}}"
+             InputTransparent="False"
+             ZIndex="9999">
+
+    <Grid BackgroundColor="{AppThemeBinding Light=#80FFFFFF, Dark=#80000000}">
+        <Border HorizontalOptions="Center"
+                VerticalOptions="Center"
+                StrokeThickness="0"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}"
+                Padding="30,25"
+                MinimumWidthRequest="220">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="16" />
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="0,8" Radius="20" Opacity="0.25" />
+            </Border.Shadow>
+
+            <VerticalStackLayout Spacing="18" HorizontalOptions="Center">
+                <!-- Animated Icon -->
+                <Border WidthRequest="60"
+                        HeightRequest="60"
+                        BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                        HorizontalOptions="Center">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="30" />
+                    </Border.StrokeShape>
+                    <Label x:Name="iconLabel"
+                           Text="&#xE95E;"
+                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                           FontSize="28"
+                           TextColor="#2196F3"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+
+                <!-- Loading Message -->
+                <Label Text="{Binding LoadingMessage, Source={x:Reference loadingOverlayControl}}"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center" />
+
+                <!-- Progress Bar (for determinate progress) -->
+                <ProgressBar x:Name="progressBar"
+                             Progress="{Binding Progress, Source={x:Reference loadingOverlayControl}}"
+                             ProgressColor="#2196F3"
+                             HeightRequest="6"
+                             WidthRequest="160"
+                             IsVisible="{Binding IsIndeterminate, Source={x:Reference loadingOverlayControl}, Converter={toolkit:InvertedBoolConverter}}"
+                             HorizontalOptions="Center" />
+
+                <!-- Activity Indicator (for indeterminate progress) -->
+                <ActivityIndicator IsRunning="{Binding IsIndeterminate, Source={x:Reference loadingOverlayControl}}"
+                                   IsVisible="{Binding IsIndeterminate, Source={x:Reference loadingOverlayControl}}"
+                                   Color="#2196F3"
+                                   HeightRequest="36"
+                                   WidthRequest="36"
+                                   HorizontalOptions="Center" />
+
+                <!-- Progress Percentage (when determinate) -->
+                <Label x:Name="progressLabel"
+                       FontSize="13"
+                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                       HorizontalOptions="Center"
+                       IsVisible="{Binding IsIndeterminate, Source={x:Reference loadingOverlayControl}, Converter={toolkit:InvertedBoolConverter}}">
+                    <Label.Text>
+                        <MultiBinding StringFormat="{}{0:P0}">
+                            <Binding Path="Progress" Source="{x:Reference loadingOverlayControl}" />
+                        </MultiBinding>
+                    </Label.Text>
+                </Label>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentView>

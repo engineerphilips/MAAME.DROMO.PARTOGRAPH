@@ -1,10 +1,13 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 {
     public partial class AppShell : Shell
     {
+        private readonly ILoadingOverlayService? _loadingService;
+
         public AppShell()
         {
             InitializeComponent();
@@ -18,8 +21,52 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
                 BindingContext = appShellModel;
             }
 
+            // Get loading overlay service for navigation transitions
+            _loadingService = IPlatformApplication.Current!.Services.GetService<ILoadingOverlayService>();
+
+            // Subscribe to navigation events for loading indicator
+            Navigating += OnShellNavigating;
+            Navigated += OnShellNavigated;
+
             // Register additional routes
             RegisterRoutes();
+        }
+
+        private void OnShellNavigating(object? sender, ShellNavigatingEventArgs e)
+        {
+            // Show loading for partograph and patient-related navigations (heavy pages)
+            var targetRoute = e.Target?.Location?.OriginalString?.ToLowerInvariant() ?? "";
+
+            if (targetRoute.Contains("partograph") ||
+                targetRoute.Contains("patient") ||
+                targetRoute.Contains("birthoutcome") ||
+                targetRoute.Contains("babydetails"))
+            {
+                var message = GetLoadingMessage(targetRoute);
+                _loadingService?.Show(message);
+            }
+        }
+
+        private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
+        {
+            // Hide loading after navigation completes with a small delay for smooth transition
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await Task.Delay(100); // Allow page to render
+                _loadingService?.Hide();
+            });
+        }
+
+        private static string GetLoadingMessage(string route)
+        {
+            if (route.Contains("secondpartograph")) return "Loading Second Stage...";
+            if (route.Contains("thirdpartograph")) return "Loading Third Stage...";
+            if (route.Contains("fourthpartograph")) return "Loading Fourth Stage...";
+            if (route.Contains("partograph")) return "Loading Partograph...";
+            if (route.Contains("birthoutcome")) return "Loading Birth Outcome...";
+            if (route.Contains("babydetails")) return "Loading Baby Details...";
+            if (route.Contains("patient")) return "Loading Patient Data...";
+            return "Loading...";
         }
 
         private static void RegisterRoutes()
