@@ -99,7 +99,7 @@
             </Grid.Background>
 
             <!-- Decorative Background Elements -->
-            <BoxView Color="#FFFFFF08"
+            <!--<BoxView Color="#FFFFFF08"
                      WidthRequest="200"
                      HeightRequest="200"
                      CornerRadius="100"
@@ -112,7 +112,7 @@
                      CornerRadius="75"
                      HorizontalOptions="Start"
                      VerticalOptions="End"
-                     Margin="-40,-40,0,0" />
+                     Margin="-40,-40,0,0" />-->
 
             <!-- Content Container -->
             <Grid VerticalOptions="Center" Margin="24,32,24,24">
@@ -125,12 +125,12 @@
                 </Grid.RowDefinitions>
 
                 <!-- User Greeting -->
-                <Label Grid.Row="0"
+                <!--<Label Grid.Row="0"
                        Text="{Binding Greeting}"
                        TextColor="#FFFFFFCC"
                        FontSize="14"
                        HorizontalOptions="Center"
-                       Margin="0,0,0,8" />
+                       Margin="0,0,0,8" />-->
 
                 <!-- App Icon with Glow Effect -->
                 <Border Grid.Row="1"
@@ -167,7 +167,7 @@
                 <!-- App Subtitle -->
                 <Label Grid.Row="3"
                        Text="Partograph Management System"
-                       TextColor="#FFFFFFAA"
+                       TextColor="White"
                        FontSize="13"
                        HorizontalOptions="Center"
                        Margin="0,4,0,0" />
@@ -177,9 +177,8 @@
                                        HorizontalOptions="Center"
                                        Spacing="10"
                                        Margin="0,14,0,0">
-                    <!-- Version Badge -->
-                    <Border BackgroundColor="#FFFFFF20"
-                            Padding="12,6">
+                    <!-- Version Badge BackgroundColor="#FFFFFF20"-->
+                    <Border Padding="12,6">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
@@ -197,9 +196,8 @@
                         </HorizontalStackLayout>
                     </Border>
 
-                    <!-- Date Badge -->
-                    <Border BackgroundColor="#FFFFFF20"
-                            Padding="12,6">
+                    <!-- Date Badge BackgroundColor="#FFFFFF20"-->
+                    <!--<Border Padding="12,6">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
@@ -214,7 +212,7 @@
                                    FontSize="12"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
-                    </Border>
+                    </Border>-->
                 </HorizontalStackLayout>
             </Grid>
         </Grid>
@@ -456,15 +454,14 @@
                             <RoundRectangle CornerRadius="25" />
                         </Border.StrokeShape>
                         <Border.Shadow>
-                            <Shadow Brush="#30000000"
+                            <Shadow Brush="#2196F3"
                                     Offset="0,2"
                                     Radius="6"
                                     Opacity="0.2" />
                         </Border.Shadow>
                         <Label Text="{Binding UserInitials}"
                                FontSize="18"
-                               FontAttributes="Bold"
-                               TextColor="White"
+                               FontAttributes="Bold" 
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
                     </Border>
@@ -481,7 +478,12 @@
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
 
                         <!-- Status Badge -->
-                        <Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B3D26}"
+                        <Label Text="{Binding Facility}"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                               LineBreakMode="TailTruncation"/>
+                        
+                        <!--<Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B3D26}"
                                 Padding="8,3"
                                 Margin="0,3,0,0"
                                 HorizontalOptions="Start">
@@ -499,7 +501,7 @@
                                        FontAttributes="Bold"
                                        TextColor="#2E7D32" />
                             </HorizontalStackLayout>
-                        </Border>
+                        </Border>-->
                     </VerticalStackLayout>
 
                     <!-- Logout Button -->
@@ -537,12 +539,12 @@
                                  VerticalOptions="Center"
                                  Margin="8,0,0,0">
                 <Label Text="{Binding Path=CurrentPage.Title, Source={RelativeSource AncestorType={x:Type Shell}}}"
-                       FontSize="20"
+                       FontSize="16"
                        FontAttributes="Bold"
                        TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
 
                 <!-- Facility Indicator -->
-                <HorizontalStackLayout Spacing="6">
+                <!--<HorizontalStackLayout Spacing="6">
                     <Label Text="&#xE80F;"
                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                            FontSize="12"
@@ -552,7 +554,7 @@
                            FontSize="13"
                            TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
                            VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                </HorizontalStackLayout>-->
             </VerticalStackLayout>
 
             <!-- Quick Stats Indicator -->
