@@ -154,7 +154,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
-                Patient = await _partographRepository.GetCurrentPartographAsync(patientId);
+                Patient = await _partographRepository.GetAsync(patientId);
 
                 if (Patient?.Patient != null)
                 {
@@ -514,7 +514,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     { "PartographId", Patient.ID.ToString() },
                     { "BirthOutcomeId", birthOutcome.ID.ToString() },
-                    { "NumberOfBabies", "1" },
+                    { "NumberOfBabies", birthOutcome.NumberOfBabies.ToString() },
                     { "FocusApgar", "1" }
                 };
 
@@ -591,7 +591,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     { "PartographId", Patient.ID.ToString() },
                     { "BirthOutcomeId", birthOutcome.ID.ToString() },
-                    { "NumberOfBabies", "1" }
+                    { "NumberOfBabies", birthOutcome.NumberOfBabies.ToString() }
                 };
 
                 await Shell.Current.GoToAsync("BabyDetailsPage", parameters);

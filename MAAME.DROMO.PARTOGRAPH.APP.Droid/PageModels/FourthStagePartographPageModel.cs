@@ -159,7 +159,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
-                Patient = await _partographRepository.GetCurrentPartographAsync(patientId);
+                Patient = await _partographRepository.GetAsync(patientId);
 
                 if (Patient?.Patient != null)
                 {

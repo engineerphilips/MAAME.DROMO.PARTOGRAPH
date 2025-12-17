@@ -9,6 +9,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls
         public LoadingPopup()
         {
             InitializeComponent();
+            Opened += (s,e) => StartAnimation();
+            Closed += (s,e) => StopAnimation();
         }
 
         public LoadingPopup(string message, string subMessage = "Please wait...")
@@ -18,17 +20,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Controls
             SubMessageLabel.Text = subMessage;
         }
 
-        protected override void OnOpened()
-        {
-            base.OnOpened();
-            StartAnimation();
-        }
+        //protected override void OnOpened()
+        //{
+        //    base.OnOpened();
+        //    StartAnimation();
+        //}
 
-        protected override void OnClosed(object? result)
-        {
-            base.OnClosed(result);
-            StopAnimation();
-        }
+        //protected override void OnClosed(object? result)
+        //{
+        //    base.OnClosed(result);
+        //    StopAnimation();
+        //}
 
         private void StartAnimation()
         {

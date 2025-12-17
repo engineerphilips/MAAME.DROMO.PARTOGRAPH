@@ -16,22 +16,19 @@
                 <Setter Property="FontSize" Value="13" />
                 <Setter Property="VerticalOptions" Value="Center" />
             </Style>
+
+            <!-- Input Styles -->
+            <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Outlined" />
+                <Setter Property="OutlineCornerRadius" Value="8" />
+            </Style>
         </ResourceDictionary>
     </sfPopup:SfPopup.Resources>
 
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
-            <StackLayout BackgroundColor="#2196F3" Padding="15">
-                <Label Text="Delivery Completion Checklist"
-                       VerticalOptions="Center"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       TextColor="White" />
-                <Label Text="Verify all items before discharge"
-                       VerticalOptions="Center"
-                       FontSize="12"
-                       TextColor="White"
-                       Opacity="0.9" />
+            <StackLayout>
+                <Label Text="Delivery Completion Checklist" VerticalOptions="Center" Margin="15,15,0,0" />
             </StackLayout>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>
@@ -39,7 +36,7 @@
     <sfPopup:SfPopup.ContentTemplate>
         <DataTemplate>
             <ScrollView>
-                <VerticalStackLayout Padding="15,10" Spacing="10">
+                <VerticalStackLayout Padding="15,0,15,10" Spacing="10">
 
                     <!-- Labour Summary -->
                     <Border BackgroundColor="#E3F2FD"
@@ -49,6 +46,11 @@
                             <RoundRectangle CornerRadius="8"/>
                         </Border.StrokeShape>
                         <VerticalStackLayout Spacing="3">
+                            <Label Text="Verify all items before discharge"
+       VerticalOptions="Center"
+       FontSize="12"
+       Opacity="0.9" />
+                            
                             <Label Text="{Binding FourthStageSummary}"
                                    FontSize="13"
                                    FontAttributes="Bold"
@@ -89,27 +91,27 @@
                             <VerticalStackLayout Spacing="10">
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Vital signs stable?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding VitalsStable}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding VitalsStable}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Bleeding controlled?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding BleedingControlled}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BleedingControlled}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Uterus firm and contracted?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding UterusFirm}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding UterusFirm}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Bladder emptied?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding BladderEmptied}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BladderEmptied}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Mobility assessed?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding MobilityAssessed}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding MobilityAssessed}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Pain adequately managed?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding PainManaged}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding PainManaged}" Color="#1565C0" />
                                 </Grid>
                             </VerticalStackLayout>
                         </Border>
@@ -125,34 +127,34 @@
                             <VerticalStackLayout Spacing="10">
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Breastfeeding initiated?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding BreastfeedingInitiated}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BreastfeedingInitiated}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Baby examination complete?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding BabyExaminationComplete}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BabyExaminationComplete}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Vitamin K administered?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding VitaminKGiven}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding VitaminKGiven}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Eye prophylaxis given?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding EyeProphylaxisGiven}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding EyeProphylaxisGiven}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Baby identification complete?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding BabyIdentificationComplete}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BabyIdentificationComplete}" Color="#1565C0" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" Text="Birth notification completed?" Style="{StaticResource CheckboxLabel}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding BirthNotificationComplete}" Color="#4CAF50" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BirthNotificationComplete}" Color="#1565C0" />
                                 </Grid>
                             </VerticalStackLayout>
                         </Border>
                     </VerticalStackLayout>
 
                     <!-- Documentation -->
-                    <VerticalStackLayout Spacing="5">
+                    <!--<VerticalStackLayout Spacing="5">
                         <Label Text="Documentation" Style="{StaticResource SectionTitle}" TextColor="#2E7D32" />
                         <Border BackgroundColor="#E8F5E9" Padding="12" StrokeThickness="0">
                             <Border.StrokeShape>
@@ -177,18 +179,34 @@
                                 </Grid>
                             </VerticalStackLayout>
                         </Border>
-                    </VerticalStackLayout>
+                    </VerticalStackLayout>-->
 
                     <!-- Discharge Details -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Discharge Details" Style="{StaticResource SectionTitle}" />
-                        <Picker ItemsSource="{Binding DischargeDestinations}"
+                        <!--<Picker ItemsSource="{Binding DischargeDestinations}"
                                 SelectedIndex="{Binding DischargeDestinationIndex}"
                                 Title="Discharge Destination" />
                         <Editor Placeholder="Handover notes (optional)"
                                 Text="{Binding HandoverNotes}"
                                 HeightRequest="80"
-                                AutoSize="TextChanges" />
+                                AutoSize="TextChanges" />-->
+
+                        <core:SfTextInputLayout Hint="Discharge Destination"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Discharge Destination">
+                            <Picker ItemsSource="{Binding DischargeDestinations}"
+        SelectedIndex="{Binding DischargeDestinationIndex}" />
+                        </core:SfTextInputLayout>
+
+
+                        <core:SfTextInputLayout Hint="Notes"
+                                        Style="{StaticResource PatientInput}"
+                                        HelperText="Handover notes (optional)">
+                            <Entry Text="{Binding Notes}"
+                           Keyboard="Text"
+                           ReturnType="Next" />
+                        </core:SfTextInputLayout>
                     </VerticalStackLayout>
 
                     <!-- Validation Message -->
