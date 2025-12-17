@@ -25,7 +25,9 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string GestationalAge => ExpectedDeliveryDate != null ? new EMPEROR.COMMON.GestationalAge().Age(DateTime.Now, new DateTime(ExpectedDeliveryDate.Value.Year, ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day), true) : LastMenstrualDate != null ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(LastMenstrualDate.Value.Year, LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day), DateTime.Now, false) : string.Empty;
 
         /// <summary>
-        /// Calculates gestational age in weeks and days for precise assessment
+        /// Calculates gestational age in weeks and days for precise assessment.
+        /// Uses EDD-based calculation: 280 days (40 weeks) minus days until EDD.
+        /// Example: If EDD was yesterday, gestational age = 40W1D (281 days).
         /// </summary>
         [JsonIgnore]
         public (int weeks, int days) GestationalWeeksAndDays
@@ -33,19 +35,21 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
             get
             {
                 int totalDays = 0;
+                var today = DateTime.Today;
 
                 if (ExpectedDeliveryDate != null)
                 {
                     var edd = new DateTime(ExpectedDeliveryDate.Value.Year,
                         ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day);
-                    var conceptDate = edd.AddDays(-280); // 40 weeks before EDD
-                    totalDays = (int)(DateTime.Now - conceptDate).TotalDays;
+                    // 280 days = 40 weeks (full term)
+                    // Subtract days remaining until EDD to get current gestational age
+                    totalDays = 280 - (edd - today).Days;
                 }
                 else if (LastMenstrualDate != null)
                 {
                     var lmp = new DateTime(LastMenstrualDate.Value.Year,
                         LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day);
-                    totalDays = (int)(DateTime.Now - lmp).TotalDays;
+                    totalDays = (today - lmp).Days;
                 }
 
                 if (totalDays < 0) totalDays = 0;
