@@ -19,7 +19,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _facilityRepository = facilityRepository;
 
             // Initialize commands
-            SelectFacilityCommand = new Command<Facility>(async (facility) => await SelectFacilityAsync(facility));
             ContinueCommand = new Command(async () => await ContinueAsync(), () => SelectedFacility != null);
         }
 
@@ -39,9 +38,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (SetProperty(ref _selectedFacility, value))
                 {
                     ((Command)ContinueCommand).ChangeCanExecute();
+                    OnPropertyChanged(nameof(HasSelectedFacility));
                 }
             }
         }
+
+        public bool HasSelectedFacility => SelectedFacility != null;
 
         public bool IsBusy
         {
@@ -56,7 +58,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         #region Commands
 
-        public ICommand SelectFacilityCommand { get; }
         public ICommand ContinueCommand { get; }
 
         #endregion
@@ -86,11 +87,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 IsBusy = false;
             }
-        }
-
-        private async Task SelectFacilityAsync(Facility facility)
-        {
-            SelectedFacility = facility;
         }
 
         private async Task ContinueAsync()

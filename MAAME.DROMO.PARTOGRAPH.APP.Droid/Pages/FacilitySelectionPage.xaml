@@ -2,10 +2,16 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.FacilitySelectionPage"
-             xmlns:model="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:fonts="clr-namespace:Fonts"
              Title="Select Facility"
              BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#1A1A1A}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*,Auto" Padding="0">
 
@@ -34,97 +40,92 @@
             </VerticalStackLayout>
         </Border>
 
-        <!-- Facilities List -->
-        <ScrollView Grid.Row="1" Padding="20,20,20,0">
-            <VerticalStackLayout Spacing="12">
-                <Label Text="Available Facilities"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
-                       Margin="0,0,0,8" />
+        <!-- Facility Selection -->
+        <VerticalStackLayout Grid.Row="1" Padding="20" Spacing="16" VerticalOptions="Center">
 
-                <!-- Loading Indicator -->
-                <ActivityIndicator IsRunning="{Binding IsBusy}"
-                                 IsVisible="{Binding IsBusy}"
-                                 Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                                 HeightRequest="50" />
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                             IsVisible="{Binding IsBusy}"
+                             Color="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                             HeightRequest="50" />
 
-                <!-- Facilities CollectionView -->
-                <CollectionView ItemsSource="{Binding Facilities}"
-                              SelectionMode="Single"
-                                SelectedItem="{Binding SelectedFacility, Mode=TwoWay}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="model:Facility">
-                            <Border Margin="0,0,0,12"
-                                  BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
-                                  StrokeThickness="0">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="16" />
-                                </Border.StrokeShape>
-                                <Border.Shadow>
-                                    <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
-                                          Offset="0,2"
-                                          Radius="8"
-                                          Opacity="0.15" />
-                                </Border.Shadow>
+            <!-- Facility Picker Section -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}"
+                    Padding="20"
+                    StrokeThickness="0"
+                    IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
+                          Offset="0,2"
+                          Radius="8"
+                          Opacity="0.15" />
+                </Border.Shadow>
 
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectFacilityCommand}" CommandParameter="{Binding .}" />
-                                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="12">
+                        <!-- Icon -->
+                        <Border WidthRequest="48"
+                              HeightRequest="48"
+                              BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1E3A5F}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <Label Text="{x:Static fonts:FluentUI.building_32_regular}"
+                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                 FontSize="24"
+                                 TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="Select Facility"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
 
-                                <Grid Padding="20" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16" InputTransparent="True" CascadeInputTransparent="True">
+                    <!-- Facility Picker -->
+                    <Border StrokeThickness="1"
+                            Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                            BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12" />
+                        </Border.StrokeShape>
+                        <Picker ItemsSource="{Binding Facilities}"
+                                SelectedItem="{Binding SelectedFacility, Mode=TwoWay}"
+                                ItemDisplayBinding="{Binding Name}"
+                                Title="Choose a facility"
+                                TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
+                                TitleColor="{AppThemeBinding Light=#999, Dark=#666}"
+                                HeightRequest="50" />
+                    </Border>
 
-                                    <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectFacilityCommand}" CommandParameter="{Binding .}" />
-                                    </Grid.GestureRecognizers>
-
-                                    <!-- Icon -->
-                                    <Border Grid.Column="0"
-                                          WidthRequest="56"
-                                          HeightRequest="56"
-                                          BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1E3A5F}">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="16" />
-                                        </Border.StrokeShape>
-                                        <Label Text="{x:Static fonts:FluentUI.building_32_regular}"
-                                             FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                             FontSize="28"
-                                             TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                                             HorizontalOptions="Center"
-                                             VerticalOptions="Center" />
-                                    </Border>
-
-                                    <!-- Facility Details -->
-                                    <VerticalStackLayout Grid.Column="1"
-                                                       VerticalOptions="Center"
-                                                       Spacing="4">
-                                        <Label Text="{Binding Name}"
-                                             FontSize="18"
-                                             FontAttributes="Bold"
-                                             TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
-                                        <Label Text="{Binding Type}"
-                                             FontSize="14"
-                                             TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
-                                        <Label Text="{Binding City}"
-                                             FontSize="13"
-                                             TextColor="{AppThemeBinding Light=#888, Dark=#888}" />
-                                    </VerticalStackLayout>
-
-                                    <!-- Selection Indicator -->
-                                    <!--<Label Grid.Column="2"
-                                         Text="&#xE73E;"
-                                         FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                         FontSize="24"
-                                         TextColor="{AppThemeBinding Light=#2196F3, Dark=#64B5F6}"
-                                         VerticalOptions="Center"
-                                         HorizontalOptions="Center" />-->
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </VerticalStackLayout>
-        </ScrollView>
+                    <!-- Selected Facility Details -->
+                    <Border BackgroundColor="{AppThemeBinding Light=#F0F7FF, Dark=#1E3A5F}"
+                            Padding="16"
+                            IsVisible="{Binding HasSelectedFacility}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding SelectedFacility.Name}"
+                                 FontSize="16"
+                                 FontAttributes="Bold"
+                                 TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                            <Label Text="{Binding SelectedFacility.Type}"
+                                 FontSize="14"
+                                 TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Label Text="{Binding SelectedFacility.City}"
+                                 FontSize="13"
+                                 TextColor="{AppThemeBinding Light=#888, Dark=#888}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
 
         <!-- Continue Button -->
         <Border Grid.Row="2"
