@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<sfPopup:SfPopup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.PlacentaDeliveryPopup">
+
+    <sfPopup:SfPopup.Resources>
+        <ResourceDictionary>
+            <Style x:Key="SectionTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Margin" Value="0,10,0,5" />
+            </Style>
+            <Style x:Key="CheckboxLabel" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </sfPopup:SfPopup.Resources>
+
+    <sfPopup:SfPopup.HeaderTemplate>
+        <DataTemplate>
+            <StackLayout BackgroundColor="#FF9800" Padding="15">
+                <Label Text="Placenta Delivery"
+                       VerticalOptions="Center"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+                <Label Text="Record placenta delivery to transition to Fourth Stage"
+                       VerticalOptions="Center"
+                       FontSize="12"
+                       TextColor="White"
+                       Opacity="0.9" />
+            </StackLayout>
+        </DataTemplate>
+    </sfPopup:SfPopup.HeaderTemplate>
+
+    <sfPopup:SfPopup.ContentTemplate>
+        <DataTemplate>
+            <ScrollView>
+                <VerticalStackLayout Padding="15,10" Spacing="10">
+
+                    <!-- Third Stage Summary -->
+                    <Border BackgroundColor="#E3F2FD"
+                            StrokeThickness="0"
+                            Padding="12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="3">
+                            <Label Text="{Binding ThirdStageSummary}"
+                                   FontSize="13"
+                                   TextColor="#1565C0" />
+                            <Label Text="{Binding TimeSinceDelivery}"
+                                   FontSize="12"
+                                   TextColor="#1976D2" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Placenta Delivery Time -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Placenta Delivery Time" Style="{StaticResource SectionTitle}" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <DatePicker Grid.Column="0"
+                                        Date="{Binding PlacentaDeliveryTime}"
+                                        MaximumDate="{x:Static sys:DateTime.Now}"
+                                        Format="dd MMM yyyy"
+                                        xmlns:sys="clr-namespace:System;assembly=netstandard" />
+                            <TimePicker Grid.Column="1"
+                                        Time="{Binding PlacentaDeliveryTimeOfDay}"
+                                        Format="HH:mm" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Placenta Completeness -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Placenta Assessment" Style="{StaticResource SectionTitle}" />
+                        <Border BackgroundColor="#F5F5F5" Padding="12" StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="12">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="Placenta complete (all cotyledons)?"
+                                           Style="{StaticResource CheckboxLabel}" />
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding PlacentaComplete}"
+                                            OnColor="#4CAF50"
+                                            ThumbColor="{Binding PlacentaComplete, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#4CAF50|#F44336'}" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="Membranes complete?"
+                                           Style="{StaticResource CheckboxLabel}" />
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding MembranesComplete}"
+                                            OnColor="#4CAF50"
+                                            ThumbColor="{Binding MembranesComplete, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#4CAF50|#F44336'}" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Blood Loss Estimation -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Estimated Blood Loss" Style="{StaticResource SectionTitle}" />
+                        <Picker ItemsSource="{Binding BloodLossCategories}"
+                                SelectedIndex="{Binding BloodLossIndex}"
+                                Title="Select blood loss category" />
+
+                        <!-- PPH Warning -->
+                        <Border BackgroundColor="#FFEBEE"
+                                StrokeThickness="0"
+                                Padding="12"
+                                IsVisible="{Binding IsPPHWarning}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <HorizontalStackLayout Spacing="10">
+                                <Label Text="!"
+                                       FontSize="18"
+                                       FontAttributes="Bold"
+                                       TextColor="#C62828"
+                                       VerticalOptions="Center" />
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding IsPPHCritical, Converter={StaticResource BoolToStringConverter}, ConverterParameter='SEVERE PPH - EMERGENCY|PPH Warning'}"
+                                           FontAttributes="Bold"
+                                           TextColor="#C62828"
+                                           FontSize="13" />
+                                    <Label Text="Activate hemorrhage protocol. Monitor closely."
+                                           FontSize="12"
+                                           TextColor="#C62828" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Uterine Status -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Uterine Status" Style="{StaticResource SectionTitle}" />
+                        <Border BackgroundColor="#F5F5F5" Padding="12" StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="12">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="Uterus firm?"
+                                           Style="{StaticResource CheckboxLabel}" />
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding UterusFirm}"
+                                            OnColor="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="Well contracted?"
+                                           Style="{StaticResource CheckboxLabel}" />
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding UterusWellContracted}"
+                                            OnColor="#4CAF50" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Active Management (WHO AMTSL) -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Active Management (AMTSL)" Style="{StaticResource SectionTitle}" />
+                        <Border BackgroundColor="#E8F5E9" Padding="12" StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="12">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Grid.Column="0">
+                                        <Label Text="Oxytocin 10 IU IM given?"
+                                               Style="{StaticResource CheckboxLabel}" />
+                                        <Label Text="WHO recommended"
+                                               FontSize="11"
+                                               TextColor="#2E7D32" />
+                                    </VerticalStackLayout>
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding OxytocinGiven}"
+                                            OnColor="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="Controlled cord traction?"
+                                           Style="{StaticResource CheckboxLabel}" />
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding ControlledCordTraction}"
+                                            OnColor="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="Uterine massage performed?"
+                                           Style="{StaticResource CheckboxLabel}" />
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding UterineMassagePerformed}"
+                                            OnColor="#4CAF50" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Perineal Status -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Perineal Status" Style="{StaticResource SectionTitle}" />
+                        <Picker ItemsSource="{Binding PerinealStatusOptions}"
+                                SelectedIndex="{Binding PerinealStatusIndex}"
+                                Title="Select perineal status" />
+                    </VerticalStackLayout>
+
+                    <!-- Validation/Warning Message -->
+                    <Label Text="{Binding ValidationMessage}"
+                           IsVisible="{Binding HasValidationError}"
+                           TextColor="#FF9800"
+                           FontSize="13"
+                           HorizontalOptions="Center" />
+
+                    <!-- Fourth Stage Reminder -->
+                    <Border BackgroundColor="#E3F2FD"
+                            StrokeThickness="0"
+                            Padding="12"
+                            Margin="0,10,0,0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Fourth Stage Monitoring"
+                                   FontAttributes="Bold"
+                                   TextColor="#1565C0"
+                                   FontSize="13" />
+                            <Label Text="After confirmation, begin 2-hour postpartum monitoring with vital signs every 15 minutes."
+                                   FontSize="12"
+                                   TextColor="#1976D2" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Action Buttons -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,15,0,20">
+                        <Button Grid.Column="0"
+                            Text="Cancel"
+                            Command="{Binding CancelCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                            TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                            HeightRequest="50"
+                            CornerRadius="10" />
+
+                        <Button Grid.Column="1"
+                            Text="Confirm &amp; Continue"
+                            Command="{Binding ConfirmPlacentaDeliveryCommand}"
+                            BackgroundColor="#FF9800"
+                            TextColor="White"
+                            HeightRequest="50"
+                            CornerRadius="10"
+                            FontAttributes="Bold" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </DataTemplate>
+    </sfPopup:SfPopup.ContentTemplate>
+
+</sfPopup:SfPopup>
