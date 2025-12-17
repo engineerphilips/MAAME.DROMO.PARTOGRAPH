@@ -24,6 +24,109 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
 
         public string GestationalAge => ExpectedDeliveryDate != null ? new EMPEROR.COMMON.GestationalAge().Age(DateTime.Now, new DateTime(ExpectedDeliveryDate.Value.Year, ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day), true) : LastMenstrualDate != null ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(LastMenstrualDate.Value.Year, LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day), DateTime.Now, false) : string.Empty;
 
+        /// <summary>
+        /// Calculates gestational age in weeks and days for precise assessment
+        /// </summary>
+        [JsonIgnore]
+        public (int weeks, int days) GestationalWeeksAndDays
+        {
+            get
+            {
+                int totalDays = 0;
+
+                if (ExpectedDeliveryDate != null)
+                {
+                    var edd = new DateTime(ExpectedDeliveryDate.Value.Year,
+                        ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day);
+                    var conceptDate = edd.AddDays(-280); // 40 weeks before EDD
+                    totalDays = (int)(DateTime.Now - conceptDate).TotalDays;
+                }
+                else if (LastMenstrualDate != null)
+                {
+                    var lmp = new DateTime(LastMenstrualDate.Value.Year,
+                        LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day);
+                    totalDays = (int)(DateTime.Now - lmp).TotalDays;
+                }
+
+                if (totalDays < 0) totalDays = 0;
+
+                int weeks = totalDays / 7;
+                int days = totalDays % 7;
+                return (weeks, days);
+            }
+        }
+
+        /// <summary>
+        /// Returns the total gestational age in days
+        /// </summary>
+        [JsonIgnore]
+        public int GestationalTotalDays
+        {
+            get
+            {
+                var (weeks, days) = GestationalWeeksAndDays;
+                return weeks * 7 + days;
+            }
+        }
+
+        /// <summary>
+        /// Determines gestational status based on EGA
+        /// - Term: ≤40W
+        /// - Prolonged Pregnancy: >40W (40W1D to 40W6D)
+        /// - Post Date: ≥41W
+        /// - Post Date Critical: >41W5D (SVD not recommended)
+        /// </summary>
+        [JsonIgnore]
+        public string GestationalStatus
+        {
+            get
+            {
+                if (ExpectedDeliveryDate == null && LastMenstrualDate == null)
+                    return string.Empty;
+
+                int totalDays = GestationalTotalDays;
+
+                // 41W5D = 292 days, 41W = 287 days, 40W = 280 days
+                if (totalDays > 292) // > 41W5D
+                    return "Post Date - SVD Not Recommended";
+                else if (totalDays >= 287) // >= 41W
+                    return "Post Date";
+                else if (totalDays > 280) // > 40W
+                    return "Prolonged Pregnancy";
+                else
+                    return "Term";
+            }
+        }
+
+        /// <summary>
+        /// Indicates if the pregnancy is post-date (≥41W)
+        /// </summary>
+        [JsonIgnore]
+        public bool IsPostDate => GestationalTotalDays >= 287;
+
+        /// <summary>
+        /// Determines if SVD is allowed based on gestational age
+        /// SVD is NOT allowed when EGA > 41W5D (292 days)
+        /// </summary>
+        [JsonIgnore]
+        public bool IsSVDAllowed
+        {
+            get
+            {
+                if (ExpectedDeliveryDate == null && LastMenstrualDate == null)
+                    return true; // Default to allowed if no date info
+
+                return GestationalTotalDays <= 292;
+            }
+        }
+
+        /// <summary>
+        /// Gets the recommended delivery mode based on gestational age
+        /// Returns "CS" for EGA > 41W5D, otherwise "SVD"
+        /// </summary>
+        [JsonIgnore]
+        public string RecommendedDeliveryMode => GestationalTotalDays > 292 ? "CS" : "SVD";
+
         // Labour Information
         public LaborStatus Status { get; set; } = LaborStatus.Pending;
 

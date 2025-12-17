@@ -100,6 +100,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _expectedDeliveryDate, value);
                 OnPropertyChanged(nameof(FormattedGestationalAge));
                 OnPropertyChanged(nameof(GestationalAgeVisibility));
+                OnPropertyChanged(nameof(GestationalStatus));
+                OnPropertyChanged(nameof(IsPostDate));
+                OnPropertyChanged(nameof(IsSVDAllowed));
+                OnPropertyChanged(nameof(RecommendedDeliveryMode));
                 CalculateRiskAssessment();
             }
         }
@@ -113,6 +117,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 SetProperty(ref _lastMenstrualDate, value);
                 OnPropertyChanged(nameof(FormattedGestationalAge));
                 OnPropertyChanged(nameof(GestationalAgeVisibility));
+                OnPropertyChanged(nameof(GestationalStatus));
+                OnPropertyChanged(nameof(IsPostDate));
+                OnPropertyChanged(nameof(IsSVDAllowed));
+                OnPropertyChanged(nameof(RecommendedDeliveryMode));
                 CalculateRiskAssessment();
             }
         }
@@ -651,8 +659,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (DateOfBirth != null && DateOfBirth.Value > DateTime.Today)
                 _errors.Add(nameof(DateOfBirth), "Date of birth cannot be in the future");
 
-            if (ExpectedDeliveryDate != null && ExpectedDeliveryDate.Value < DateTime.Today)
-                _errors.Add(nameof(ExpectedDeliveryDate), "Expected delivery date should be in the future");
+            // EDD can be in the past - we validate based on gestational age instead
+            // EGA > 41W5D should not allow SVD
 
             // Phone validation (basic)
             if (!string.IsNullOrWhiteSpace(PhoneNumber) && PhoneNumber.Length < 10)
@@ -700,19 +708,37 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 RiskAssessmentFactors.Add("Grand multiparity (≥5 births)");
             }
 
-            // Gestational age risk
+            // Gestational age risk - WHO guidelines for post-term pregnancy
             if (ExpectedDeliveryDate != null || LastMenstrualDate != null)
             {
-                int weeks = CalculateGestationalWeeks();
+                var (weeks, days) = CalculateGestationalWeeksAndDays();
+                int totalDays = weeks * 7 + days;
+
                 if (weeks < 37)
                 {
                     score += 3;
-                    RiskAssessmentFactors.Add($"Preterm labour ({weeks} weeks)");
+                    RiskAssessmentFactors.Add($"Preterm labour ({weeks}W{days}D)");
                 }
-                else if (weeks > 42)
+                else if (totalDays > 292) // > 41W5D
+                {
+                    score += 5; // Critical risk - CS required
+                    RiskAssessmentFactors.Add($"Post Date - Critical ({weeks}W{days}D) - SVD NOT ALLOWED");
+                    RecommendedActions.Add("CESAREAN SECTION REQUIRED - EGA exceeds 41W5D");
+                    RecommendedActions.Add("SVD is contraindicated at this gestational age");
+                }
+                else if (totalDays >= 287) // >= 41W
+                {
+                    score += 3;
+                    RiskAssessmentFactors.Add($"Post Date ({weeks}W{days}D)");
+                    RecommendedActions.Add("Consider induction of labour or CS");
+                    RecommendedActions.Add("Increased fetal monitoring required");
+                }
+                else if (totalDays > 280) // > 40W (Prolonged pregnancy)
                 {
                     score += 2;
-                    RiskAssessmentFactors.Add($"Post-term pregnancy ({weeks} weeks)");
+                    RiskAssessmentFactors.Add($"Prolonged Pregnancy ({weeks}W{days}D)");
+                    RecommendedActions.Add("Monitor closely for signs of post-term complications");
+                    RecommendedActions.Add("Consider membrane sweep or induction planning");
                 }
             }
 
@@ -828,20 +854,119 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private int CalculateGestationalWeeks()
         {
+            var (weeks, _) = CalculateGestationalWeeksAndDays();
+            return weeks;
+        }
+
+        /// <summary>
+        /// Calculates gestational age in weeks and days for more precise assessment
+        /// </summary>
+        private (int weeks, int days) CalculateGestationalWeeksAndDays()
+        {
+            int totalDays = 0;
+
             if (ExpectedDeliveryDate != null)
             {
                 var edd = new DateTime(ExpectedDeliveryDate.Value.Year,
                     ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day);
                 var conceptDate = edd.AddDays(-280); // 40 weeks before EDD
-                return (int)((DateTime.Now - conceptDate).TotalDays / 7);
+                totalDays = (int)(DateTime.Now - conceptDate).TotalDays;
             }
             else if (LastMenstrualDate != null)
             {
                 var lmp = new DateTime(LastMenstrualDate.Value.Year,
                     LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day);
-                return (int)((DateTime.Now - lmp).TotalDays / 7);
+                totalDays = (int)(DateTime.Now - lmp).TotalDays;
             }
-            return 0;
+
+            if (totalDays < 0) totalDays = 0;
+
+            int weeks = totalDays / 7;
+            int days = totalDays % 7;
+            return (weeks, days);
+        }
+
+        /// <summary>
+        /// Determines gestational status based on EGA
+        /// - Normal: ≤40W
+        /// - Prolonged Pregnancy: >40W (40W1D to 40W6D)
+        /// - Post Date: ≥41W
+        /// </summary>
+        public string GestationalStatus
+        {
+            get
+            {
+                if (ExpectedDeliveryDate == null && LastMenstrualDate == null)
+                    return string.Empty;
+
+                var (weeks, days) = CalculateGestationalWeeksAndDays();
+                int totalDays = weeks * 7 + days;
+
+                // 41W5D = 41*7 + 5 = 292 days
+                // 41W0D = 41*7 = 287 days
+                // 40W0D = 40*7 = 280 days
+
+                if (totalDays > 292) // > 41W5D
+                    return "Post Date - SVD Not Recommended";
+                else if (totalDays >= 287) // >= 41W
+                    return "Post Date";
+                else if (totalDays > 280) // > 40W
+                    return "Prolonged Pregnancy";
+                else
+                    return "Term";
+            }
+        }
+
+        /// <summary>
+        /// Indicates if the pregnancy is post-date (≥41W)
+        /// </summary>
+        public bool IsPostDate
+        {
+            get
+            {
+                var (weeks, _) = CalculateGestationalWeeksAndDays();
+                return weeks >= 41;
+            }
+        }
+
+        /// <summary>
+        /// Determines if SVD is allowed based on gestational age
+        /// SVD is NOT allowed when EGA > 41W5D
+        /// </summary>
+        public bool IsSVDAllowed
+        {
+            get
+            {
+                if (ExpectedDeliveryDate == null && LastMenstrualDate == null)
+                    return true; // Default to allowed if no date info
+
+                var (weeks, days) = CalculateGestationalWeeksAndDays();
+                int totalDays = weeks * 7 + days;
+
+                // 41W5D = 292 days - SVD not allowed beyond this
+                return totalDays <= 292;
+            }
+        }
+
+        /// <summary>
+        /// Gets the recommended delivery mode based on gestational age
+        /// </summary>
+        public string RecommendedDeliveryMode
+        {
+            get
+            {
+                if (ExpectedDeliveryDate == null && LastMenstrualDate == null)
+                    return "SVD"; // Default
+
+                var (weeks, days) = CalculateGestationalWeeksAndDays();
+                int totalDays = weeks * 7 + days;
+
+                // > 41W5D (292 days) - CS recommended
+                if (totalDays > 292)
+                    return "CS";
+
+                return "SVD";
+            }
         }
 
         [RelayCommand]
