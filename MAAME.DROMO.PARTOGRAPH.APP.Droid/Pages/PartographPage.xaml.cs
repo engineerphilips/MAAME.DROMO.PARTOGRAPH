@@ -13,32 +13,32 @@ public partial class PartographPage : ContentPage
         InitializeComponent();
         BindingContext = pageModel;
 
-        // Bind modal view BindingContexts to the modal page models exposed by the main page model
-        sfPopupPainRelief.BindingContext = pageModel.PainReliefModalPageModel;
-        sfPopupCompanion.BindingContext = pageModel.CompanionModalPageModel;
-        sfPopupOralFluid.BindingContext = pageModel.OralFluidModalPageModel;
-        sfPopupPosture.BindingContext = pageModel.PostureModalPageModel;
-        sfPopupFetalPosition.BindingContext = pageModel.FetalPositionModalPageModel;
-        sfPopupAmnioticFluid.BindingContext = pageModel.AmnioticFluidModalPageModel;
-        sfPopupCaput.BindingContext = pageModel.CaputModalPageModel;
-        sfPopupMoulding.BindingContext = pageModel.MouldingModalPageModel;
-        sfPopupUrine.BindingContext = pageModel.UrineModalPageModel;
-        sfPopupTemperature.BindingContext = pageModel.TemperatureModalPageModel;
-        sfPopupOxytocin.BindingContext = pageModel.OxytocinModalPageModel;
-        sfPopupMedication.BindingContext = pageModel.MedicationModalPageModel;
-        sfPopupIVFluid.BindingContext = pageModel.IVFluidModalPageModel;
-        sfPopupHeadDescent.BindingContext = pageModel.HeadDescentModalPageModel;
-        sfPopupCervixDilatation.BindingContext = pageModel.CervixDilatationModalPageModel;
-        sfPopupBpPulse.BindingContext = pageModel.BPPulseModalPageModel;
-        sfPopupFHRContraction.BindingContext = pageModel.FHRContractionModalPageModel;
-        sfPopupAssessment.BindingContext = pageModel.AssessmentModalPageModel;
-        sfPopupPlan.BindingContext = pageModel.PlanModalPageModel;
-        sfPopupBishopScore.BindingContext = pageModel.BishopScorePopupPageModel;
-
         Loaded += (s, e) =>
         {
             if (BindingContext is PartographPageModel pageModel)
             {
+                // Bind modal view BindingContexts to the modal page models exposed by the main page model
+                //sfPopupPainRelief.BindingContext = pageModel.PainReliefModalPageModel;
+                //sfPopupCompanion.BindingContext = pageModel.CompanionModalPageModel;
+                //sfPopupOralFluid.BindingContext = pageModel.OralFluidModalPageModel;
+                //sfPopupPosture.BindingContext = pageModel.PostureModalPageModel;
+                //sfPopupFetalPosition.BindingContext = pageModel.FetalPositionModalPageModel;
+                //sfPopupAmnioticFluid.BindingContext = pageModel.AmnioticFluidModalPageModel;
+                //sfPopupCaput.BindingContext = pageModel.CaputModalPageModel;
+                //sfPopupMoulding.BindingContext = pageModel.MouldingModalPageModel;
+                //sfPopupUrine.BindingContext = pageModel.UrineModalPageModel;
+                //sfPopupTemperature.BindingContext = pageModel.TemperatureModalPageModel;
+                //sfPopupOxytocin.BindingContext = pageModel.OxytocinModalPageModel;
+                //sfPopupMedication.BindingContext = pageModel.MedicationModalPageModel;
+                //sfPopupIVFluid.BindingContext = pageModel.IVFluidModalPageModel;
+                //sfPopupHeadDescent.BindingContext = pageModel.HeadDescentModalPageModel;
+                //sfPopupCervixDilatation.BindingContext = pageModel.CervixDilatationModalPageModel;
+                //sfPopupBpPulse.BindingContext = pageModel.BPPulseModalPageModel;
+                //sfPopupFHRContraction.BindingContext = pageModel.FHRContractionModalPageModel;
+                //sfPopupAssessment.BindingContext = pageModel.AssessmentModalPageModel;
+                //sfPopupPlan.BindingContext = pageModel.PlanModalPageModel;
+                //sfPopupBishopScore.BindingContext = pageModel.BishopScorePopupPageModel;
+
                 pageModel.CloseCompanionModalPopup += async () => { sfPopupCompanion.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenCompanionModalPopup += () => sfPopupCompanion.IsOpen = true;
                 pageModel.ClosePainReliefModalPopup += async () => { sfPopupPainRelief.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };

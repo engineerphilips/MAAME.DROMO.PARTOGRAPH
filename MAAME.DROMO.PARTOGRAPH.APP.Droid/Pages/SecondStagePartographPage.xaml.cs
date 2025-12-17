@@ -35,7 +35,7 @@ public partial class SecondStagePartographPage : ContentPage
         sfPopupAssessment.BindingContext = pageModel.AssessmentModalPageModel;
         sfPopupPlan.BindingContext = pageModel.PlanModalPageModel;
 
-        Loaded += async (s, e) =>
+        Loaded += (s, e) =>
         {
             if (BindingContext is SecondStagePartographPageModel pageModel)
             {

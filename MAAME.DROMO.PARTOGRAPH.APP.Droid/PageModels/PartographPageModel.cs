@@ -449,9 +449,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             //Chartinghours = new ObservableCollection<TimeSlots>();
             //TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
 
-            var tasks = new Task[1];
-            tasks[0] = GenerateInitialTimeSlots();
-            Task.WhenAny(tasks);
+            //var tasks = new Task[1];
+            //tasks[0] = GenerateInitialTimeSlots();
+            //Task.WhenAny(tasks);
         }
 
         /// <summary>
@@ -574,10 +574,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private async Task GenerateInitialTimeSlots()
-        {
-            StartTime = await GetEarliestMeasurableTimeAsync() ?? DateTime.Today;
-        }
+        //private async Task GenerateInitialTimeSlots()
+        //{
+        //    StartTime = await GetEarliestMeasurableTimeAsync() ?? DateTime.Today;
+        //}
 
         //private async Task GenerateInitialTimeSlots()
         //{
@@ -880,160 +880,168 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (Patient == null)
                 return;
-
-            // FHR Status
-            var latestFHR = Patient.Fhrs?.OrderByDescending(e => e.Time).FirstOrDefault();
-            var fhrStatus = MeasurementStatusHelper.CalculateStatus<FHR>(
-                latestFHR?.Time,
-                latestFHR != null ? $"{latestFHR.Rate} bpm" : "");
-            FhrLatestValue = fhrStatus.LatestValue;
-            FhrStatusText = fhrStatus.DueStatusText;
-            FhrButtonColor = fhrStatus.ButtonColor;
-
-            // FHR Deceleration Status
-            if (latestFHR != null && !string.IsNullOrEmpty(latestFHR.Deceleration))
+            try
             {
-                FhrDecelerationLatestValue = FormatDecelerationType(latestFHR.Deceleration);
+
+                // FHR Status
+                var latestFHR = Patient.Fhrs?.OrderByDescending(e => e.Time).FirstOrDefault();
+                var fhrStatus = MeasurementStatusHelper.CalculateStatus<FHR>(
+                    latestFHR?.Time,
+                    latestFHR != null ? $"{latestFHR.Rate} bpm" : "");
+                FhrLatestValue = fhrStatus.LatestValue;
+                FhrStatusText = fhrStatus.DueStatusText;
+                FhrButtonColor = fhrStatus.ButtonColor;
+
+                // FHR Deceleration Status
+                if (latestFHR != null && !string.IsNullOrEmpty(latestFHR.Deceleration))
+                {
+                    FhrDecelerationLatestValue = FormatDecelerationType(latestFHR.Deceleration);
+                }
+                else
+                {
+                    FhrDecelerationLatestValue = string.Empty;
+                }
+
+                // Contraction Status
+                var latestContraction = Patient.Contractions?.OrderByDescending(e => e.Time).FirstOrDefault();
+                var contractionStatus = MeasurementStatusHelper.CalculateStatus<Contraction>(
+                    latestContraction?.Time,
+                    latestContraction != null ? $"{latestContraction.FrequencyPer10Min}/10min, {latestContraction.DurationSeconds}s" : "");
+                ContractionLatestValue = contractionStatus.LatestValue;
+                ContractionStatusText = contractionStatus.DueStatusText;
+                ContractionButtonColor = contractionStatus.ButtonColor;
+
+                // BP/Pulse Status
+                var latestBP = Patient.BPs?.OrderByDescending(e => e.Time).FirstOrDefault();
+                var bpStatus = MeasurementStatusHelper.CalculateStatus<BP>(
+                    latestBP?.Time,
+                    latestBP != null ? $"{latestBP.Systolic}/{latestBP.Diastolic}, P:{latestBP.Pulse}" : "");
+                BpLatestValue = bpStatus.LatestValue;
+                BpStatusText = bpStatus.DueStatusText;
+                BpButtonColor = bpStatus.ButtonColor;
+
+                // Temperature Status
+                var latestTemp = Patient.Temperatures?.OrderByDescending(e => e.Time).FirstOrDefault();
+                var tempStatus = MeasurementStatusHelper.CalculateStatus<Temperature>(
+                    latestTemp?.Time,
+                    latestTemp != null ? $"{latestTemp.TemperatureCelsius:F1}°C" : "");
+                TemperatureLatestValue = tempStatus.LatestValue;
+                TemperatureStatusText = tempStatus.DueStatusText;
+                TemperatureButtonColor = tempStatus.ButtonColor;
+
+                // Urine Status
+                var latestUrine = Patient.Urines?.OrderByDescending(e => e.Time).FirstOrDefault();
+                if (latestUrine != null)
+                {
+                    var urineStatus = MeasurementStatusHelper.CalculateStatus<Urine>(
+                    latestUrine?.Time,
+                    latestUrine != null ? $"P:{latestUrine.Protein}, A:{latestUrine.Ketones}" : "");
+                    UrineLatestValue = urineStatus.LatestValue;
+                    UrineStatusText = urineStatus.DueStatusText;
+                    UrineButtonColor = urineStatus.ButtonColor;
+                }
+                else
+                {
+                    UrineLatestValue = string.Empty;
+                    UrineStatusText = string.Empty;
+                    UrineButtonColor = string.Empty;
+                }
+
+                // Cervix Dilatation Status
+                var latestDilatation = Patient.Dilatations?.OrderByDescending(e => e.Time).FirstOrDefault();
+                var dilatationStatus = MeasurementStatusHelper.CalculateStatus<CervixDilatation>(
+                    latestDilatation?.Time,
+                    latestDilatation != null ? $"{latestDilatation.DilatationCm} cm" : "");
+                CervixDilatationLatestValue = dilatationStatus.LatestValue;
+                CervixDilatationStatusText = dilatationStatus.DueStatusText;
+                CervixDilatationButtonColor = dilatationStatus.ButtonColor;
+
+                // Head Descent Status
+                var latestHeadDescent = Patient.HeadDescents?.OrderByDescending(e => e.Time).FirstOrDefault();
+                var headDescentStatus = MeasurementStatusHelper.CalculateStatus<HeadDescent>(
+                    latestHeadDescent?.Time,
+                    latestHeadDescent != null ? $"Station {latestHeadDescent.Station}" : "");
+                HeadDescentLatestValue = headDescentStatus.LatestValue;
+                HeadDescentStatusText = headDescentStatus.DueStatusText;
+                HeadDescentButtonColor = headDescentStatus.ButtonColor;
+
+                // Assessment Status
+                var latestAssessment = Patient.Assessments?.OrderByDescending(e => e.Time).FirstOrDefault();
+                var assessmentStatus = MeasurementStatusHelper.CalculateStatus<Assessment>(
+                    latestAssessment?.Time,
+                    latestAssessment != null ? latestAssessment.Notes : "");
+                AssessmentLatestValue = assessmentStatus.LatestValue;
+                AssessmentStatusText = assessmentStatus.DueStatusText;
+                AssessmentButtonColor = assessmentStatus.ButtonColor;
+
+                // Companion (not scheduled, just latest)
+                var latestCompanion = Patient.Companions?.OrderByDescending(e => e.Time).FirstOrDefault();
+                CompanionLatestValue = latestCompanion?.CompanionDisplay ?? "";
+                CompanionStatusText = latestCompanion != null ? $"Last: {latestCompanion.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestCompanion.Time - DateTime.Now)}" : "";
+
+                // Pain Relief (not scheduled, just latest)
+                var latestPainRelief = Patient.PainReliefs?.OrderByDescending(e => e.Time).FirstOrDefault();
+                PainReliefLatestValue = latestPainRelief?.PainReliefDisplay ?? "";
+                PainReliefStatusText = latestPainRelief != null ? $"Last: {latestPainRelief.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPainRelief.Time - DateTime.Now)}" : "";
+
+                // Oral Fluid (not scheduled, just latest)
+                var latestOralFluid = Patient.OralFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
+                OralFluidLatestValue = latestOralFluid?.OralFluidDisplay ?? "";
+                OralFluidStatusText = latestOralFluid != null ? $"Last: {latestOralFluid.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestOralFluid.Time - DateTime.Now)}" : "";
+
+                // Posture (not scheduled, just latest)
+                var latestPosture = Patient.Postures?.OrderByDescending(e => e.Time).FirstOrDefault();
+                PostureLatestValue = latestPosture?.PostureDisplay ?? "";
+                PostureStatusText = latestPosture != null ? $"Last: {latestPosture.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPosture.Time - DateTime.Now)}" : "";
+
+                // Amniotic Fluid (not scheduled, just latest)
+                var latestAmnioticFluid = Patient.AmnioticFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
+                AmnioticFluidLatestValue = latestAmnioticFluid?.Color ?? "";
+                AmnioticFluidStatusText = latestAmnioticFluid != null ? $"Last: {latestAmnioticFluid.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestAmnioticFluid.Time - DateTime.Now)}" : "";
+
+                // Fetal Position (not scheduled, just latest)
+                var latestFetalPosition = Patient.FetalPositions?.OrderByDescending(e => e.Time).FirstOrDefault();
+                FetalPositionLatestValue = latestFetalPosition?.Position ?? "";
+                FetalPositionStatusText = latestFetalPosition != null ? $"Last: {latestFetalPosition.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestFetalPosition.Time - DateTime.Now)}" : "";
+
+                // Caput (not scheduled, just latest)
+                var latestCaput = Patient.Caputs?.OrderByDescending(e => e.Time).FirstOrDefault();
+                CaputLatestValue = latestCaput?.Degree ?? "";
+                CaputStatusText = latestCaput != null ? $"Last: {latestCaput.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestCaput.Time - DateTime.Now)}" : "";
+
+                // Moulding (not scheduled, just latest)
+                var latestMoulding = Patient.Mouldings?.OrderByDescending(e => e.Time).FirstOrDefault();
+                MouldingLatestValue = latestMoulding?.DegreeDisplay ?? "";
+                MouldingStatusText = latestMoulding != null ? $"Last: {latestMoulding.Time:HH:mm}" : "";
+
+                // Oxytocin (not scheduled, just latest)
+                var latestOxytocin = Patient.Oxytocins?.OrderByDescending(e => e.Time).FirstOrDefault();
+                OxytocinLatestValue = latestOxytocin != null ? $"{latestOxytocin.DoseMUnitsPerMin} mU/min" : "";
+                OxytocinStatusText = latestOxytocin != null ? $"Last: {latestOxytocin.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestOxytocin.Time - DateTime.Now)}" : "";
+
+                // Medication (not scheduled, just latest)
+                var latestMedication = Patient.Medications?.OrderByDescending(e => e.Time).FirstOrDefault();
+                MedicationLatestValue = $"{latestMedication?.MedicationName} {latestMedication?.Dose}" ?? "";
+                MedicationStatusText = latestMedication != null ? $"Last: {latestMedication.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestMedication.Time - DateTime.Now)}" : "";
+
+                // IV Fluid (not scheduled, just latest)
+                var latestIVFluid = Patient.IVFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
+                IvFluidLatestValue = latestIVFluid != null ? $"{latestIVFluid.FluidType}, {latestIVFluid.VolumeInfused}ml" : "";
+                IvFluidStatusText = latestIVFluid != null ? $"Last: {latestIVFluid.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestIVFluid.Time - DateTime.Now)}" : "";
+
+                // Plan (not scheduled, just latest)
+                var latestPlan = Patient.Plans?.OrderByDescending(e => e.Time).FirstOrDefault();
+                PlanLatestValue = latestPlan?.Notes ?? "";
+                PlanStatusText = latestPlan != null ? $"Last: {latestPlan.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPlan.Time - DateTime.Now)}" : "";
+
+                // Bishop Score (with auto-calculation from latest measurables)
+                UpdateBishopScoreDisplay();
             }
-            else
+            catch (Exception e)
             {
-                FhrDecelerationLatestValue = string.Empty;
+
+                throw new Exception(e.Message);
             }
-
-            // Contraction Status
-            var latestContraction = Patient.Contractions?.OrderByDescending(e => e.Time).FirstOrDefault();
-            var contractionStatus = MeasurementStatusHelper.CalculateStatus<Contraction>(
-                latestContraction?.Time,
-                latestContraction != null ? $"{latestContraction.FrequencyPer10Min}/10min, {latestContraction.DurationSeconds}s" : "");
-            ContractionLatestValue = contractionStatus.LatestValue;
-            ContractionStatusText = contractionStatus.DueStatusText;
-            ContractionButtonColor = contractionStatus.ButtonColor;
-
-            // BP/Pulse Status
-            var latestBP = Patient.BPs?.OrderByDescending(e => e.Time).FirstOrDefault();
-            var bpStatus = MeasurementStatusHelper.CalculateStatus<BP>(
-                latestBP?.Time,
-                latestBP != null ? $"{latestBP.Systolic}/{latestBP.Diastolic}, P:{latestBP.Pulse}" : "");
-            BpLatestValue = bpStatus.LatestValue;
-            BpStatusText = bpStatus.DueStatusText;
-            BpButtonColor = bpStatus.ButtonColor;
-
-            // Temperature Status
-            var latestTemp = Patient.Temperatures?.OrderByDescending(e => e.Time).FirstOrDefault();
-            var tempStatus = MeasurementStatusHelper.CalculateStatus<Temperature>(
-                latestTemp?.Time,
-                latestTemp != null ? $"{latestTemp.TemperatureCelsius:F1}°C" : "");
-            TemperatureLatestValue = tempStatus.LatestValue;
-            TemperatureStatusText = tempStatus.DueStatusText;
-            TemperatureButtonColor = tempStatus.ButtonColor;
-
-            // Urine Status
-            var latestUrine = Patient.Urines?.OrderByDescending(e => e.Time).FirstOrDefault();
-            if (latestUrine != null)
-            {
-                var urineStatus = MeasurementStatusHelper.CalculateStatus<Urine>(
-                latestUrine?.Time,
-                latestUrine != null ? $"P:{latestUrine.Protein}, A:{latestUrine.Ketones}" : "");
-                UrineLatestValue = urineStatus.LatestValue;
-                UrineStatusText = urineStatus.DueStatusText;
-                UrineButtonColor = urineStatus.ButtonColor;
-            }
-            else
-            {
-                UrineLatestValue = string.Empty;
-                UrineStatusText = string.Empty;
-                UrineButtonColor = string.Empty;
-            }
-
-            // Cervix Dilatation Status
-            var latestDilatation = Patient.Dilatations?.OrderByDescending(e => e.Time).FirstOrDefault();
-            var dilatationStatus = MeasurementStatusHelper.CalculateStatus<CervixDilatation>(
-                latestDilatation?.Time,
-                latestDilatation != null ? $"{latestDilatation.DilatationCm} cm" : "");
-            CervixDilatationLatestValue = dilatationStatus.LatestValue;
-            CervixDilatationStatusText = dilatationStatus.DueStatusText;
-            CervixDilatationButtonColor = dilatationStatus.ButtonColor;
-
-            // Head Descent Status
-            var latestHeadDescent = Patient.HeadDescents?.OrderByDescending(e => e.Time).FirstOrDefault();
-            var headDescentStatus = MeasurementStatusHelper.CalculateStatus<HeadDescent>(
-                latestHeadDescent?.Time,
-                latestHeadDescent != null ? $"Station {latestHeadDescent.Station}" : "");
-            HeadDescentLatestValue = headDescentStatus.LatestValue;
-            HeadDescentStatusText = headDescentStatus.DueStatusText;
-            HeadDescentButtonColor = headDescentStatus.ButtonColor;
-
-            // Assessment Status
-            var latestAssessment = Patient.Assessments?.OrderByDescending(e => e.Time).FirstOrDefault();
-            var assessmentStatus = MeasurementStatusHelper.CalculateStatus<Assessment>(
-                latestAssessment?.Time,
-                latestAssessment != null ? latestAssessment.Notes : "");
-            AssessmentLatestValue = assessmentStatus.LatestValue;
-            AssessmentStatusText = assessmentStatus.DueStatusText;
-            AssessmentButtonColor = assessmentStatus.ButtonColor;
-
-            // Companion (not scheduled, just latest)
-            var latestCompanion = Patient.Companions?.OrderByDescending(e => e.Time).FirstOrDefault();
-            CompanionLatestValue = latestCompanion?.CompanionDisplay ?? "";
-            CompanionStatusText = latestCompanion != null ? $"Last: {latestCompanion.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestCompanion.Time - DateTime.Now)}" : "";
-
-            // Pain Relief (not scheduled, just latest)
-            var latestPainRelief = Patient.PainReliefs?.OrderByDescending(e => e.Time).FirstOrDefault();
-            PainReliefLatestValue = latestPainRelief?.PainReliefDisplay ?? "";
-            PainReliefStatusText = latestPainRelief != null ? $"Last: {latestPainRelief.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPainRelief.Time - DateTime.Now)}" : "";
-
-            // Oral Fluid (not scheduled, just latest)
-            var latestOralFluid = Patient.OralFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
-            OralFluidLatestValue = latestOralFluid?.OralFluidDisplay ?? "";
-            OralFluidStatusText = latestOralFluid != null ? $"Last: {latestOralFluid.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestOralFluid.Time - DateTime.Now)}" : "";
-
-            // Posture (not scheduled, just latest)
-            var latestPosture = Patient.Postures?.OrderByDescending(e => e.Time).FirstOrDefault();
-            PostureLatestValue = latestPosture?.PostureDisplay ?? "";
-            PostureStatusText = latestPosture != null ? $"Last: {latestPosture.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPosture.Time - DateTime.Now)}" : "";
-
-            // Amniotic Fluid (not scheduled, just latest)
-            var latestAmnioticFluid = Patient.AmnioticFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
-            AmnioticFluidLatestValue = latestAmnioticFluid?.Color ?? "";
-            AmnioticFluidStatusText = latestAmnioticFluid != null ? $"Last: {latestAmnioticFluid.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestAmnioticFluid.Time - DateTime.Now)}" : "";
-
-            // Fetal Position (not scheduled, just latest)
-            var latestFetalPosition = Patient.FetalPositions?.OrderByDescending(e => e.Time).FirstOrDefault();
-            FetalPositionLatestValue = latestFetalPosition?.Position ?? "";
-            FetalPositionStatusText = latestFetalPosition != null ? $"Last: {latestFetalPosition.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestFetalPosition.Time - DateTime.Now)}" : "";
-
-            // Caput (not scheduled, just latest)
-            var latestCaput = Patient.Caputs?.OrderByDescending(e => e.Time).FirstOrDefault();
-            CaputLatestValue = latestCaput?.Degree ?? "";
-            CaputStatusText = latestCaput != null ? $"Last: {latestCaput.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestCaput.Time - DateTime.Now)}" : "";
-
-            // Moulding (not scheduled, just latest)
-            var latestMoulding = Patient.Mouldings?.OrderByDescending(e => e.Time).FirstOrDefault();
-            MouldingLatestValue = latestMoulding?.DegreeDisplay ?? "";
-            MouldingStatusText = latestMoulding != null ? $"Last: {latestMoulding.Time:HH:mm}" : "";
-
-            // Oxytocin (not scheduled, just latest)
-            var latestOxytocin = Patient.Oxytocins?.OrderByDescending(e => e.Time).FirstOrDefault();
-            OxytocinLatestValue = latestOxytocin != null ? $"{latestOxytocin.DoseMUnitsPerMin} mU/min" : "";
-            OxytocinStatusText = latestOxytocin != null ? $"Last: {latestOxytocin.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestOxytocin.Time - DateTime.Now)}" : "";
-
-            // Medication (not scheduled, just latest)
-            var latestMedication = Patient.Medications?.OrderByDescending(e => e.Time).FirstOrDefault();
-            MedicationLatestValue = $"{latestMedication?.MedicationName} {latestMedication?.Dose}" ?? "";
-            MedicationStatusText = latestMedication != null ? $"Last: {latestMedication.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestMedication.Time - DateTime.Now)}" : "";
-
-            // IV Fluid (not scheduled, just latest)
-            var latestIVFluid = Patient.IVFluids?.OrderByDescending(e => e.Time).FirstOrDefault();
-            IvFluidLatestValue = latestIVFluid != null ? $"{latestIVFluid.FluidType}, {latestIVFluid.VolumeInfused}ml" : "";
-            IvFluidStatusText = latestIVFluid != null ? $"Last: {latestIVFluid.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestIVFluid.Time - DateTime.Now)}" : "";
-
-            // Plan (not scheduled, just latest)
-            var latestPlan = Patient.Plans?.OrderByDescending(e => e.Time).FirstOrDefault();
-            PlanLatestValue = latestPlan?.Notes ?? "";
-            PlanStatusText = latestPlan != null ? $"Last: {latestPlan.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPlan.Time - DateTime.Now)}" : "";
-
-            // Bishop Score (with auto-calculation from latest measurables)
-            UpdateBishopScoreDisplay();
         }
 
         /// <summary>
@@ -1044,54 +1052,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (Patient == null)
                 return;
 
-            var latestBishopScore = Patient.BishopScores?.OrderByDescending(e => e.Time).FirstOrDefault();
-
-            // If we have a saved Bishop Score, use it
-            if (latestBishopScore != null)
+            try
             {
-                BishopScoreTotalDisplay = latestBishopScore.TotalScore.ToString();
-                BishopScoreLatestValue = $"Recorded: {latestBishopScore.Time:HH:mm}";
-                BishopScoreInterpretation = latestBishopScore.Interpretation ?? "";
-                BishopScoreNotes = latestBishopScore.Notes ?? "";
+                var latestBishopScore = Patient.BishopScores?.OrderByDescending(e => e.Time).FirstOrDefault();
 
-                // Color based on score favorability
-                if (latestBishopScore.TotalScore >= 9)
+                // If we have a saved Bishop Score, use it
+                if (latestBishopScore != null)
                 {
-                    BishopScoreStatusColor = "#4CAF50"; // Green - Favorable
-                    BishopScoreButtonColor = "#E8F5E9"; // Light green background
-                }
-                else if (latestBishopScore.TotalScore >= 6)
-                {
-                    BishopScoreStatusColor = "#FF9800"; // Orange - Moderately favorable
-                    BishopScoreButtonColor = "#FFF3E0"; // Light orange background
-                }
-                else
-                {
-                    BishopScoreStatusColor = "#F44336"; // Red - Unfavorable
-                    BishopScoreButtonColor = "#FFEBEE"; // Light red background
-                }
-            }
-            else
-            {
-                // Auto-calculate from latest measurables
-                var autoCalculated = CalculateBishopScoreFromMeasurables();
-
-                if (autoCalculated.HasValue)
-                {
-                    var (totalScore, interpretation, _) = autoCalculated.Value;
-
-                    BishopScoreTotalDisplay = $"~{totalScore}";  // ~ indicates estimated
-                    BishopScoreLatestValue = "Auto-calculated";
-                    BishopScoreInterpretation = interpretation;
-                    BishopScoreNotes = "Tap to record complete score";
+                    BishopScoreTotalDisplay = latestBishopScore.TotalScore.ToString();
+                    BishopScoreLatestValue = $"Recorded: {latestBishopScore.Time:HH:mm}";
+                    BishopScoreInterpretation = latestBishopScore.Interpretation ?? "";
+                    BishopScoreNotes = latestBishopScore.Notes ?? "";
 
                     // Color based on score favorability
-                    if (totalScore >= 9)
+                    if (latestBishopScore.TotalScore >= 9)
                     {
                         BishopScoreStatusColor = "#4CAF50"; // Green - Favorable
                         BishopScoreButtonColor = "#E8F5E9"; // Light green background
                     }
-                    else if (totalScore >= 6)
+                    else if (latestBishopScore.TotalScore >= 6)
                     {
                         BishopScoreStatusColor = "#FF9800"; // Orange - Moderately favorable
                         BishopScoreButtonColor = "#FFF3E0"; // Light orange background
@@ -1104,14 +1083,50 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 }
                 else
                 {
-                    // No data available for calculation
-                    BishopScoreTotalDisplay = "-";
-                    BishopScoreLatestValue = "";
-                    BishopScoreInterpretation = "Insufficient data";
-                    BishopScoreNotes = "Tap to record Bishop Score";
-                    BishopScoreStatusColor = "#808080"; // Gray - No data
-                    BishopScoreButtonColor = "LightGray";
+                    // Auto-calculate from latest measurables
+                    var autoCalculated = CalculateBishopScoreFromMeasurables();
+
+                    if (autoCalculated.HasValue)
+                    {
+                        var (totalScore, interpretation, _) = autoCalculated.Value;
+
+                        BishopScoreTotalDisplay = $"~{totalScore}";  // ~ indicates estimated
+                        BishopScoreLatestValue = "Auto-calculated";
+                        BishopScoreInterpretation = interpretation;
+                        BishopScoreNotes = "Tap to record complete score";
+
+                        // Color based on score favorability
+                        if (totalScore >= 9)
+                        {
+                            BishopScoreStatusColor = "#4CAF50"; // Green - Favorable
+                            BishopScoreButtonColor = "#E8F5E9"; // Light green background
+                        }
+                        else if (totalScore >= 6)
+                        {
+                            BishopScoreStatusColor = "#FF9800"; // Orange - Moderately favorable
+                            BishopScoreButtonColor = "#FFF3E0"; // Light orange background
+                        }
+                        else
+                        {
+                            BishopScoreStatusColor = "#F44336"; // Red - Unfavorable
+                            BishopScoreButtonColor = "#FFEBEE"; // Light red background
+                        }
+                    }
+                    else
+                    {
+                        // No data available for calculation
+                        BishopScoreTotalDisplay = "-";
+                        BishopScoreLatestValue = "";
+                        BishopScoreInterpretation = "Insufficient data";
+                        BishopScoreNotes = "Tap to record Bishop Score";
+                        BishopScoreStatusColor = "#808080"; // Gray - No data
+                        BishopScoreButtonColor = "LightGray";
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
             }
         }
 
@@ -1123,33 +1138,40 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (Patient == null)
                 return null;
-
-            // Get latest cervical dilation
-            var latestDilatation = Patient.Dilatations?.OrderByDescending(d => d.Time).FirstOrDefault();
-            if (latestDilatation == null)
-                return null; // Need at least dilation for meaningful calculation
-
-            // Calculate dilation score
-            int dilationScore = BishopScoreCalculator.CalculateDilationScore(latestDilatation.DilatationCm);
-
-            // Default values for unknowns (conservative estimates)
-            int effacementScore = 0;  // Unknown, assume 0
-            int consistencyScore = 0; // Unknown, assume firm
-            int positionScore = 0;    // Unknown, assume posterior
-
-            // Get head descent station if available
-            int stationScore = 0;
-            var latestHeadDescent = Patient.HeadDescents?.OrderByDescending(d => d.Time).FirstOrDefault();
-            if (latestHeadDescent != null)
+            try
             {
-                stationScore = BishopScoreCalculator.CalculateStationScore(latestHeadDescent.Station);
+
+                // Get latest cervical dilation
+                var latestDilatation = Patient.Dilatations?.OrderByDescending(d => d.Time).FirstOrDefault();
+                if (latestDilatation == null)
+                    return null; // Need at least dilation for meaningful calculation
+
+                // Calculate dilation score
+                int dilationScore = BishopScoreCalculator.CalculateDilationScore(latestDilatation.DilatationCm);
+
+                // Default values for unknowns (conservative estimates)
+                int effacementScore = 0;  // Unknown, assume 0
+                int consistencyScore = 0; // Unknown, assume firm
+                int positionScore = 0;    // Unknown, assume posterior
+
+                // Get head descent station if available
+                int stationScore = 0;
+                var latestHeadDescent = Patient.HeadDescents?.OrderByDescending(d => d.Time).FirstOrDefault();
+                if (latestHeadDescent != null)
+                {
+                    stationScore = BishopScoreCalculator.CalculateStationScore(latestHeadDescent.Station);
+                }
+
+                // Calculate total score and interpretation
+                var result = BishopScoreCalculator.CalculateTotalScore(
+                    dilationScore, effacementScore, consistencyScore, positionScore, stationScore);
+
+                return result;
             }
-
-            // Calculate total score and interpretation
-            var result = BishopScoreCalculator.CalculateTotalScore(
-                dilationScore, effacementScore, consistencyScore, positionScore, stationScore);
-
-            return result;
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
         //private void LoadMeasurablesFromDatabase()
@@ -1356,35 +1378,40 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 PatientName = Patient.Name;
                 PatientInfo = Patient.DisplayInfo;
 
+                var earliestMeasurableTime = await GetEarliestMeasurableTimeAsync();
                 // Calculate labor duration
                 if (Patient.LaborStartTime.HasValue)
                 {
                     var duration = DateTime.Now - Patient.LaborStartTime.Value;
                     LaborDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
                 }
-
-                // Get the earliest measurable time to set as start time
-                var earliestMeasurableTime = await GetEarliestMeasurableTimeAsync();
-
-                // Set StartTime to the earliest of: LaborStartTime or earliest measurable
-                DateTime? newStartTime = null;
-                if (Patient.LaborStartTime.HasValue)
+                else
                 {
-                    newStartTime = Patient.LaborStartTime.Value;
-                }
-                else if (earliestMeasurableTime.HasValue)
-                {
-                    newStartTime = earliestMeasurableTime.Value;
+                    var duration = DateTime.Now - (earliestMeasurableTime ?? DateTime.Now);
+                    LaborDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
                 }
 
-                // If we have a new start time, floor it to the hour and regenerate time slots
-                if (newStartTime.HasValue)
-                {
-                    StartTime = new DateTime(newStartTime.Value.Year, newStartTime.Value.Month,
-                        newStartTime.Value.Day, newStartTime.Value.Hour, 0, 0);
+                //// Get the earliest measurable time to set as start time
 
-                    await GenerateInitialTimeSlots();
-                }
+                //// Set StartTime to the earliest of: LaborStartTime or earliest measurable
+                //DateTime? newStartTime = null;
+                //if (Patient.LaborStartTime.HasValue)
+                //{
+                //    newStartTime = Patient.LaborStartTime.Value;
+                //}
+                //else if (earliestMeasurableTime.HasValue)
+                //{
+                //    newStartTime = earliestMeasurableTime.Value;
+                //}
+
+                //// If we have a new start time, floor it to the hour and regenerate time slots
+                //if (newStartTime.HasValue)
+                //{
+                //    StartTime = new DateTime(newStartTime.Value.Year, newStartTime.Value.Month,
+                //        newStartTime.Value.Day, newStartTime.Value.Hour, 0, 0);
+
+                //    await GenerateInitialTimeSlots();
+                //}
 
                 //var companions = await _companionRepository.ListByPatientAsync(patientId);
                 //// Load partograph entries
@@ -1401,7 +1428,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (Patient.Dilatations.Any())
                     CurrentDilation = Patient.Dilatations?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.DilatationCm ?? 0;
                 else
-                    CurrentDilation = 0;
+                    CurrentDilation = Patient.CervicalDilationOnAdmission ?? 0;
 
                 //if (_patient.Companions.Any())
                 //    CompanionDescription = _patient.Companions?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.CompanionDisplay ?? string.Empty;
@@ -1415,8 +1442,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 //PrepareChartData();
                 //CalculateAlertActionLines();
 
-                CompanionCurrentIndex = 0;
-                CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
+                //CompanionCurrentIndex = 0;
+                //CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
 
                 // Update all measurement statuses with latest values and due times
                 UpdateMeasurementStatuses();
@@ -1903,10 +1930,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private void OnCompanionCycle()
         {
-            CompanionCurrentIndex = (CompanionCurrentIndex + 1) % Patient?.Companions.Count ?? 0;
-            //_companionCurrentIndex = (_companionCurrentIndex + 1) % _companionInfoList.Count;
-            //CompanionText = _companionInfoList[_companionCurrentIndex];
-            CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
+            try
+            {
+                CompanionCurrentIndex = (CompanionCurrentIndex + 1) % Patient?.Companions.Count ?? 0;
+                //_companionCurrentIndex = (_companionCurrentIndex + 1) % _companionInfoList.Count;
+                //CompanionText = _companionInfoList[_companionCurrentIndex];
+                CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception(e.Message);
+            }
         }
 
         [RelayCommand]

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
-             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.PlacentaDeliveryPopup">
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.PlacentaDeliveryPopup"
+                 xmlns:sys="clr-namespace:System;assembly=netstandard">
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
@@ -65,8 +66,7 @@
                             <DatePicker Grid.Column="0"
                                         Date="{Binding PlacentaDeliveryTime}"
                                         MaximumDate="{x:Static sys:DateTime.Now}"
-                                        Format="dd MMM yyyy"
-                                        xmlns:sys="clr-namespace:System;assembly=netstandard" />
+                                        Format="dd MMM yyyy" />
                             <TimePicker Grid.Column="1"
                                         Time="{Binding PlacentaDeliveryTimeOfDay}"
                                         Format="HH:mm" />

@@ -671,6 +671,78 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             PlanStatusText = latestPlan != null ? $"Last: {latestPlan.Time:HH:mm}, {MeasurementStatusHelper.FormatTimeSince(latestPlan.Time - DateTime.Now)}" : "";
         }
 
+        //private async Task LoadData(Guid? patientId)
+        //{
+        //    try
+        //    {
+        //        IsBusy = true;
+
+        //        Patient = await _partographRepository.GetAsync(patientId);
+        //        if (Patient == null)
+        //        {
+        //            _errorHandler.HandleError(new Exception($"Patient with id {patientId} not found."));
+        //            return;
+        //        }
+
+        //        PatientName = Patient.Name;
+        //        PatientInfo = Patient.DisplayInfo;
+
+        //        var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID);
+        //        if (birthOutcome != null)
+        //            Patient.SecondStageStartTime = birthOutcome.DeliveryTime;
+
+        //        // Calculate second stage duration
+        //        if (Patient.SecondStageStartTime.HasValue)
+        //        {
+        //            var duration = DateTime.Now - Patient.SecondStageStartTime.Value;
+        //            SecondStageDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
+        //        }
+
+        //        // Get the earliest measurable time
+        //        var earliestMeasurableTime = await GetEarliestMeasurableTimeAsync();
+
+        //        // Set StartTime
+        //        DateTime? newStartTime = null;
+        //        if (Patient.SecondStageStartTime.HasValue)
+        //        {
+        //            newStartTime = Patient.SecondStageStartTime.Value;
+        //        }
+        //        else if (earliestMeasurableTime.HasValue)
+        //        {
+        //            newStartTime = earliestMeasurableTime.Value;
+        //        }
+
+        //        if (newStartTime.HasValue)
+        //        {
+        //            StartTime = new DateTime(newStartTime.Value.Year, newStartTime.Value.Month,
+        //                newStartTime.Value.Day, newStartTime.Value.Hour, 0, 0);
+        //        }
+
+        //        CompanionCurrentIndex = 0;
+        //        CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
+
+        //        // Load babies for this partograph
+        //        await LoadBabiesAsync();
+
+        //        // Update all measurement statuses
+        //        UpdateMeasurementStatuses();
+
+        //        // Update delivery status
+        //        UpdateDeliveryStatus();
+
+        //        // Generate clinical notes
+        //        GenerateClinicalNotes();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _errorHandler.HandleError(e);
+        //    }
+        //    finally
+        //    {
+        //        IsBusy = false;
+        //    }
+        //}
+
         private async Task LoadData(Guid? patientId)
         {
             try
@@ -687,9 +759,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 PatientName = Patient.Name;
                 PatientInfo = Patient.DisplayInfo;
 
-                var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID);
-                if (birthOutcome != null)
-                    Patient.SecondStageStartTime = birthOutcome.DeliveryTime;
+                var earliestMeasurableTime = await GetEarliestMeasurableTimeAsync();
 
                 // Calculate second stage duration
                 if (Patient.SecondStageStartTime.HasValue)
@@ -697,29 +767,65 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     var duration = DateTime.Now - Patient.SecondStageStartTime.Value;
                     SecondStageDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
                 }
-
-                // Get the earliest measurable time
-                var earliestMeasurableTime = await GetEarliestMeasurableTimeAsync();
-
-                // Set StartTime
-                DateTime? newStartTime = null;
-                if (Patient.SecondStageStartTime.HasValue)
+                else
                 {
-                    newStartTime = Patient.SecondStageStartTime.Value;
-                }
-                else if (earliestMeasurableTime.HasValue)
-                {
-                    newStartTime = earliestMeasurableTime.Value;
+                    var duration = DateTime.Now - (earliestMeasurableTime ?? DateTime.Now);
+                    SecondStageDuration = $"{(int)duration.TotalHours}h {duration.Minutes}m";
                 }
 
-                if (newStartTime.HasValue)
-                {
-                    StartTime = new DateTime(newStartTime.Value.Year, newStartTime.Value.Month,
-                        newStartTime.Value.Day, newStartTime.Value.Hour, 0, 0);
-                }
+                //// Get the earliest measurable time to set as start time
 
-                CompanionCurrentIndex = 0;
-                CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
+                //// Set StartTime to the earliest of: LaborStartTime or earliest measurable
+                //DateTime? newStartTime = null;
+                //if (Patient.LaborStartTime.HasValue)
+                //{
+                //    newStartTime = Patient.LaborStartTime.Value;
+                //}
+                //else if (earliestMeasurableTime.HasValue)
+                //{
+                //    newStartTime = earliestMeasurableTime.Value;
+                //}
+
+                //// If we have a new start time, floor it to the hour and regenerate time slots
+                //if (newStartTime.HasValue)
+                //{
+                //    StartTime = new DateTime(newStartTime.Value.Year, newStartTime.Value.Month,
+                //        newStartTime.Value.Day, newStartTime.Value.Hour, 0, 0);
+
+                //    await GenerateInitialTimeSlots();
+                //}
+
+                //var companions = await _companionRepository.ListByPatientAsync(patientId);
+                //// Load partograph entries
+                //var entries = await _partographRepository.ListByPatientAsync(patientId);
+                //PartographEntries = new ObservableCollection<Partograph>(entries.OrderBy(e => e.Time));
+
+                //if (entries.Any())
+                //{
+                //    LastRecordedTime = entries.Max(e => e.Time);
+                //    var latestEntry = entries.OrderByDescending(e => e.Time).FirstOrDefault();
+                //    //CurrentDilation = latestEntry.CervicalDilation;
+                //}
+
+                //if (Patient.Dilatations.Any())
+                //    CurrentDilation = Patient.Dilatations?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.DilatationCm ?? 0;
+                //else
+                //    CurrentDilation = Patient.CervicalDilationOnAdmission ?? 0;
+
+                //if (_patient.Companions.Any())
+                //    CompanionDescription = _patient.Companions?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.CompanionDisplay ?? string.Empty;
+                //else
+                //    CompanionDescription = string.Empty;                
+
+                //// Load measurables from database and populate TimeSlots
+                //LoadMeasurablesFromDatabase();
+
+                // Prepare chart data
+                //PrepareChartData();
+                //CalculateAlertActionLines();
+
+                //CompanionCurrentIndex = 0;
+                //CompanionText = Patient?.Companions[CompanionCurrentIndex]?.CompanionDisplay ?? string.Empty;
 
                 // Load babies for this partograph
                 await LoadBabiesAsync();
@@ -904,7 +1010,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     ID = Guid.NewGuid(),
                     PartographID = Patient.ID.Value,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
                 };
 
                 birthOutcome.DeliveryTime = data.DeliveryTime;
@@ -918,7 +1024,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     "Elective C-Section" => DeliveryMode.CaesareanSection,
                     _ => DeliveryMode.SpontaneousVaginal
                 };
-                birthOutcome.UpdatedAt = DateTime.UtcNow;
+                birthOutcome.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                 await _birthOutcomeRepository.SaveItemAsync(birthOutcome);
 
@@ -930,16 +1036,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     BirthOutcomeID = birthOutcome.ID,
                     Sex = data.BabySex switch
                     {
-                        "Male" => BabyDetails.BabySex.Male,
-                        "Female" => BabyDetails.BabySex.Female,
-                        _ => BabyDetails.BabySex.Undetermined
+                        "Male" => BabySex.Male,
+                        "Female" => BabySex.Female,
+                        _ => BabySex.Unknown
                     },
                     BirthTime = data.DeliveryTime,
                     ImmediateCry = data.ImmediateCry,
-                    SkinToSkinInitiated = data.SkinToSkinInitiated,
+                    KangarooMotherCare = data.SkinToSkinInitiated,
                     DelayedCordClamping = data.CordClampedDelayed,
                     BabyTag = data.IsMultipleBirth ? $"Baby {data.BabyNumber}" : "Baby",
-                    CreatedAt = DateTime.UtcNow
+                    CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
                 };
 
                 await _babyDetailsRepository.SaveItemAsync(babyDetails);

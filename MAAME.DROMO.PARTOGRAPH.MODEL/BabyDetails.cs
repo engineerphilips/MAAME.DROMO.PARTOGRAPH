@@ -178,6 +178,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
             }
         }
 
+        public bool ImmediateCry { get; set; }
+
         public string CalculateHash()
         {
             var data = $"{ID}|{PartographID}|{BirthWeight}|{VitalStatus}";

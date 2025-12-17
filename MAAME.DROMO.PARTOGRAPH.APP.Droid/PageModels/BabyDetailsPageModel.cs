@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -663,7 +664,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             if (result)
             {
-                await Shell.Current.GoToAsync("..");
+                //await Shell.Current.GoToAsync("..");
+
+                await Shell.Current.GoToAsync($"thirdpartograph?patientId={Partograph.ID.ToString()}");
             }
         }
 

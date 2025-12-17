@@ -6,7 +6,8 @@
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:pickers="clr-namespace:Syncfusion.Maui.Picker;assembly=Syncfusion.Maui.Picker"
-             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.DeliveryMomentPopup">
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.DeliveryMomentPopup"
+                 xmlns:sys="clr-namespace:System;assembly=netstandard">
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
@@ -64,8 +65,7 @@
                             <DatePicker Grid.Column="0"
                                         Date="{Binding DeliveryTime}"
                                         MaximumDate="{x:Static sys:DateTime.Now}"
-                                        Format="dd MMM yyyy"
-                                        xmlns:sys="clr-namespace:System;assembly=netstandard" />
+                                        Format="dd MMM yyyy" />
                             <TimePicker Grid.Column="1"
                                         Time="{Binding DeliveryTimeOfDay}"
                                         Format="HH:mm" />

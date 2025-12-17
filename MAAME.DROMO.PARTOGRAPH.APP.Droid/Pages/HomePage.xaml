@@ -414,12 +414,12 @@
                                 BackgroundColor="{AppThemeBinding Light=#FEF2F2, Dark=#450A0A}">
                             <VerticalStackLayout Spacing="12">
                                 <Grid ColumnDefinitions="Auto,*,Auto">
-                                    <Border Grid.Column="0" BackgroundColor="#EF444420" Padding="8" WidthRequest="36" HeightRequest="36">
+                                    <!--<Border Grid.Column="0" BackgroundColor="#EF444420" Padding="8" WidthRequest="36" HeightRequest="36">
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="8" />
                                         </Border.StrokeShape>
                                         <Label Text="&#x26A0;" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
-                                    </Border>
+                                    </Border>-->
                                     <Label Grid.Column="1"
                                            Text="Critical Patients"
                                            Style="{StaticResource SectionHeaderStyle}"
@@ -430,7 +430,7 @@
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="12" />
                                         </Border.StrokeShape>
-                                        <Label Text="{Binding DashboardStats.CriticalPatients.Count}" FontSize="13" FontAttributes="Bold" TextColor="White" />
+                                        <Label Text="{Binding DashboardStats.CriticalPatients.Count}" FontSize="13" FontAttributes="Bold" />
                                     </Border>
                                 </Grid>
 
@@ -457,21 +457,21 @@
 
                                                     <!-- Patient Details -->
                                                     <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                                                        <Label Text="{Binding PatientName}" FontSize="15" FontAttributes="Bold" />
-                                                        <Label Text="{Binding HospitalNumber, StringFormat='ID: {0}'}" FontSize="11" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                                        <Label Text="{Binding PatientName}" FontSize="16" FontAttributes="Bold" />
+                                                        <Label Text="{Binding HospitalNumber, StringFormat='ID: {0}'}" FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                                         <Label Text="{Binding ReasonForConcern}" FontSize="12" FontAttributes="Bold" TextColor="#EF4444" />
                                                         <HorizontalStackLayout Spacing="16">
                                                             <HorizontalStackLayout Spacing="4">
-                                                                <Label Text="&#x23F1;" FontSize="11" VerticalOptions="Center" />
-                                                                <Label Text="{Binding TimeInLabor}" FontSize="11" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                                                <Label Text="&#x23F1;" FontSize="12" VerticalOptions="Center" />
+                                                                <Label Text="{Binding TimeInLabor}" FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                                             </HorizontalStackLayout>
                                                             <HorizontalStackLayout Spacing="4" IsVisible="{Binding CurrentDilation, Converter={StaticResource IsNotNullConverter}}">
                                                                 <Label Text="&#x2B55;" FontSize="9" VerticalOptions="Center" />
-                                                                <Label Text="{Binding CurrentDilation, StringFormat='{0}cm'}" FontSize="11" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                                                <Label Text="{Binding CurrentDilation, StringFormat='{0}cm'}" FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                                             </HorizontalStackLayout>
                                                             <HorizontalStackLayout Spacing="4" IsVisible="{Binding LastFetalHeartRate, Converter={StaticResource IsNotNullConverter}}">
-                                                                <Label Text="&#x1F493;" FontSize="11" VerticalOptions="Center" />
-                                                                <Label Text="{Binding LastFetalHeartRate, StringFormat='{0} bpm'}" FontSize="11" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                                                <Label Text="&#x1F493;" FontSize="12" VerticalOptions="Center" />
+                                                                <Label Text="{Binding LastFetalHeartRate, StringFormat='{0} bpm'}" FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                                             </HorizontalStackLayout>
                                                         </HorizontalStackLayout>
                                                     </VerticalStackLayout>
@@ -479,13 +479,13 @@
                                                     <!-- View Button -->
                                                     <Button Grid.Column="2"
                                                             Text="View"
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:HomePageModel}}, Path=NavigateToCriticalPatientCommand}"
-                                                            CommandParameter="{Binding .}"
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:HomePageModel}}, Path=NavigateToCriticalPatientCommand, x:DataType=pagemodels:HomePageModel}"
+                                        CommandParameter="{Binding .}"
                                                             BackgroundColor="#3B82F6"
                                                             TextColor="White"
                                                             Padding="16,8"
                                                             CornerRadius="8"
-                                                            FontSize="13"
+                                                            FontSize="14"
                                                             VerticalOptions="Center" />
                                                 </Grid>
                                             </Border>
@@ -541,8 +541,8 @@
                                                     </VerticalStackLayout>
                                                     <Button Grid.Column="2"
                                                             Text="View"
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:HomePageModel}}, Path=NavigateToAlertPatientCommand}"
-                                                            CommandParameter="{Binding .}"
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:HomePageModel}}, Path=NavigateToAlertPatientCommand, x:DataType=pagemodels:HomePageModel}"
+                                        CommandParameter="{Binding .}"
                                                             BackgroundColor="#F59E0B"
                                                             TextColor="White"
                                                             Padding="12,6"
@@ -652,7 +652,7 @@
                         <Border Grid.Row="6" Style="{StaticResource ModernCardStyle}">
                             <VerticalStackLayout Spacing="12">
                                 <HorizontalStackLayout Spacing="8">
-                                    <Label Text="&#x1F4CA;" FontSize="18" VerticalOptions="Center" />
+                                    <!--<Label Text="&#x1F4CA;" FontSize="18" VerticalOptions="Center" />-->
                                     <Label Text="Today's Admissions" Style="{StaticResource SectionHeaderStyle}" VerticalOptions="Center" />
                                 </HorizontalStackLayout>
 
@@ -682,12 +682,12 @@
                         <Border Grid.Row="7" Style="{StaticResource ModernCardStyle}">
                             <VerticalStackLayout Spacing="12">
                                 <Grid ColumnDefinitions="Auto,*,Auto">
-                                    <Border Grid.Column="0" BackgroundColor="#3B82F620" Padding="8" WidthRequest="36" HeightRequest="36">
+                                    <!--<Border Grid.Column="0" BackgroundColor="#3B82F620" Padding="8" WidthRequest="36" HeightRequest="36">
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="8" />
                                         </Border.StrokeShape>
                                         <Label Text="&#x1F4CB;" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
-                                    </Border>
+                                    </Border>-->
                                     <Label Grid.Column="1"
                                            Text="Handover Summary"
                                            Style="{StaticResource SectionHeaderStyle}"
@@ -750,12 +750,12 @@
                             <VerticalStackLayout Spacing="12">
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     <HorizontalStackLayout Grid.Column="0" Spacing="8">
-                                        <Border BackgroundColor="#10B98120" Padding="8" WidthRequest="36" HeightRequest="36">
+                                        <!--<Border BackgroundColor="#10B98120" Padding="8" WidthRequest="36" HeightRequest="36">
                                             <Border.StrokeShape>
                                                 <RoundRectangle CornerRadius="8" />
                                             </Border.StrokeShape>
                                             <Label Text="&#x2696;" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
-                                        </Border>
+                                        </Border>-->
                                         <Label Text="WHO Compliance"
                                                Style="{StaticResource SectionHeaderStyle}"
                                                VerticalOptions="Center" />
@@ -769,8 +769,7 @@
                                         </Border.StrokeShape>
                                         <Label Text="{Binding DashboardStats.ComplianceMetrics.ComplianceRate, StringFormat='{0:F0}%'}"
                                                FontSize="14"
-                                               FontAttributes="Bold"
-                                               TextColor="White" />
+                                               FontAttributes="Bold" />
                                     </Border>
                                 </Grid>
 
@@ -786,7 +785,7 @@
                                                    FontAttributes="Bold"
                                                    TextColor="#D97706"
                                                    HorizontalOptions="Center" />
-                                            <Label Text="Alert Line" FontSize="11" HorizontalOptions="Center" TextColor="#92400E" />
+                                            <Label Text="Alert Line" FontSize="12" HorizontalOptions="Center" TextColor="#92400E" />
                                         </VerticalStackLayout>
                                     </Border>
 
@@ -801,7 +800,7 @@
                                                    FontAttributes="Bold"
                                                    TextColor="#DC2626"
                                                    HorizontalOptions="Center" />
-                                            <Label Text="Action Line" FontSize="11" HorizontalOptions="Center" TextColor="#991B1B" />
+                                            <Label Text="Action Line" FontSize="12" HorizontalOptions="Center" TextColor="#991B1B" />
                                         </VerticalStackLayout>
                                     </Border>
 
@@ -816,7 +815,7 @@
                                                    FontAttributes="Bold"
                                                    TextColor="#059669"
                                                    HorizontalOptions="Center" />
-                                            <Label Text="On-Time" FontSize="11" HorizontalOptions="Center" TextColor="#047857" />
+                                            <Label Text="On-Time" FontSize="12" HorizontalOptions="Center" TextColor="#047857" />
                                         </VerticalStackLayout>
                                     </Border>
 
@@ -831,7 +830,7 @@
                                                    FontAttributes="Bold"
                                                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                                    HorizontalOptions="Center" />
-                                            <Label Text="Late" FontSize="11" HorizontalOptions="Center" TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                            <Label Text="Late" FontSize="12" HorizontalOptions="Center" TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
                                         </VerticalStackLayout>
                                     </Border>
                                 </Grid>
@@ -842,12 +841,12 @@
                         <Border Grid.Row="9" Style="{StaticResource ModernCardStyle}">
                             <VerticalStackLayout Spacing="12">
                                 <HorizontalStackLayout Spacing="8">
-                                    <Border BackgroundColor="#8B5CF620" Padding="8" WidthRequest="36" HeightRequest="36">
+                                    <!--<Border BackgroundColor="#8B5CF620" Padding="8" WidthRequest="36" HeightRequest="36">
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="8" />
                                         </Border.StrokeShape>
                                         <Label Text="&#x1F4AC;" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
-                                    </Border>
+                                    </Border>-->
                                     <Label Text="Recent Activity" Style="{StaticResource SectionHeaderStyle}" VerticalOptions="Center" />
                                 </HorizontalStackLayout>
 
@@ -881,8 +880,8 @@
 
                                                 <!-- Activity Details -->
                                                 <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                                                    <Label Text="{Binding Description}" FontSize="13" FontAttributes="Bold" />
-                                                    <Label Text="{Binding TimeAgo, StringFormat='{0} ago'}" FontSize="11" TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}" />
+                                                    <Label Text="{Binding Description}" FontSize="14" FontAttributes="Bold" />
+                                                    <Label Text="{Binding TimeAgo, StringFormat='{0} ago'}" FontSize="12" TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}" />
                                                 </VerticalStackLayout>
 
                                                 <!-- Time Badge -->
@@ -899,7 +898,7 @@
                         </Border>
 
                         <!-- Bottom Spacing -->
-                        <BoxView Grid.Row="10" HeightRequest="20" Color="Transparent" />
+                        <!--<BoxView Grid.Row="10" HeightRequest="20" Color="Transparent" />-->
 
                     </Grid>
                 </ScrollView>
