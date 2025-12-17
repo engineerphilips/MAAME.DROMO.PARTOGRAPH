@@ -1,4 +1,5 @@
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages;
 
@@ -6,10 +7,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages;
 public partial class SecondStagePartographPage : ContentPage
 {
     public string PatientId { get; set; }
+    private readonly SecondStagePartographPageModel _pageModel;
+    private DeliveryMomentPopup? _deliveryMomentPopup;
 
     public SecondStagePartographPage(SecondStagePartographPageModel pageModel)
     {
         InitializeComponent();
+        _pageModel = pageModel;
         BindingContext = pageModel;
 
         // Bind modal view BindingContexts to the modal page models exposed by the main page model
@@ -69,7 +73,51 @@ public partial class SecondStagePartographPage : ContentPage
                 pageModel.OpenAssessmentModalPopup += () => sfPopupAssessment.IsOpen = true;
                 pageModel.ClosePlanModalPopup += async () => { sfPopupPlan.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenPlanModalPopup += () => sfPopupPlan.IsOpen = true;
+
+                // Delivery moment popup
+                pageModel.OpenDeliveryMomentPopup += OpenDeliveryMomentPopup;
+                pageModel.CloseDeliveryMomentPopup += CloseDeliveryMomentPopup;
             }
         };
+    }
+
+    private void OpenDeliveryMomentPopup()
+    {
+        _deliveryMomentPopup = new DeliveryMomentPopup(_pageModel.DeliveryMomentPopupPageModel)
+        {
+            IsOpen = true,
+            ShowHeader = true,
+            ShowFooter = false,
+            ShowCloseButton = true,
+            WidthRequest = 400,
+            HeightRequest = 600
+        };
+
+        // Add popup to the page
+        if (Content is Grid grid)
+        {
+            grid.Children.Add(_deliveryMomentPopup);
+        }
+        else
+        {
+            var newGrid = new Grid();
+            var oldContent = Content;
+            Content = newGrid;
+            newGrid.Children.Add(oldContent);
+            newGrid.Children.Add(_deliveryMomentPopup);
+        }
+    }
+
+    private void CloseDeliveryMomentPopup()
+    {
+        if (_deliveryMomentPopup != null)
+        {
+            _deliveryMomentPopup.IsOpen = false;
+            if (Content is Grid grid)
+            {
+                grid.Children.Remove(_deliveryMomentPopup);
+            }
+            _deliveryMomentPopup = null;
+        }
     }
 }

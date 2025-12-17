@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 {
@@ -44,6 +45,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         // Services
         private readonly PartographNotesService _notesService;
         private readonly IPartographPdfService _pdfService;
+        private readonly LabourTimerService _labourTimerService;
+
+        // Delivery moment popup
+        private readonly DeliveryMomentPopupPageModel _deliveryMomentPopupPageModel;
 
         // Modal page models
         private readonly CompanionModalPageModel _companionModalPageModel;
@@ -301,7 +306,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             AssessmentModalPageModel assessmentModalPageModel,
             PlanModalPageModel planModalPageModel,
             PartographNotesService notesService,
-            IPartographPdfService pdfService)
+            IPartographPdfService pdfService,
+            LabourTimerService labourTimerService,
+            DeliveryMomentPopupPageModel deliveryMomentPopupPageModel)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
@@ -345,6 +352,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _planModalPageModel = planModalPageModel;
             _notesService = notesService;
             _pdfService = pdfService;
+            _labourTimerService = labourTimerService;
+            _deliveryMomentPopupPageModel = deliveryMomentPopupPageModel;
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -836,6 +845,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         /// <summary>
         /// Records baby delivery and transitions to Third Stage
+        /// Uses the DeliveryMomentPopup for comprehensive data capture
         /// </summary>
         [RelayCommand]
         private async Task RecordBabyDelivery()
@@ -848,43 +858,129 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             try
             {
-                var shouldProceed = await Application.Current.MainPage.DisplayAlert(
-                    "Record Baby Delivery",
-                    "This will record the baby delivery time and transition to Third Stage (placenta delivery monitoring). Continue?",
-                    "Yes, Baby Delivered", "Cancel");
+                // Calculate second stage duration for the popup
+                TimeSpan? secondStageDuration = null;
+                if (Patient.SecondStageStartTime.HasValue)
+                {
+                    secondStageDuration = DateTime.Now - Patient.SecondStageStartTime.Value;
+                }
 
-                if (!shouldProceed)
-                    return;
+                // Initialize and show the delivery moment popup
+                _deliveryMomentPopupPageModel.Initialize(secondStageDuration, Patient.SecondStageStartTime);
+                _deliveryMomentPopupPageModel.ClosePopup = () => CloseDeliveryMomentPopup?.Invoke();
+                _deliveryMomentPopupPageModel.OnDeliveryConfirmed = async (data) =>
+                {
+                    await ProcessDeliveryConfirmation(data);
+                };
 
+                OpenDeliveryMomentPopup?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to open delivery popup");
+            }
+        }
+
+        /// <summary>
+        /// Processes the delivery confirmation from the popup
+        /// </summary>
+        private async Task ProcessDeliveryConfirmation(DeliveryMomentData data)
+        {
+            if (Patient?.ID == null)
+                return;
+
+            try
+            {
                 // Record delivery time and transition to Third Stage
-                Patient.DeliveryTime = DateTime.Now;
+                Patient.DeliveryTime = data.DeliveryTime;
                 Patient.Status = LaborStatus.ThirdStage;
-                Patient.ThirdStageStartTime = DateTime.Now;
+                Patient.ThirdStageStartTime = data.DeliveryTime;
 
                 await _partographRepository.SaveItemAsync(Patient);
 
-                await AppShell.DisplayToastAsync("Baby delivery recorded - Transitioned to Third Stage");
-
-                // Ask if user wants to record birth outcome now
-                var recordOutcome = await Application.Current.MainPage.DisplayAlert(
-                    "Record Birth Outcome",
-                    "Do you want to record the birth outcome details now?",
-                    "Yes", "Later");
-
-                if (recordOutcome)
+                // Create or update birth outcome with delivery mode
+                var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID) ?? new BirthOutcome
                 {
-                    await NavigateToBirthOutcome();
-                }
-                else
+                    ID = Guid.NewGuid(),
+                    PartographID = Patient.ID.Value,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                birthOutcome.DeliveryTime = data.DeliveryTime;
+                birthOutcome.DeliveryMode = data.DeliveryMode switch
                 {
-                    // Navigate to Third Stage page
-                    await Shell.Current.GoToAsync($"thirdpartograph?patientId={Patient.ID}");
+                    "Spontaneous Vaginal" => BirthOutcome.DeliveryModeType.SVD,
+                    "Assisted (Vacuum)" => BirthOutcome.DeliveryModeType.AssistedVacuum,
+                    "Assisted (Forceps)" => BirthOutcome.DeliveryModeType.AssistedForceps,
+                    "Breech Vaginal" => BirthOutcome.DeliveryModeType.BreechVaginal,
+                    "Emergency C-Section" => BirthOutcome.DeliveryModeType.EmergencyCSection,
+                    "Elective C-Section" => BirthOutcome.DeliveryModeType.ElectiveCSection,
+                    _ => BirthOutcome.DeliveryModeType.SVD
+                };
+                birthOutcome.UpdatedAt = DateTime.UtcNow;
+
+                await _birthOutcomeRepository.SaveItemAsync(birthOutcome);
+
+                // Create baby details entry
+                var babyDetails = new BabyDetails
+                {
+                    ID = Guid.NewGuid(),
+                    PartographID = Patient.ID.Value,
+                    BirthOutcomeID = birthOutcome.ID,
+                    Sex = data.BabySex switch
+                    {
+                        "Male" => BabyDetails.BabySex.Male,
+                        "Female" => BabyDetails.BabySex.Female,
+                        _ => BabyDetails.BabySex.Undetermined
+                    },
+                    BirthTime = data.DeliveryTime,
+                    ImmediateCry = data.ImmediateCry,
+                    SkinToSkinInitiated = data.SkinToSkinInitiated,
+                    DelayedCordClamping = data.CordClampedDelayed,
+                    BabyTag = data.IsMultipleBirth ? $"Baby {data.BabyNumber}" : "Baby",
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _babyDetailsRepository.SaveItemAsync(babyDetails);
+
+                // Start labour timer monitoring for APGAR reminders
+                _labourTimerService.StartMonitoring(Patient);
+
+                await AppShell.DisplayToastAsync("Baby delivery recorded - APGAR 1-min due soon!");
+
+                // Update delivery status display
+                UpdateDeliveryStatus();
+
+                // Reload babies list
+                await LoadBabiesAsync();
+
+                // Ask if user wants to go to Third Stage or record more details
+                var choice = await Application.Current.MainPage.DisplayActionSheet(
+                    "What would you like to do next?",
+                    "Stay Here",
+                    null,
+                    "Go to Third Stage",
+                    "Record APGAR Score",
+                    "Record Birth Outcome Details");
+
+                switch (choice)
+                {
+                    case "Go to Third Stage":
+                        await Shell.Current.GoToAsync($"thirdpartograph?patientId={Patient.ID}");
+                        break;
+                    case "Record APGAR Score":
+                        await NavigateToBabyDetails();
+                        break;
+                    case "Record Birth Outcome Details":
+                        await NavigateToBirthOutcome();
+                        break;
                 }
             }
             catch (Exception ex)
             {
                 _errorHandler.HandleError(ex);
-                await AppShell.DisplayToastAsync("Failed to record baby delivery");
+                await AppShell.DisplayToastAsync("Failed to process delivery confirmation");
             }
         }
 
@@ -1044,6 +1140,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Action? CloseAssessmentModalPopup { get; set; }
         public Action? OpenPlanModalPopup { get; set; }
         public Action? ClosePlanModalPopup { get; set; }
+
+        // Delivery moment popup actions
+        public Action? OpenDeliveryMomentPopup { get; set; }
+        public Action? CloseDeliveryMomentPopup { get; set; }
+
+        public DeliveryMomentPopupPageModel DeliveryMomentPopupPageModel => _deliveryMomentPopupPageModel;
 
         [RelayCommand]
         public async Task OpenCompanionPopup()

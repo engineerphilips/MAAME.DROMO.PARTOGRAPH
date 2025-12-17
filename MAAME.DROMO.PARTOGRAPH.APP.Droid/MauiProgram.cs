@@ -94,6 +94,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<ModalErrorHandler>();
             builder.Services.AddSingleton<FHRPatternAnalysisService>();
             builder.Services.AddSingleton<StageProgressionService>(); // WHO Four-Stage Labor System
+            builder.Services.AddSingleton<LabourTimerService>(); // Labour stage timers and APGAR reminders
             builder.Services.AddSingleton<PartographNotesService>(); // Dynamic clinical notes generation
             builder.Services.AddSingleton<IReportService, ReportService>(); // Comprehensive reporting service
             builder.Services.AddHttpClient<IPartographPdfService, PartographPdfService>(); // PDF generation service
@@ -156,10 +157,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<FHRContractionModalPageModel>();
             builder.Services.AddSingleton<BishopScorePopupPageModel>();
 
+            // Stage Transition Popup PageModels
+            builder.Services.AddSingleton<DeliveryMomentPopupPageModel>();
+            builder.Services.AddSingleton<PlacentaDeliveryPopupPageModel>();
+            builder.Services.AddSingleton<CompletionChecklistPopupPageModel>();
+
             // Register Pages and PageModels with routes
             builder.Services.AddTransientWithShellRoute<PatientPage, PatientPageModel>("patient");
             builder.Services.AddTransientWithShellRoute<PartographPage, PartographPageModel>("partograph");
             builder.Services.AddTransientWithShellRoute<SecondStagePartographPage, SecondStagePartographPageModel>("secondpartograph");
+            builder.Services.AddTransientWithShellRoute<ThirdStagePartographPage, ThirdStagePartographPageModel>("thirdpartograph");
+            builder.Services.AddTransientWithShellRoute<FourthStagePartographPage, FourthStagePartographPageModel>("fourthpartograph");
             builder.Services.AddTransientWithShellRoute<PartographEntryPage, PartographEntryPageModel>("partographentry");
             builder.Services.AddTransientWithShellRoute<PartographChartPage, PartographChartPageModel>("partographchart");
             builder.Services.AddTransientWithShellRoute<BirthOutcomePage, BirthOutcomePageModel>("BirthOutcomePage");

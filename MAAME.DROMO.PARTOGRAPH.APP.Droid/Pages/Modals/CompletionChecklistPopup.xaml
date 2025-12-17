@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<sfPopup:SfPopup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.CompletionChecklistPopup">
+
+    <sfPopup:SfPopup.Resources>
+        <ResourceDictionary>
+            <Style x:Key="SectionTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Margin" Value="0,10,0,5" />
+            </Style>
+            <Style x:Key="CheckboxLabel" TargetType="Label">
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </sfPopup:SfPopup.Resources>
+
+    <sfPopup:SfPopup.HeaderTemplate>
+        <DataTemplate>
+            <StackLayout BackgroundColor="#2196F3" Padding="15">
+                <Label Text="Delivery Completion Checklist"
+                       VerticalOptions="Center"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+                <Label Text="Verify all items before discharge"
+                       VerticalOptions="Center"
+                       FontSize="12"
+                       TextColor="White"
+                       Opacity="0.9" />
+            </StackLayout>
+        </DataTemplate>
+    </sfPopup:SfPopup.HeaderTemplate>
+
+    <sfPopup:SfPopup.ContentTemplate>
+        <DataTemplate>
+            <ScrollView>
+                <VerticalStackLayout Padding="15,10" Spacing="10">
+
+                    <!-- Labour Summary -->
+                    <Border BackgroundColor="#E3F2FD"
+                            StrokeThickness="0"
+                            Padding="12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="3">
+                            <Label Text="{Binding FourthStageSummary}"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#1565C0" />
+                            <Label Text="{Binding TotalLabourDuration}"
+                                   FontSize="12"
+                                   TextColor="#1976D2" />
+                            <Label Text="{Binding VitalSignsStatus, StringFormat='Vital Signs: {0}'}"
+                                   FontSize="12"
+                                   TextColor="{Binding VitalSignsComplete, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#4CAF50|#FF9800'}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Progress Bar -->
+                    <VerticalStackLayout Spacing="5">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0"
+                                   Text="Checklist Progress"
+                                   Style="{StaticResource SectionTitle}" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding ChecklistProgressText}"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
+                                   TextColor="#666" />
+                        </Grid>
+                        <ProgressBar Progress="{Binding ChecklistProgress, Converter={StaticResource PercentToDecimalConverter}}"
+                                     ProgressColor="{Binding CanComplete, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#4CAF50|#FF9800'}"
+                                     HeightRequest="8" />
+                    </VerticalStackLayout>
+
+                    <!-- Maternal Status -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Maternal Status" Style="{StaticResource SectionTitle}" TextColor="#C62828" />
+                        <Border BackgroundColor="#FFEBEE" Padding="12" StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="10">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Vital signs stable?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding VitalsStable}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Bleeding controlled?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BleedingControlled}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Uterus firm and contracted?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding UterusFirm}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Bladder emptied?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BladderEmptied}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Mobility assessed?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding MobilityAssessed}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Pain adequately managed?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding PainManaged}" Color="#4CAF50" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Newborn Status -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Newborn Care" Style="{StaticResource SectionTitle}" TextColor="#1565C0" />
+                        <Border BackgroundColor="#E3F2FD" Padding="12" StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="10">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Breastfeeding initiated?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BreastfeedingInitiated}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Baby examination complete?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BabyExaminationComplete}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Vitamin K administered?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding VitaminKGiven}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Eye prophylaxis given?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding EyeProphylaxisGiven}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Baby identification complete?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BabyIdentificationComplete}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Birth notification completed?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BirthNotificationComplete}" Color="#4CAF50" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Documentation -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Documentation" Style="{StaticResource SectionTitle}" TextColor="#2E7D32" />
+                        <Border BackgroundColor="#E8F5E9" Padding="12" StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="10">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Partograph complete?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding PartographComplete}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Birth outcome recorded?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BirthOutcomeRecorded}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="Baby details recorded?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding BabyDetailsRecorded}" Color="#4CAF50" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="APGAR scores recorded?" Style="{StaticResource CheckboxLabel}" />
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding ApgarScoresRecorded}" Color="#4CAF50" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Discharge Details -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Discharge Details" Style="{StaticResource SectionTitle}" />
+                        <Picker ItemsSource="{Binding DischargeDestinations}"
+                                SelectedIndex="{Binding DischargeDestinationIndex}"
+                                Title="Discharge Destination" />
+                        <Editor Placeholder="Handover notes (optional)"
+                                Text="{Binding HandoverNotes}"
+                                HeightRequest="80"
+                                AutoSize="TextChanges" />
+                    </VerticalStackLayout>
+
+                    <!-- Validation Message -->
+                    <Label Text="{Binding ValidationMessage}"
+                           IsVisible="{Binding HasValidationError}"
+                           TextColor="#F44336"
+                           FontSize="13"
+                           HorizontalOptions="Center" />
+
+                    <!-- Action Buttons -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,15,0,20">
+                        <Button Grid.Column="0"
+                            Text="Cancel"
+                            Command="{Binding CancelCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                            TextColor="{AppThemeBinding Light=#333, Dark=White}"
+                            HeightRequest="50"
+                            CornerRadius="10" />
+
+                        <Button Grid.Column="1"
+                            Text="Complete Delivery"
+                            Command="{Binding ConfirmCompletionCommand}"
+                            BackgroundColor="{Binding CanComplete, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#4CAF50|#9E9E9E'}"
+                            TextColor="White"
+                            HeightRequest="50"
+                            CornerRadius="10"
+                            FontAttributes="Bold"
+                            IsEnabled="{Binding CanComplete}" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </DataTemplate>
+    </sfPopup:SfPopup.ContentTemplate>
+
+</sfPopup:SfPopup>
