@@ -176,7 +176,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT * FROM Tbl_Baby WHERE partographid = @partographid AND deleted = 0 ORDER BY babynumber";
+                selectCmd.CommandText = @"SELECT b.*, s.name as staffname
+                    FROM Tbl_Baby b
+                    LEFT JOIN Tbl_Staff s ON b.handler = s.ID
+                    WHERE b.partographid = @partographid AND b.deleted = 0 ORDER BY b.babynumber";
                 selectCmd.Parameters.AddWithValue("@partographid", partographId.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -205,7 +208,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT * FROM Tbl_Baby WHERE birthoutcomeid = @birthoutcomeid AND deleted = 0 ORDER BY babynumber";
+                selectCmd.CommandText = @"SELECT b.*, s.name as staffname
+                    FROM Tbl_Baby b
+                    LEFT JOIN Tbl_Staff s ON b.handler = s.ID
+                    WHERE b.birthoutcomeid = @birthoutcomeid AND b.deleted = 0 ORDER BY b.babynumber";
                 selectCmd.Parameters.AddWithValue("@birthoutcomeid", birthOutcomeId.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -234,7 +240,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT * FROM Tbl_Baby WHERE deleted = 0 ORDER BY babynumber";
+                selectCmd.CommandText = @"SELECT b.*, s.name as staffname
+                    FROM Tbl_Baby b
+                    LEFT JOIN Tbl_Staff s ON b.handler = s.ID
+                    WHERE b.deleted = 0 ORDER BY b.babynumber";
                 //selectCmd.Parameters.AddWithValue("@birthoutcomeid", birthOutcomeId.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -545,6 +554,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Hypoglycemia = Convert.ToBoolean(reader["hypoglycemia"]),
                 OtherComplications = reader["othercomplications"]?.ToString() ?? string.Empty,
                 Handler = reader["handler"] == DBNull.Value ? null : Guid.Parse(reader["handler"].ToString()),
+                HandlerName = reader["staffname"] == DBNull.Value ? string.Empty : reader["staffname"].ToString(),
                 Notes = reader["notes"]?.ToString() ?? string.Empty,
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),

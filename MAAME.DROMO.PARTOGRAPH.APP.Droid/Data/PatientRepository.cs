@@ -124,7 +124,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted FROM Tbl_Patient ORDER BY time DESC";
+                selectCmd.CommandText = @"SELECT p.ID, p.time, p.firstName, p.lastName, p.hospitalNumber, p.dateofbirth, p.age, p.bloodGroup, p.phoneNumber, p.emergencyContactName, p.emergencyContactRelationship, p.emergencyContactPhone, p.handler, s.name as staffname, p.createdtime, p.updatedtime, p.deletedtime, p.deviceid, p.origindeviceid, p.syncstatus, p.version, p.serverversion, p.deleted
+                    FROM Tbl_Patient p
+                    LEFT JOIN Tbl_Staff s ON p.handler = s.ID
+                    ORDER BY p.time DESC";
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -143,6 +146,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         EmergencyContactRelationship = reader["emergencyContactRelationship"] is DBNull ? "" : reader["emergencyContactRelationship"].ToString(),
                         EmergencyContactPhone = reader["emergencyContactPhone"] is DBNull ? "" : reader["emergencyContactPhone"].ToString(),
                         Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
+                        HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
                         CreatedTime = Convert.ToInt64(reader["createdtime"]),
                         UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                         DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
@@ -179,7 +183,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = "SELECT ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted FROM Tbl_Patient WHERE ID = @id";
+                selectCmd.CommandText = @"SELECT p.ID, p.time, p.firstName, p.lastName, p.hospitalNumber, p.dateofbirth, p.age, p.bloodGroup, p.phoneNumber, p.emergencyContactName, p.emergencyContactRelationship, p.emergencyContactPhone, p.handler, s.name as staffname, p.createdtime, p.updatedtime, p.deletedtime, p.deviceid, p.origindeviceid, p.syncstatus, p.version, p.serverversion, p.deleted
+                    FROM Tbl_Patient p
+                    LEFT JOIN Tbl_Staff s ON p.handler = s.ID
+                    WHERE p.ID = @id";
                 selectCmd.Parameters.AddWithValue("@id", id.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -199,6 +206,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         EmergencyContactRelationship = reader["emergencyContactRelationship"] is DBNull ? "" : reader["emergencyContactRelationship"].ToString(),
                         EmergencyContactPhone = reader["emergencyContactPhone"] is DBNull ? "" : reader["emergencyContactPhone"].ToString(),
                         Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
+                        HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
                         CreatedTime = Convert.ToInt64(reader["createdtime"]),
                         UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                         DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),

@@ -483,13 +483,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
                     P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications,
-                    P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
+                    P.handler, S.name as staffname, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
                     P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted,
                     PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age,
                     PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone,
                     PA.emergencyContactRelationship
                     FROM Tbl_Partograph P
                     INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID
+                    LEFT JOIN Tbl_Staff S ON P.handler = S.ID
                     WHERE P.ID = @Id
                     ORDER BY P.time DESC";
 
@@ -535,6 +536,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 LiquorStatus = reader["liquorStatus"] is DBNull ? "Clear" : reader["liquorStatus"].ToString(),
                 Complications = reader["complications"] is DBNull ? "" : reader["complications"].ToString(),
                 Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
+                HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                 DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
@@ -766,13 +768,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
                     P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications,
-                    P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
+                    P.handler, S.name as staffname, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
                     P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted,
                     PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age,
                     PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone,
                     PA.emergencyContactRelationship
                     FROM Tbl_Partograph P
-                    INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID";
+                    INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID
+                    LEFT JOIN Tbl_Staff S ON P.handler = S.ID";
 
                 if (status.HasValue)
                 {
@@ -818,13 +821,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
                     P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications,
-                    P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
+                    P.handler, S.name as staffname, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
                     P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted,
                     PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age,
                     PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone,
                     PA.emergencyContactRelationship
                     FROM Tbl_Partograph P
                     INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID
+                    LEFT JOIN Tbl_Staff S ON P.handler = S.ID
                     WHERE P.ID = @id";
                 selectCmd.Parameters.AddWithValue("@id", id.ToString());
 
@@ -1654,8 +1658,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 // First try to find an active partograph
                 var selectCmd = connection.CreateCommand();
                 selectCmd.CommandText = @"
-                SELECT P.ID, P.patientID, P.time, P.status, P.currentPhase, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted
+                SELECT P.ID, P.patientID, P.time, P.status, P.currentPhase, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, S.name as staffname, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted
                 FROM Tbl_Partograph P
+                LEFT JOIN Tbl_Staff S ON P.handler = S.ID
                 WHERE P.patientID = @patientID
                   AND P.deleted = 0
                   AND P.status = @firststage
@@ -1675,8 +1680,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     selectCmd = connection.CreateCommand();
                     selectCmd.CommandText = @"
-                    SELECT P.ID, P.patientID, P.time, P.status, P.currentPhase, P.gravida, P.parity, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted
+                    SELECT P.ID, P.patientID, P.time, P.status, P.currentPhase, P.gravida, P.parity, P.abortion, P.admissionDate, P.expectedDeliveryDate, P.lastMenstrualDate, P.laborStartTime, P.deliveryTime, P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications, P.handler, S.name as staffname, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted
                     FROM Tbl_Partograph P
+                    LEFT JOIN Tbl_Staff S ON P.handler = S.ID
                     WHERE P.patientID = @patientID
                       AND P.deleted = 0
                       AND P.status = @pendingStatus
@@ -1721,6 +1727,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 LiquorStatus = reader["liquorStatus"] is DBNull ? "Clear" : reader["liquorStatus"].ToString(),
                 Complications = reader["complications"] is DBNull ? "" : reader["complications"].ToString(),
                 Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
+                HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                 DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
