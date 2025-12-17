@@ -54,7 +54,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = $"SELECT * FROM {TableName} WHERE partographid = @partographid ORDER BY time DESC";
+                selectCmd.CommandText = $@"SELECT m.*, s.name as staffname
+                    FROM {TableName} m
+                    LEFT JOIN Tbl_Staff s ON m.handler = s.ID
+                    WHERE m.partographid = @partographid
+                    ORDER BY m.time DESC";
                 selectCmd.Parameters.AddWithValue("@partographid", id.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -85,7 +89,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = $"SELECT * FROM {TableName} WHERE partographid = @partographid ORDER BY time DESC LIMIT 1";
+                selectCmd.CommandText = $@"SELECT m.*, s.name as staffname
+                    FROM {TableName} m
+                    LEFT JOIN Tbl_Staff s ON m.handler = s.ID
+                    WHERE m.partographid = @partographid
+                    ORDER BY m.time DESC LIMIT 1";
                 selectCmd.Parameters.AddWithValue("@partographid", id.ToString());
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
