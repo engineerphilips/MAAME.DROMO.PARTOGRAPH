@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -24,8 +25,58 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         [ObservableProperty]
         private TimeSpan _recordingTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
+        /// <summary>
+        /// Collection of measurement history items for display
+        /// </summary>
         [ObservableProperty]
+        private ObservableCollection<MeasurementHistoryItem> _measurementHistory = new();
+
+        /// <summary>
+        /// Indicates whether there is any history to display
+        /// </summary>
+        [ObservableProperty]
+        private bool _hasHistory;
+
+        /// <summary>
+        /// The maximum allowed descent value based on previous measurements.
+        /// As labor progresses, descent should drop (head descends into pelvis).
+        /// Using the "fifths palpable" scale: 5/5 (high) to 0/5 (fully descended).
+        /// </summary>
+        [ObservableProperty]
+        private int _maximumDescent = 5;
+
+        /// <summary>
+        /// Validation message shown when user tries to enter invalid value
+        /// </summary>
+        [ObservableProperty]
+        private string _validationMessage = string.Empty;
+
+        /// <summary>
+        /// Whether the validation message should be shown
+        /// </summary>
+        [ObservableProperty]
+        private bool _showValidationMessage;
+
         private int _station;
+
+        public int Station
+        {
+            get => _station;
+            set
+            {
+                // Validate that descent is dropping (labor progression rule)
+                // As labor progresses, the fifths palpable should decrease (5 -> 0)
+                if (value > MaximumDescent && MaximumDescent < 5)
+                {
+                    ValidationMessage = $"Descent cannot increase. Last recorded value was {MaximumDescent}/5. As labor progresses, descent should drop.";
+                    ShowValidationMessage = true;
+                    return;
+                }
+                ShowValidationMessage = false;
+                ValidationMessage = string.Empty;
+                SetProperty(ref _station, value);
+            }
+        }
 
         [ObservableProperty]
         private string _notes = string.Empty;
@@ -63,12 +114,49 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 // For now, we'll use the patient ID directly
                 PatientName = $"Patient ID: {patientId}";
 
-                // Load last pain relief entry to prefill some values
+                // Load measurement history
+                await LoadMeasurementHistory(patientId);
+
+                // Load last entry to set maximum descent (labor progression rule - descent should drop)
                 var lastEntry = await _headDescentRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
                 {
-                    Station = lastEntry.Station;
+                    // Set maximum descent - labor should progress (descent drops)
+                    MaximumDescent = lastEntry.Station;
+                    // Pre-fill with last known value
+                    _station = lastEntry.Station;
+                    OnPropertyChanged(nameof(Station));
                 }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
+        /// <summary>
+        /// Loads the measurement history for display in the modal.
+        /// Shows values, date/time (time only if today), and who recorded it.
+        /// </summary>
+        private async Task LoadMeasurementHistory(Guid? patientId)
+        {
+            try
+            {
+                var historyEntries = await _headDescentRepository.ListByPatientAsync(patientId);
+
+                MeasurementHistory.Clear();
+
+                foreach (var entry in historyEntries.Take(10)) // Show last 10 entries
+                {
+                    var historyItem = new MeasurementHistoryItem(
+                        $"{entry.Station}/5",
+                        entry.Time,
+                        entry.HandlerName ?? "Unknown"
+                    );
+                    MeasurementHistory.Add(historyItem);
+                }
+
+                HasHistory = MeasurementHistory.Count > 0;
             }
             catch (Exception e)
             {

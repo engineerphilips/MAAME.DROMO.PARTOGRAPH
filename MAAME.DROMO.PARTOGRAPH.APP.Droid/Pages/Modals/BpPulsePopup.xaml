@@ -8,18 +8,24 @@
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
+            <Color x:Key="PrimaryBlue">#0078D4</Color>
             <!-- Input Styles -->
             <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
                 <Setter Property="ContainerType" Value="Outlined" />
                 <Setter Property="OutlineCornerRadius" Value="8" />
+                <Setter Property="Stroke" Value="{StaticResource PrimaryBlue}" />
             </Style>
         </ResourceDictionary>
     </sfPopup:SfPopup.Resources>
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
-            <StackLayout>
-                <Label Text="Blood Pressure &amp; Pulse" VerticalOptions="Center" Margin="15,15,0,0" />
-            </StackLayout>
+            <Grid BackgroundColor="{StaticResource PrimaryBlue}" Padding="15,12">
+                <Label Text="Blood Pressure &amp; Pulse"
+                       VerticalOptions="Center"
+                       FontAttributes="Bold"
+                       FontSize="18"
+                       TextColor="White" />
+            </Grid>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>
     <sfPopup:SfPopup.ContentTemplate>
@@ -61,6 +67,54 @@
                                                CustomFormat="0"
                                                ValueChangeMode="OnKeyFocus" />
                     </core:SfTextInputLayout>
+
+                    <!-- Measurement History Section -->
+                    <Frame IsVisible="{Binding HasHistory}"
+                           BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2C}"
+                           BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                           CornerRadius="10"
+                           Padding="12"
+                           Margin="0,5,0,10">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Previous Measurements"
+                                   FontAttributes="Bold"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=#333, Dark=White}" />
+                            <CollectionView ItemsSource="{Binding MeasurementHistory}"
+                                            HeightRequest="120">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="Auto,*,Auto"
+                                              Padding="8,6"
+                                              ColumnSpacing="10">
+                                            <Frame Grid.Column="0"
+                                                   BackgroundColor="#FFEBEE"
+                                                   CornerRadius="15"
+                                                   Padding="8,4"
+                                                   HasShadow="False">
+                                                <Label Text="{Binding Value}"
+                                                       FontAttributes="Bold"
+                                                       FontSize="12"
+                                                       TextColor="#C62828"
+                                                       VerticalOptions="Center" />
+                                            </Frame>
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding DateTimeDisplay}"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                                   VerticalOptions="Center" />
+                                            <Label Grid.Column="2"
+                                                   Text="{Binding RecordedBy}"
+                                                   FontSize="11"
+                                                   FontAttributes="Italic"
+                                                   TextColor="{AppThemeBinding Light=#888, Dark=#888}"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Frame>
 
                     <!-- Advanced Fields Toggle -->
                     <!--<Frame BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
@@ -139,7 +193,7 @@
                         <Button Grid.Column="1"
                             Text="Save Assessment"
                             Command="{Binding SaveCommand}"
-                            BackgroundColor="#4CAF50"
+                            BackgroundColor="{StaticResource PrimaryBlue}"
                             TextColor="White"
                             HeightRequest="50"
                             CornerRadius="10" />

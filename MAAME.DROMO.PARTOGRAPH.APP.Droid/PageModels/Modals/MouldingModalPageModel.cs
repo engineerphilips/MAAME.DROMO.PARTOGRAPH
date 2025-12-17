@@ -21,6 +21,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             _errorHandler = errorHandler;
         }
 
+        /// <summary>
+        /// Collection of measurement history items for display
+        /// </summary>
+        [ObservableProperty]
+        private ObservableCollection<MeasurementHistoryItem> _measurementHistory = new();
+
+        /// <summary>
+        /// Indicates whether there is any history to display
+        /// </summary>
+        [ObservableProperty]
+        private bool _hasHistory;
+
         [ObservableProperty]
         private string _patientName = string.Empty;
 
@@ -112,6 +124,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 // For now, we'll use the patient ID directly
                 PatientName = $"Patient ID: {patientId}";
 
+                // Load measurement history
+                await LoadMeasurementHistory(patientId);
+
                 // Load last moulding entry to prefill some values
                 var lastEntry = await _mouldingRepository.GetLatestByPatientAsync(patientId);
                 if (lastEntry != null)
@@ -119,6 +134,36 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                     DegreeIndex = lastEntry.Degree == "0" ? 0 : lastEntry.Degree == "+" ? 1 : lastEntry.Degree == "++" ? 2 : lastEntry.Degree == "+++" ? 3 : -1;
                     DegreeDisplay = lastEntry.DegreeDisplay;
                 }
+            }
+            catch (Exception e)
+            {
+                _errorHandler.HandleError(e);
+            }
+        }
+
+        /// <summary>
+        /// Loads the measurement history for display in the modal.
+        /// Shows values, date/time (time only if today), and who recorded it.
+        /// </summary>
+        private async Task LoadMeasurementHistory(Guid? patientId)
+        {
+            try
+            {
+                var historyEntries = await _mouldingRepository.ListByPatientAsync(patientId);
+
+                MeasurementHistory.Clear();
+
+                foreach (var entry in historyEntries.Take(10)) // Show last 10 entries
+                {
+                    var historyItem = new MeasurementHistoryItem(
+                        entry.Degree ?? "N/A",
+                        entry.Time,
+                        entry.HandlerName ?? "Unknown"
+                    );
+                    MeasurementHistory.Add(historyItem);
+                }
+
+                HasHistory = MeasurementHistory.Count > 0;
             }
             catch (Exception e)
             {
