@@ -39,7 +39,7 @@ public partial class FourthStagePartographPage : ContentPage
             TemperaturePopup.IsOpen = false;
         };
 
-        // Wire up popup actions for Vitals Trend
+        // Wire up popup actions for Vitals Trend (BP/Pulse)
         _pageModel.OpenVitalsTrendPopup = () =>
         {
             VitalsTrendPopup.IsOpen = true;
@@ -47,6 +47,16 @@ public partial class FourthStagePartographPage : ContentPage
         _pageModel.CloseVitalsTrendPopup = () =>
         {
             VitalsTrendPopup.IsOpen = false;
+        };
+
+        // Wire up popup actions for Temperature Trend
+        _pageModel.OpenTemperatureTrendPopup = () =>
+        {
+            TemperatureTrendPopup.IsOpen = true;
+        };
+        _pageModel.CloseTemperatureTrendPopup = () =>
+        {
+            TemperatureTrendPopup.IsOpen = false;
         };
 
         // Wire up popup actions for Completion Checklist
@@ -79,6 +89,7 @@ public partial class FourthStagePartographPage : ContentPage
         BpPulsePopup.IsOpen = false;
         TemperaturePopup.IsOpen = false;
         VitalsTrendPopup.IsOpen = false;
+        TemperatureTrendPopup.IsOpen = false;
         CompletionChecklistPopup.IsOpen = false;
     }
 }

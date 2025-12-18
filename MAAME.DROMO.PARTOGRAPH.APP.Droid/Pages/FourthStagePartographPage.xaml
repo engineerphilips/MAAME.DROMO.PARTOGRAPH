@@ -571,8 +571,16 @@
                                   StaysOpen="True"
                                   ShowCloseButton="True"
                                   WidthRequest="360"
-                                  HeightRequest="550"
+                                  HeightRequest="450"
                                   HeaderHeight="50" />
+
+        <modals:TemperatureTrendPopup x:Name="TemperatureTrendPopup"
+                                       BindingContext="{Binding .}"
+                                       StaysOpen="True"
+                                       ShowCloseButton="True"
+                                       WidthRequest="360"
+                                       HeightRequest="450"
+                                       HeaderHeight="50" />
 
         <modals:CompletionChecklistPopup x:Name="CompletionChecklistPopup"
                                           BindingContext="{Binding CompletionChecklistPopupPageModel}"
