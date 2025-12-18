@@ -22,7 +22,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         }
 
         /// <summary>
-        /// Initializes the database connection and creates the Tag and ProjectsTags tables if they do not exist.
+        /// Initializes the database connection and creates the Tag and Tbl_ProjectTag tables if they do not exist.
         /// </summary>
         private async Task Init()
         {
@@ -36,7 +36,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Tag (
+            CREATE TABLE IF NOT EXISTS Tbl_Tag (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Title TEXT NOT NULL,
                 Color TEXT NOT NULL
@@ -44,7 +44,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await createTableCmd.ExecuteNonQueryAsync();
 
                 createTableCmd.CommandText = @"
-            CREATE TABLE IF NOT EXISTS ProjectsTags (
+            CREATE TABLE IF NOT EXISTS Tbl_ProjectTag (
                 ProjectID INTEGER NOT NULL,
                 TagID INTEGER NOT NULL,
                 PRIMARY KEY(ProjectID, TagID)
@@ -71,7 +71,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Tag";
+            selectCmd.CommandText = "SELECT * FROM Tbl_Tag";
             var tags = new List<Tag>();
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -102,8 +102,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             var selectCmd = connection.CreateCommand();
             selectCmd.CommandText = @"
         SELECT t.*
-        FROM Tag t
-        JOIN ProjectsTags pt ON t.ID = pt.TagID
+        FROM Tbl_Tag t
+        JOIN Tbl_ProjectTag pt ON t.ID = pt.TagID
         WHERE pt.ProjectID = @ProjectID";
             selectCmd.Parameters.AddWithValue("ProjectID", projectID);
 
@@ -135,7 +135,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Tag WHERE ID = @id";
+            selectCmd.CommandText = "SELECT * FROM Tbl_Tag WHERE ID = @id";
             selectCmd.Parameters.AddWithValue("@id", id);
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -167,13 +167,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             if (item.ID == 0)
             {
                 saveCmd.CommandText = @"
-            INSERT INTO Tag (Title, Color) VALUES (@Title, @Color);
+            INSERT INTO Tbl_Tag (Title, Color) VALUES (@Title, @Color);
             SELECT last_insert_rowid();";
             }
             else
             {
                 saveCmd.CommandText = @"
-            UPDATE Tag SET Title = @Title, Color = @Color WHERE ID = @ID";
+            UPDATE Tbl_Tag SET Title = @Title, Color = @Color WHERE ID = @ID";
                 saveCmd.Parameters.AddWithValue("@ID", item.ID);
             }
 
@@ -205,7 +205,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             var saveCmd = connection.CreateCommand();
             saveCmd.CommandText = @"
-        INSERT INTO ProjectsTags (ProjectID, TagID) VALUES (@projectID, @tagID)";
+        INSERT INTO Tbl_ProjectTag (ProjectID, TagID) VALUES (@projectID, @tagID)";
             saveCmd.Parameters.AddWithValue("@projectID", projectID);
             saveCmd.Parameters.AddWithValue("@tagID", item.ID);
 
@@ -224,7 +224,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = "DELETE FROM Tag WHERE ID = @id";
+            deleteCmd.CommandText = "DELETE FROM Tbl_Tag WHERE ID = @id";
             deleteCmd.Parameters.AddWithValue("@id", item.ID);
 
             return await deleteCmd.ExecuteNonQueryAsync();
@@ -243,7 +243,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = "DELETE FROM ProjectsTags WHERE ProjectID = @projectID AND TagID = @tagID";
+            deleteCmd.CommandText = "DELETE FROM Tbl_ProjectTag WHERE ProjectID = @projectID AND TagID = @tagID";
             deleteCmd.Parameters.AddWithValue("@projectID", projectID);
             deleteCmd.Parameters.AddWithValue("@tagID", item.ID);
 
@@ -251,7 +251,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         }
 
         /// <summary>
-        /// Drops the Tag and ProjectsTags tables from the database.
+        /// Drops the Tag and Tbl_ProjectTag tables from the database.
         /// </summary>
         public async Task DropTableAsync()
         {
@@ -260,10 +260,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var dropTableCmd = connection.CreateCommand();
-            dropTableCmd.CommandText = "DROP TABLE IF EXISTS Tag";
+            dropTableCmd.CommandText = "DROP TABLE IF EXISTS Tbl_Tag";
             await dropTableCmd.ExecuteNonQueryAsync();
 
-            dropTableCmd.CommandText = "DROP TABLE IF EXISTS ProjectsTags";
+            dropTableCmd.CommandText = "DROP TABLE IF EXISTS Tbl_ProjectTag";
             await dropTableCmd.ExecuteNonQueryAsync();
 
             _hasBeenInitialized = false;
