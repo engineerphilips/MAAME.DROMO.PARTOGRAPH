@@ -196,18 +196,19 @@
 
                     <!-- Date of Birth / Age -->
                     <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
-                        <core:SfTextInputLayout Grid.Column="0"
-                                                Hint="Date of Birth *"
-                                                Style="{StaticResource PatientInput}" >
-                            <DatePicker Date="{Binding DateOfBirth, Mode=TwoWay, StringFormat='{0:dd-MM-yyyy}'}" />
-                            <!--<Entry Text="{Binding DateOfBirth, Mode=TwoWay, StringFormat='{0:dd-MM-yyyy}'}"  
-       ReturnType="Next" IsReadOnly="True" />-->
-                            <!--<Label Text="{Binding DateOfBirth, Mode=TwoWay, StringFormat='{0:dd-MM-yyyy}'}"     VerticalOptions="Center">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
-                                </Label.GestureRecognizers>
-                            </Label>-->
-                        </core:SfTextInputLayout>
+                        <picker:SfDatePicker Grid.Column="0"
+                                             SelectedDate="{Binding DateOfBirth, Mode=TwoWay}"
+                                             Format="dd_MM_yyyy"
+                                             MinimumDate="01/01/1950"
+                                             MaximumDate="{StaticResource Today}"
+                                             Mode="RelativeDialog"
+                                             HeightRequest="45">
+                            <picker:SfDatePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Date of Birth *"
+                                                         Background="{StaticResource PrimaryBlue}"
+                                                         TextColor="White" />
+                            </picker:SfDatePicker.HeaderView>
+                        </picker:SfDatePicker>
                         
                         <core:SfTextInputLayout Grid.Column="1"
                                                 Hint="Age *"
@@ -221,10 +222,6 @@
                         </core:SfTextInputLayout>
                     </Grid>
                     
-                    <!--<picker:SfDatePicker Grid.Column="0" Grid.ColumnSpan="3" SelectedDate="{Binding DateOfBirth, Mode=TwoWay}"
-                Format="dd_MM_yyyy"
-                MinimumDate="01/01/1950"
-                MaximumDate="{StaticResource Today}" Mode="Dialog" PopupHeight="500" />-->
                     
                     <!-- Blood Group -->
                     <core:SfTextInputLayout Hint="Blood Group *"
@@ -540,24 +537,32 @@
 
                     <!-- Delivery Dates -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,8,0,0">
-                        <core:SfTextInputLayout Grid.Column="0"
-                                                Hint="Estimated Delivery Date *"
-                                                Style="{StaticResource PatientInput}"
-                                                HelperText="EDD or LMP required">
-                            <DatePicker Date="{Binding ExpectedDeliveryDate, Mode=TwoWay}"
-                                        Format="dd-MM-yyyy"
-                                        MinimumDate="01/01/1950" />
-                        </core:SfTextInputLayout>
+                        <picker:SfDatePicker Grid.Column="0"
+                                             SelectedDate="{Binding ExpectedDeliveryDate, Mode=TwoWay}"
+                                             Format="dd_MM_yyyy"
+                                             MinimumDate="01/01/1950"
+                                             Mode="RelativeDialog"
+                                             HeightRequest="45">
+                            <picker:SfDatePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Estimated Delivery Date *"
+                                                         Background="{StaticResource PrimaryBlue}"
+                                                         TextColor="White" />
+                            </picker:SfDatePicker.HeaderView>
+                        </picker:SfDatePicker>
 
-                        <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Last Menstrual Date *"
-                                                Style="{StaticResource PatientInput}"
-                                                HelperText="EDD or LMP required">
-                            <DatePicker Date="{Binding LastMenstrualDate, Mode=TwoWay}"
-                                        Format="dd-MM-yyyy"
-                                        MinimumDate="01/01/1950"
-                                        MaximumDate="{StaticResource Today}" />
-                        </core:SfTextInputLayout>
+                        <picker:SfDatePicker Grid.Column="1"
+                                             SelectedDate="{Binding LastMenstrualDate, Mode=TwoWay}"
+                                             Format="dd_MM_yyyy"
+                                             MinimumDate="01/01/1950"
+                                             MaximumDate="{StaticResource Today}"
+                                             Mode="RelativeDialog"
+                                             HeightRequest="45">
+                            <picker:SfDatePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Last Menstrual Date *"
+                                                         Background="{StaticResource PrimaryBlue}"
+                                                         TextColor="White" />
+                            </picker:SfDatePicker.HeaderView>
+                        </picker:SfDatePicker>
                     </Grid>
 
                     <!-- Gestational Age Display -->
@@ -655,20 +660,30 @@
                            Margin="0,4,0,4" />
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                        <core:SfTextInputLayout Grid.Column="0"
-                                                Hint="Date *"
-                                                Style="{StaticResource PatientInput}">
-                            <DatePicker Date="{Binding LaborStartDate, Mode=TwoWay}"
-                                        Format="dd-MM-yyyy"
-                                        MinimumDate="01/01/1950" />
-                        </core:SfTextInputLayout>
+                        <picker:SfDatePicker Grid.Column="0"
+                                             SelectedDate="{Binding LaborStartDate, Mode=TwoWay}"
+                                             Format="dd_MM_yyyy"
+                                             MinimumDate="01/01/1950"
+                                             Mode="RelativeDialog"
+                                             HeightRequest="45">
+                            <picker:SfDatePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Labour Start Date *"
+                                                         Background="{StaticResource PrimaryBlue}"
+                                                         TextColor="White" />
+                            </picker:SfDatePicker.HeaderView>
+                        </picker:SfDatePicker>
 
-                        <core:SfTextInputLayout Grid.Column="1"
-                                                Hint="Time *"
-                                                Style="{StaticResource PatientInput}">
-                            <TimePicker Time="{Binding LaborStartTime, Mode=TwoWay}"
-                                        Format="HH:mm" />
-                        </core:SfTextInputLayout>
+                        <picker:SfTimePicker Grid.Column="1"
+                                             SelectedTime="{Binding LaborStartTime, Mode=TwoWay}"
+                                             Format="HH_mm"
+                                             Mode="RelativeDialog"
+                                             HeightRequest="45">
+                            <picker:SfTimePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Labour Start Time *"
+                                                         Background="{StaticResource PrimaryBlue}"
+                                                         TextColor="White" />
+                            </picker:SfTimePicker.HeaderView>
+                        </picker:SfTimePicker>
                     </Grid>
 
                     <!-- Active Labour Diagnosis -->
@@ -724,20 +739,30 @@
                             <Grid ColumnDefinitions="*,*"
                                   ColumnSpacing="12"
                                   IsVisible="{Binding HasRupturedMembrane}">
-                                <core:SfTextInputLayout Grid.Column="0"
-                                                        Hint="Rupture Date"
-                                                        Style="{StaticResource PatientInput}">
-                                    <DatePicker Date="{Binding RupturedMembraneDate, Mode=TwoWay}"
-                                                Format="dd-MM-yyyy"
-                                                MinimumDate="01/01/1950" />
-                                </core:SfTextInputLayout>
+                                <picker:SfDatePicker Grid.Column="0"
+                                                     SelectedDate="{Binding RupturedMembraneDate, Mode=TwoWay}"
+                                                     Format="dd_MM_yyyy"
+                                                     MinimumDate="01/01/1950"
+                                                     Mode="RelativeDialog"
+                                                     HeightRequest="45">
+                                    <picker:SfDatePicker.HeaderView>
+                                        <picker:PickerHeaderView Text="Rupture Date"
+                                                                 Background="{StaticResource PrimaryBlue}"
+                                                                 TextColor="White" />
+                                    </picker:SfDatePicker.HeaderView>
+                                </picker:SfDatePicker>
 
-                                <core:SfTextInputLayout Grid.Column="1"
-                                                        Hint="Rupture Time"
-                                                        Style="{StaticResource PatientInput}">
-                                    <TimePicker Time="{Binding RupturedMembraneTime, Mode=TwoWay}"
-                                                Format="HH:mm" />
-                                </core:SfTextInputLayout>
+                                <picker:SfTimePicker Grid.Column="1"
+                                                     SelectedTime="{Binding RupturedMembraneTime, Mode=TwoWay}"
+                                                     Format="HH_mm"
+                                                     Mode="RelativeDialog"
+                                                     HeightRequest="45">
+                                    <picker:SfTimePicker.HeaderView>
+                                        <picker:PickerHeaderView Text="Rupture Time"
+                                                                 Background="{StaticResource PrimaryBlue}"
+                                                                 TextColor="White" />
+                                    </picker:SfTimePicker.HeaderView>
+                                </picker:SfTimePicker>
                             </Grid>
                         </StackLayout>
                     </Border>
