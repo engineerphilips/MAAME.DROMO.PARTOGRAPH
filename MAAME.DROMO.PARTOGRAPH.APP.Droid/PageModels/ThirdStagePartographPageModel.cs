@@ -5,6 +5,7 @@ using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
@@ -12,6 +13,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     /// <summary>
     /// Third Stage Partograph Page Model - Manages placenta delivery monitoring
     /// WHO Guidelines: Third stage should not exceed 30 minutes
+    /// Enhanced with maternal vitals monitoring, baby listing, and APGAR tracking
     /// </summary>
     public partial class ThirdStagePartographPageModel : ObservableObject, IQueryAttributable
     {
@@ -25,6 +27,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly BabyDetailsRepository _babyDetailsRepository;
         private readonly LabourTimerService _labourTimerService;
         private readonly PlacentaDeliveryPopupPageModel _placentaDeliveryPopupPageModel;
+        private readonly BPPulseModalPageModel _bpPulseModalPageModel;
+        private readonly TemperatureModalPageModel _temperatureModalPageModel;
+
+        #region Patient Info Properties
 
         [ObservableProperty]
         private string _patientName = string.Empty;
@@ -44,6 +50,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         bool _isBusy;
 
+        #endregion
+
+        #region Placenta Status Properties
+
         [ObservableProperty]
         private string _placentaStatus = "Awaiting Delivery";
 
@@ -51,12 +61,67 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _placentaStatusColor = "#FF9800";
 
         [ObservableProperty]
-        private string _bloodLoss = "0 mL";
+        private string _bloodLoss = "Not recorded";
+
+        [ObservableProperty]
+        private string _bloodLossColor = "#64748B";
 
         [ObservableProperty]
         private string _uterineStatus = "Monitoring";
 
-        // APGAR tracking
+        [ObservableProperty]
+        private string _uterineStatusColor = "#64748B";
+
+        [ObservableProperty]
+        private bool _isPlacentaDelivered;
+
+        [ObservableProperty]
+        private string _activeManagementStatus = "Not recorded";
+
+        #endregion
+
+        #region Maternal Vitals Properties
+
+        // BP/Pulse
+        [ObservableProperty]
+        private string _bpLatestValue = "--/-- mmHg";
+
+        [ObservableProperty]
+        private string _bpStatusText = "No reading";
+
+        [ObservableProperty]
+        private string _bpButtonColor = "#64748B";
+
+        [ObservableProperty]
+        private string _pulseLatestValue = "-- bpm";
+
+        [ObservableProperty]
+        private string _pulseStatusText = string.Empty;
+
+        [ObservableProperty]
+        private string _pulseButtonColor = "#64748B";
+
+        // Temperature
+        [ObservableProperty]
+        private string _temperatureLatestValue = "--°C";
+
+        [ObservableProperty]
+        private string _temperatureStatusText = "No reading";
+
+        [ObservableProperty]
+        private string _temperatureButtonColor = "#64748B";
+
+        // Vitals history for trends
+        [ObservableProperty]
+        private ObservableCollection<BP> _bpHistory = new();
+
+        [ObservableProperty]
+        private ObservableCollection<Temperature> _temperatureHistory = new();
+
+        #endregion
+
+        #region APGAR Tracking Properties
+
         [ObservableProperty]
         private string _apgar1Status = "Due";
 
@@ -81,7 +146,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _apgar10StatusColor = "#9E9E9E";
 
-        // Timer display
+        #endregion
+
+        #region Timer Properties
+
         [ObservableProperty]
         private string _timerDisplay = "00:00";
 
@@ -91,10 +159,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private bool _isTimerCritical;
 
-        [ObservableProperty]
-        private bool _isPlacentaDelivered;
+        #endregion
 
-        // Alert message
+        #region Alert Properties
+
         [ObservableProperty]
         private string _alertMessage = string.Empty;
 
@@ -104,11 +172,48 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private string _alertColor = "#FF9800";
 
-        // Popup actions
+        #endregion
+
+        #region Babies Properties
+
+        [ObservableProperty]
+        private ObservableCollection<BabyDetails> _babies = new();
+
+        [ObservableProperty]
+        private bool _hasBabies;
+
+        [ObservableProperty]
+        private int _babyCount;
+
+        [ObservableProperty]
+        private BabyDetails? _selectedBaby;
+
+        #endregion
+
+        #region Popup Actions
+
         public Action? OpenPlacentaDeliveryPopup { get; set; }
         public Action? ClosePlacentaDeliveryPopup { get; set; }
+        public Action? OpenBpPulsePopup { get; set; }
+        public Action? CloseBpPulsePopup { get; set; }
+        public Action? OpenTemperaturePopup { get; set; }
+        public Action? CloseTemperaturePopup { get; set; }
+        public Action? OpenVitalsTrendPopup { get; set; }
+        public Action? CloseVitalsTrendPopup { get; set; }
+        public Action? OpenQuickAddBabyPopup { get; set; }
+        public Action? CloseQuickAddBabyPopup { get; set; }
+        public Action<BabyDetails>? OpenBabyApgarPopup { get; set; }
+        public Action? CloseBabyApgarPopup { get; set; }
+
+        #endregion
+
+        #region PageModel References
 
         public PlacentaDeliveryPopupPageModel PlacentaDeliveryPopupPageModel => _placentaDeliveryPopupPageModel;
+        public BPPulseModalPageModel BPPulseModalPageModel => _bpPulseModalPageModel;
+        public TemperatureModalPageModel TemperatureModalPageModel => _temperatureModalPageModel;
+
+        #endregion
 
         public ThirdStagePartographPageModel(
             PatientRepository patientRepository,
@@ -119,7 +224,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             BirthOutcomeRepository birthOutcomeRepository,
             BabyDetailsRepository babyDetailsRepository,
             LabourTimerService labourTimerService,
-            PlacentaDeliveryPopupPageModel placentaDeliveryPopupPageModel)
+            PlacentaDeliveryPopupPageModel placentaDeliveryPopupPageModel,
+            BPPulseModalPageModel bpPulseModalPageModel,
+            TemperatureModalPageModel temperatureModalPageModel)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
@@ -130,6 +237,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _babyDetailsRepository = babyDetailsRepository;
             _labourTimerService = labourTimerService;
             _placentaDeliveryPopupPageModel = placentaDeliveryPopupPageModel;
+            _bpPulseModalPageModel = bpPulseModalPageModel;
+            _temperatureModalPageModel = temperatureModalPageModel;
 
             // Subscribe to timer events
             _labourTimerService.OnTimerUpdate += OnTimerUpdate;
@@ -148,6 +257,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 Task.Run(async () => await LoadPatientData(patientId));
             }
         }
+
+        #region Data Loading Methods
 
         private async Task LoadPatientData(Guid patientId)
         {
@@ -184,8 +295,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         PlacentaStatusColor = "#4CAF50";
                     }
 
-                    // Load APGAR scores from baby details
-                    await LoadApgarScores();
+                    // Load all related data
+                    await Task.WhenAll(
+                        LoadApgarScores(),
+                        LoadBabiesAsync(),
+                        LoadLatestVitals(),
+                        LoadBirthOutcomeData()
+                    );
 
                     // Start timer monitoring
                     _labourTimerService.StartMonitoring(Patient);
@@ -234,11 +350,182 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
+        private async Task LoadBabiesAsync()
+        {
+            if (Patient?.ID == null)
+                return;
+
+            try
+            {
+                var babies = await _babyDetailsRepository.GetByPartographIdAsync(Patient.ID);
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Babies = new ObservableCollection<BabyDetails>(babies);
+                    HasBabies = Babies.Count > 0;
+                    BabyCount = Babies.Count;
+                });
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync($"Error loading babies: {ex.Message}");
+            }
+        }
+
+        private async Task LoadLatestVitals()
+        {
+            if (Patient?.ID == null)
+                return;
+
+            try
+            {
+                // Load BP/Pulse history
+                var bpList = await _bpRepository.ListByPatientAsync(Patient.ID);
+                BpHistory = new ObservableCollection<BP>(bpList.OrderByDescending(b => b.Time).Take(10));
+
+                var latestBp = bpList.OrderByDescending(b => b.Time).FirstOrDefault();
+                if (latestBp != null)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        BpLatestValue = $"{latestBp.Systolic}/{latestBp.Diastolic} mmHg";
+                        PulseLatestValue = $"{latestBp.Pulse} bpm";
+                        BpStatusText = GetBpStatusText(latestBp.Systolic, latestBp.Diastolic);
+                        BpButtonColor = GetBpColor(latestBp.Systolic, latestBp.Diastolic);
+                        PulseStatusText = GetPulseStatusText(latestBp.Pulse);
+                        PulseButtonColor = GetPulseColor(latestBp.Pulse);
+                        LastRecordedTime = latestBp.Time;
+                    });
+                }
+
+                // Load Temperature history
+                var tempList = await _temperatureRepository.ListByPatientAsync(Patient.ID);
+                TemperatureHistory = new ObservableCollection<Temperature>(tempList.OrderByDescending(t => t.Time).Take(10));
+
+                var latestTemp = tempList.OrderByDescending(t => t.Time).FirstOrDefault();
+                if (latestTemp != null)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        TemperatureLatestValue = $"{latestTemp.TemperatureCelsius:F1}°C";
+                        TemperatureStatusText = GetTemperatureStatusText(latestTemp.TemperatureCelsius);
+                        TemperatureButtonColor = GetTemperatureColor(latestTemp.TemperatureCelsius);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading vitals: {ex.Message}");
+            }
+        }
+
+        private async Task LoadBirthOutcomeData()
+        {
+            if (Patient?.ID == null)
+                return;
+
+            try
+            {
+                var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID);
+                if (birthOutcome != null)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        if (birthOutcome.PlacentaDeliveryTime.HasValue)
+                        {
+                            PlacentaStatus = $"Delivered at {birthOutcome.PlacentaDeliveryTime.Value:HH:mm}";
+                            PlacentaStatusColor = "#4CAF50";
+                            IsPlacentaDelivered = true;
+                        }
+
+                        if (birthOutcome.EstimatedBloodLoss.HasValue)
+                        {
+                            BloodLoss = $"{birthOutcome.EstimatedBloodLoss} mL";
+                            BloodLossColor = GetBloodLossColor(birthOutcome.EstimatedBloodLoss.Value);
+                        }
+
+                        if (birthOutcome.OxytocinGivenPostDelivery)
+                        {
+                            ActiveManagementStatus = "Oxytocin given ✓";
+                        }
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading birth outcome: {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        #region Status Helper Methods
+
         private string GetApgarColor(int score)
         {
             if (score >= 7) return "#4CAF50"; // Green - Normal
             if (score >= 4) return "#FF9800"; // Orange - Moderate
             return "#F44336"; // Red - Severe
+        }
+
+        private string GetBpStatusText(int systolic, int diastolic)
+        {
+            if (systolic >= 160 || diastolic >= 110)
+                return "⚠️ Severe HTN";
+            if (systolic >= 140 || diastolic >= 90)
+                return "Elevated";
+            if (systolic < 90)
+                return "Low";
+            return "Normal";
+        }
+
+        private string GetBpColor(int systolic, int diastolic)
+        {
+            if (systolic >= 160 || diastolic >= 110)
+                return "#F44336"; // Red
+            if (systolic >= 140 || diastolic >= 90)
+                return "#FF9800"; // Orange
+            if (systolic < 90)
+                return "#FF9800"; // Orange
+            return "#4CAF50"; // Green
+        }
+
+        private string GetPulseStatusText(int pulse)
+        {
+            if (pulse >= 120) return "⚠️ Tachycardia";
+            if (pulse < 60) return "Bradycardia";
+            return "Normal";
+        }
+
+        private string GetPulseColor(int pulse)
+        {
+            if (pulse >= 120) return "#F44336"; // Red
+            if (pulse < 60) return "#FF9800"; // Orange
+            return "#4CAF50"; // Green
+        }
+
+        private string GetTemperatureStatusText(float temp)
+        {
+            if (temp >= 38.5f) return "⚠️ High fever";
+            if (temp >= 37.5f) return "Elevated";
+            if (temp < 35.0f) return "Hypothermia";
+            return "Normal";
+        }
+
+        private string GetTemperatureColor(float temp)
+        {
+            if (temp >= 38.5f) return "#F44336"; // Red
+            if (temp >= 37.5f) return "#FF9800"; // Orange
+            if (temp < 35.0f) return "#FF9800"; // Orange
+            return "#4CAF50"; // Green
+        }
+
+        private string GetBloodLossColor(int bloodLoss)
+        {
+            if (bloodLoss >= 1000) return "#F44336"; // Red - Severe PPH
+            if (bloodLoss >= 500) return "#FF9800"; // Orange - PPH warning
+            return "#4CAF50"; // Green - Normal
         }
 
         private void UpdateTimerWarnings(TimeSpan duration)
@@ -263,6 +550,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 HasAlert = false;
             }
         }
+
+        #endregion
 
         #region Timer Event Handlers
 
@@ -354,6 +643,84 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         #endregion
 
+        #region Vitals Commands
+
+        [RelayCommand]
+        private async Task RecordBpPulse()
+        {
+            try
+            {
+                if (Patient == null)
+                {
+                    await AppShell.DisplayToastAsync("No patient loaded");
+                    return;
+                }
+
+                _bpPulseModalPageModel._patient = Patient;
+                await _bpPulseModalPageModel.LoadPatient(Patient.ID);
+                _bpPulseModalPageModel.ClosePopup = async () =>
+                {
+                    CloseBpPulsePopup?.Invoke();
+                    await LoadLatestVitals();
+                };
+
+                OpenBpPulsePopup?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+            }
+        }
+
+        [RelayCommand]
+        private async Task RecordTemperature()
+        {
+            try
+            {
+                if (Patient == null)
+                {
+                    await AppShell.DisplayToastAsync("No patient loaded");
+                    return;
+                }
+
+                _temperatureModalPageModel._patient = Patient;
+                await _temperatureModalPageModel.LoadPatient(Patient.ID);
+                _temperatureModalPageModel.ClosePopup = async () =>
+                {
+                    CloseTemperaturePopup?.Invoke();
+                    await LoadLatestVitals();
+                };
+
+                OpenTemperaturePopup?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+            }
+        }
+
+        [RelayCommand]
+        private void ShowBpTrend()
+        {
+            OpenVitalsTrendPopup?.Invoke();
+        }
+
+        [RelayCommand]
+        private void ShowTemperatureTrend()
+        {
+            OpenVitalsTrendPopup?.Invoke();
+        }
+
+        [RelayCommand]
+        private void Close()
+        {
+            CloseVitalsTrendPopup?.Invoke();
+        }
+
+        #endregion
+
+        #region Placenta Commands
+
         [RelayCommand]
         private async Task RecordPlacentaDelivery()
         {
@@ -379,6 +746,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 _errorHandler.HandleError(ex);
             }
+        }
+
+        [RelayCommand]
+        private async Task EditPlacentaDetails()
+        {
+            // Re-open the placenta delivery popup for editing
+            await RecordPlacentaDelivery();
         }
 
         private async Task ProcessPlacentaDelivery(PlacentaDeliveryData data)
@@ -408,12 +782,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     birthOutcome.OxytocinGivenPostDelivery = data.OxytocinGiven;
                     birthOutcome.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-                    // Set complication if PPH detected
-                    if (data.IsSeverePPH)
-                    {
-                        //birthOutcome.MaternalComplications = BirthOutcome.MaternalComplicationType.PPH;
-                    }
-
                     await _birthOutcomeRepository.SaveItemAsync(birthOutcome);
                 }
 
@@ -421,8 +789,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 PlacentaStatus = $"Delivered at {data.PlacentaDeliveryTime:HH:mm}";
                 PlacentaStatusColor = "#4CAF50";
                 BloodLoss = $"{data.EstimatedBloodLossMl} mL";
+                BloodLossColor = GetBloodLossColor(data.EstimatedBloodLossMl);
                 UterineStatus = data.UterusFirm ? "Firm & Contracted" : "Monitoring - Atony Risk";
+                UterineStatusColor = data.UterusFirm ? "#4CAF50" : "#FF9800";
                 IsPlacentaDelivered = true;
+                ActiveManagementStatus = data.OxytocinGiven ? "Oxytocin given ✓" : "Not recorded";
 
                 await AppShell.DisplayToastAsync("Placenta delivery recorded");
 
@@ -454,6 +825,284 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 await AppShell.DisplayToastAsync("Failed to record placenta delivery");
             }
         }
+
+        #endregion
+
+        #region Baby Management Commands
+
+        [RelayCommand]
+        private async Task AddBaby()
+        {
+            if (Patient?.ID == null)
+            {
+                await AppShell.DisplayToastAsync("No patient selected");
+                return;
+            }
+
+            try
+            {
+                // Check if birth outcome exists
+                var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID);
+                if (birthOutcome == null)
+                {
+                    var shouldCreate = await Application.Current.MainPage.DisplayAlert(
+                        "Birth Outcome Required",
+                        "A birth outcome record is needed to add baby details. Would you like to create one?",
+                        "Yes",
+                        "Cancel");
+
+                    if (shouldCreate)
+                    {
+                        await NavigateToBirthOutcome();
+                    }
+                    return;
+                }
+
+                // Show action sheet for quick add vs full details
+                var choice = await Application.Current.MainPage.DisplayActionSheet(
+                    "Add Baby",
+                    "Cancel",
+                    null,
+                    "Quick Entry (Essential Info)",
+                    "Full Details Page");
+
+                switch (choice)
+                {
+                    case "Quick Entry (Essential Info)":
+                        await QuickAddBaby(birthOutcome);
+                        break;
+                    case "Full Details Page":
+                        await NavigateToBabyDetails();
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+            }
+        }
+
+        private async Task QuickAddBaby(BirthOutcome birthOutcome)
+        {
+            try
+            {
+                // Get baby sex
+                var sex = await Application.Current.MainPage.DisplayActionSheet(
+                    "Baby Sex",
+                    "Cancel",
+                    null,
+                    "Male", "Female", "Unknown");
+
+                if (sex == "Cancel" || string.IsNullOrEmpty(sex))
+                    return;
+
+                // Get baby tag
+                var babyNumber = Babies.Count + 1;
+                var babyTag = babyNumber == 1 ? "Baby" : $"Baby {(char)('A' + babyNumber - 1)}";
+
+                var tagResult = await Application.Current.MainPage.DisplayPromptAsync(
+                    "Baby Tag",
+                    "Enter baby identifier (e.g., Baby A, Twin 1)",
+                    initialValue: babyTag);
+
+                if (string.IsNullOrEmpty(tagResult))
+                    return;
+
+                // Create new baby
+                var baby = new BabyDetails
+                {
+                    ID = Guid.NewGuid(),
+                    PartographID = Patient.ID.Value,
+                    BirthOutcomeID = birthOutcome.ID,
+                    Sex = sex switch
+                    {
+                        "Male" => BabySex.Male,
+                        "Female" => BabySex.Female,
+                        _ => BabySex.Unknown
+                    },
+                    BirthTime = Patient.DeliveryTime ?? DateTime.Now,
+                    BabyTag = tagResult,
+                    BabyNumber = babyNumber,
+                    VitalStatus = BabyVitalStatus.LiveBirth,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    Handler = Constants.Staff?.ID,
+                    CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                };
+
+                await _babyDetailsRepository.SaveItemAsync(baby);
+                await LoadBabiesAsync();
+
+                await AppShell.DisplayToastAsync($"{tagResult} added successfully");
+
+                // Offer to record APGAR
+                var recordApgar = await Application.Current.MainPage.DisplayAlert(
+                    "Record APGAR?",
+                    $"Would you like to record APGAR scores for {tagResult}?",
+                    "Yes",
+                    "Later");
+
+                if (recordApgar)
+                {
+                    await RecordBabyApgar(baby);
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Failed to add baby");
+            }
+        }
+
+        [RelayCommand]
+        private async Task RecordBabyApgar(BabyDetails baby)
+        {
+            if (baby == null)
+                return;
+
+            try
+            {
+                // Determine which APGAR to record
+                var apgarOptions = new List<string>();
+
+                if (!baby.Apgar1Min.HasValue)
+                    apgarOptions.Add("APGAR 1-Minute");
+                else
+                    apgarOptions.Add($"Update APGAR 1 (Current: {baby.Apgar1Min})");
+
+                if (!baby.Apgar5Min.HasValue)
+                    apgarOptions.Add("APGAR 5-Minute");
+                else
+                    apgarOptions.Add($"Update APGAR 5 (Current: {baby.Apgar5Min})");
+
+                // Add APGAR 10 if APGAR 5 < 7
+                if (baby.Apgar5Min.HasValue && baby.Apgar5Min.Value < 7)
+                {
+                    apgarOptions.Add("APGAR 10-Minute");
+                }
+
+                var choice = await Application.Current.MainPage.DisplayActionSheet(
+                    $"Record APGAR - {baby.BabyTag}",
+                    "Cancel",
+                    null,
+                    apgarOptions.ToArray());
+
+                if (choice == "Cancel" || string.IsNullOrEmpty(choice))
+                    return;
+
+                // Determine which APGAR type
+                int apgarType = 1;
+                if (choice.Contains("5"))
+                    apgarType = 5;
+                else if (choice.Contains("10"))
+                    apgarType = 10;
+
+                // Record APGAR with component scoring
+                await RecordApgarWithComponents(baby, apgarType);
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+            }
+        }
+
+        private async Task RecordApgarWithComponents(BabyDetails baby, int apgarType)
+        {
+            try
+            {
+                // For simplicity, use quick entry. In full implementation, open APGAR popup
+                var scoreResult = await Application.Current.MainPage.DisplayPromptAsync(
+                    $"APGAR {apgarType}-Minute Score",
+                    "Enter total APGAR score (0-10):",
+                    keyboard: Keyboard.Numeric);
+
+                if (string.IsNullOrEmpty(scoreResult) || !int.TryParse(scoreResult, out int score))
+                    return;
+
+                if (score < 0 || score > 10)
+                {
+                    await AppShell.DisplayToastAsync("APGAR score must be between 0 and 10");
+                    return;
+                }
+
+                // Update baby record
+                switch (apgarType)
+                {
+                    case 1:
+                        baby.Apgar1Min = score;
+                        break;
+                    case 5:
+                        baby.Apgar5Min = score;
+                        break;
+                }
+
+                baby.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                await _babyDetailsRepository.SaveItemAsync(baby);
+
+                // Reload data
+                await LoadBabiesAsync();
+                await LoadApgarScores();
+
+                var interpretation = score >= 7 ? "Normal" : score >= 4 ? "Moderately Abnormal" : "Severely Abnormal";
+                await AppShell.DisplayToastAsync($"APGAR {apgarType}-min: {score} ({interpretation})");
+
+                // If APGAR 5 < 7, remind about APGAR 10
+                if (apgarType == 5 && score < 7)
+                {
+                    await Application.Current.MainPage.DisplayAlert(
+                        "APGAR 10 Recommended",
+                        $"APGAR 5-minute score is {score}. WHO recommends recording APGAR at 10 minutes.",
+                        "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+            }
+        }
+
+        [RelayCommand]
+        private async Task ViewBabyDetails(BabyDetails baby)
+        {
+            if (baby == null || Patient?.ID == null)
+                return;
+
+            try
+            {
+                var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID);
+                if (birthOutcome == null)
+                {
+                    await AppShell.DisplayToastAsync("Birth outcome not found");
+                    return;
+                }
+
+                var parameters = new Dictionary<string, object>
+                {
+                    { "PartographId", Patient.ID.ToString() },
+                    { "BirthOutcomeId", birthOutcome.ID.ToString() },
+                    { "BabyId", baby.ID.ToString() }
+                };
+
+                await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+            }
+        }
+
+        [RelayCommand]
+        private async Task UpdateBabyVitals(BabyDetails baby)
+        {
+            if (baby == null)
+                return;
+
+            await RecordBabyApgar(baby);
+        }
+
+        #endregion
+
+        #region Navigation Commands
 
         [RelayCommand]
         private async Task TransitionToFourthStage()
@@ -495,69 +1144,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private async Task RecordApgar1()
-        {
-            if (Patient?.ID == null)
-                return;
-
-            try
-            {
-                // Navigate to baby details to record APGAR
-                var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID);
-                if (birthOutcome == null)
-                {
-                    await AppShell.DisplayToastAsync("Please record birth outcome first");
-                    return;
-                }
-
-                var parameters = new Dictionary<string, object>
-                {
-                    { "PartographId", Patient.ID.ToString() },
-                    { "BirthOutcomeId", birthOutcome.ID.ToString() },
-                    { "NumberOfBabies", birthOutcome.NumberOfBabies.ToString() },
-                    { "FocusApgar", "1" }
-                };
-
-                await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
-            }
-            catch (Exception ex)
-            {
-                _errorHandler.HandleError(ex);
-            }
-        }
-
-        [RelayCommand]
-        private async Task RecordApgar5()
-        {
-            if (Patient?.ID == null)
-                return;
-
-            try
-            {
-                var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(Patient.ID);
-                if (birthOutcome == null)
-                {
-                    await AppShell.DisplayToastAsync("Please record birth outcome first");
-                    return;
-                }
-
-                var parameters = new Dictionary<string, object>
-                {
-                    { "PartographId", Patient.ID.ToString() },
-                    { "BirthOutcomeId", birthOutcome.ID.ToString() },
-                    { "NumberOfBabies", "1" },
-                    { "FocusApgar", "5" }
-                };
-
-                await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
-            }
-            catch (Exception ex)
-            {
-                _errorHandler.HandleError(ex);
-            }
-        }
-
-        [RelayCommand]
         private async Task NavigateToBirthOutcome()
         {
             if (Patient?.ID == null)
@@ -591,7 +1177,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     { "PartographId", Patient.ID.ToString() },
                     { "BirthOutcomeId", birthOutcome.ID.ToString() },
-                    { "NumberOfBabies", birthOutcome.NumberOfBabies.ToString() }
+                    { "NumberOfBabies", (Babies.Count + 1).ToString() }
                 };
 
                 await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
@@ -601,6 +1187,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 _errorHandler.HandleError(ex);
             }
         }
+
+        #endregion
+
+        #region Other Commands
 
         [RelayCommand]
         private async Task Refresh()
@@ -616,5 +1206,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             await AppShell.DisplayToastAsync("Print functionality coming soon");
         }
+
+        #endregion
     }
 }

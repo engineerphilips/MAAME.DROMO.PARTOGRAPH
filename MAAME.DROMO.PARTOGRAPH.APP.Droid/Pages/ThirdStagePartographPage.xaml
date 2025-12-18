@@ -4,167 +4,555 @@
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.ThirdStagePartographPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
+             xmlns:modals="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals"
              Title="Third Stage Partograph">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <!-- Converters -->
+            <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
+            <converters:GramsToKilogramsConverter x:Key="GramsToKilogramsConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+
+            <!-- Colors -->
+            <Color x:Key="PrimaryBlue">#2196F3</Color>
+            <Color x:Key="SuccessGreen">#4CAF50</Color>
+            <Color x:Key="WarningOrange">#FF9800</Color>
+            <Color x:Key="DangerRed">#F44336</Color>
+            <Color x:Key="Purple">#9C27B0</Color>
+
             <!-- Modern Card Style -->
             <Style x:Key="ModernCardStyle" TargetType="Border">
                 <Setter Property="StrokeThickness" Value="0" />
                 <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E293B}" />
-                <Setter Property="Padding" Value="24" />
+                <Setter Property="Padding" Value="16" />
                 <Setter Property="StrokeShape">
-                    <RoundRectangle CornerRadius="20" />
+                    <RoundRectangle CornerRadius="16" />
                 </Setter>
                 <Setter Property="Shadow">
                     <Shadow Brush="{AppThemeBinding Light=#10000000, Dark=#30000000}"
-                            Offset="0,8"
-                            Radius="24"
-                            Opacity="0.15" />
+                            Offset="0,4"
+                            Radius="16"
+                            Opacity="0.12" />
                 </Setter>
             </Style>
 
             <!-- Section Title Style -->
             <Style x:Key="SectionTitleStyle" TargetType="Label">
-                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontSize" Value="16" />
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="TextColor" Value="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
-                <Setter Property="Margin" Value="0,0,0,12" />
+                <Setter Property="Margin" Value="0,0,0,8" />
+            </Style>
+
+            <!-- Vital Button Style -->
+            <Style x:Key="VitalButtonStyle" TargetType="Button">
+                <Setter Property="HeightRequest" Value="44" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Padding" Value="12,8" />
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh"
+                     Command="{Binding RefreshCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.arrow_sync_16_regular}" />
+        <ToolbarItem Text="Add Baby"
+                     Command="{Binding AddBabyCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.person_add_16_regular}"
+                     ToolTipProperties.Text="Add Baby Details" />
         <ToolbarItem Text="Print"
                      Command="{Binding PrintCommand}"
                      IconImageSource="{x:Static fonts:FluentUI.print_16_regular}" />
     </ContentPage.ToolbarItems>
 
-    <ScrollView>
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto" Padding="10">
-            <!-- Patient Header -->
-            <Border Grid.Row="0"
-                    StrokeThickness="0"
-                    BackgroundColor="{AppThemeBinding Light=#E1F5FE, Dark=#01579B}"
-                    Padding="15"
-                    Margin="0,0,0,20">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <Grid ColumnDefinitions="*,Auto">
-                    <VerticalStackLayout>
-                        <Label Text="{Binding PatientName}" FontSize="20" FontAttributes="Bold" />
-                        <Label Text="{Binding PatientInfo}" FontSize="14" Opacity="0.8" />
-                        <HorizontalStackLayout Spacing="20">
-                            <Label Text="{Binding ThirdStageDuration, StringFormat='Third Stage Duration: {0}'}" FontSize="12" />
-                            <Label Text="{Binding LastRecordedTime, StringFormat='Last Entry: {0:HH:mm}'}" FontSize="12" />
-                        </HorizontalStackLayout>
-                    </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                        <Label Text="STAGE 3"
-                               FontSize="24"
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="12" Spacing="12">
+
+                <!-- Patient Header -->
+                <Border StrokeThickness="0"
+                        BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding PatientName}"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1E293B, Dark=White}" />
+                            <Label Text="{Binding PatientInfo}"
+                                   FontSize="13"
+                                   TextColor="{AppThemeBinding Light=#475569, Dark=#E0E0E0}" />
+                            <HorizontalStackLayout Spacing="16" Margin="0,8,0,0">
+                                <HorizontalStackLayout Spacing="4">
+                                    <Label Text="{x:Static fonts:FluentUI.timer_16_regular}"
+                                           FontFamily="FluentUI"
+                                           FontSize="14"
+                                           TextColor="{AppThemeBinding Light=#2196F3, Dark=#90CAF9}"
+                                           VerticalOptions="Center" />
+                                    <Label Text="{Binding ThirdStageDuration}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=White}" />
+                                </HorizontalStackLayout>
+                                <Label Text="{Binding LastRecordedTime, StringFormat='Last: {0:HH:mm}'}"
+                                       FontSize="12"
+                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#B0BEC5}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End">
+                            <Border BackgroundColor="{StaticResource SuccessGreen}"
+                                    StrokeThickness="0"
+                                    Padding="12,6">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Label Text="STAGE 3"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center" />
+                            </Border>
+                            <Label Text="Placenta Delivery"
+                                   FontSize="11"
+                                   HorizontalOptions="Center"
+                                   TextColor="{AppThemeBinding Light=#64748B, Dark=#B0BEC5}"
+                                   Margin="0,4,0,0" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Alert Banner (if any) -->
+                <Border IsVisible="{Binding HasAlert}"
+                        BackgroundColor="{Binding AlertColor}"
+                        StrokeThickness="0"
+                        Padding="12">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="{x:Static fonts:FluentUI.warning_16_filled}"
+                               FontFamily="FluentUI"
+                               FontSize="18"
+                               TextColor="White"
+                               VerticalOptions="Center" />
+                        <Label Text="{Binding AlertMessage}"
+                               FontSize="13"
                                FontAttributes="Bold"
-                               HorizontalOptions="Center"
-                               TextColor="#2196F3" />
-                        <Label Text="Placenta Delivery"
-                               FontSize="10"
-                               HorizontalOptions="Center" />
+                               TextColor="White"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
+
+                <!-- WHO 2020 Info Box -->
+                <Border StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light=#3B82F6, Dark=#60A5FA}"
+                        BackgroundColor="{AppThemeBinding Light=#EFF6FF, Dark=#1E3A8A}"
+                        Padding="12">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Third Stage Monitoring (WHO 2020)"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#1E40AF, Dark=#DBEAFE}" />
+                        <Label FontSize="12" TextColor="{AppThemeBinding Light=#1E40AF, Dark=#BFDBFE}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Monitor: " FontAttributes="Bold" />
+                                    <Span Text="Placenta delivery (&lt;30min), blood loss, uterine tone, BP, Pulse, Temperature" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
                     </VerticalStackLayout>
+                </Border>
+
+                <!-- Maternal Vitals Monitoring Card -->
+                <Border Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{x:Static fonts:FluentUI.heart_pulse_16_regular}"
+                                   FontFamily="FluentUI"
+                                   FontSize="18"
+                                   TextColor="{StaticResource DangerRed}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Maternal Vitals"
+                                   Style="{StaticResource SectionTitleStyle}"
+                                   Margin="0" />
+                        </HorizontalStackLayout>
+
+                        <!-- BP/Pulse Row -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+                            <!-- BP Display -->
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                                <Label Text="Blood Pressure" FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label Text="{Binding BpLatestValue}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="{Binding BpButtonColor}" />
+                                    <Label Text="{Binding BpStatusText}"
+                                           FontSize="11"
+                                           TextColor="{Binding BpButtonColor}"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                            <Button Grid.Row="0" Grid.Column="1"
+                                    Text="Record"
+                                    Command="{Binding RecordBpPulseCommand}"
+                                    BackgroundColor="{StaticResource DangerRed}"
+                                    TextColor="White"
+                                    Style="{StaticResource VitalButtonStyle}" />
+                            <Button Grid.Row="0" Grid.Column="2"
+                                    Text="Trend"
+                                    Command="{Binding ShowBpTrendCommand}"
+                                    BackgroundColor="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                    TextColor="{AppThemeBinding Light=#475569, Dark=#E2E8F0}"
+                                    Style="{StaticResource VitalButtonStyle}" />
+
+                            <!-- Pulse Display -->
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                                <Label Text="Pulse" FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label Text="{Binding PulseLatestValue}"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           TextColor="{Binding PulseButtonColor}" />
+                                    <Label Text="{Binding PulseStatusText}"
+                                           FontSize="11"
+                                           TextColor="{Binding PulseButtonColor}"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#E2E8F0, Dark=#334155}" Margin="0,4" />
+
+                        <!-- Temperature Row -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                            <VerticalStackLayout>
+                                <Label Text="Temperature" FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label Text="{Binding TemperatureLatestValue}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="{Binding TemperatureButtonColor}" />
+                                    <Label Text="{Binding TemperatureStatusText}"
+                                           FontSize="11"
+                                           TextColor="{Binding TemperatureButtonColor}"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1"
+                                    Text="Record"
+                                    Command="{Binding RecordTemperatureCommand}"
+                                    BackgroundColor="{StaticResource WarningOrange}"
+                                    TextColor="White"
+                                    Style="{StaticResource VitalButtonStyle}" />
+                            <Button Grid.Column="2"
+                                    Text="Trend"
+                                    Command="{Binding ShowTemperatureTrendCommand}"
+                                    BackgroundColor="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                    TextColor="{AppThemeBinding Light=#475569, Dark=#E2E8F0}"
+                                    Style="{StaticResource VitalButtonStyle}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Third Stage Data Cards Grid -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+
+                    <!-- Placenta Status Card -->
+                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Placenta Status" Style="{StaticResource SectionTitleStyle}" />
+                            <Label Text="{Binding PlacentaStatus}"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="{Binding PlacentaStatusColor}" />
+                            <Button Text="{Binding IsPlacentaDelivered, Converter={StaticResource IsNotNullConverter}, ConverterParameter='Edit|Record'}"
+                                    Command="{Binding RecordPlacentaDeliveryCommand}"
+                                    BackgroundColor="{StaticResource PrimaryBlue}"
+                                    TextColor="White"
+                                    HeightRequest="40"
+                                    CornerRadius="8"
+                                    FontSize="12" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Blood Loss Card -->
+                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Estimated Blood Loss" Style="{StaticResource SectionTitleStyle}" />
+                            <Label Text="{Binding BloodLoss}"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="{Binding BloodLossColor}" />
+                            <Label Text="Normal: &lt;500 mL"
+                                   FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Uterine Status Card -->
+                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Uterine Tone" Style="{StaticResource SectionTitleStyle}" />
+                            <Label Text="{Binding UterineStatus}"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="{Binding UterineStatusColor}" />
+                            <Label Text="Monitor for firmness"
+                                   FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Active Management Card -->
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Active Management" Style="{StaticResource SectionTitleStyle}" />
+                            <Label Text="{Binding ActiveManagementStatus}"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource SuccessGreen}" />
+                            <Label Text="WHO: 10 IU Oxytocin IM"
+                                   FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                        </VerticalStackLayout>
+                    </Border>
                 </Grid>
-            </Border>
 
-            <!-- WHO 2020 Third Stage Monitoring Info -->
-            <Border Grid.Row="1"
-                    StrokeThickness="1"
-                    Stroke="{AppThemeBinding Light=#3B82F6, Dark=#60A5FA}"
-                    BackgroundColor="{AppThemeBinding Light=#EFF6FF, Dark=#1E3A8A}"
-                    Padding="15"
-                    Margin="0,0,0,20">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Third Stage Monitoring (Placenta Delivery)"
-                           FontSize="16"
-                           FontAttributes="Bold"
-                           TextColor="{AppThemeBinding Light=#1E40AF, Dark=#DBEAFE}" />
-                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#1E40AF, Dark=#BFDBFE}">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Key Monitoring: " FontAttributes="Bold" />
-                                <Span Text="Placenta delivery (should occur within 30 minutes), blood loss estimation, uterine tone, maternal vital signs" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#DC2626, Dark=#FCA5A5}">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Alert: " FontAttributes="Bold" />
-                                <Span Text="If placenta not delivered within 30 minutes or heavy bleeding, escalate immediately" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                </VerticalStackLayout>
-            </Border>
+                <!-- Babies Section -->
+                <Border Style="{StaticResource ModernCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <!-- Header with Add Button -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <HorizontalStackLayout Spacing="8">
+                                <Label Text="{x:Static fonts:FluentUI.people_16_regular}"
+                                       FontFamily="FluentUI"
+                                       FontSize="18"
+                                       TextColor="{StaticResource SuccessGreen}"
+                                       VerticalOptions="Center" />
+                                <Label Text="Babies"
+                                       Style="{StaticResource SectionTitleStyle}"
+                                       Margin="0" />
+                                <Border BackgroundColor="{StaticResource PrimaryBlue}"
+                                        StrokeThickness="0"
+                                        Padding="8,2"
+                                        IsVisible="{Binding HasBabies}">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10" />
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding BabyCount}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="White" />
+                                </Border>
+                            </HorizontalStackLayout>
+                            <Button Grid.Column="1"
+                                    Text="+ Add Baby"
+                                    Command="{Binding AddBabyCommand}"
+                                    BackgroundColor="{StaticResource SuccessGreen}"
+                                    TextColor="White"
+                                    HeightRequest="36"
+                                    CornerRadius="8"
+                                    FontSize="12"
+                                    Padding="12,6" />
+                        </Grid>
 
-            <!-- Third Stage Monitoring Cards -->
-            <Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10" Margin="0,0,0,20">
+                        <!-- No Babies Message -->
+                        <Border IsVisible="{Binding HasBabies, Converter={StaticResource IsNotNullConverter}, ConverterParameter=invert}"
+                                BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
+                                StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                Padding="20">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="{x:Static fonts:FluentUI.person_add_16_regular}"
+                                       FontFamily="FluentUI"
+                                       FontSize="32"
+                                       TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="No babies recorded yet"
+                                       FontSize="14"
+                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Tap '+ Add Baby' to record baby details"
+                                       FontSize="12"
+                                       TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
 
-                <!-- Placenta Status Card -->
-                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Placenta Status" Style="{StaticResource SectionTitleStyle}" />
-                        <Label Text="{Binding PlacentaStatus}" FontSize="16" FontAttributes="Bold" TextColor="#2196F3" />
-                        <Button Text="Record Placenta Delivery"
-                                Command="{Binding RecordPlacentaDeliveryCommand}"
-                                BackgroundColor="#2196F3"
-                                TextColor="White"
-                                CornerRadius="8" />
+                        <!-- Babies List -->
+                        <CollectionView ItemsSource="{Binding Babies}"
+                                        IsVisible="{Binding HasBabies}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                            StrokeThickness="1"
+                                            BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
+                                            Padding="12"
+                                            Margin="0,4">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="8">
+                                            <!-- Baby Info -->
+                                            <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="4">
+                                                <HorizontalStackLayout Spacing="8">
+                                                    <Label Text="{Binding BabyTag}"
+                                                           FontSize="16"
+                                                           FontAttributes="Bold"
+                                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                                                    <Border BackgroundColor="{AppThemeBinding Light=#DBEAFE, Dark=#1E3A8A}"
+                                                            StrokeThickness="0"
+                                                            Padding="6,2">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="6" />
+                                                        </Border.StrokeShape>
+                                                        <Label Text="{Binding Sex}"
+                                                               FontSize="11"
+                                                               TextColor="{AppThemeBinding Light=#1E40AF, Dark=#BFDBFE}" />
+                                                    </Border>
+                                                </HorizontalStackLayout>
+                                                <HorizontalStackLayout Spacing="16">
+                                                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}">
+                                                        <Label.FormattedText>
+                                                            <FormattedString>
+                                                                <Span Text="Weight: " />
+                                                                <Span Text="{Binding BirthWeight, Converter={StaticResource GramsToKilogramsConverter}}" FontAttributes="Bold" />
+                                                                <Span Text=" kg" />
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </Label>
+                                                    <Label Text="{Binding VitalStatus}"
+                                                           FontSize="12"
+                                                           TextColor="{StaticResource SuccessGreen}" />
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+
+                                            <!-- APGAR Scores -->
+                                            <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                                <Border BackgroundColor="{AppThemeBinding Light=#DCFCE7, Dark=#14532D}"
+                                                        StrokeThickness="0"
+                                                        Padding="8,4"
+                                                        IsVisible="{Binding Apgar1Min, Converter={StaticResource IsNotNullConverter}}">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="6" />
+                                                    </Border.StrokeShape>
+                                                    <Label FontSize="11" TextColor="{AppThemeBinding Light=#166534, Dark=#BBF7D0}">
+                                                        <Label.FormattedText>
+                                                            <FormattedString>
+                                                                <Span Text="1min: " />
+                                                                <Span Text="{Binding Apgar1Min}" FontAttributes="Bold" />
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </Label>
+                                                </Border>
+                                                <Border BackgroundColor="{AppThemeBinding Light=#DCFCE7, Dark=#14532D}"
+                                                        StrokeThickness="0"
+                                                        Padding="8,4"
+                                                        IsVisible="{Binding Apgar5Min, Converter={StaticResource IsNotNullConverter}}">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="6" />
+                                                    </Border.StrokeShape>
+                                                    <Label FontSize="11" TextColor="{AppThemeBinding Light=#166534, Dark=#BBF7D0}">
+                                                        <Label.FormattedText>
+                                                            <FormattedString>
+                                                                <Span Text="5min: " />
+                                                                <Span Text="{Binding Apgar5Min}" FontAttributes="Bold" />
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </Label>
+                                                </Border>
+                                            </HorizontalStackLayout>
+
+                                            <!-- Action Buttons -->
+                                            <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="8" HorizontalOptions="End">
+                                                <Button Text="Record APGAR"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RecordBabyApgarCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        BackgroundColor="{StaticResource SuccessGreen}"
+                                                        TextColor="White"
+                                                        HeightRequest="32"
+                                                        CornerRadius="6"
+                                                        FontSize="11"
+                                                        Padding="10,4" />
+                                                <Button Text="View Details"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewBabyDetailsCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        BackgroundColor="{StaticResource PrimaryBlue}"
+                                                        TextColor="White"
+                                                        HeightRequest="32"
+                                                        CornerRadius="6"
+                                                        FontSize="11"
+                                                        Padding="10,4" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Blood Loss Card -->
-                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Estimated Blood Loss" Style="{StaticResource SectionTitleStyle}" />
-                        <Label Text="{Binding BloodLoss}" FontSize="16" FontAttributes="Bold" TextColor="#F44336" />
-                        <Label Text="Normal: &lt;500 mL" FontSize="12" Opacity="0.7" />
-                    </VerticalStackLayout>
-                </Border>
-
-                <!-- Uterine Status Card -->
-                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Uterine Tone" Style="{StaticResource SectionTitleStyle}" />
-                        <Label Text="{Binding UterineStatus}" FontSize="16" FontAttributes="Bold" TextColor="#FF9800" />
-                        <Label Text="Monitor for firmness" FontSize="12" Opacity="0.7" />
-                    </VerticalStackLayout>
-                </Border>
-
-                <!-- Maternal Vitals Card -->
-                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Maternal Vitals" Style="{StaticResource SectionTitleStyle}" />
-                        <Label Text="BP, Pulse, Temperature" FontSize="12" Opacity="0.7" />
-                        <Button Text="Record Vitals"
-                                BackgroundColor="#4CAF50"
-                                TextColor="White"
-                                CornerRadius="8" />
-                    </VerticalStackLayout>
-                </Border>
-            </Grid>
-
-            <!-- Action Buttons -->
-            <VerticalStackLayout Grid.Row="3" Spacing="10">
+                <!-- Transition Button -->
                 <Button Text="Transition to Fourth Stage (Immediate Postpartum)"
                         Command="{Binding TransitionToFourthStageCommand}"
-                        BackgroundColor="#9C27B0"
+                        BackgroundColor="{StaticResource Purple}"
                         TextColor="White"
-                        FontSize="16"
+                        FontSize="15"
                         FontAttributes="Bold"
-                        HeightRequest="50"
-                        CornerRadius="10" />
+                        HeightRequest="54"
+                        CornerRadius="12"
+                        Margin="0,8,0,20" />
+
             </VerticalStackLayout>
-        </Grid>
-    </ScrollView>
+        </ScrollView>
+
+        <!-- Popups -->
+        <modals:PlacentaDeliveryPopup x:Name="PlacentaDeliveryPopup"
+                                       BindingContext="{Binding PlacentaDeliveryPopupPageModel}"
+                                       StaysOpen="True"
+                                       ShowCloseButton="True"
+                                       WidthRequest="340"
+                                       HeightRequest="650"
+                                       HeaderHeight="60" />
+
+        <modals:BpPulsePopup x:Name="BpPulsePopup"
+                             BindingContext="{Binding BPPulseModalPageModel}"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="320"
+                             HeightRequest="600"
+                             HeaderHeight="50" />
+
+        <modals:TemperaturePopup x:Name="TemperaturePopup"
+                                  BindingContext="{Binding TemperatureModalPageModel}"
+                                  StaysOpen="True"
+                                  ShowCloseButton="True"
+                                  WidthRequest="320"
+                                  HeightRequest="450"
+                                  HeaderHeight="50" />
+
+        <modals:VitalsTrendPopup x:Name="VitalsTrendPopup"
+                                  BindingContext="{Binding .}"
+                                  StaysOpen="True"
+                                  ShowCloseButton="True"
+                                  WidthRequest="360"
+                                  HeightRequest="550"
+                                  HeaderHeight="50" />
+
+    </Grid>
 </ContentPage>

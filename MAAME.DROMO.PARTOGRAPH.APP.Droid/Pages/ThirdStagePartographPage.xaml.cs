@@ -8,7 +8,6 @@ public partial class ThirdStagePartographPage : ContentPage
 {
     public string PatientId { get; set; }
     private readonly ThirdStagePartographPageModel _pageModel;
-    private PlacentaDeliveryPopup? _placentaDeliveryPopup;
 
     public ThirdStagePartographPage(ThirdStagePartographPageModel pageModel)
     {
@@ -17,47 +16,16 @@ public partial class ThirdStagePartographPage : ContentPage
         BindingContext = pageModel;
 
         // Wire up popup actions
-        _pageModel.OpenPlacentaDeliveryPopup = OpenPlacentaDeliveryPopup;
-        _pageModel.ClosePlacentaDeliveryPopup = ClosePlacentaDeliveryPopup;
-    }
+        _pageModel.OpenPlacentaDeliveryPopup = () => PlacentaDeliveryPopup.IsOpen = true;
+        _pageModel.ClosePlacentaDeliveryPopup = () => PlacentaDeliveryPopup.IsOpen = false;
 
-    private void OpenPlacentaDeliveryPopup()
-    {
-        _placentaDeliveryPopup = new PlacentaDeliveryPopup(_pageModel.PlacentaDeliveryPopupPageModel)
-        {
-            IsOpen = true,
-            ShowHeader = true,
-            ShowFooter = false,
-            ShowCloseButton = true,
-            WidthRequest = 400,
-            HeightRequest = 600
-        };
+        _pageModel.OpenBpPulsePopup = () => BpPulsePopup.IsOpen = true;
+        _pageModel.CloseBpPulsePopup = () => BpPulsePopup.IsOpen = false;
 
-        // Add popup to the page
-        if (Content is Grid grid)
-        {
-            grid.Children.Add(_placentaDeliveryPopup);
-        }
-        else
-        {
-            var newGrid = new Grid();
-            var oldContent = Content;
-            Content = newGrid;
-            newGrid.Children.Add(oldContent);
-            newGrid.Children.Add(_placentaDeliveryPopup);
-        }
-    }
+        _pageModel.OpenTemperaturePopup = () => TemperaturePopup.IsOpen = true;
+        _pageModel.CloseTemperaturePopup = () => TemperaturePopup.IsOpen = false;
 
-    private void ClosePlacentaDeliveryPopup()
-    {
-        if (_placentaDeliveryPopup != null)
-        {
-            _placentaDeliveryPopup.IsOpen = false;
-            if (Content is Grid grid)
-            {
-                grid.Children.Remove(_placentaDeliveryPopup);
-            }
-            _placentaDeliveryPopup = null;
-        }
+        _pageModel.OpenVitalsTrendPopup = () => VitalsTrendPopup.IsOpen = true;
+        _pageModel.CloseVitalsTrendPopup = () => VitalsTrendPopup.IsOpen = false;
     }
 }
