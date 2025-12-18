@@ -41,7 +41,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
 
             // Active labors (partographs not completed within date range)
             var activeLabors = await _context.Partographs
-                .Where(p => p.Deleted == 0 && p.LaborStatus != LaborStatus.Completed)
+                .Where(p => p.Deleted == 0 && p.Status != LaborStatus.Completed)
                 .CountAsync();
 
             // Birth outcomes in date range
@@ -130,10 +130,10 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
         {
             // Active labors by stage
             var activePartographs = await _context.Partographs
-                .Where(p => p.Deleted == 0 && p.LaborStatus != LaborStatus.Completed)
+                .Where(p => p.Deleted == 0 && p.Status != LaborStatus.Completed)
                 .ToListAsync();
 
-            var byStage = activePartographs.GroupBy(p => p.LaborStatus)
+            var byStage = activePartographs.GroupBy(p => p.Status)
                 .Select(g => new { stage = g.Key.ToString(), count = g.Count() });
 
             // Today's stats

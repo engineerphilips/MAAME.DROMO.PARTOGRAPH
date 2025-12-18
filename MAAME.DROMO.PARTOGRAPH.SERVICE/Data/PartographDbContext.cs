@@ -36,7 +36,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
         public DbSet<MedicationEntry> Medications { get; set; }
         public DbSet<Oxytocin> Oxytocins { get; set; }
         public DbSet<CompanionEntry> Companions { get; set; }
-        public DbSet<Assessment> AssessmentPlans { get; set; }
+        public DbSet<Assessment> Assessments { get; set; } 
         public DbSet<MedicalNote> MedicalNotes { get; set; }
 
         // Extended Partograph Measurements

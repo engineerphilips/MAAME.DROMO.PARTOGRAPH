@@ -257,7 +257,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             try
             {
                 var totalPatients = await _context.Patients.CountAsync(p => p.Deleted == 0);
-                var activeLabor = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.Active);
+                var activeLabor = await _context.Partographs.CountAsync(p => p.Deleted == 0 && (p.Status == LaborStatus.FirstStage || p.Status == LaborStatus.SecondStage || p.Status == LaborStatus.ThirdStage || p.Status == LaborStatus.FourthStage));
                 var completedToday = await _context.Partographs.CountAsync(p =>
                     p.Deleted == 0 &&
                     p.Status == LaborStatus.Completed &&

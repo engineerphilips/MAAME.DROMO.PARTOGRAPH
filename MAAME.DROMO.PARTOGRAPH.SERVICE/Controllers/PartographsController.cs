@@ -116,7 +116,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     medicationEntries = await _context.Medications.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
                     oxytocins = await _context.Oxytocins.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
                     companionEntries = await _context.Companions.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync(),
-                    assessmentPlanEntries = await _context.AssessmentPlans.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync()
+                    assessmentPlanEntries = await _context.Assessments.Where(m => m.PartographID == id && m.Deleted == 0).OrderBy(m => m.Time).ToListAsync()
                 };
 
                 return Ok(measurements);

@@ -76,7 +76,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
                 // Create PDF document (A4 Landscape)
                 PdfDocument document = new PdfDocument();
                 PdfPage page = document.Pages.Add();
-                page.SetSize(PageWidth, PageHeight);
+                //page.SetSize(PageWidth, PageHeight);
                 PdfGraphics graphics = page.Graphics;
 
                 // Fonts
@@ -141,7 +141,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
 
             // Row 3
             graphics.DrawString($"Date of Admission: {partograph.AdmissionDate:dd/MM/yyyy}", regularFont, PdfBrushes.Black, new PointF(xPos, yPos));
-            graphics.DrawString($"Risk factors: {string.Join(", ", partograph.RiskFactors?.Select(r => r.Factor) ?? Array.Empty<string>())}", regularFont, PdfBrushes.Black, new PointF(xPos + 250, yPos));
+            graphics.DrawString($"Risk factors: {string.Join(", ", partograph.RiskFactors?.Select(r => r.Name) ?? Array.Empty<string>())}", regularFont, PdfBrushes.Black, new PointF(xPos + 250, yPos));
             yPos += lineHeight;
 
             // Row 4
@@ -213,7 +213,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             // BABY Section
             yPos = DrawSectionHeader(graphics, "BABY", xPos, yPos, AlertColumnWidth, borderPen, alertColor, regularFont, RowHeight);
             yPos = DrawFHRRow(graphics, xPos, yPos, AlertColumnWidth, columnWidth, totalHours, borderPen, smallFont, fhrs, partograph, RowHeight);
-            yPos = DrawDataRow(graphics, "FHR deceleration", "<110, >160", xPos, yPos, AlertColumnWidth, columnWidth, totalHours, borderPen, smallFont, null, partograph, RowHeight);
+            //yPos = DrawDataRow(graphics, "FHR deceleration", "<110, >160", xPos, yPos, AlertColumnWidth, columnWidth, totalHours, borderPen, smallFont, null, partograph, RowHeight);
             yPos = DrawDataRow(graphics, "Amniotic fluid", "M+++, B", xPos, yPos, AlertColumnWidth, columnWidth, totalHours, borderPen, smallFont, amnioticFluids, partograph, RowHeight);
             yPos = DrawDataRow(graphics, "Fetal position", "P,T", xPos, yPos, AlertColumnWidth, columnWidth, totalHours, borderPen, smallFont, fetalPositions, partograph, RowHeight);
             yPos = DrawDataRow(graphics, "Caput", "+++", xPos, yPos, AlertColumnWidth, columnWidth, totalHours, borderPen, smallFont, caputs, partograph, RowHeight);
@@ -256,7 +256,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             yPos = DrawDataRow(graphics, "PLAN", "", xPos, yPos, AlertColumnWidth, columnWidth, totalHours, borderPen, smallFont, plans, partograph, RowHeight * 2);
 
             // INITIALS row
-            yPos = DrawDataRow(graphics, "INITIALS", "", xPos, yPos, AlertColumnWidth, columnWidth, totalHours, borderPen, smallFont, null, partograph, RowHeight);
+            //yPos = DrawDataRow(graphics, "INITIALS", "", xPos, yPos, AlertColumnWidth, columnWidth, totalHours, borderPen, smallFont, null, partograph, RowHeight);
 
             return yPos;
         }
@@ -479,30 +479,58 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             return yPos + height;
         }
 
+        //private string GetDataMarker<T>(T data, string label) where T : BasePartographMeasurement
+        //{
+        //    return label switch
+        //    {
+        //        "Companion" => data is CompanionEntry c ? c.Companion : "",
+        //        "Pain relief" => data is PainReliefEntry pr ? pr.PainRelief : "",
+        //        "Oral fluid" => data is OralFluidEntry of ? (!string.IsNullOrWhiteSpace(of.OralFluid) ? "Y" : "N") : "",
+        //        "Posture" => data is PostureEntry p ? (p.Pos ? "U" : "S") : "",
+        //        "Amniotic fluid" => data is AmnioticFluid af ? af.Status : "",
+        //        "Fetal position" => data is FetalPosition fp ? fp.Position : "",
+        //        "Caput" => data is Caput cap ? new string('+', cap.Grade) : "",
+        //        "Moulding" => data is Moulding m ? new string('+', m.Grade) : "",
+        //        "Pulse" => data is BP bp ? bp.Pulse.ToString() : "",
+        //        "Systolic BP" => data is BP bps ? bps.Systolic.ToString() : "",
+        //        "Diastolic BP" => data is BP bpd ? bpd.Diastolic.ToString() : "",
+        //        "Temperature °C" => data is Temperature t ? t.Value.ToString("F1") : "",
+        //        "Urine" => data is Urine u ? (u.Protein > 0 ? $"P{new string('+', u.Protein)}" : "") + (u.Acetone > 0 ? $"A{new string('+', u.Acetone)}" : "") : "",
+        //        "Contractions per 10 min" => data is Contraction con ? con.Frequency.ToString() : "",
+        //        "Duration of contractions" => data is Contraction cond ? cond.Duration.ToString() : "",
+        //        "Oxytocin (U/L, drops/min)" => data is Oxytocin ox ? $"{ox.Concentration}U/{ox.DropsPerMin}" : "",
+        //        "Medicine" => data is MedicationEntry med ? med.Name : "",
+        //        "IV fluids" => data is IVFluidEntry iv ? iv.FluidType : "",
+        //        "ASSESSMENT" => data is Assessment a ? a.Note : "",
+        //        "PLAN" => data is Plan pl ? pl.Note : "",
+        //        _ => ""
+        //    };
+        //}
+
         private string GetDataMarker<T>(T data, string label) where T : BasePartographMeasurement
         {
             return label switch
             {
-                "Companion" => data is CompanionEntry c ? (c.Present ? "Y" : "N") : "",
-                "Pain relief" => data is PainReliefEntry pr ? (pr.Given ? "Y" : "N") : "",
-                "Oral fluid" => data is OralFluidEntry of ? (of.Given ? "Y" : "N") : "",
-                "Posture" => data is PostureEntry p ? (p.Upright ? "U" : "S") : "",
-                "Amniotic fluid" => data is AmnioticFluid af ? af.Status : "",
+                "Companion" => data is CompanionEntry c ? c.Companion : "",
+                "Pain relief" => data is PainReliefEntry pr ? pr.PainRelief : "",
+                "Oral fluid" => data is OralFluidEntry of ? (!string.IsNullOrWhiteSpace(of.OralFluid) ? "Y" : "N") : "",
+                "Posture" => data is PostureEntry p ? p.Posture : "",
+                "Amniotic fluid" => data is AmnioticFluid af ? af.Color : "",
                 "Fetal position" => data is FetalPosition fp ? fp.Position : "",
-                "Caput" => data is Caput cap ? new string('+', cap.Grade) : "",
-                "Moulding" => data is Moulding m ? new string('+', m.Grade) : "",
+                "Caput" => data is Caput cap ? cap.Degree : "",
+                "Moulding" => data is Moulding m ? m.Degree : "",
                 "Pulse" => data is BP bp ? bp.Pulse.ToString() : "",
                 "Systolic BP" => data is BP bps ? bps.Systolic.ToString() : "",
                 "Diastolic BP" => data is BP bpd ? bpd.Diastolic.ToString() : "",
-                "Temperature °C" => data is Temperature t ? t.Value.ToString("F1") : "",
-                "Urine" => data is Urine u ? (u.Protein > 0 ? $"P{new string('+', u.Protein)}" : "") + (u.Acetone > 0 ? $"A{new string('+', u.Acetone)}" : "") : "",
-                "Contractions per 10 min" => data is Contraction con ? con.Frequency.ToString() : "",
-                "Duration of contractions" => data is Contraction cond ? cond.Duration.ToString() : "",
-                "Oxytocin (U/L, drops/min)" => data is Oxytocin ox ? $"{ox.Concentration}U/{ox.DropsPerMin}" : "",
-                "Medicine" => data is MedicationEntry med ? med.Name : "",
+                "Temperature °C" => data is Temperature t ? t.TemperatureCelsius.ToString("F1") : "",
+                "Urine" => data is Urine u ? $"P{u.Protein}A{u.Ketones}"  : "",
+                "Contractions per 10 min" => data is Contraction con ? con.FrequencyPer10Min.ToString() : "",
+                "Duration of contractions" => data is Contraction cond ? cond.DurationSeconds.ToString() : "",
+                "Oxytocin (U/L, drops/min)" => data is Oxytocin ox ? $"{ox.TotalVolumeInfused}U/{ox.DoseMUnitsPerMin}" : "",
+                "Medicine" => data is MedicationEntry med ? med.MedicationName : "",
                 "IV fluids" => data is IVFluidEntry iv ? iv.FluidType : "",
-                "ASSESSMENT" => data is Assessment a ? a.Note : "",
-                "PLAN" => data is Plan pl ? pl.Note : "",
+                "ASSESSMENT" => data is Assessment a ? a.Notes : "",
+                "PLAN" => data is Plan pl ? pl.Notes : "",
                 _ => ""
             };
         }

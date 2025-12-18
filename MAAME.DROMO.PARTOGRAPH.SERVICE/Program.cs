@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Server=localhost;Database=PartographDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False";
+    ?? "Server=database-server;Database=MAAMEBROMODb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False";
 builder.Services.AddDbContext<PartographDbContext>(options =>
     options.UseSqlServer(connectionString));
 
@@ -51,6 +51,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
+builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
 
