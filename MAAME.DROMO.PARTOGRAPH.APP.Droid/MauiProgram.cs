@@ -93,6 +93,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<SeedDataService>();
             builder.Services.AddSingleton<ModalErrorHandler>();
             builder.Services.AddSingleton<ILoadingOverlayService, LoadingOverlayService>();
+            builder.Services.AddSingleton<IDataLoadingService, DataLoadingService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();
             builder.Services.AddSingleton<FHRPatternAnalysisService>();
             builder.Services.AddSingleton<StageProgressionService>(); // WHO Four-Stage Labor System

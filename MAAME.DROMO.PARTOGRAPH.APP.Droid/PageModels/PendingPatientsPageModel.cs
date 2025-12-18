@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Maui.Graphics;
 using System;
@@ -14,6 +15,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     {
         private readonly PartographRepository _patientRepository;
         private readonly ModalErrorHandler _errorHandler;
+        private readonly IDataLoadingService _dataLoadingService;
+        private bool _isInitialLoad = true;
 
         [ObservableProperty]
         private List<Partograph> _patients = [];
@@ -29,10 +32,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private List<Partograph> _allPatients = [];
 
-        public PendingPatientsPageModel(PartographRepository patientRepository, ModalErrorHandler errorHandler)
+        public PendingPatientsPageModel(
+            PartographRepository patientRepository,
+            ModalErrorHandler errorHandler,
+            IDataLoadingService dataLoadingService)
         {
             _patientRepository = patientRepository;
             _errorHandler = errorHandler;
+            _dataLoadingService = dataLoadingService;
         }
 
         [RelayCommand]
@@ -40,12 +47,33 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                await LoadData();
+                // UI renders first, then data loads with progress
+                if (_isInitialLoad)
+                {
+                    _isInitialLoad = false;
+                    await LoadDataWithProgress();
+                }
+                else
+                {
+                    await LoadData();
+                }
             }
             catch (Exception e)
             {
                 _errorHandler.HandleError(e);
             }
+        }
+
+        private async Task LoadDataWithProgress()
+        {
+            await _dataLoadingService.LoadDataWithProgressAsync(
+                "Loading Pending Patients",
+                ("pending records", async () =>
+                {
+                    _allPatients = await _patientRepository.ListAsync(LaborStatus.Pending);
+                    FilterPatients();
+                })
+            );
         }
 
         private async Task LoadData()
