@@ -196,6 +196,16 @@
 
                     <!-- Date of Birth / Age -->
                     <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
+                        <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Date of Birth *"
+                                                Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding DateOfBirth, Mode=TwoWay}"
+                                        Format="dd-MM-yyyy"
+                                        MinimumDate="01/01/1950"
+                                        MaximumDate="{StaticResource Today}" />
+                        </core:SfTextInputLayout>
+
+
                         <Grid Grid.Column="0">
                             <core:SfTextInputLayout Hint="Date of Birth *"
                                                     Style="{StaticResource PatientInput}">
@@ -548,6 +558,24 @@
 
                     <!-- Delivery Dates -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                        <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Estimated Delivery Date *"
+                                                Style="{StaticResource PatientInput}"
+                                                HelperText="EDD or LMP required">
+                            <DatePicker Date="{Binding ExpectedDeliveryDate, Mode=TwoWay}"
+                                        Format="dd-MM-yyyy"
+                                        MinimumDate="01/01/1950" />
+                        </core:SfTextInputLayout>
+
+                        <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Last Menstrual Date *"
+                                                Style="{StaticResource PatientInput}"
+                                                HelperText="EDD or LMP required">
+                            <DatePicker Date="{Binding LastMenstrualDate, Mode=TwoWay}"
+                                        Format="dd-MM-yyyy"
+                                        MinimumDate="01/01/1950"
+                                        MaximumDate="{StaticResource Today}" />
+                        </core:SfTextInputLayout>
                         <Grid Grid.Column="0">
                             <core:SfTextInputLayout Hint="Estimated Delivery Date *"
                                                     Style="{StaticResource PatientInput}"
@@ -695,6 +723,20 @@
                            Margin="0,4,0,4" />
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <core:SfTextInputLayout Grid.Column="0"
+                                                Hint="Date *"
+                                                Style="{StaticResource PatientInput}">
+                            <DatePicker Date="{Binding LaborStartDate, Mode=TwoWay}"
+                                        Format="dd-MM-yyyy"
+                                        MinimumDate="01/01/1950" />
+                        </core:SfTextInputLayout>
+
+                        <core:SfTextInputLayout Grid.Column="1"
+                                                Hint="Time *"
+                                                Style="{StaticResource PatientInput}">
+                            <TimePicker Time="{Binding LaborStartTime, Mode=TwoWay}"
+                                        Format="HH:mm" />
+                        </core:SfTextInputLayout>
                         <Grid Grid.Column="0">
                             <core:SfTextInputLayout Hint="Date *"
                                                     Style="{StaticResource PatientInput}">
@@ -796,6 +838,20 @@
                             <Grid ColumnDefinitions="*,*"
                                   ColumnSpacing="12"
                                   IsVisible="{Binding HasRupturedMembrane}">
+                                <core:SfTextInputLayout Grid.Column="0"
+                                                        Hint="Rupture Date"
+                                                        Style="{StaticResource PatientInput}">
+                                    <DatePicker Date="{Binding RupturedMembraneDate, Mode=TwoWay}"
+                                                Format="dd-MM-yyyy"
+                                                MinimumDate="01/01/1950" />
+                                </core:SfTextInputLayout>
+
+                                <core:SfTextInputLayout Grid.Column="1"
+                                                        Hint="Rupture Time"
+                                                        Style="{StaticResource PatientInput}">
+                                    <TimePicker Time="{Binding RupturedMembraneTime, Mode=TwoWay}"
+                                                Format="HH:mm" />
+                                </core:SfTextInputLayout>
                                 <Grid Grid.Column="0">
                                     <core:SfTextInputLayout Hint="Rupture Date"
                                                             Style="{StaticResource PatientInput}">
