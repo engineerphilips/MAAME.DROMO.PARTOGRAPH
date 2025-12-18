@@ -15,13 +15,9 @@
 
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
-            <Grid BackgroundColor="{StaticResource WarningOrange}" Padding="15,12">
-                <Label Text="Temperature Trend History"
-                       VerticalOptions="Center"
-                       FontAttributes="Bold"
-                       FontSize="18"
-                       TextColor="White" />
-            </Grid>
+            <StackLayout>
+                <Label Text="Temperature Trend History" VerticalOptions="Center" Margin="15,15,0,0" />
+            </StackLayout>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>
 
@@ -48,7 +44,7 @@
 
                             <!-- Temperature History List -->
                             <CollectionView ItemsSource="{Binding TemperatureHistory}"
-                                            HeightRequest="300"
+                                            HeightRequest="200"
                                             IsVisible="{Binding TemperatureHistory.Count, Converter={StaticResource GreaterThanZeroConverter}}">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>

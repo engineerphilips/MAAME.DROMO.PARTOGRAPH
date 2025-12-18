@@ -17,13 +17,9 @@
 
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
-            <Grid BackgroundColor="{StaticResource PrimaryBlue}" Padding="15,12">
-                <Label Text="BP/Pulse Trend History"
-                       VerticalOptions="Center"
-                       FontAttributes="Bold"
-                       FontSize="18"
-                       TextColor="White" />
-            </Grid>
+            <StackLayout>
+                <Label Text="BP/Pulse Trend History" VerticalOptions="Center" Margin="15,15,0,0" />
+            </StackLayout>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>
 

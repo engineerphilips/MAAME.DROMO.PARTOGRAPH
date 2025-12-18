@@ -541,7 +541,7 @@
                         TextColor="White"
                         FontSize="15"
                         FontAttributes="Bold"
-                        HeightRequest="45"
+                        HeightRequest="54"
                         CornerRadius="12"
                         Margin="0,8,0,20"
                         IsEnabled="{Binding CanComplete}" />

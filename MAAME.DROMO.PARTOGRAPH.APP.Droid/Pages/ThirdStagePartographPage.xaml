@@ -87,7 +87,7 @@
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light=#1E293B, Dark=White}" />
                             <Label Text="{Binding PatientInfo}"
-                                   FontSize="13"
+                                   FontSize="14"
                                    TextColor="{AppThemeBinding Light=#475569, Dark=#E0E0E0}" />
                             <HorizontalStackLayout Spacing="16" Margin="0,8,0,0">
                                 <HorizontalStackLayout Spacing="4">
@@ -97,12 +97,12 @@
                                            TextColor="{AppThemeBinding Light=#2196F3, Dark=#90CAF9}"
                                            VerticalOptions="Center" />
                                     <Label Text="{Binding ThirdStageDuration}"
-                                           FontSize="13"
+                                           FontSize="14"
                                            FontAttributes="Bold"
                                            TextColor="{AppThemeBinding Light=#1E293B, Dark=White}" />
                                 </HorizontalStackLayout>
                                 <Label Text="{Binding LastRecordedTime, StringFormat='Last: {0:HH:mm}'}"
-                                       FontSize="12"
+                                       FontSize="14"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#B0BEC5}" />
                             </HorizontalStackLayout>
                         </VerticalStackLayout>
@@ -116,11 +116,11 @@
                                 <Label Text="STAGE 3"
                                        FontSize="16"
                                        FontAttributes="Bold"
-                                       TextColor="White"
+                                       TextColor="{StaticResource PrimaryBlue}"
                                        HorizontalOptions="Center" />
                             </Border>
                             <Label Text="Placenta Delivery"
-                                   FontSize="11"
+                                   FontSize="12"
                                    HorizontalOptions="Center"
                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#B0BEC5}"
                                    Margin="0,4,0,0" />
@@ -140,12 +140,10 @@
                         <Label Text="{x:Static fonts:FluentUI.warning_16_regular}"
                                FontFamily="FluentUI"
                                FontSize="18"
-                               TextColor="White"
                                VerticalOptions="Center" />
                         <Label Text="{Binding AlertMessage}"
                                FontSize="13"
                                FontAttributes="Bold"
-                               TextColor="White"
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </Border>
@@ -343,10 +341,12 @@
                                        VerticalOptions="Center" />
                                 <Label Text="Babies"
                                        Style="{StaticResource SectionTitleStyle}"
-                                       Margin="0" />
+                                       Margin="0"
+                                       VerticalOptions="Center"/>
                                 <Border BackgroundColor="{StaticResource PrimaryBlue}"
                                         StrokeThickness="0"
                                         Padding="8,2"
+
                                         IsVisible="{Binding HasBabies}">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10" />
@@ -414,6 +414,7 @@
                                                     <Label Text="{Binding BabyTag}"
                                                            FontSize="16"
                                                            FontAttributes="Bold"
+                                                           VerticalOptions="Center"
                                                            TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
                                                     <Border BackgroundColor="{AppThemeBinding Light=#DBEAFE, Dark=#1E3A8A}"
                                                             StrokeThickness="0"
@@ -422,17 +423,19 @@
                                                             <RoundRectangle CornerRadius="6" />
                                                         </Border.StrokeShape>
                                                         <Label Text="{Binding Sex}"
-                                                               FontSize="11"
+                                                               FontSize="16"
+                                                               VerticalOptions="Center"
                                                                TextColor="{AppThemeBinding Light=#1E40AF, Dark=#BFDBFE}" />
                                                     </Border>
                                                 </HorizontalStackLayout>
+                                                <!--, Converter={StaticResource GramsToKilogramsConverter}-->
                                                 <HorizontalStackLayout Spacing="16">
-                                                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}">
+                                                    <Label FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" VerticalOptions="Center">
                                                         <Label.FormattedText>
                                                             <FormattedString>
                                                                 <Span Text="Weight: " />
-                                                                <Span Text="{Binding BirthWeight, Converter={StaticResource GramsToKilogramsConverter}}" FontAttributes="Bold" />
-                                                                <Span Text=" kg" />
+                                                                <Span Text="{Binding BirthWeight}" FontAttributes="Bold" />
+                                                                <Span Text="kg" />
                                                             </FormattedString>
                                                         </Label.FormattedText>
                                                     </Label>
@@ -451,7 +454,7 @@
                                                     <Border.StrokeShape>
                                                         <RoundRectangle CornerRadius="6" />
                                                     </Border.StrokeShape>
-                                                    <Label FontSize="11" TextColor="{AppThemeBinding Light=#166534, Dark=#BBF7D0}">
+                                                    <Label FontSize="14" TextColor="{AppThemeBinding Light=#166534, Dark=#BBF7D0}">
                                                         <Label.FormattedText>
                                                             <FormattedString>
                                                                 <Span Text="1min: " />
@@ -467,7 +470,7 @@
                                                     <Border.StrokeShape>
                                                         <RoundRectangle CornerRadius="6" />
                                                     </Border.StrokeShape>
-                                                    <Label FontSize="11" TextColor="{AppThemeBinding Light=#166534, Dark=#BBF7D0}">
+                                                    <Label FontSize="14" TextColor="{AppThemeBinding Light=#166534, Dark=#BBF7D0}">
                                                         <Label.FormattedText>
                                                             <FormattedString>
                                                                 <Span Text="5min: " />
@@ -479,9 +482,11 @@
                                             </HorizontalStackLayout>
 
                                             <!-- Action Buttons -->
+                                            <!--Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RecordBabyApgarCommand}"-->
+
                                             <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="8" HorizontalOptions="End">
                                                 <Button Text="Record APGAR"
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RecordBabyApgarCommand}"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:ThirdStagePartographPageModel}}, Path=RecordBabyApgarCommand, x:DataType=pagemodels:ThirdStagePartographPageModel}"
                                                         CommandParameter="{Binding .}"
                                                         BackgroundColor="{StaticResource SuccessGreen}"
                                                         TextColor="White"
@@ -489,8 +494,10 @@
                                                         CornerRadius="6"
                                                         FontSize="11"
                                                         Padding="10,4" />
+                                                <!--Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewBabyDetailsCommand}"-->
+
                                                 <Button Text="View Details"
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewBabyDetailsCommand}"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:ThirdStagePartographPageModel}}, Path=ViewBabyDetailsCommand, x:DataType=pagemodels:ThirdStagePartographPageModel}"
                                                         CommandParameter="{Binding .}"
                                                         BackgroundColor="{StaticResource PrimaryBlue}"
                                                         TextColor="White"
