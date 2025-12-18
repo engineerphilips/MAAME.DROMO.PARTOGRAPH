@@ -14,6 +14,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         // Selected facility for Super/Maame.Dromo.Admin users
         public static Facility? SelectedFacility;
 
+        // Cached dashboard stats for UI-first loading pattern
+        // Preloaded during facility selection transition to avoid loading overlay on homepage
+        public static DashboardStats? CachedDashboardStats;
+
         // Helper method to check if user is Super or Admin
         public static bool IsSuperOrAdmin()
         {

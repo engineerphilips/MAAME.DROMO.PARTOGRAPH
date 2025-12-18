@@ -150,5 +150,127 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages
                 throw;
             }
         }
+
+        /// <summary>
+        /// Shows the loading page with step-by-step progress tracking during page transition.
+        /// Executes preparatory operations with progress updates before creating the target page.
+        /// </summary>
+        /// <param name="createPage">Function to create the target page</param>
+        /// <param name="message">Main loading message</param>
+        /// <param name="operations">Array of named operations to execute with progress tracking</param>
+        public static async Task TransitionWithProgressAsync(
+            Func<Page> createPage,
+            string message,
+            params (string stepName, Func<Task> operation)[] operations)
+        {
+            var loadingPage = new TransitionLoadingPage(message, "Initializing...");
+            Application.Current!.MainPage = loadingPage;
+
+            // Stop indeterminate animation - we'll show actual progress
+            loadingPage.StopAnimations();
+            loadingPage.SetProgress(0);
+
+            // Allow UI to render
+            await Task.Delay(50);
+
+            try
+            {
+                var totalSteps = operations.Length + 1; // +1 for page creation step
+                var completedSteps = 0;
+
+                // Execute each preparatory operation with progress
+                foreach (var (stepName, operation) in operations)
+                {
+                    var progress = (double)completedSteps / totalSteps;
+                    loadingPage.SetProgress(progress);
+                    loadingPage.UpdateMessage(message, stepName);
+
+                    await operation();
+                    completedSteps++;
+
+                    // Small delay between steps for visual feedback
+                    await Task.Delay(50);
+                }
+
+                // Final step: Create the target page
+                loadingPage.SetProgress((double)completedSteps / totalSteps);
+                loadingPage.UpdateMessage(message, "Preparing interface...");
+
+                var targetPage = createPage();
+                completedSteps++;
+
+                // Show completion
+                loadingPage.SetProgress(1.0);
+                loadingPage.UpdateMessage(message, "Ready!");
+                await Task.Delay(150);
+
+                // Navigate to target page
+                Application.Current.MainPage = targetPage;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Transition error: {ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Shows the loading page with step-by-step progress tracking during page transition.
+        /// Returns a result from the operations that can be used by the target page.
+        /// </summary>
+        /// <typeparam name="T">Type of result from preparatory operations</typeparam>
+        /// <param name="createPageWithResult">Function to create the target page using the result</param>
+        /// <param name="message">Main loading message</param>
+        /// <param name="prepareData">Async function that prepares data and reports progress</param>
+        public static async Task TransitionWithDataPreloadAsync<T>(
+            Func<T, Page> createPageWithResult,
+            string message,
+            Func<Action<double, string>, Task<T>> prepareData)
+        {
+            var loadingPage = new TransitionLoadingPage(message, "Initializing...");
+            Application.Current!.MainPage = loadingPage;
+
+            // Stop indeterminate animation - we'll show actual progress
+            loadingPage.StopAnimations();
+            loadingPage.SetProgress(0);
+
+            // Allow UI to render
+            await Task.Delay(50);
+
+            try
+            {
+                // Execute data preparation with progress reporting
+                var progressReporter = new Action<double, string>((progress, stepMessage) =>
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        loadingPage.SetProgress(progress);
+                        loadingPage.UpdateMessage(message, stepMessage);
+                    });
+                });
+
+                var result = await prepareData(progressReporter);
+
+                // Final step: Create the target page with prepared data
+                loadingPage.SetProgress(0.9);
+                loadingPage.UpdateMessage(message, "Preparing interface...");
+                await Task.Delay(50);
+
+                var targetPage = createPageWithResult(result);
+
+                // Show completion
+                loadingPage.SetProgress(1.0);
+                loadingPage.UpdateMessage(message, "Ready!");
+                await Task.Delay(150);
+
+                // Navigate to target page
+                Application.Current.MainPage = targetPage;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Transition error: {ex.Message}");
+                throw;
+            }
+        }
     }
 }

@@ -11,13 +11,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     public class FacilitySelectionPageModel : INotifyPropertyChanged
     {
         private readonly FacilityRepository _facilityRepository;
+        private readonly PartographRepository _partographRepository;
         private bool _isBusy = false;
         private Facility? _selectedFacility;
         private ObservableCollection<Facility> _facilities = new();
 
-        public FacilitySelectionPageModel(FacilityRepository facilityRepository)
+        public FacilitySelectionPageModel(FacilityRepository facilityRepository, PartographRepository partographRepository)
         {
             _facilityRepository = facilityRepository;
+            _partographRepository = partographRepository;
 
             // Initialize commands
             ContinueCommand = new Command(async () => await ContinueAsync(), () => SelectedFacility != null);
@@ -101,19 +103,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
+                var facilityName = SelectedFacility.Name;
 
-                // Save selected facility to Constants
-                Constants.SelectedFacility = SelectedFacility;
-
-                // Save to preferences for persistence
-                Preferences.Set("SelectedFacilityId", SelectedFacility.ID.ToString());
-                Preferences.Set("SelectedFacilityName", SelectedFacility.Name);
-
-                // Navigate to AppShell (main app) with loading transition
-                await TransitionLoadingPage.TransitionToAsync(
+                // Navigate to AppShell with UI-first loading pattern and progress tracking
+                await TransitionLoadingPage.TransitionWithProgressAsync(
                     () => new AppShell(),
-                    "Loading Dashboard...",
-                    $"Setting up {SelectedFacility.Name}...");
+                    "Loading Dashboard",
+                    ("Configuring facility...", async () =>
+                    {
+                        // Save selected facility to Constants
+                        Constants.SelectedFacility = SelectedFacility;
+
+                        // Save to preferences for persistence
+                        Preferences.Set("SelectedFacilityId", SelectedFacility.ID.ToString());
+                        Preferences.Set("SelectedFacilityName", facilityName);
+
+                        await Task.Delay(100); // Allow UI update
+                    }),
+                    ("Loading patient data...", async () =>
+                    {
+                        // Preload dashboard stats and cache them
+                        var stats = await _partographRepository.GetDashboardStatsAsync();
+                        Constants.CachedDashboardStats = stats;
+                    }),
+                    ($"Setting up {facilityName}...", async () =>
+                    {
+                        // Final preparation
+                        await Task.Delay(50);
+                    })
+                );
             }
             catch (Exception ex)
             {

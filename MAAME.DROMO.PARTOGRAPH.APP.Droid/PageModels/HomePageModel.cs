@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Maui.Graphics;
@@ -122,7 +123,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (_isInitialLoad)
                 {
                     _isInitialLoad = false;
-                    await LoadDataWithProgress();
+
+                    // Check for cached dashboard stats (preloaded during facility selection transition)
+                    if (Constants.CachedDashboardStats != null)
+                    {
+                        // Use cached data - no loading overlay needed
+                        DashboardStats = Constants.CachedDashboardStats;
+                        // Clear cache after use
+                        Constants.CachedDashboardStats = null;
+                    }
+                    else
+                    {
+                        // Fallback: load with progress if no cached data
+                        await LoadDataWithProgress();
+                    }
                 }
                 else
                 {
