@@ -217,6 +217,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Action? CloseTemperaturePopup { get; set; }
         public Action? OpenVitalsTrendPopup { get; set; }
         public Action? CloseVitalsTrendPopup { get; set; }
+        public Action? OpenTemperatureTrendPopup { get; set; }
+        public Action? CloseTemperatureTrendPopup { get; set; }
         public Action? OpenFourthStageAssessmentPopup { get; set; }
         public Action? CloseFourthStageAssessmentPopup { get; set; }
 
@@ -826,13 +828,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private void ShowTemperatureTrend()
         {
-            OpenVitalsTrendPopup?.Invoke();
+            OpenTemperatureTrendPopup?.Invoke();
         }
 
         [RelayCommand]
         private void CloseTrend()
         {
             CloseVitalsTrendPopup?.Invoke();
+        }
+
+        [RelayCommand]
+        private void CloseTemperatureTrend()
+        {
+            CloseTemperatureTrendPopup?.Invoke();
         }
 
         #endregion
