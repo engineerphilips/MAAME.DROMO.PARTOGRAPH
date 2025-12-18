@@ -27,5 +27,8 @@ public partial class ThirdStagePartographPage : ContentPage
 
         _pageModel.OpenVitalsTrendPopup = () => VitalsTrendPopup.IsOpen = true;
         _pageModel.CloseVitalsTrendPopup = () => VitalsTrendPopup.IsOpen = false;
+
+        _pageModel.OpenTemperatureTrendPopup = () => TemperatureTrendPopup.IsOpen = true;
+        _pageModel.CloseTemperatureTrendPopup = () => TemperatureTrendPopup.IsOpen = false;
     }
 }
