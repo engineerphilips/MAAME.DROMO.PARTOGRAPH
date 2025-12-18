@@ -1,14 +1,17 @@
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels;
-using MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages;
 
+/// <summary>
+/// Fourth Stage Partograph Page - Immediate postpartum monitoring
+/// WHO 2020: 2-hour monitoring with vitals every 15 minutes
+/// Enhanced with comprehensive maternal vitals and fourth stage specific assessments
+/// </summary>
 [QueryProperty(nameof(PatientId), "patientId")]
 public partial class FourthStagePartographPage : ContentPage
 {
     public string PatientId { get; set; }
     private readonly FourthStagePartographPageModel _pageModel;
-    private CompletionChecklistPopup? _completionChecklistPopup;
 
     public FourthStagePartographPage(FourthStagePartographPageModel pageModel)
     {
@@ -16,48 +19,66 @@ public partial class FourthStagePartographPage : ContentPage
         _pageModel = pageModel;
         BindingContext = pageModel;
 
-        // Wire up popup actions
-        _pageModel.OpenCompletionChecklistPopup = OpenCompletionChecklistPopup;
-        _pageModel.CloseCompletionChecklistPopup = CloseCompletionChecklistPopup;
-    }
-
-    private void OpenCompletionChecklistPopup()
-    {
-        _completionChecklistPopup = new CompletionChecklistPopup(_pageModel.CompletionChecklistPopupPageModel)
+        // Wire up popup actions for BP/Pulse modal
+        _pageModel.OpenBpPulsePopup = () =>
         {
-            IsOpen = true,
-            ShowHeader = true,
-            ShowFooter = false,
-            ShowCloseButton = true,
-            WidthRequest = 450,
-            HeightRequest = 650
+            BpPulsePopup.IsOpen = true;
+        };
+        _pageModel.CloseBpPulsePopup = () =>
+        {
+            BpPulsePopup.IsOpen = false;
         };
 
-        // Add popup to the page
-        if (Content is Grid grid)
+        // Wire up popup actions for Temperature modal
+        _pageModel.OpenTemperaturePopup = () =>
         {
-            grid.Children.Add(_completionChecklistPopup);
-        }
-        else
+            TemperaturePopup.IsOpen = true;
+        };
+        _pageModel.CloseTemperaturePopup = () =>
         {
-            var newGrid = new Grid();
-            var oldContent = Content;
-            Content = newGrid;
-            newGrid.Children.Add(oldContent);
-            newGrid.Children.Add(_completionChecklistPopup);
+            TemperaturePopup.IsOpen = false;
+        };
+
+        // Wire up popup actions for Vitals Trend
+        _pageModel.OpenVitalsTrendPopup = () =>
+        {
+            VitalsTrendPopup.IsOpen = true;
+        };
+        _pageModel.CloseVitalsTrendPopup = () =>
+        {
+            VitalsTrendPopup.IsOpen = false;
+        };
+
+        // Wire up popup actions for Completion Checklist
+        _pageModel.OpenCompletionChecklistPopup = () =>
+        {
+            CompletionChecklistPopup.IsOpen = true;
+        };
+        _pageModel.CloseCompletionChecklistPopup = () =>
+        {
+            CompletionChecklistPopup.IsOpen = false;
+        };
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // Refresh data when page appears
+        if (_pageModel.RefreshCommand.CanExecute(null))
+        {
+            _pageModel.RefreshCommand.Execute(null);
         }
     }
 
-    private void CloseCompletionChecklistPopup()
+    protected override void OnDisappearing()
     {
-        if (_completionChecklistPopup != null)
-        {
-            _completionChecklistPopup.IsOpen = false;
-            if (Content is Grid grid)
-            {
-                grid.Children.Remove(_completionChecklistPopup);
-            }
-            _completionChecklistPopup = null;
-        }
+        base.OnDisappearing();
+
+        // Close any open popups when leaving the page
+        BpPulsePopup.IsOpen = false;
+        TemperaturePopup.IsOpen = false;
+        VitalsTrendPopup.IsOpen = false;
+        CompletionChecklistPopup.IsOpen = false;
     }
 }
