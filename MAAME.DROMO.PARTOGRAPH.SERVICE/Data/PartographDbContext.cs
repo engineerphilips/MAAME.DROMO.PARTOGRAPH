@@ -70,6 +70,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Configure Patient
             modelBuilder.Entity<Patient>(entity =>
             {
+                entity.ToTable("Tbl_Patient");
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
@@ -93,6 +94,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Configure Partograph
             modelBuilder.Entity<Partograph>(entity =>
             {
+                entity.ToTable("Tbl_Partograph");
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
@@ -113,6 +115,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Configure Staff
             modelBuilder.Entity<Staff>(entity =>
             {
+                entity.ToTable("Tbl_Staff");
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.FacilityName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.StaffID).HasMaxLength(50);
@@ -130,6 +133,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Configure Facility
             modelBuilder.Entity<Facility>(entity =>
             {
+                entity.ToTable("Tbl_Facility");
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Code).HasMaxLength(50);
@@ -145,37 +149,38 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             });
 
             // Configure base measurement properties for all measurement types
-            ConfigureMeasurement<FHR>(modelBuilder);
-            ConfigureMeasurement<Contraction>(modelBuilder);
-            ConfigureMeasurement<CervixDilatation>(modelBuilder);
-            ConfigureMeasurement<HeadDescent>(modelBuilder);
-            ConfigureMeasurement<BP>(modelBuilder);
-            ConfigureMeasurement<Temperature>(modelBuilder);
-            ConfigureMeasurement<AmnioticFluid>(modelBuilder);
-            ConfigureMeasurement<Urine>(modelBuilder);
-            ConfigureMeasurement<Caput>(modelBuilder);
-            ConfigureMeasurement<Moulding>(modelBuilder);
-            ConfigureMeasurement<FetalPosition>(modelBuilder);
-            ConfigureMeasurement<PainReliefEntry>(modelBuilder);
-            ConfigureMeasurement<PostureEntry>(modelBuilder);
-            ConfigureMeasurement<OralFluidEntry>(modelBuilder);
-            ConfigureMeasurement<IVFluidEntry>(modelBuilder);
-            ConfigureMeasurement<MedicationEntry>(modelBuilder);
-            ConfigureMeasurement<Oxytocin>(modelBuilder);
-            ConfigureMeasurement<CompanionEntry>(modelBuilder);
-            ConfigureMeasurement<Assessment>(modelBuilder);
-            ConfigureMeasurement<MedicalNote>(modelBuilder);
+            ConfigureMeasurement<FHR>(modelBuilder, "Tbl_FHR");
+            ConfigureMeasurement<Contraction>(modelBuilder, "Tbl_Contraction");
+            ConfigureMeasurement<CervixDilatation>(modelBuilder, "Tbl_CervixDilatation");
+            ConfigureMeasurement<HeadDescent>(modelBuilder, "Tbl_HeadDescent");
+            ConfigureMeasurement<BP>(modelBuilder, "Tbl_BP");
+            ConfigureMeasurement<Temperature>(modelBuilder, "Tbl_Temperature");
+            ConfigureMeasurement<AmnioticFluid>(modelBuilder, "Tbl_AmnioticFluid");
+            ConfigureMeasurement<Urine>(modelBuilder, "Tbl_Urine");
+            ConfigureMeasurement<Caput>(modelBuilder, "Tbl_Caput");
+            ConfigureMeasurement<Moulding>(modelBuilder, "Tbl_Moulding");
+            ConfigureMeasurement<FetalPosition>(modelBuilder, "Tbl_FetalPosition");
+            ConfigureMeasurement<PainReliefEntry>(modelBuilder, "Tbl_PainReliefEntry");
+            ConfigureMeasurement<PostureEntry>(modelBuilder, "Tbl_Posture");
+            ConfigureMeasurement<OralFluidEntry>(modelBuilder, "Tbl_OralFluid");
+            ConfigureMeasurement<IVFluidEntry>(modelBuilder, "Tbl_IVFluid");
+            ConfigureMeasurement<MedicationEntry>(modelBuilder, "Tbl_Medication");
+            ConfigureMeasurement<Oxytocin>(modelBuilder, "Tbl_Oxytocin");
+            ConfigureMeasurement<CompanionEntry>(modelBuilder, "Tbl_Companion");
+            ConfigureMeasurement<Assessment>(modelBuilder, "Tbl_Assessment");
+            ConfigureMeasurement<MedicalNote>(modelBuilder, "Tbl_MedicalNote");
 
             // Configure extended measurement types
-            ConfigureMeasurement<FourthStageVitals>(modelBuilder);
-            ConfigureMeasurement<BishopScore>(modelBuilder);
-            ConfigureMeasurement<PartographDiagnosis>(modelBuilder);
-            ConfigureMeasurement<PartographRiskFactor>(modelBuilder);
-            ConfigureMeasurement<Plan>(modelBuilder);
+            ConfigureMeasurement<FourthStageVitals>(modelBuilder, "Tbl_FourthStageVitals");
+            ConfigureMeasurement<BishopScore>(modelBuilder, "Tbl_BishopScore");
+            ConfigureMeasurement<PartographDiagnosis>(modelBuilder, "Tbl_PartographDiagnosis");
+            ConfigureMeasurement<PartographRiskFactor>(modelBuilder, "Tbl_PartographRiskFactor");
+            ConfigureMeasurement<Plan>(modelBuilder, "Tbl_Plan");
 
             // Configure BirthOutcome
             modelBuilder.Entity<BirthOutcome>(entity =>
             {
+                entity.ToTable("Tbl_BirthOutcome");
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
@@ -197,6 +202,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Configure BabyDetails
             modelBuilder.Entity<BabyDetails>(entity =>
             {
+                entity.ToTable("Tbl_BabyDetails");
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
@@ -225,6 +231,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Configure Referral
             modelBuilder.Entity<Referral>(entity =>
             {
+                entity.ToTable("Tbl_Referral");
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
@@ -248,10 +255,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             ConfigureAnalyticsTables(modelBuilder);
         }
 
-        private void ConfigureMeasurement<T>(ModelBuilder modelBuilder) where T : BasePartographMeasurement
+        private void ConfigureMeasurement<T>(ModelBuilder modelBuilder, string tableName) where T : BasePartographMeasurement
         {
             modelBuilder.Entity<T>(entity =>
             {
+                entity.ToTable(tableName);
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
@@ -276,6 +284,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // DailyFacilityStats
             modelBuilder.Entity<DailyFacilityStats>(entity =>
             {
+                entity.ToTable("Tbl_DailyFacilityStats");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.FacilityID);
                 entity.HasIndex(e => e.Date);
@@ -286,6 +295,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // MonthlyFacilityStats
             modelBuilder.Entity<MonthlyFacilityStats>(entity =>
             {
+                entity.ToTable("Tbl_MonthlyFacilityStats");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.FacilityID);
                 entity.HasIndex(e => new { e.Year, e.Month });
@@ -295,6 +305,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // DeliveryOutcomeSummary
             modelBuilder.Entity<DeliveryOutcomeSummary>(entity =>
             {
+                entity.ToTable("Tbl_DeliveryOutcomeSummary");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.PartographID);
                 entity.HasIndex(e => e.PatientID);
@@ -306,6 +317,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // MaternalMortalityRecord
             modelBuilder.Entity<MaternalMortalityRecord>(entity =>
             {
+                entity.ToTable("Tbl_MaternalMortalityRecord");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.FacilityID);
                 entity.HasIndex(e => e.DeathDateTime);
@@ -316,6 +328,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // NeonatalOutcomeRecord
             modelBuilder.Entity<NeonatalOutcomeRecord>(entity =>
             {
+                entity.ToTable("Tbl_NeonatalOutcomeRecord");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.FacilityID);
                 entity.HasIndex(e => e.BirthDateTime);
@@ -326,6 +339,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // ComplicationAnalytics
             modelBuilder.Entity<ComplicationAnalytics>(entity =>
             {
+                entity.ToTable("Tbl_ComplicationAnalytics");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.PartographID);
                 entity.HasIndex(e => e.FacilityID);
@@ -337,6 +351,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // ReferralAnalytics
             modelBuilder.Entity<ReferralAnalytics>(entity =>
             {
+                entity.ToTable("Tbl_ReferralAnalytics");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.ReferralID);
                 entity.HasIndex(e => e.SourceFacilityID);
@@ -348,6 +363,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // LaborProgressAnalytics
             modelBuilder.Entity<LaborProgressAnalytics>(entity =>
             {
+                entity.ToTable("Tbl_LaborProgressAnalytics");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.PartographID);
                 entity.HasIndex(e => e.FacilityID);
@@ -358,6 +374,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // FacilityPerformanceSnapshot
             modelBuilder.Entity<FacilityPerformanceSnapshot>(entity =>
             {
+                entity.ToTable("Tbl_FacilityPerformanceSnapshot");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.FacilityID);
                 entity.HasIndex(e => e.SnapshotDate);
@@ -368,6 +385,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // AlertSummary
             modelBuilder.Entity<AlertSummary>(entity =>
             {
+                entity.ToTable("Tbl_AlertSummary");
                 entity.HasKey(e => e.ID);
                 entity.HasIndex(e => e.FacilityID);
                 entity.HasIndex(e => e.PartographID);
