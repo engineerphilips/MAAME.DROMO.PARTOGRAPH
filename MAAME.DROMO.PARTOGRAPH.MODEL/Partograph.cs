@@ -1,6 +1,7 @@
 ﻿using MAAME.DROMO.PARTOGRAPH.Helper;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public Guid? ID { get; set; }
         public Guid? PatientID { get; set; }
         public DateTime Time { get; set; } = DateTime.Now;
+
+        [ForeignKey("PatientID")]
         public Patient? Patient { get; set; }
         public int Gravida { get; set; } // Number of pregnancies
         public int Parity { get; set; } // Number of births

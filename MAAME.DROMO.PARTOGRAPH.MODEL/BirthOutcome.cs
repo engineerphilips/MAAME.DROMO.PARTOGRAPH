@@ -57,6 +57,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Notes { get; set; } = string.Empty;
 
         // Navigation Property
+        [ForeignKey("PartographID")]
         [JsonIgnore]
         public Partograph Partograph { get; set; }
 
