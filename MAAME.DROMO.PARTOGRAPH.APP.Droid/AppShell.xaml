@@ -345,7 +345,7 @@
                 <RoundRectangle CornerRadius="0" />
             </Border.StrokeShape>
 
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="14">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="14">
 
                 <!-- Quick Stats Section -->
                 <Grid Grid.Row="0"
@@ -524,6 +524,27 @@
                                VerticalOptions="Center" />
                     </Border>
                 </Grid>
+
+                <!-- Made with love in Ghana -->
+                <HorizontalStackLayout Grid.Row="4"
+                                       Spacing="6"
+                                       HorizontalOptions="Center"
+                                       Margin="0,4,0,0">
+                    <Label Text="Made with"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#888, Dark=#777}"
+                           VerticalOptions="Center" />
+                    <Label Text="❤️"
+                           FontSize="12"
+                           VerticalOptions="Center" />
+                    <Label Text="in Ghana"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#888, Dark=#777}"
+                           VerticalOptions="Center" />
+                    <Label Text="🇬🇭"
+                           FontSize="14"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
             </Grid>
         </Border>
     </Shell.FlyoutFooter>

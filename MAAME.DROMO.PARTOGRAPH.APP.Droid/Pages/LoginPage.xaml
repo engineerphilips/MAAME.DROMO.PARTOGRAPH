@@ -234,11 +234,30 @@
                 </Border>
 
                 <!-- Footer -->
-                <Label Text="© 2025 Emperor Software"
-                       FontSize="12"
-                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
-                       HorizontalOptions="Center"
-                       Margin="0,20,0,0" />
+                <VerticalStackLayout Spacing="8" HorizontalOptions="Center" Margin="0,20,0,0">
+                    <!-- Made with love in Ghana -->
+                    <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="Made with"
+                               FontSize="13"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                               VerticalOptions="Center" />
+                        <Label Text="❤️"
+                               FontSize="13"
+                               VerticalOptions="Center" />
+                        <Label Text="in Ghana"
+                               FontSize="13"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                               VerticalOptions="Center" />
+                        <Label Text="🇬🇭"
+                               FontSize="16"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <Label Text="© 2025 Emperor Software"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#888, Dark=#777}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
 
             </VerticalStackLayout>
         </ScrollView>
