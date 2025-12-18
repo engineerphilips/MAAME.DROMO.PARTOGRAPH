@@ -32,7 +32,7 @@
             <ScrollView>
                 <VerticalStackLayout Padding="15" Spacing="15">
 
-                    <!-- BP/Pulse Trends Section -->
+                    <!-- Blood Pressure Trends Section -->
                     <Border StrokeThickness="0"
                             BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#1E293B}"
                             Padding="15">
@@ -42,7 +42,7 @@
                         <VerticalStackLayout Spacing="10">
                             <HorizontalStackLayout Spacing="8">
                                 <Label Text="●" TextColor="#F44336" FontSize="14" VerticalOptions="Center" />
-                                <Label Text="Blood Pressure &amp; Pulse"
+                                <Label Text="Blood Pressure"
                                        FontSize="16"
                                        FontAttributes="Bold"
                                        TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
@@ -50,7 +50,7 @@
 
                             <!-- BP History List -->
                             <CollectionView ItemsSource="{Binding BpHistory}"
-                                            HeightRequest="200"
+                                            HeightRequest="180"
                                             IsVisible="{Binding BpHistory.Count, Converter={StaticResource GreaterThanZeroConverter}}">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
@@ -74,47 +74,29 @@
                                                            TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                                 </VerticalStackLayout>
 
-                                                <!-- Values -->
-                                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                                    <HorizontalStackLayout Spacing="8">
-                                                        <Frame BackgroundColor="#FFEBEE"
-                                                               CornerRadius="12"
-                                                               Padding="8,4"
-                                                               HasShadow="False"
-                                                               BorderColor="Transparent">
-                                                            <Label FontSize="13"
-                                                                   FontAttributes="Bold"
-                                                                   TextColor="#C62828">
-                                                                <Label.Text>
-                                                                    <MultiBinding StringFormat="{}{0}/{1}">
-                                                                        <Binding Path="Systolic" />
-                                                                        <Binding Path="Diastolic" />
-                                                                    </MultiBinding>
-                                                                </Label.Text>
-                                                            </Label>
-                                                        </Frame>
-                                                        <Label Text="mmHg"
-                                                               FontSize="11"
-                                                               TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
-                                                               VerticalOptions="Center" />
-                                                    </HorizontalStackLayout>
-                                                    <HorizontalStackLayout Spacing="8" Margin="0,4,0,0">
-                                                        <Frame BackgroundColor="#E8F5E9"
-                                                               CornerRadius="12"
-                                                               Padding="8,4"
-                                                               HasShadow="False"
-                                                               BorderColor="Transparent">
-                                                            <Label Text="{Binding Pulse}"
-                                                                   FontSize="13"
-                                                                   FontAttributes="Bold"
-                                                                   TextColor="#2E7D32" />
-                                                        </Frame>
-                                                        <Label Text="bpm"
-                                                               FontSize="11"
-                                                               TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
-                                                               VerticalOptions="Center" />
-                                                    </HorizontalStackLayout>
-                                                </VerticalStackLayout>
+                                                <!-- Value -->
+                                                <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                                                    <Frame BackgroundColor="#FFEBEE"
+                                                           CornerRadius="12"
+                                                           Padding="10,6"
+                                                           HasShadow="False"
+                                                           BorderColor="Transparent">
+                                                        <Label FontSize="14"
+                                                               FontAttributes="Bold"
+                                                               TextColor="#C62828">
+                                                            <Label.Text>
+                                                                <MultiBinding StringFormat="{}{0}/{1}">
+                                                                    <Binding Path="Systolic" />
+                                                                    <Binding Path="Diastolic" />
+                                                                </MultiBinding>
+                                                            </Label.Text>
+                                                        </Label>
+                                                    </Frame>
+                                                    <Label Text="mmHg"
+                                                           FontSize="11"
+                                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                                           VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
 
                                                 <!-- Recorded By -->
                                                 <Label Grid.Column="2"
@@ -132,6 +114,89 @@
 
                             <!-- No BP readings message -->
                             <Label Text="No BP readings recorded"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                   HorizontalOptions="Center"
+                                   IsVisible="{Binding BpHistory.Count, Converter={StaticResource GreaterThanZeroConverter}, ConverterParameter=invert}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Pulse Trends Section -->
+                    <Border StrokeThickness="0"
+                            BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#1E293B}"
+                            Padding="15">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="10">
+                            <HorizontalStackLayout Spacing="8">
+                                <Label Text="●" TextColor="#4CAF50" FontSize="14" VerticalOptions="Center" />
+                                <Label Text="Pulse Rate"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                            </HorizontalStackLayout>
+
+                            <!-- Pulse History List -->
+                            <CollectionView ItemsSource="{Binding BpHistory}"
+                                            HeightRequest="180"
+                                            IsVisible="{Binding BpHistory.Count, Converter={StaticResource GreaterThanZeroConverter}}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                                StrokeThickness="1"
+                                                BackgroundColor="{AppThemeBinding Light=White, Dark=#0F172A}"
+                                                Padding="12,10"
+                                                Margin="0,4">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                                <!-- Time -->
+                                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                                                    <Label Text="{Binding Time, StringFormat='{0:HH:mm}'}"
+                                                           FontSize="14"
+                                                           FontAttributes="Bold"
+                                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                                                    <Label Text="{Binding Time, StringFormat='{0:dd/MM}'}"
+                                                           FontSize="11"
+                                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                                </VerticalStackLayout>
+
+                                                <!-- Value -->
+                                                <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                                                    <Frame BackgroundColor="#E8F5E9"
+                                                           CornerRadius="12"
+                                                           Padding="10,6"
+                                                           HasShadow="False"
+                                                           BorderColor="Transparent">
+                                                        <Label Text="{Binding Pulse}"
+                                                               FontSize="14"
+                                                               FontAttributes="Bold"
+                                                               TextColor="#2E7D32" />
+                                                    </Frame>
+                                                    <Label Text="bpm"
+                                                           FontSize="11"
+                                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                                           VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+
+                                                <!-- Recorded By -->
+                                                <Label Grid.Column="2"
+                                                       Text="{Binding HandlerName}"
+                                                       FontSize="10"
+                                                       FontAttributes="Italic"
+                                                       TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}"
+                                                       VerticalOptions="Center"
+                                                       HorizontalOptions="End" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                            <!-- No Pulse readings message -->
+                            <Label Text="No pulse readings recorded"
                                    FontSize="14"
                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                    HorizontalOptions="Center"
