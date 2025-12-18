@@ -33,13 +33,52 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 status = "healthy",
                 timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                 service = "Partograph Sync Service",
-                version = "1.0.0"
+                version = "2.0.0"
             });
+        }
+
+        /// <summary>
+        /// Get sync status summary for all tables
+        /// </summary>
+        [HttpGet("status")]
+        public async Task<IActionResult> GetSyncStatus()
+        {
+            try
+            {
+                var status = new
+                {
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    tables = new
+                    {
+                        patients = await _context.Patients.CountAsync(),
+                        partographs = await _context.Partographs.CountAsync(),
+                        staff = await _context.Staff.CountAsync(),
+                        facilities = await _context.Facilities.CountAsync(),
+                        birthOutcomes = await _context.BirthOutcomes.CountAsync(),
+                        babyDetails = await _context.BabyDetails.CountAsync(),
+                        referrals = await _context.Referrals.CountAsync(),
+                        fhrs = await _context.FHRs.CountAsync(),
+                        contractions = await _context.Contractions.CountAsync(),
+                        cervixDilatations = await _context.CervixDilatations.CountAsync(),
+                        fourthStageVitals = await _context.FourthStageVitals.CountAsync(),
+                        bishopScores = await _context.BishopScores.CountAsync(),
+                        diagnoses = await _context.PartographDiagnoses.CountAsync(),
+                        riskFactors = await _context.PartographRiskFactors.CountAsync(),
+                        plans = await _context.Plans.CountAsync()
+                    }
+                };
+                return Ok(status);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting sync status");
+                return StatusCode(500, new { error = "Failed to get sync status", message = ex.Message });
+            }
         }
 
         #endregion
 
-        #region Pull Endpoints
+        #region Pull Endpoints - Core Entities
 
         [HttpPost("pull/patients")]
         public async Task<ActionResult<SyncPullResponse<Patient>>> PullPatients([FromBody] SyncPullRequest request)
@@ -133,6 +172,134 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             }
         }
 
+        [HttpPost("pull/facilities")]
+        public async Task<ActionResult<SyncPullResponse<Facility>>> PullFacilities([FromBody] SyncPullRequest request)
+        {
+            try
+            {
+                var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
+
+                var records = await _context.Facilities
+                    .Where(f => f.UpdatedTime > request.LastSyncTimestamp && f.Deleted == 0)
+                    .OrderBy(f => f.UpdatedTime)
+                    .Take(maxRecords)
+                    .ToListAsync();
+
+                var hasMore = await _context.Facilities
+                    .CountAsync(f => f.UpdatedTime > request.LastSyncTimestamp && f.Deleted == 0) > maxRecords;
+
+                return Ok(new SyncPullResponse<Facility>
+                {
+                    Records = records,
+                    ServerTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    HasMore = hasMore
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pulling facilities for device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to pull facilities", message = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region Pull Endpoints - Outcome Entities
+
+        [HttpPost("pull/birthoutcomes")]
+        public async Task<ActionResult<SyncPullResponse<BirthOutcome>>> PullBirthOutcomes([FromBody] SyncPullRequest request)
+        {
+            try
+            {
+                var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
+
+                var records = await _context.BirthOutcomes
+                    .Where(b => b.UpdatedTime > request.LastSyncTimestamp && b.Deleted == 0)
+                    .OrderBy(b => b.UpdatedTime)
+                    .Take(maxRecords)
+                    .ToListAsync();
+
+                var hasMore = await _context.BirthOutcomes
+                    .CountAsync(b => b.UpdatedTime > request.LastSyncTimestamp && b.Deleted == 0) > maxRecords;
+
+                return Ok(new SyncPullResponse<BirthOutcome>
+                {
+                    Records = records,
+                    ServerTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    HasMore = hasMore
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pulling birth outcomes for device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to pull birth outcomes", message = ex.Message });
+            }
+        }
+
+        [HttpPost("pull/babydetails")]
+        public async Task<ActionResult<SyncPullResponse<BabyDetails>>> PullBabyDetails([FromBody] SyncPullRequest request)
+        {
+            try
+            {
+                var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
+
+                var records = await _context.BabyDetails
+                    .Where(b => b.UpdatedTime > request.LastSyncTimestamp && b.Deleted == 0)
+                    .OrderBy(b => b.UpdatedTime)
+                    .Take(maxRecords)
+                    .ToListAsync();
+
+                var hasMore = await _context.BabyDetails
+                    .CountAsync(b => b.UpdatedTime > request.LastSyncTimestamp && b.Deleted == 0) > maxRecords;
+
+                return Ok(new SyncPullResponse<BabyDetails>
+                {
+                    Records = records,
+                    ServerTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    HasMore = hasMore
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pulling baby details for device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to pull baby details", message = ex.Message });
+            }
+        }
+
+        [HttpPost("pull/referrals")]
+        public async Task<ActionResult<SyncPullResponse<Referral>>> PullReferrals([FromBody] SyncPullRequest request)
+        {
+            try
+            {
+                var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
+
+                var records = await _context.Referrals
+                    .Where(r => r.UpdatedTime > request.LastSyncTimestamp && r.Deleted == 0)
+                    .OrderBy(r => r.UpdatedTime)
+                    .Take(maxRecords)
+                    .ToListAsync();
+
+                var hasMore = await _context.Referrals
+                    .CountAsync(r => r.UpdatedTime > request.LastSyncTimestamp && r.Deleted == 0) > maxRecords;
+
+                return Ok(new SyncPullResponse<Referral>
+                {
+                    Records = records,
+                    ServerTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    HasMore = hasMore
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pulling referrals for device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to pull referrals", message = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region Pull Endpoints - Measurements (Generic)
+
         [HttpPost("pull/{tableName}")]
         public async Task<IActionResult> PullMeasurements(string tableName, [FromBody] SyncPullRequest request)
         {
@@ -140,31 +307,40 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
 
-                object? result = null;
-                result = tableName.ToLower() switch
+                object? result = tableName.ToLower() switch
                 {
-                    "fhrs" => await PullGenericMeasurements<FHR>(_context.FHRs, request, maxRecords),
-                    "contractions" => await PullGenericMeasurements<Contraction>(_context.Contractions, request, maxRecords),
-                    "cervixdilatations" => await PullGenericMeasurements<CervixDilatation>(_context.CervixDilatations, request, maxRecords),
-                    "headdescents" => await PullGenericMeasurements<HeadDescent>(_context.HeadDescents, request, maxRecords),
-                    "bps" => await PullGenericMeasurements<BP>(_context.BPs, request, maxRecords),
-                    "temperatures" => await PullGenericMeasurements<Temperature>(_context.Temperatures, request, maxRecords),
-                    "amnioticfluids" => await PullGenericMeasurements<AmnioticFluid>(_context.AmnioticFluids, request, maxRecords),
-                    "urines" => await PullGenericMeasurements<Urine>(_context.Urines, request, maxRecords),
-                    "caputs" => await PullGenericMeasurements<Caput>(_context.Caputs, request, maxRecords),
-                    "mouldings" => await PullGenericMeasurements<Moulding>(_context.Mouldings, request, maxRecords),
-                    "fetalpositions" => await PullGenericMeasurements<FetalPosition>(_context.FetalPositions, request, maxRecords),
-                    "painreliefentries" => await PullGenericMeasurements<PainReliefEntry>(_context.PainReliefs, request, maxRecords),
-                    "postureentries" => await PullGenericMeasurements<PostureEntry>(_context.Postures, request, maxRecords),
-                    "oralfluidentries" => await PullGenericMeasurements<OralFluidEntry>(_context.OralFluids, request, maxRecords),
-                    "ivfluidentries" => await PullGenericMeasurements<IVFluidEntry>(_context.IVFluids, request, maxRecords),
-                    "medicationentries" => await PullGenericMeasurements<MedicationEntry>(_context.Medications, request, maxRecords),
-                    "oxytocins" => await PullGenericMeasurements<Oxytocin>(_context.Oxytocins, request, maxRecords),
-                    "companionentries" => await PullGenericMeasurements<CompanionEntry>(_context.Companions, request, maxRecords),
-                    "assessmentplanentries" => await PullGenericMeasurements<Assessment>(_context.AssessmentPlans, request, maxRecords),
-                    "medicalnotes" => await PullGenericMeasurements<MedicalNote>(_context.MedicalNotes, request, maxRecords),
-                    _ => null,
+                    // Original measurements
+                    "fhrs" => await PullGenericMeasurements(_context.FHRs, request, maxRecords),
+                    "contractions" => await PullGenericMeasurements(_context.Contractions, request, maxRecords),
+                    "cervixdilatations" => await PullGenericMeasurements(_context.CervixDilatations, request, maxRecords),
+                    "headdescents" => await PullGenericMeasurements(_context.HeadDescents, request, maxRecords),
+                    "bps" => await PullGenericMeasurements(_context.BPs, request, maxRecords),
+                    "temperatures" => await PullGenericMeasurements(_context.Temperatures, request, maxRecords),
+                    "amnioticfluids" => await PullGenericMeasurements(_context.AmnioticFluids, request, maxRecords),
+                    "urines" => await PullGenericMeasurements(_context.Urines, request, maxRecords),
+                    "caputs" => await PullGenericMeasurements(_context.Caputs, request, maxRecords),
+                    "mouldings" => await PullGenericMeasurements(_context.Mouldings, request, maxRecords),
+                    "fetalpositions" => await PullGenericMeasurements(_context.FetalPositions, request, maxRecords),
+                    "painreliefentries" => await PullGenericMeasurements(_context.PainReliefs, request, maxRecords),
+                    "postureentries" => await PullGenericMeasurements(_context.Postures, request, maxRecords),
+                    "oralfluidentries" => await PullGenericMeasurements(_context.OralFluids, request, maxRecords),
+                    "ivfluidentries" => await PullGenericMeasurements(_context.IVFluids, request, maxRecords),
+                    "medicationentries" => await PullGenericMeasurements(_context.Medications, request, maxRecords),
+                    "oxytocins" => await PullGenericMeasurements(_context.Oxytocins, request, maxRecords),
+                    "companionentries" => await PullGenericMeasurements(_context.Companions, request, maxRecords),
+                    "assessmentplanentries" or "assessments" => await PullGenericMeasurements(_context.AssessmentPlans, request, maxRecords),
+                    "medicalnotes" => await PullGenericMeasurements(_context.MedicalNotes, request, maxRecords),
+
+                    // Extended measurements
+                    "fourthstagevitals" => await PullGenericMeasurements(_context.FourthStageVitals, request, maxRecords),
+                    "bishopscores" => await PullGenericMeasurements(_context.BishopScores, request, maxRecords),
+                    "partographdiagnoses" or "diagnoses" => await PullGenericMeasurements(_context.PartographDiagnoses, request, maxRecords),
+                    "partographriskfactors" or "riskfactors" => await PullGenericMeasurements(_context.PartographRiskFactors, request, maxRecords),
+                    "plans" => await PullGenericMeasurements(_context.Plans, request, maxRecords),
+
+                    _ => null
                 };
+
                 if (result == null)
                     return BadRequest(new { error = "Unknown table name", tableName });
 
@@ -179,7 +355,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
         #endregion
 
-        #region Push Endpoints
+        #region Push Endpoints - Core Entities
 
         [HttpPost("push/patients")]
         public async Task<ActionResult<SyncPushResponse<Patient>>> PushPatients([FromBody] SyncPushRequest<Patient> request)
@@ -197,7 +373,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                         if (existing != null)
                         {
-                            // Check for conflicts
                             if (existing.ServerVersion > patient.Version)
                             {
                                 response.Conflicts.Add(new ConflictRecord<Patient>
@@ -211,21 +386,19 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                                 continue;
                             }
 
-                            // Update existing
                             _context.Entry(existing).CurrentValues.SetValues(patient);
                             existing.ServerVersion++;
                             existing.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                            existing.SyncStatus = 1; // Synced
+                            existing.SyncStatus = 1;
                         }
                         else
                         {
-                            // Insert new
                             patient.ServerVersion = 1;
                             patient.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                             patient.CreatedTime = patient.CreatedTime == 0
                                 ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
                                 : patient.CreatedTime;
-                            patient.SyncStatus = 1; // Synced
+                            patient.SyncStatus = 1;
                             _context.Patients.Add(patient);
                         }
 
@@ -269,7 +442,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                         if (existing != null)
                         {
-                            // Check for conflicts
                             if (existing.ServerVersion > partograph.Version)
                             {
                                 response.Conflicts.Add(new ConflictRecord<Partograph>
@@ -283,21 +455,19 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                                 continue;
                             }
 
-                            // Update existing
                             _context.Entry(existing).CurrentValues.SetValues(partograph);
                             existing.ServerVersion++;
                             existing.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                            existing.SyncStatus = 1; // Synced
+                            existing.SyncStatus = 1;
                         }
                         else
                         {
-                            // Insert new
                             partograph.ServerVersion = 1;
                             partograph.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                             partograph.CreatedTime = partograph.CreatedTime == 0
                                 ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
                                 : partograph.CreatedTime;
-                            partograph.SyncStatus = 1; // Synced
+                            partograph.SyncStatus = 1;
                             _context.Partographs.Add(partograph);
                         }
 
@@ -341,7 +511,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                         if (existing != null)
                         {
-                            // Check for conflicts
                             if (existing.ServerVersion > staff.Version)
                             {
                                 response.Conflicts.Add(new ConflictRecord<Staff>
@@ -355,21 +524,19 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                                 continue;
                             }
 
-                            // Update existing
                             _context.Entry(existing).CurrentValues.SetValues(staff);
                             existing.ServerVersion++;
                             existing.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                            existing.SyncStatus = 1; // Synced
+                            existing.SyncStatus = 1;
                         }
                         else
                         {
-                            // Insert new
                             staff.ServerVersion = 1;
                             staff.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                             staff.CreatedTime = staff.CreatedTime == 0
                                 ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
                                 : staff.CreatedTime;
-                            staff.SyncStatus = 1; // Synced
+                            staff.SyncStatus = 1;
                             _context.Staff.Add(staff);
                         }
 
@@ -397,34 +564,326 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             }
         }
 
+        [HttpPost("push/facilities")]
+        public async Task<ActionResult<SyncPushResponse<Facility>>> PushFacilities([FromBody] SyncPushRequest<Facility> request)
+        {
+            try
+            {
+                var response = new SyncPushResponse<Facility>();
+
+                foreach (var facility in request.Changes)
+                {
+                    try
+                    {
+                        var existing = await _context.Facilities
+                            .FirstOrDefaultAsync(f => f.ID == facility.ID);
+
+                        if (existing != null)
+                        {
+                            if (existing.ServerVersion > facility.Version)
+                            {
+                                response.Conflicts.Add(new ConflictRecord<Facility>
+                                {
+                                    Id = facility.ID.ToString()!,
+                                    LocalRecord = facility,
+                                    ServerRecord = existing,
+                                    ConflictTime = DateTime.UtcNow,
+                                    ConflictReason = "Server version is newer"
+                                });
+                                continue;
+                            }
+
+                            _context.Entry(existing).CurrentValues.SetValues(facility);
+                            existing.ServerVersion++;
+                            existing.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                            existing.SyncStatus = 1;
+                        }
+                        else
+                        {
+                            facility.ServerVersion = 1;
+                            facility.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                            facility.CreatedTime = facility.CreatedTime == 0
+                                ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                                : facility.CreatedTime;
+                            facility.SyncStatus = 1;
+                            _context.Facilities.Add(facility);
+                        }
+
+                        response.SuccessIds.Add(facility.ID.ToString()!);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error processing facility {FacilityId}", facility.ID);
+                        response.Errors.Add(new SyncError
+                        {
+                            Id = facility.ID.ToString()!,
+                            ErrorMessage = ex.Message,
+                            StackTrace = ex.StackTrace
+                        });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pushing facilities from device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to push facilities", message = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region Push Endpoints - Outcome Entities
+
+        [HttpPost("push/birthoutcomes")]
+        public async Task<ActionResult<SyncPushResponse<BirthOutcome>>> PushBirthOutcomes([FromBody] SyncPushRequest<BirthOutcome> request)
+        {
+            try
+            {
+                var response = new SyncPushResponse<BirthOutcome>();
+
+                foreach (var birthOutcome in request.Changes)
+                {
+                    try
+                    {
+                        var existing = await _context.BirthOutcomes
+                            .FirstOrDefaultAsync(b => b.ID == birthOutcome.ID);
+
+                        if (existing != null)
+                        {
+                            if (existing.ServerVersion > birthOutcome.Version)
+                            {
+                                response.Conflicts.Add(new ConflictRecord<BirthOutcome>
+                                {
+                                    Id = birthOutcome.ID.ToString()!,
+                                    LocalRecord = birthOutcome,
+                                    ServerRecord = existing,
+                                    ConflictTime = DateTime.UtcNow,
+                                    ConflictReason = "Server version is newer"
+                                });
+                                continue;
+                            }
+
+                            _context.Entry(existing).CurrentValues.SetValues(birthOutcome);
+                            existing.ServerVersion++;
+                            existing.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                            existing.SyncStatus = 1;
+                        }
+                        else
+                        {
+                            birthOutcome.ServerVersion = 1;
+                            birthOutcome.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                            birthOutcome.CreatedTime = birthOutcome.CreatedTime == 0
+                                ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                                : birthOutcome.CreatedTime;
+                            birthOutcome.SyncStatus = 1;
+                            _context.BirthOutcomes.Add(birthOutcome);
+                        }
+
+                        response.SuccessIds.Add(birthOutcome.ID.ToString()!);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error processing birth outcome {BirthOutcomeId}", birthOutcome.ID);
+                        response.Errors.Add(new SyncError
+                        {
+                            Id = birthOutcome.ID.ToString()!,
+                            ErrorMessage = ex.Message,
+                            StackTrace = ex.StackTrace
+                        });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pushing birth outcomes from device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to push birth outcomes", message = ex.Message });
+            }
+        }
+
+        [HttpPost("push/babydetails")]
+        public async Task<ActionResult<SyncPushResponse<BabyDetails>>> PushBabyDetails([FromBody] SyncPushRequest<BabyDetails> request)
+        {
+            try
+            {
+                var response = new SyncPushResponse<BabyDetails>();
+
+                foreach (var babyDetails in request.Changes)
+                {
+                    try
+                    {
+                        var existing = await _context.BabyDetails
+                            .FirstOrDefaultAsync(b => b.ID == babyDetails.ID);
+
+                        if (existing != null)
+                        {
+                            if (existing.ServerVersion > babyDetails.Version)
+                            {
+                                response.Conflicts.Add(new ConflictRecord<BabyDetails>
+                                {
+                                    Id = babyDetails.ID.ToString()!,
+                                    LocalRecord = babyDetails,
+                                    ServerRecord = existing,
+                                    ConflictTime = DateTime.UtcNow,
+                                    ConflictReason = "Server version is newer"
+                                });
+                                continue;
+                            }
+
+                            _context.Entry(existing).CurrentValues.SetValues(babyDetails);
+                            existing.ServerVersion++;
+                            existing.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                            existing.SyncStatus = 1;
+                        }
+                        else
+                        {
+                            babyDetails.ServerVersion = 1;
+                            babyDetails.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                            babyDetails.CreatedTime = babyDetails.CreatedTime == 0
+                                ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                                : babyDetails.CreatedTime;
+                            babyDetails.SyncStatus = 1;
+                            _context.BabyDetails.Add(babyDetails);
+                        }
+
+                        response.SuccessIds.Add(babyDetails.ID.ToString()!);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error processing baby details {BabyDetailsId}", babyDetails.ID);
+                        response.Errors.Add(new SyncError
+                        {
+                            Id = babyDetails.ID.ToString()!,
+                            ErrorMessage = ex.Message,
+                            StackTrace = ex.StackTrace
+                        });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pushing baby details from device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to push baby details", message = ex.Message });
+            }
+        }
+
+        [HttpPost("push/referrals")]
+        public async Task<ActionResult<SyncPushResponse<Referral>>> PushReferrals([FromBody] SyncPushRequest<Referral> request)
+        {
+            try
+            {
+                var response = new SyncPushResponse<Referral>();
+
+                foreach (var referral in request.Changes)
+                {
+                    try
+                    {
+                        var existing = await _context.Referrals
+                            .FirstOrDefaultAsync(r => r.ID == referral.ID);
+
+                        if (existing != null)
+                        {
+                            if (existing.ServerVersion > referral.Version)
+                            {
+                                response.Conflicts.Add(new ConflictRecord<Referral>
+                                {
+                                    Id = referral.ID.ToString()!,
+                                    LocalRecord = referral,
+                                    ServerRecord = existing,
+                                    ConflictTime = DateTime.UtcNow,
+                                    ConflictReason = "Server version is newer"
+                                });
+                                continue;
+                            }
+
+                            _context.Entry(existing).CurrentValues.SetValues(referral);
+                            existing.ServerVersion++;
+                            existing.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                            existing.SyncStatus = 1;
+                        }
+                        else
+                        {
+                            referral.ServerVersion = 1;
+                            referral.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                            referral.CreatedTime = referral.CreatedTime == 0
+                                ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                                : referral.CreatedTime;
+                            referral.SyncStatus = 1;
+                            _context.Referrals.Add(referral);
+                        }
+
+                        response.SuccessIds.Add(referral.ID.ToString()!);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error processing referral {ReferralId}", referral.ID);
+                        response.Errors.Add(new SyncError
+                        {
+                            Id = referral.ID.ToString()!,
+                            ErrorMessage = ex.Message,
+                            StackTrace = ex.StackTrace
+                        });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pushing referrals from device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to push referrals", message = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region Push Endpoints - Measurements (Generic)
+
         [HttpPost("push/{tableName}")]
         public async Task<IActionResult> PushMeasurements(string tableName, [FromBody] object request)
         {
             try
             {
-                object? result = null;
-                result = tableName.ToLower() switch
+                object? result = tableName.ToLower() switch
                 {
-                    "fhrs" => await PushGenericMeasurements<FHR>(_context.FHRs, request),
-                    "contractions" => await PushGenericMeasurements<Contraction>(_context.Contractions, request),
-                    "cervixdilatations" => await PushGenericMeasurements<CervixDilatation>(_context.CervixDilatations, request),
-                    "headdescents" => await PushGenericMeasurements<HeadDescent>(_context.HeadDescents, request),
-                    "bps" => await PushGenericMeasurements<BP>(_context.BPs, request),
-                    "temperatures" => await PushGenericMeasurements<Temperature>(_context.Temperatures, request),
-                    "amnioticfluids" => await PushGenericMeasurements<AmnioticFluid>(_context.AmnioticFluids, request),
-                    "urines" => await PushGenericMeasurements<Urine>(_context.Urines, request),
-                    "caputs" => await PushGenericMeasurements<Caput>(_context.Caputs, request),
-                    "mouldings" => await PushGenericMeasurements<Moulding>(_context.Mouldings, request),
-                    "fetalpositions" => await PushGenericMeasurements<FetalPosition>(_context.FetalPositions, request),
-                    "painreliefentries" => await PushGenericMeasurements<PainReliefEntry>(_context.PainReliefs, request),
-                    "postureentries" => await PushGenericMeasurements<PostureEntry>(_context.Postures, request),
-                    "oralfluidentries" => await PushGenericMeasurements<OralFluidEntry>(_context.OralFluids, request),
-                    "ivfluidentries" => await PushGenericMeasurements<IVFluidEntry>(_context.IVFluids, request),
-                    "medicationentries" => await PushGenericMeasurements<MedicationEntry>(_context.Medications, request),
-                    "oxytocins" => await PushGenericMeasurements<Oxytocin>(_context.Oxytocins, request),
-                    "companionentries" => await PushGenericMeasurements<CompanionEntry>(_context.Companions, request),
-                    "assessmentplanentries" => await PushGenericMeasurements<Assessment>(_context.AssessmentPlans, request),
-                    "medicalnotes" => await PushGenericMeasurements<MedicalNote>(_context.MedicalNotes, request),
+                    // Original measurements
+                    "fhrs" => await PushGenericMeasurements(_context.FHRs, request),
+                    "contractions" => await PushGenericMeasurements(_context.Contractions, request),
+                    "cervixdilatations" => await PushGenericMeasurements(_context.CervixDilatations, request),
+                    "headdescents" => await PushGenericMeasurements(_context.HeadDescents, request),
+                    "bps" => await PushGenericMeasurements(_context.BPs, request),
+                    "temperatures" => await PushGenericMeasurements(_context.Temperatures, request),
+                    "amnioticfluids" => await PushGenericMeasurements(_context.AmnioticFluids, request),
+                    "urines" => await PushGenericMeasurements(_context.Urines, request),
+                    "caputs" => await PushGenericMeasurements(_context.Caputs, request),
+                    "mouldings" => await PushGenericMeasurements(_context.Mouldings, request),
+                    "fetalpositions" => await PushGenericMeasurements(_context.FetalPositions, request),
+                    "painreliefentries" => await PushGenericMeasurements(_context.PainReliefs, request),
+                    "postureentries" => await PushGenericMeasurements(_context.Postures, request),
+                    "oralfluidentries" => await PushGenericMeasurements(_context.OralFluids, request),
+                    "ivfluidentries" => await PushGenericMeasurements(_context.IVFluids, request),
+                    "medicationentries" => await PushGenericMeasurements(_context.Medications, request),
+                    "oxytocins" => await PushGenericMeasurements(_context.Oxytocins, request),
+                    "companionentries" => await PushGenericMeasurements(_context.Companions, request),
+                    "assessmentplanentries" or "assessments" => await PushGenericMeasurements(_context.AssessmentPlans, request),
+                    "medicalnotes" => await PushGenericMeasurements(_context.MedicalNotes, request),
+
+                    // Extended measurements
+                    "fourthstagevitals" => await PushGenericMeasurements(_context.FourthStageVitals, request),
+                    "bishopscores" => await PushGenericMeasurements(_context.BishopScores, request),
+                    "partographdiagnoses" or "diagnoses" => await PushGenericMeasurements(_context.PartographDiagnoses, request),
+                    "partographriskfactors" or "riskfactors" => await PushGenericMeasurements(_context.PartographRiskFactors, request),
+                    "plans" => await PushGenericMeasurements(_context.Plans, request),
+
                     _ => null
                 };
 
@@ -486,7 +945,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                     if (existing != null)
                     {
-                        // Check for conflicts
                         if (existing.ServerVersion > measurement.Version)
                         {
                             response.Conflicts.Add(new ConflictRecord<T>
@@ -500,21 +958,19 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                             continue;
                         }
 
-                        // Update existing
                         _context.Entry(existing).CurrentValues.SetValues(measurement);
                         existing.ServerVersion++;
                         existing.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                        existing.SyncStatus = 1; // Synced
+                        existing.SyncStatus = 1;
                     }
                     else
                     {
-                        // Insert new
                         measurement.ServerVersion = 1;
                         measurement.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                         measurement.CreatedTime = measurement.CreatedTime == 0
                             ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
                             : measurement.CreatedTime;
-                        measurement.SyncStatus = 1; // Synced
+                        measurement.SyncStatus = 1;
                         dbSet.Add(measurement);
                     }
 

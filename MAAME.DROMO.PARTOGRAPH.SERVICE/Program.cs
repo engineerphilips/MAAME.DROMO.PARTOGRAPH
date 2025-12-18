@@ -14,6 +14,7 @@ builder.Services.AddDbContext<PartographDbContext>(options =>
 
 // Register services
 builder.Services.AddScoped<IPartographPdfService, PartographPdfService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 // Configure CORS for mobile app access
 builder.Services.AddCors(options =>
@@ -41,8 +42,8 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "Partograph Service API",
-        Version = "v1",
-        Description = "API for Partograph mobile app synchronization and data management"
+        Version = "v2",
+        Description = "API for Partograph mobile app synchronization, data management, and analytics for external web applications"
     });
 });
 
