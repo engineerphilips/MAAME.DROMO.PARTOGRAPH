@@ -36,7 +36,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Category (
+            CREATE TABLE IF NOT EXISTS Tbl_Category (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Title TEXT NOT NULL,
                 Color TEXT NOT NULL
@@ -63,7 +63,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Category";
+            selectCmd.CommandText = "SELECT * FROM Tbl_Category";
             var categories = new List<Category>();
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -92,7 +92,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Category WHERE ID = @id";
+            selectCmd.CommandText = "SELECT * FROM Tbl_Category WHERE ID = @id";
             selectCmd.Parameters.AddWithValue("@id", id);
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -124,14 +124,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             if (item.ID == 0)
             {
                 saveCmd.CommandText = @"
-                INSERT INTO Category (Title, Color)
+                INSERT INTO Tbl_Category (Title, Color)
                 VALUES (@Title, @Color);
                 SELECT last_insert_rowid();";
             }
             else
             {
                 saveCmd.CommandText = @"
-                UPDATE Category SET Title = @Title, Color = @Color
+                UPDATE Tbl_Category SET Title = @Title, Color = @Color
                 WHERE ID = @ID";
                 saveCmd.Parameters.AddWithValue("@ID", item.ID);
             }
@@ -160,7 +160,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = "DELETE FROM Category WHERE ID = @id";
+            deleteCmd.CommandText = "DELETE FROM Tbl_Category WHERE ID = @id";
             deleteCmd.Parameters.AddWithValue("@id", item.ID);
 
             return await deleteCmd.ExecuteNonQueryAsync();
@@ -176,7 +176,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var dropTableCmd = connection.CreateCommand();
-            dropTableCmd.CommandText = "DROP TABLE IF EXISTS Category";
+            dropTableCmd.CommandText = "DROP TABLE IF EXISTS Tbl_Category";
 
             await dropTableCmd.ExecuteNonQueryAsync();
             _hasBeenInitialized = false;

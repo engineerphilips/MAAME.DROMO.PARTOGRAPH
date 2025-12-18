@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
-    public class VitalSignRepository
+    public class Tbl_VitalSignRepository
     {
         private bool _hasBeenInitialized = false;
         private readonly ILogger _logger;
 
-        public VitalSignRepository(ILogger<VitalSignRepository> logger)
+        public Tbl_VitalSignRepository(ILogger<Tbl_VitalSignRepository> logger)
         {
             _logger = logger;
         }
@@ -31,7 +31,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
-                CREATE TABLE IF NOT EXISTS VitalSign (
+                CREATE TABLE IF NOT EXISTS Tbl_VitalSign (
                     ID INTEGER PRIMARY KEY AUTOINCREMENT,
                     PatientID INTEGER NOT NULL,
                     RecordedTime TEXT NOT NULL,
@@ -49,29 +49,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error creating VitalSign table");
+                _logger.LogError(e, "Error creating Tbl_VitalSign table");
                 throw;
             }
 
             _hasBeenInitialized = true;
         }
 
-        public async Task<List<VitalSign>> ListByPatientAsync(Guid? patientId)
+        public async Task<List<Tbl_VitalSign>> ListByPatientAsync(Guid? patientId)
         {
             await Init();
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM VitalSign WHERE PatientID = @patientId ORDER BY RecordedTime DESC";
+            selectCmd.CommandText = "SELECT * FROM Tbl_VitalSign WHERE PatientID = @patientId ORDER BY RecordedTime DESC";
             selectCmd.Parameters.AddWithValue("@patientId", patientId);
 
-            var vitalSigns = new List<VitalSign>();
+            var vitalSigns = new List<Tbl_VitalSign>();
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                vitalSigns.Add(new VitalSign
+                vitalSigns.Add(new Tbl_VitalSign
                 {
                     ID = Guid.Parse(reader["ID"].ToString()),
                     PatientID = reader["PatientID"] is DBNull ? null : Guid.Parse(reader["PatientID"].ToString()),
@@ -91,7 +91,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return vitalSigns;
         }
 
-        public async Task<Guid?> SaveItemAsync(VitalSign item)
+        public async Task<Guid?> SaveItemAsync(Tbl_VitalSign item)
         {
             await Init();
             await using var connection = new SqliteConnection(Constants.DatabasePath);
@@ -101,7 +101,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             if (item.ID == null)
             {
                 saveCmd.CommandText = @"
-                INSERT INTO VitalSign (PatientID, RecordedTime, SystolicBP, DiastolicBP, Temperature,
+                INSERT INTO Tbl_VitalSign (PatientID, RecordedTime, SystolicBP, DiastolicBP, Temperature,
                     PulseRate, RespiratoryRate, UrineOutput, UrineProtein, UrineAcetone, RecordedBy)
                 VALUES (@PatientID, @RecordedTime, @SystolicBP, @DiastolicBP, @Temperature,
                     @PulseRate, @RespiratoryRate, @UrineOutput, @UrineProtein, @UrineAcetone, @RecordedBy);
@@ -110,7 +110,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             else
             {
                 saveCmd.CommandText = @"
-                UPDATE VitalSign SET 
+                UPDATE Tbl_VitalSign SET 
                     RecordedTime = @RecordedTime, SystolicBP = @SystolicBP, DiastolicBP = @DiastolicBP,
                     Temperature = @Temperature, PulseRate = @PulseRate, RespiratoryRate = @RespiratoryRate,
                     UrineOutput = @UrineOutput, UrineProtein = @UrineProtein, UrineAcetone = @UrineAcetone,

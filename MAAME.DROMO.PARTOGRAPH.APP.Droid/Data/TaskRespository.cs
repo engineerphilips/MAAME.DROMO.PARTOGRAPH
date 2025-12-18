@@ -36,7 +36,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Task (
+            CREATE TABLE IF NOT EXISTS Tbl_Task (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Title TEXT NOT NULL,
                 IsCompleted INTEGER NOT NULL,
@@ -64,7 +64,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Task";
+            selectCmd.CommandText = "SELECT * FROM Tbl_Task";
             var tasks = new List<ProjectTask>();
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -99,7 +99,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Task WHERE ProjectID = @projectId";
+            selectCmd.CommandText = "SELECT * FROM Tbl_Task WHERE ProjectID = @projectId";
             selectCmd.Parameters.AddWithValue("@projectId", projectId);
             var tasks = new List<ProjectTask>();
 
@@ -135,7 +135,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Task WHERE ID = @id";
+            selectCmd.CommandText = "SELECT * FROM Tbl_Task WHERE ID = @id";
             selectCmd.Parameters.AddWithValue("@id", id);
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -173,13 +173,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             if (item.ID == 0)
             {
                 saveCmd.CommandText = @"
-            INSERT INTO Task (Title, IsCompleted, ProjectID) VALUES (@title, @isCompleted, @projectId);
+            INSERT INTO Tbl_Task (Title, IsCompleted, ProjectID) VALUES (@title, @isCompleted, @projectId);
             SELECT last_insert_rowid();";
             }
             else
             {
                 saveCmd.CommandText = @"
-            UPDATE Task SET Title = @title, IsCompleted = @isCompleted, ProjectID = @projectId WHERE ID = @id";
+            UPDATE Tbl_Task SET Title = @title, IsCompleted = @isCompleted, ProjectID = @projectId WHERE ID = @id";
                 saveCmd.Parameters.AddWithValue("@id", item.ID);
             }
 
@@ -208,7 +208,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = "DELETE FROM Task WHERE ID = @id";
+            deleteCmd.CommandText = "DELETE FROM Tbl_Task WHERE ID = @id";
             deleteCmd.Parameters.AddWithValue("@id", item.ID);
 
             return await deleteCmd.ExecuteNonQueryAsync();
@@ -224,7 +224,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var dropTableCmd = connection.CreateCommand();
-            dropTableCmd.CommandText = "DROP TABLE IF EXISTS Task";
+            dropTableCmd.CommandText = "DROP TABLE IF EXISTS Tbl_Task";
             await dropTableCmd.ExecuteNonQueryAsync();
             _hasBeenInitialized = false;
         }

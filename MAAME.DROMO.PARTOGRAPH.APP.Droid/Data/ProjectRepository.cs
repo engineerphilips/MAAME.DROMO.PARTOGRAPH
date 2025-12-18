@@ -42,7 +42,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Project (
+            CREATE TABLE IF NOT EXISTS Tbl_Project (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL,
                 Description TEXT NOT NULL,
@@ -71,7 +71,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Project";
+            selectCmd.CommandText = "SELECT * FROM Tbl_Project";
             var projects = new List<Project>();
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -108,7 +108,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Project WHERE ID = @id";
+            selectCmd.CommandText = "SELECT * FROM Tbl_Project WHERE ID = @id";
             selectCmd.Parameters.AddWithValue("@id", id);
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -147,14 +147,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             if (item.ID == 0)
             {
                 saveCmd.CommandText = @"
-                INSERT INTO Project (Name, Description, Icon, CategoryID)
+                INSERT INTO Tbl_Project (Name, Description, Icon, CategoryID)
                 VALUES (@Name, @Description, @Icon, @CategoryID);
                 SELECT last_insert_rowid();";
             }
             else
             {
                 saveCmd.CommandText = @"
-                UPDATE Project
+                UPDATE Tbl_Project
                 SET Name = @Name, Description = @Description, Icon = @Icon, CategoryID = @CategoryID
                 WHERE ID = @ID";
                 saveCmd.Parameters.AddWithValue("@ID", item.ID);
@@ -186,7 +186,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = "DELETE FROM Project WHERE ID = @ID";
+            deleteCmd.CommandText = "DELETE FROM Tbl_Project WHERE ID = @ID";
             deleteCmd.Parameters.AddWithValue("@ID", item.ID);
 
             return await deleteCmd.ExecuteNonQueryAsync();
@@ -202,7 +202,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await connection.OpenAsync();
 
             var dropCmd = connection.CreateCommand();
-            dropCmd.CommandText = "DROP TABLE IF EXISTS Project";
+            dropCmd.CommandText = "DROP TABLE IF EXISTS Tbl_Project";
             await dropCmd.ExecuteNonQueryAsync();
 
             await _taskRepository.DropTableAsync();
