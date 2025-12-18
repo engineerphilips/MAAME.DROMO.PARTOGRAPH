@@ -205,8 +205,7 @@
                                              HeightRequest="45">
                             <picker:SfDatePicker.HeaderView>
                                 <picker:PickerHeaderView Text="Date of Birth *"
-                                                         Background="{StaticResource PrimaryBlue}"
-                                                         TextColor="White" />
+                                                         Background="{StaticResource PrimaryBlue}" />
                             </picker:SfDatePicker.HeaderView>
                         </picker:SfDatePicker>
                         
@@ -545,8 +544,7 @@
                                              HeightRequest="45">
                             <picker:SfDatePicker.HeaderView>
                                 <picker:PickerHeaderView Text="Estimated Delivery Date *"
-                                                         Background="{StaticResource PrimaryBlue}"
-                                                         TextColor="White" />
+                                                         Background="{StaticResource PrimaryBlue}" />
                             </picker:SfDatePicker.HeaderView>
                         </picker:SfDatePicker>
 
@@ -559,8 +557,7 @@
                                              HeightRequest="45">
                             <picker:SfDatePicker.HeaderView>
                                 <picker:PickerHeaderView Text="Last Menstrual Date *"
-                                                         Background="{StaticResource PrimaryBlue}"
-                                                         TextColor="White" />
+                                                         Background="{StaticResource PrimaryBlue}" />
                             </picker:SfDatePicker.HeaderView>
                         </picker:SfDatePicker>
                     </Grid>
@@ -668,8 +665,7 @@
                                              HeightRequest="45">
                             <picker:SfDatePicker.HeaderView>
                                 <picker:PickerHeaderView Text="Labour Start Date *"
-                                                         Background="{StaticResource PrimaryBlue}"
-                                                         TextColor="White" />
+                                                         Background="{StaticResource PrimaryBlue}" />
                             </picker:SfDatePicker.HeaderView>
                         </picker:SfDatePicker>
 
@@ -680,8 +676,7 @@
                                              HeightRequest="45">
                             <picker:SfTimePicker.HeaderView>
                                 <picker:PickerHeaderView Text="Labour Start Time *"
-                                                         Background="{StaticResource PrimaryBlue}"
-                                                         TextColor="White" />
+                                                         Background="{StaticResource PrimaryBlue}" />
                             </picker:SfTimePicker.HeaderView>
                         </picker:SfTimePicker>
                     </Grid>
@@ -747,8 +742,7 @@
                                                      HeightRequest="45">
                                     <picker:SfDatePicker.HeaderView>
                                         <picker:PickerHeaderView Text="Rupture Date"
-                                                                 Background="{StaticResource PrimaryBlue}"
-                                                                 TextColor="White" />
+                                                                 Background="{StaticResource PrimaryBlue}" />
                                     </picker:SfDatePicker.HeaderView>
                                 </picker:SfDatePicker>
 
@@ -759,8 +753,7 @@
                                                      HeightRequest="45">
                                     <picker:SfTimePicker.HeaderView>
                                         <picker:PickerHeaderView Text="Rupture Time"
-                                                                 Background="{StaticResource PrimaryBlue}"
-                                                                 TextColor="White" />
+                                                                 Background="{StaticResource PrimaryBlue}" />
                                     </picker:SfTimePicker.HeaderView>
                                 </picker:SfTimePicker>
                             </Grid>
