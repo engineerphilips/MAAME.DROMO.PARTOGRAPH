@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly CervixDilatationRepository _cervixDilatationRepository;
         private readonly HeadDescentRepository _headDescentRepository;
         private readonly ModalErrorHandler _errorHandler;
+        private readonly IDataLoadingService _dataLoadingService;
+        private bool _isInitialLoad = true;
 
         [ObservableProperty]
         private List<Partograph> _partographs = [];
@@ -30,12 +33,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private List<Partograph> _allPartographs = [];
 
-        public ActivePatientsPageModel(PartographRepository partographRepository, CervixDilatationRepository cervixDilatationRepository, HeadDescentRepository headDescentRepository, ModalErrorHandler errorHandler)
+        public ActivePatientsPageModel(
+            PartographRepository partographRepository,
+            CervixDilatationRepository cervixDilatationRepository,
+            HeadDescentRepository headDescentRepository,
+            ModalErrorHandler errorHandler,
+            IDataLoadingService dataLoadingService)
         {
             _partographRepository = partographRepository;
             _cervixDilatationRepository = cervixDilatationRepository;
             _headDescentRepository = headDescentRepository;
             _errorHandler = errorHandler;
+            _dataLoadingService = dataLoadingService;
         }
 
         [RelayCommand]
@@ -43,12 +52,67 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                await LoadData();
+                // UI renders first, then data loads with progress
+                if (_isInitialLoad)
+                {
+                    _isInitialLoad = false;
+                    await LoadDataWithProgress();
+                }
+                else
+                {
+                    // Subsequent loads can be faster without full progress UI
+                    await LoadData();
+                }
             }
             catch (Exception e)
             {
                 _errorHandler.HandleError(e);
             }
+        }
+
+        private async Task LoadDataWithProgress()
+        {
+            await _dataLoadingService.LoadDataWithProgressAsync(
+                "Loading Active Patients",
+                ("first stage patients", async () =>
+                {
+                    var firstStage = await _partographRepository.ListAsync(LaborStatus.FirstStage);
+                    _allPartographs = new List<Partograph>();
+                    _allPartographs.AddRange(firstStage ?? []);
+                }),
+                ("second stage patients", async () =>
+                {
+                    var secondStage = await _partographRepository.ListAsync(LaborStatus.SecondStage);
+                    _allPartographs.AddRange(secondStage ?? []);
+                }),
+                ("third stage patients", async () =>
+                {
+                    var thirdStage = await _partographRepository.ListAsync(LaborStatus.ThirdStage);
+                    _allPartographs.AddRange(thirdStage ?? []);
+                }),
+                ("fourth stage patients", async () =>
+                {
+                    var fourthStage = await _partographRepository.ListAsync(LaborStatus.FourthStage);
+                    _allPartographs.AddRange(fourthStage ?? []);
+                }),
+                ("emergency patients", async () =>
+                {
+                    var emergency = await _partographRepository.ListAsync(LaborStatus.Emergency);
+                    _allPartographs.AddRange(emergency ?? []);
+                }),
+                ("patient details", async () =>
+                {
+                    if (_allPartographs?.Count > 0)
+                    {
+                        foreach (var item in _allPartographs)
+                        {
+                            item.Dilatations = await _cervixDilatationRepository.ListByPatientAsync(item.ID);
+                            item.HeadDescents = await _headDescentRepository.ListByPatientAsync(item.ID);
+                        }
+                    }
+                    FilterPatients();
+                })
+            );
         }
 
         public async Task LoadData()

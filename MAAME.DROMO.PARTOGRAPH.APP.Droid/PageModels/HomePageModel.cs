@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Maui.Graphics;
 using System;
@@ -14,6 +15,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     {
         private readonly PartographRepository _partographRepository;
         private readonly ModalErrorHandler _errorHandler;
+        private readonly IDataLoadingService _dataLoadingService;
+        private bool _isInitialLoad = true;
 
         [ObservableProperty]
         private DashboardStats _dashboardStats = new();
@@ -42,10 +45,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private bool _hasCriticalPatients;
 
-        public HomePageModel(PartographRepository partographRepository, ModalErrorHandler errorHandler)
+        public HomePageModel(
+            PartographRepository partographRepository,
+            ModalErrorHandler errorHandler,
+            IDataLoadingService dataLoadingService)
         {
             _partographRepository = partographRepository;
             _errorHandler = errorHandler;
+            _dataLoadingService = dataLoadingService;
         }
 
         partial void OnDashboardStatsChanged(DashboardStats value)
@@ -60,6 +67,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (hour >= 7 && hour < 15) return "Morning Shift";
             if (hour >= 15 && hour < 23) return "Evening Shift";
             return "Night Shift";
+        }
+
+        private async Task LoadDataWithProgress()
+        {
+            await _dataLoadingService.LoadDataWithProgressAsync(
+                "Loading Dashboard",
+                ("dashboard statistics", async () =>
+                {
+                    DashboardStats = await _partographRepository.GetDashboardStatsAsync();
+                })
+            );
         }
 
         private async Task LoadData()
@@ -100,7 +118,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                await LoadData();
+                // UI renders first, then data loads with progress
+                if (_isInitialLoad)
+                {
+                    _isInitialLoad = false;
+                    await LoadDataWithProgress();
+                }
+                else
+                {
+                    await LoadData();
+                }
             }
             catch (Exception e)
             {

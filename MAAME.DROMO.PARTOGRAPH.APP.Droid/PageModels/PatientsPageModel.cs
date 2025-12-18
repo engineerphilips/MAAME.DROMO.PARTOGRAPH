@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     {
         private readonly PatientRepository _patientRepository;
         private readonly ModalErrorHandler _errorHandler;
+        private readonly IDataLoadingService _dataLoadingService;
+        private bool _isInitialLoad = true;
 
         [ObservableProperty]
         private List<Patient> _patients = [];
@@ -27,10 +30,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private List<Patient> _allPatients = [];
 
-        public PatientsPageModel(PatientRepository patientRepository, ModalErrorHandler errorHandler)
+        public PatientsPageModel(
+            PatientRepository patientRepository,
+            ModalErrorHandler errorHandler,
+            IDataLoadingService dataLoadingService)
         {
             _patientRepository = patientRepository;
             _errorHandler = errorHandler;
+            _dataLoadingService = dataLoadingService;
         }
 
         [RelayCommand]
@@ -38,12 +45,49 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                await LoadData();
+                // UI renders first, then data loads with progress
+                if (_isInitialLoad)
+                {
+                    _isInitialLoad = false;
+                    await LoadDataWithProgress();
+                }
+                else
+                {
+                    await LoadData();
+                }
             }
             catch (Exception e)
             {
                 _errorHandler.HandleError(e);
             }
+        }
+
+        private async Task LoadDataWithProgress()
+        {
+            await _dataLoadingService.LoadDataWithProgressAsync(
+                "Loading Patients",
+                ("patient records", async () =>
+                {
+                    _allPatients = await _patientRepository.ListAsync() ?? [];
+                }),
+                ("filtering data", async () =>
+                {
+                    await Task.Run(() =>
+                    {
+                        // Filter by facility if necessary
+                        var facilityId = Data.Constants.GetFacilityForFiltering();
+                        if (facilityId != null)
+                        {
+                            _allPatients = _allPatients.Where(p => p.Handler == facilityId || p.Handler == Data.Constants.Staff?.ID).ToList();
+                        }
+
+                        // Filter out deleted patients
+                        _allPatients = _allPatients.Where(p => p.Deleted == 0).ToList();
+
+                        FilterPatients();
+                    });
+                })
+            );
         }
 
         private async Task LoadData()

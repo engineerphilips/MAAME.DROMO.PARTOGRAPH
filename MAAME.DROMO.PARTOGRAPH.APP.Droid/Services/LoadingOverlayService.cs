@@ -17,10 +17,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         bool IsIndeterminate { get; }
 
         void Show(string message = "Loading...", bool isIndeterminate = true);
-        void UpdateProgress(double progress, string? message = null);
+        void ShowWithProgress(string message = "Loading data...", string subMessage = "Please wait...");
+        void UpdateProgress(double progress, string? message = null, string? subMessage = null);
         void Hide();
         Task ShowAsync(Func<Task> action, string message = "Loading...");
         Task<T> ShowAsync<T>(Func<Task<T>> action, string message = "Loading...");
+        Task ShowWithProgressAsync(Func<IProgress<(double progress, string? message)>, Task> action, string message = "Loading data...");
+        Task<T> ShowWithProgressAsync<T>(Func<IProgress<(double progress, string? message)>, Task<T>> action, string message = "Loading data...");
     }
 
     public class LoadingOverlayService : ILoadingOverlayService
@@ -70,7 +73,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     // Show popup if not already showing
                     if (_currentPopup == null)
                     {
-                        ShowPopup(message);
+                        ShowPopup(message, "Please wait...", showProgress: false);
                     }
                     else
                     {
@@ -80,7 +83,32 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             });
         }
 
-        private void ShowPopup(string message)
+        public void ShowWithProgress(string message = "Loading data...", string subMessage = "Please wait...")
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                lock (_lock)
+                {
+                    LoadingMessage = message;
+                    IsIndeterminate = false;
+                    Progress = 0;
+                    IsLoading = true;
+
+                    // Show popup with progress bar if not already showing
+                    if (_currentPopup == null)
+                    {
+                        ShowPopup(message, subMessage, showProgress: true);
+                    }
+                    else
+                    {
+                        _currentPopup.SetProgressMode(true);
+                        _currentPopup.UpdateProgress(0, message, subMessage);
+                    }
+                }
+            });
+        }
+
+        private void ShowPopup(string message, string subMessage, bool showProgress)
         {
             try
             {
@@ -93,7 +121,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     page = shell.CurrentPage ?? page;
                 }
 
-                _currentPopup = new LoadingPopup(message, "Please wait...");
+                _currentPopup = new LoadingPopup(message, subMessage, showProgress);
                 page.ShowPopup(_currentPopup);
             }
             catch (Exception ex)
@@ -102,7 +130,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             }
         }
 
-        public void UpdateProgress(double progress, string? message = null)
+        public void UpdateProgress(double progress, string? message = null, string? subMessage = null)
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -110,9 +138,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 if (message != null)
                 {
                     LoadingMessage = message;
-                    _currentPopup?.UpdateMessage(message);
                 }
                 IsIndeterminate = false;
+
+                // Update the popup with progress
+                _currentPopup?.UpdateProgress(Progress, message, subMessage);
             });
         }
 
@@ -166,6 +196,44 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             {
                 Show(message);
                 return await action();
+            }
+            finally
+            {
+                Hide();
+            }
+        }
+
+        public async Task ShowWithProgressAsync(Func<IProgress<(double progress, string? message)>, Task> action, string message = "Loading data...")
+        {
+            try
+            {
+                ShowWithProgress(message);
+
+                var progress = new Progress<(double progress, string? message)>(report =>
+                {
+                    UpdateProgress(report.progress, report.message);
+                });
+
+                await action(progress);
+            }
+            finally
+            {
+                Hide();
+            }
+        }
+
+        public async Task<T> ShowWithProgressAsync<T>(Func<IProgress<(double progress, string? message)>, Task<T>> action, string message = "Loading data...")
+        {
+            try
+            {
+                ShowWithProgress(message);
+
+                var progress = new Progress<(double progress, string? message)>(report =>
+                {
+                    UpdateProgress(report.progress, report.message);
+                });
+
+                return await action(progress);
             }
             finally
             {

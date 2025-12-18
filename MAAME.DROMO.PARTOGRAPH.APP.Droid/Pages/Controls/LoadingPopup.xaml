@@ -9,7 +9,7 @@
 
     <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}"
             Padding="30,25"
-            MinimumWidthRequest="220"
+            MinimumWidthRequest="280"
             HorizontalOptions="Center"
             VerticalOptions="Center">
         <Border.StrokeShape>
@@ -47,8 +47,46 @@
                    HorizontalOptions="Center"
                    HorizontalTextAlignment="Center" />
 
-            <!-- Activity Indicator -->
-            <ActivityIndicator IsRunning="True"
+            <!-- Progress Bar Container -->
+            <Grid x:Name="ProgressContainer"
+                  IsVisible="False"
+                  WidthRequest="220"
+                  HeightRequest="24">
+                <!-- Progress Bar Background -->
+                <Border BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                        HeightRequest="8"
+                        VerticalOptions="Center">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="4" />
+                    </Border.StrokeShape>
+                </Border>
+
+                <!-- Progress Bar Fill -->
+                <Border x:Name="ProgressFill"
+                        BackgroundColor="#2196F3"
+                        HeightRequest="8"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="4" />
+                    </Border.StrokeShape>
+                </Border>
+
+                <!-- Progress Percentage Label -->
+                <Label x:Name="ProgressPercentLabel"
+                       Text="0%"
+                       FontSize="11"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}"
+                       HorizontalOptions="End"
+                       VerticalOptions="End"
+                       Margin="0,0,0,-2" />
+            </Grid>
+
+            <!-- Activity Indicator (for indeterminate loading) -->
+            <ActivityIndicator x:Name="IndeterminateIndicator"
+                               IsRunning="True"
                                Color="#2196F3"
                                HeightRequest="36"
                                WidthRequest="36"
@@ -59,7 +97,8 @@
                    Text="Please wait..."
                    FontSize="13"
                    TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
-                   HorizontalOptions="Center" />
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
     </Border>
 

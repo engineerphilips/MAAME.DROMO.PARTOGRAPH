@@ -55,6 +55,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly BabyDetailsRepository _babyDetailsRepository;
         private readonly ModalErrorHandler _errorHandler;
         private readonly IPartographPdfService _pdfService;
+        private readonly IDataLoadingService _dataLoadingService;
+        private bool _isInitialLoad = true;
 
         [ObservableProperty]
         private List<CompletedPatientItem> _partographs = [];
@@ -72,6 +74,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private DateTime _selectedDate = DateTime.Today;
 
         private List<CompletedPatientItem> _allPatients = [];
+        private List<Partograph> _loadedPartographs = [];
 
         public CompletedPatientsPageModel(
             PatientRepository patientRepository,
@@ -79,7 +82,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             BirthOutcomeRepository birthOutcomeRepository,
             BabyDetailsRepository babyDetailsRepository,
             ModalErrorHandler errorHandler,
-            IPartographPdfService pdfService)
+            IPartographPdfService pdfService,
+            IDataLoadingService dataLoadingService)
         {
             _patientRepository = patientRepository;
             _partographRepository = partographRepository;
@@ -87,6 +91,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _babyDetailsRepository = babyDetailsRepository;
             _errorHandler = errorHandler;
             _pdfService = pdfService;
+            _dataLoadingService = dataLoadingService;
         }
 
         [RelayCommand]
@@ -94,12 +99,59 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                await LoadData();
+                // UI renders first, then data loads with progress
+                if (_isInitialLoad)
+                {
+                    _isInitialLoad = false;
+                    await LoadDataWithProgress();
+                }
+                else
+                {
+                    await LoadData();
+                }
             }
             catch (Exception e)
             {
                 _errorHandler.HandleError(e);
             }
+        }
+
+        private async Task LoadDataWithProgress()
+        {
+            var completedPatients = new List<CompletedPatientItem>();
+
+            await _dataLoadingService.LoadDataWithProgressAsync(
+                "Loading Completed Deliveries",
+                ("completed records", async () =>
+                {
+                    _loadedPartographs = await _partographRepository.ListAsync(LaborStatus.Completed);
+                }),
+                ("birth outcomes", async () =>
+                {
+                    foreach (var partograph in _loadedPartographs)
+                    {
+                        var birthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(partograph.ID);
+                        completedPatients.Add(new CompletedPatientItem
+                        {
+                            Partograph = partograph,
+                            BirthOutcome = birthOutcome,
+                            Babies = []
+                        });
+                    }
+                }),
+                ("baby details", async () =>
+                {
+                    foreach (var item in completedPatients)
+                    {
+                        if (item.BirthOutcome != null)
+                        {
+                            item.Babies = await _babyDetailsRepository.GetByBirthOutcomeIdAsync(item.BirthOutcome.ID);
+                        }
+                    }
+                    _allPatients = completedPatients;
+                    FilterPatients();
+                })
+            );
         }
 
         private async Task LoadData()
