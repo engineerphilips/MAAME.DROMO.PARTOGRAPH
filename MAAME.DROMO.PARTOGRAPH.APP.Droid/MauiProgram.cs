@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using FluentIcons.Maui;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MauiIcons.Fluent;
@@ -83,6 +84,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<BirthOutcomeRepository>();
             builder.Services.AddSingleton<BabyDetailsRepository>();
             builder.Services.AddSingleton<ReferralRepository>();
+            builder.Services.AddSingleton<FourthStageVitalsRepository>();
             // Keep existing repositories for compatibility during migration
             //builder.Services.AddSingleton<ProjectRepository>();
             //builder.Services.AddSingleton<TaskRepository>();
