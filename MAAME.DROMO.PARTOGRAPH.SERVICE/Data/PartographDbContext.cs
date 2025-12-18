@@ -101,10 +101,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.ServerVersion);
                 entity.HasIndex(e => e.PatientID);
 
-                // Foreign key to Patient - configure using both navigation properties
+                // Foreign key to Patient - explicit principal key to avoid shadow property
                 entity.HasOne(p => p.Patient)
                     .WithMany(p => p.PartographEntries)
                     .HasForeignKey(p => p.PatientID)
+                    .HasPrincipalKey(p => p.ID)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -253,10 +254,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.ServerVersion);
                 entity.HasIndex(e => e.RecordedTime);
 
-                // Foreign key to Partograph
+                // Foreign key to Partograph - explicit principal key to avoid shadow property
                 entity.HasOne(e => e.Partograph)
                     .WithMany()
                     .HasForeignKey(e => e.PartographID)
+                    .HasPrincipalKey(p => p.ID)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -283,16 +285,18 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.ServerVersion);
                 entity.HasIndex(e => e.BirthTime);
 
-                // Foreign key to Partograph
+                // Foreign key to Partograph - explicit principal key to avoid shadow property
                 entity.HasOne(e => e.Partograph)
                     .WithMany()
                     .HasForeignKey(e => e.PartographID)
+                    .HasPrincipalKey(p => p.ID)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                // Foreign key to BirthOutcome
+                // Foreign key to BirthOutcome - explicit principal key to avoid shadow property
                 entity.HasOne(e => e.BirthOutcome)
                     .WithMany()
                     .HasForeignKey(e => e.BirthOutcomeID)
+                    .HasPrincipalKey(b => b.ID)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -315,15 +319,20 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.ReferralTime);
                 entity.HasIndex(e => e.Status);
 
-                // Foreign key to Partograph
+                // Foreign key to Partograph - explicit principal key to avoid shadow property
                 entity.HasOne(e => e.Partograph)
                     .WithMany()
                     .HasForeignKey(e => e.PartographID)
+                    .HasPrincipalKey(p => p.ID)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configure Analytics Tables
             ConfigureAnalyticsTables(modelBuilder);
+
+            // Ignore types that are defined but not intended for database persistence
+            // EnhancedVitalSignEntry is defined in BasePartographMeasurement.cs but not used as a DbSet
+            modelBuilder.Ignore<EnhancedVitalSignEntry>();
         }
 
         private void ConfigureMeasurement<T>(ModelBuilder modelBuilder, string tableName) where T : BasePartographMeasurement
@@ -342,10 +351,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.ServerVersion);
                 entity.HasIndex(e => e.Time);
 
-                // Foreign key to Partograph - no navigation property reference
+                // Foreign key to Partograph - explicit principal key to avoid shadow property
                 entity.HasOne<Partograph>()
                     .WithMany()
                     .HasForeignKey(e => e.PartographID)
+                    .HasPrincipalKey(p => p.ID)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
@@ -366,10 +376,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.ServerVersion);
                 entity.HasIndex(e => e.Time);
 
-                // Foreign key to Partograph - with navigation property reference
+                // Foreign key to Partograph - explicit principal key to avoid shadow property
                 entity.HasOne<Partograph>()
                     .WithMany(navigationProperty)
                     .HasForeignKey(e => e.PartographID)
+                    .HasPrincipalKey(p => p.ID)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }

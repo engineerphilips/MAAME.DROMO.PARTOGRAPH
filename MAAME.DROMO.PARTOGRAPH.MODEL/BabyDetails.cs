@@ -122,9 +122,11 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Notes { get; set; } = string.Empty;
 
         // Navigation Properties
+        [ForeignKey("PartographID")]
         [JsonIgnore]
         public Partograph Partograph { get; set; }
 
+        [ForeignKey("BirthOutcomeID")]
         [JsonIgnore]
         public BirthOutcome BirthOutcome { get; set; }
 
