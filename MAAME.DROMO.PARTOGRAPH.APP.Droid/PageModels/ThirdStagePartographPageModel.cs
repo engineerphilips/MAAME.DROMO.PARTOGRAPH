@@ -439,10 +439,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                             IsPlacentaDelivered = true;
                         }
 
-                        if (birthOutcome.EstimatedBloodLoss.HasValue)
+                        if (birthOutcome.EstimatedBloodLoss > 0)
                         {
                             BloodLoss = $"{birthOutcome.EstimatedBloodLoss} mL";
-                            BloodLossColor = GetBloodLossColor(birthOutcome.EstimatedBloodLoss.Value);
+                            BloodLossColor = GetBloodLossColor(birthOutcome.EstimatedBloodLoss);
                         }
 
                         if (birthOutcome.OxytocinGivenPostDelivery)

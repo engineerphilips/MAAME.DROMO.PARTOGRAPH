@@ -137,7 +137,7 @@
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
                     <HorizontalStackLayout Spacing="8">
-                        <Label Text="{x:Static fonts:FluentUI.warning_16_filled}"
+                        <Label Text="{x:Static fonts:FluentUI.warning_16_regular}"
                                FontFamily="FluentUI"
                                FontSize="18"
                                TextColor="White"
@@ -159,7 +159,7 @@
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Third Stage Monitoring (WHO 2020)"
+                        <Label Text="Third Stage Monitoring"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#1E40AF, Dark=#DBEAFE}" />
@@ -178,8 +178,8 @@
                 <Border Style="{StaticResource ModernCardStyle}">
                     <VerticalStackLayout Spacing="12">
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="{x:Static fonts:FluentUI.heart_pulse_16_regular}"
-                                   FontFamily="FluentUI"
+                            <Label Text="{x:Static fonts:FluentUI.heart_pulse_20_regular}"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                    FontSize="18"
                                    TextColor="{StaticResource DangerRed}"
                                    VerticalOptions="Center" />

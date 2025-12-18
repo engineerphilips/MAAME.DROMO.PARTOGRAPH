@@ -578,92 +578,92 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private string GetFundalHeightDisplayText(FundalHeightStatus status) => status switch
         {
-            FundalHeightStatus.AtUmbilicus => "At umbilicus",
-            FundalHeightStatus.OneFingerBelow => "1 finger below",
-            FundalHeightStatus.TwoFingersBelow => "2 fingers below",
-            FundalHeightStatus.ThreeFingersBelow => "3 fingers below",
-            FundalHeightStatus.AboveUmbilicus => "Above umbilicus",
-            FundalHeightStatus.NotPalpable => "Not palpable",
+            MODEL.FundalHeightStatus.AtUmbilicus => "At umbilicus",
+            MODEL.FundalHeightStatus.OneFingerBelow => "1 finger below",
+            MODEL.FundalHeightStatus.TwoFingersBelow => "2 fingers below",
+            MODEL.FundalHeightStatus.ThreeFingersBelow => "3 fingers below",
+            MODEL.FundalHeightStatus.AboveUmbilicus => "Above umbilicus",
+            MODEL.FundalHeightStatus.NotPalpable => "Not palpable",
             _ => "Not recorded"
         };
 
         private string GetFundalHeightColor(FundalHeightStatus status) => status switch
         {
-            FundalHeightStatus.AtUmbilicus => "#4CAF50",
-            FundalHeightStatus.OneFingerBelow => "#4CAF50",
-            FundalHeightStatus.TwoFingersBelow => "#4CAF50",
-            FundalHeightStatus.ThreeFingersBelow => "#4CAF50",
-            FundalHeightStatus.AboveUmbilicus => "#F44336", // Concern
-            FundalHeightStatus.NotPalpable => "#F44336",
+            MODEL.FundalHeightStatus.AtUmbilicus => "#4CAF50",
+            MODEL.FundalHeightStatus.OneFingerBelow => "#4CAF50",
+            MODEL.FundalHeightStatus.TwoFingersBelow => "#4CAF50",
+            MODEL.FundalHeightStatus.ThreeFingersBelow => "#4CAF50",
+            MODEL.FundalHeightStatus.AboveUmbilicus => "#F44336", // Concern
+            MODEL.FundalHeightStatus.NotPalpable => "#F44336",
             _ => "#64748B"
         };
 
         private string GetFundalHeightStatusText(FundalHeightStatus status) => status switch
         {
-            FundalHeightStatus.AboveUmbilicus => "⚠️ Check for atony/full bladder",
-            FundalHeightStatus.NotPalpable => "⚠️ Urgent assessment needed",
+            MODEL.FundalHeightStatus.AboveUmbilicus => "⚠️ Check for atony/full bladder",
+            MODEL.FundalHeightStatus.NotPalpable => "⚠️ Urgent assessment needed",
             _ => "Normal"
         };
 
         private string GetBleedingDisplayText(BleedingStatus status) => status switch
         {
-            BleedingStatus.NormalLochia => "Normal lochia",
-            BleedingStatus.Minimal => "Minimal",
-            BleedingStatus.Moderate => "Moderate",
-            BleedingStatus.Heavy => "Heavy",
-            BleedingStatus.Excessive => "Excessive - PPH",
-            BleedingStatus.Clots => "Clots present",
+            MODEL.BleedingStatus.NormalLochia => "Normal lochia",
+            MODEL.BleedingStatus.Minimal => "Minimal",
+            MODEL.BleedingStatus.Moderate => "Moderate",
+            MODEL.BleedingStatus.Heavy => "Heavy",
+            MODEL.BleedingStatus.Excessive => "Excessive - PPH",
+            MODEL.BleedingStatus.Clots => "Clots present",
             _ => "Not recorded"
         };
 
         private string GetBleedingColor(BleedingStatus status) => status switch
         {
-            BleedingStatus.NormalLochia => "#4CAF50",
-            BleedingStatus.Minimal => "#4CAF50",
-            BleedingStatus.Moderate => "#FF9800",
-            BleedingStatus.Heavy => "#F44336",
-            BleedingStatus.Excessive => "#F44336",
-            BleedingStatus.Clots => "#FF9800",
+            MODEL.BleedingStatus.NormalLochia => "#4CAF50",
+            MODEL.BleedingStatus.Minimal => "#4CAF50",
+            MODEL.BleedingStatus.Moderate => "#FF9800",
+            MODEL.BleedingStatus.Heavy => "#F44336",
+            MODEL.BleedingStatus.Excessive => "#F44336",
+            MODEL.BleedingStatus.Clots => "#FF9800",
             _ => "#64748B"
         };
 
         private string GetBladderDisplayText(BladderStatus status) => status switch
         {
-            BladderStatus.Empty => "Empty",
-            BladderStatus.VoidedSpontaneously => "Voided spontaneously",
-            BladderStatus.Palpable => "Palpable",
-            BladderStatus.Distended => "Distended",
-            BladderStatus.Catheterized => "Catheterized",
+            MODEL.BladderStatus.Empty => "Empty",
+            MODEL.BladderStatus.VoidedSpontaneously => "Voided spontaneously",
+            MODEL.BladderStatus.Palpable => "Palpable",
+            MODEL.BladderStatus.Distended => "Distended",
+            MODEL.BladderStatus.Catheterized => "Catheterized",
             _ => "Not recorded"
         };
 
         private string GetBladderColor(BladderStatus status) => status switch
         {
-            BladderStatus.Empty => "#4CAF50",
-            BladderStatus.VoidedSpontaneously => "#4CAF50",
-            BladderStatus.Catheterized => "#4CAF50",
-            BladderStatus.Palpable => "#FF9800",
-            BladderStatus.Distended => "#F44336",
+            MODEL.BladderStatus.Empty => "#4CAF50",
+            MODEL.BladderStatus.VoidedSpontaneously => "#4CAF50",
+            MODEL.BladderStatus.Catheterized => "#4CAF50",
+            MODEL.BladderStatus.Palpable => "#FF9800",
+            MODEL.BladderStatus.Distended => "#F44336",
             _ => "#64748B"
         };
 
         private string GetUterineDisplayText(UterineStatus status) => status switch
         {
-            UterineStatus.Firm => "Firm",
-            UterineStatus.ModeratelyFirm => "Moderately firm",
-            UterineStatus.Soft => "Soft",
-            UterineStatus.Boggy => "Boggy - Atony",
-            UterineStatus.NotPalpable => "Not palpable",
+            MODEL.UterineStatus.Firm => "Firm",
+            MODEL.UterineStatus.ModeratelyFirm => "Moderately firm",
+            MODEL.UterineStatus.Soft => "Soft",
+            MODEL.UterineStatus.Boggy => "Boggy - Atony",
+            MODEL.UterineStatus.NotPalpable => "Not palpable",
             _ => "Not recorded"
         };
 
         private string GetUterineColor(UterineStatus status) => status switch
         {
-            UterineStatus.Firm => "#4CAF50",
-            UterineStatus.ModeratelyFirm => "#4CAF50",
-            UterineStatus.Soft => "#FF9800",
-            UterineStatus.Boggy => "#F44336",
-            UterineStatus.NotPalpable => "#F44336",
+            MODEL.UterineStatus.Firm => "#4CAF50",
+            MODEL.UterineStatus.ModeratelyFirm => "#4CAF50",
+            MODEL.UterineStatus.Soft => "#FF9800",
+            MODEL.UterineStatus.Boggy => "#F44336",
+            MODEL.UterineStatus.NotPalpable => "#F44336",
             _ => "#64748B"
         };
 
@@ -851,12 +851,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 FundalHeight = result;
                 var status = result switch
                 {
-                    "At umbilicus" => FundalHeightStatus.AtUmbilicus,
-                    "1 finger below" => FundalHeightStatus.OneFingerBelow,
-                    "2 fingers below" => FundalHeightStatus.TwoFingersBelow,
-                    "3 fingers below" => FundalHeightStatus.ThreeFingersBelow,
-                    "Above umbilicus (concern)" => FundalHeightStatus.AboveUmbilicus,
-                    _ => FundalHeightStatus.AtUmbilicus
+                    "At umbilicus" => MODEL.FundalHeightStatus.AtUmbilicus,
+                    "1 finger below" => MODEL.FundalHeightStatus.OneFingerBelow,
+                    "2 fingers below" => MODEL.FundalHeightStatus.TwoFingersBelow,
+                    "3 fingers below" => MODEL.FundalHeightStatus.ThreeFingersBelow,
+                    "Above umbilicus (concern)" => MODEL.FundalHeightStatus.AboveUmbilicus,
+                    _ => MODEL.FundalHeightStatus.AtUmbilicus
                 };
 
                 FundalHeightColor = GetFundalHeightColor(status);
@@ -1005,12 +1005,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private FundalHeightStatus ParseFundalHeight(string text) => text switch
         {
-            "At umbilicus" => FundalHeightStatus.AtUmbilicus,
-            "1 finger below" => FundalHeightStatus.OneFingerBelow,
-            "2 fingers below" => FundalHeightStatus.TwoFingersBelow,
-            "3 fingers below" => FundalHeightStatus.ThreeFingersBelow,
-            _ when text.Contains("Above") => FundalHeightStatus.AboveUmbilicus,
-            _ => FundalHeightStatus.AtUmbilicus
+            "At umbilicus" => MODEL.FundalHeightStatus.AtUmbilicus,
+            "1 finger below" => MODEL.FundalHeightStatus.OneFingerBelow,
+            "2 fingers below" => MODEL.FundalHeightStatus.TwoFingersBelow,
+            "3 fingers below" => MODEL.FundalHeightStatus.ThreeFingersBelow,
+            _ when text.Contains("Above") => MODEL.FundalHeightStatus.AboveUmbilicus,
+            _ => MODEL.FundalHeightStatus.AtUmbilicus
         };
 
         private BleedingStatus ParseBleedingStatus(string text) => text switch

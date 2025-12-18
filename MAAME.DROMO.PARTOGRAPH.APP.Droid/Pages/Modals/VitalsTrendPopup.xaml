@@ -17,13 +17,9 @@
 
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
-            <Grid BackgroundColor="{StaticResource PrimaryBlue}" Padding="15,12">
-                <Label Text="Vitals Trend History"
-                       VerticalOptions="Center"
-                       FontAttributes="Bold"
-                       FontSize="18"
-                       TextColor="White" />
-            </Grid>
+            <StackLayout>
+                <Label Text="Vitals Trend History" VerticalOptions="Center" Margin="15,15,0,0" />
+            </StackLayout>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>
 
@@ -70,7 +66,7 @@
                                                            FontAttributes="Bold"
                                                            TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
                                                     <Label Text="{Binding Time, StringFormat='{0:dd/MM}'}"
-                                                           FontSize="11"
+                                                           FontSize="12"
                                                            TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                                 </VerticalStackLayout>
 
@@ -94,7 +90,7 @@
                                                             </Label>
                                                         </Frame>
                                                         <Label Text="mmHg"
-                                                               FontSize="11"
+                                                               FontSize="12"
                                                                TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                                                VerticalOptions="Center" />
                                                     </HorizontalStackLayout>
@@ -110,7 +106,7 @@
                                                                    TextColor="#2E7D32" />
                                                         </Frame>
                                                         <Label Text="bpm"
-                                                               FontSize="11"
+                                                               FontSize="12"
                                                                TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                                                VerticalOptions="Center" />
                                                     </HorizontalStackLayout>
@@ -177,7 +173,7 @@
                                                            FontAttributes="Bold"
                                                            TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
                                                     <Label Text="{Binding Time, StringFormat='{0:dd/MM}'}"
-                                                           FontSize="11"
+                                                           FontSize="12"
                                                            TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                                                 </VerticalStackLayout>
 
@@ -194,7 +190,7 @@
                                                                TextColor="#E65100" />
                                                     </Frame>
                                                     <Label Text="{Binding FeverCategory}"
-                                                           FontSize="11"
+                                                           FontSize="12"
                                                            TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                                            VerticalOptions="Center" />
                                                 </HorizontalStackLayout>

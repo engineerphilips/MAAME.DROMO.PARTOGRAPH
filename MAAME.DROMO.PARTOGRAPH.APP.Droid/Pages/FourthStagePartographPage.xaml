@@ -11,7 +11,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <!-- Converters -->
-            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" /> 
             <converters:GramsToKilogramsConverter x:Key="GramsToKilogramsConverter" />
 
             <!-- Colors -->
@@ -90,7 +90,7 @@
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light=#1E293B, Dark=White}" />
                             <Label Text="{Binding PatientInfo}"
-                                   FontSize="13"
+                                   FontSize="14"
                                    TextColor="{AppThemeBinding Light=#475569, Dark=#E0E0E0}" />
                             <HorizontalStackLayout Spacing="16" Margin="0,8,0,0">
                                 <HorizontalStackLayout Spacing="4">
@@ -100,7 +100,7 @@
                                            TextColor="{StaticResource Purple}"
                                            VerticalOptions="Center" />
                                     <Label Text="{Binding FourthStageDuration}"
-                                           FontSize="13"
+                                           FontSize="14"
                                            FontAttributes="Bold"
                                            TextColor="{AppThemeBinding Light=#1E293B, Dark=White}" />
                                 </HorizontalStackLayout>
@@ -123,11 +123,11 @@
                                 <Label Text="STAGE 4"
                                        FontSize="16"
                                        FontAttributes="Bold"
-                                       TextColor="White"
+                                       TextColor="{StaticResource Purple}"
                                        HorizontalOptions="Center" />
                             </Border>
                             <Label Text="Postpartum (2hrs)"
-                                   FontSize="11"
+                                   FontSize="12"
                                    HorizontalOptions="Center"
                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#B0BEC5}"
                                    Margin="0,4,0,0" />
@@ -144,15 +144,13 @@
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
                     <HorizontalStackLayout Spacing="8">
-                        <Label Text="{x:Static fonts:FluentUI.warning_16_filled}"
+                        <Label Text="{x:Static fonts:FluentUI.warning_16_regular}"
                                FontFamily="FluentUI"
                                FontSize="18"
-                               TextColor="White"
                                VerticalOptions="Center" />
                         <Label Text="{Binding AlertMessage}"
-                               FontSize="13"
-                               FontAttributes="Bold"
-                               TextColor="White"
+                               FontSize="14"
+                               FontAttributes="Bold" 
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </Border>
@@ -166,7 +164,7 @@
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Fourth Stage Monitoring (WHO 2020)"
+                        <Label Text="Fourth Stage Monitoring"
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#6A1B9A, Dark=#E1BEE7}" />
@@ -193,8 +191,8 @@
                 <Border Style="{StaticResource ModernCardStyle}">
                     <VerticalStackLayout Spacing="12">
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="{x:Static fonts:FluentUI.heart_pulse_16_regular}"
-                                   FontFamily="FluentUI"
+                            <Label Text="{x:Static fonts:FluentUI.heart_pulse_20_regular}"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                    FontSize="18"
                                    TextColor="{StaticResource DangerRed}"
                                    VerticalOptions="Center" />
@@ -210,8 +208,7 @@
                                 </Border.StrokeShape>
                                 <Label Text="DUE NOW"
                                        FontSize="10"
-                                       FontAttributes="Bold"
-                                       TextColor="White" />
+                                       FontAttributes="Bold" />
                             </Border>
                         </HorizontalStackLayout>
 
@@ -226,7 +223,7 @@
                                            FontAttributes="Bold"
                                            TextColor="{Binding BpButtonColor}" />
                                     <Label Text="{Binding BpStatusText}"
-                                           FontSize="11"
+                                           FontSize="12"
                                            TextColor="{Binding BpButtonColor}"
                                            VerticalOptions="Center" />
                                 </HorizontalStackLayout>
@@ -253,7 +250,7 @@
                                            FontAttributes="Bold"
                                            TextColor="{Binding PulseButtonColor}" />
                                     <Label Text="{Binding PulseStatusText}"
-                                           FontSize="11"
+                                           FontSize="12"
                                            TextColor="{Binding PulseButtonColor}"
                                            VerticalOptions="Center" />
                                 </HorizontalStackLayout>
@@ -272,7 +269,7 @@
                                            FontAttributes="Bold"
                                            TextColor="{Binding TemperatureButtonColor}" />
                                     <Label Text="{Binding TemperatureStatusText}"
-                                           FontSize="11"
+                                           FontSize="12"
                                            TextColor="{Binding TemperatureButtonColor}"
                                            VerticalOptions="Center" />
                                 </HorizontalStackLayout>
@@ -295,12 +292,12 @@
                         <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
                                 StrokeThickness="1"
                                 Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
-                                Padding="10">
+                                Padding="0,10">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
                             <HorizontalStackLayout Spacing="16">
-                                <Label FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}">
+                                <Label FontSize="12" TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" HorizontalOptions="Start">
                                     <Label.FormattedText>
                                         <FormattedString>
                                             <Span Text="Last: " />
@@ -337,7 +334,7 @@
                                    FontAttributes="Bold"
                                    TextColor="{Binding FundalHeightColor}" />
                             <Label Text="{Binding FundalHeightStatus}"
-                                   FontSize="11"
+                                   FontSize="12"
                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                             <Button Text="Update"
                                     Command="{Binding UpdateFundalHeightCommand}"
@@ -356,7 +353,7 @@
                                    FontAttributes="Bold"
                                    TextColor="{Binding BleedingStatusColor}" />
                             <Label Text="{Binding EstimatedBloodLoss}"
-                                   FontSize="11"
+                                   FontSize="12"
                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                             <Button Text="Update"
                                     Command="{Binding UpdateBleedingStatusCommand}"
@@ -375,7 +372,7 @@
                                    FontAttributes="Bold"
                                    TextColor="{Binding BladderStatusColor}" />
                             <Label Text="Should be empty"
-                                   FontSize="11"
+                                   FontSize="12"
                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                             <Button Text="Update"
                                     Command="{Binding UpdateBladderStatusCommand}"
@@ -394,7 +391,7 @@
                                    FontAttributes="Bold"
                                    TextColor="{Binding UterineStatusColor}" />
                             <Label Text="Should be firm"
-                                   FontSize="11"
+                                   FontSize="12"
                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                             <Button Text="Update"
                                     Command="{Binding UpdateUterineStatusCommand}"
@@ -421,35 +418,35 @@
 
                         <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
                             <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
-                                <Label Text="{x:Static fonts:FluentUI.checkmark_circle_16_filled}"
-                                       FontFamily="FluentUI"
+                                <Label Text="{x:Static fonts:FluentUI.checkmark_circle_16_regular}"
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                        FontSize="24"
                                        TextColor="{Binding SkinToSkinInitiated, Converter={StaticResource IsNotNullConverter}, ConverterParameter='#4CAF50|#9E9E9E'}"
                                        HorizontalOptions="Center" />
                                 <Label Text="Skin-to-skin"
-                                       FontSize="11"
+                                       FontSize="12"
                                        HorizontalOptions="Center"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                             </VerticalStackLayout>
-                            <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
-                                <Label Text="{x:Static fonts:FluentUI.checkmark_circle_16_filled}"
-                                       FontFamily="FluentUI"
+                            <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="4">
+                                <Label Text="{x:Static fonts:FluentUI.checkmark_circle_16_regular}"
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                        FontSize="24"
                                        TextColor="{Binding BreastfeedingInitiated, Converter={StaticResource IsNotNullConverter}, ConverterParameter='#4CAF50|#9E9E9E'}"
                                        HorizontalOptions="Center" />
                                 <Label Text="Breastfeeding"
-                                       FontSize="11"
+                                       FontSize="12"
                                        HorizontalOptions="Center"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                             </VerticalStackLayout>
-                            <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
-                                <Label Text="{x:Static fonts:FluentUI.checkmark_circle_16_filled}"
-                                       FontFamily="FluentUI"
+                            <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="4">
+                                <Label Text="{x:Static fonts:FluentUI.checkmark_circle_16_regular}"
+                                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                        FontSize="24"
                                        TextColor="{Binding BabyVitalsStable, Converter={StaticResource IsNotNullConverter}, ConverterParameter='#4CAF50|#9E9E9E'}"
                                        HorizontalOptions="Center" />
                                 <Label Text="Baby stable"
-                                       FontSize="11"
+                                       FontSize="12"
                                        HorizontalOptions="Center"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
                             </VerticalStackLayout>
@@ -471,21 +468,22 @@
                                         <Grid ColumnDefinitions="*,Auto">
                                             <HorizontalStackLayout Spacing="12">
                                                 <Label Text="{Binding BabyTag}"
-                                                       FontSize="14"
+                                                       FontSize="16"
                                                        FontAttributes="Bold"
                                                        TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}"
                                                        VerticalOptions="Center" />
                                                 <Label Text="{Binding Sex}"
-                                                       FontSize="12"
+                                                       FontSize="16"
                                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                                        VerticalOptions="Center" />
-                                                <Label FontSize="12"
+                                                <Label FontSize="16"
                                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                                        VerticalOptions="Center">
                                                     <Label.FormattedText>
                                                         <FormattedString>
-                                                            <Span Text="{Binding BirthWeight, Converter={StaticResource GramsToKilogramsConverter}}" />
-                                                            <Span Text=" kg" />
+                                                            <!--, Converter={StaticResource GramsToKilogramsConverter}-->
+                                                            <Span Text="{Binding BirthWeight}" />
+                                                            <Span Text="kg" />
                                                         </FormattedString>
                                                     </Label.FormattedText>
                                                 </Label>
@@ -498,7 +496,7 @@
                                                     TextColor="White"
                                                     HeightRequest="30"
                                                     CornerRadius="6"
-                                                    FontSize="11"
+                                                    FontSize="14"
                                                     Padding="10,4" />
                                         </Grid>
                                     </Border>
@@ -536,13 +534,14 @@
                 </Border>
 
                 <!-- Action Button -->
-                <Button Text="Complete Delivery &amp; Transfer to Postpartum Ward"
+                <!--&amp; Transfer to Postpartum Ward-->
+                <Button Text="Complete Delivery"
                         Command="{Binding CompleteDeliveryCommand}"
                         BackgroundColor="{StaticResource SuccessGreen}"
                         TextColor="White"
                         FontSize="15"
                         FontAttributes="Bold"
-                        HeightRequest="54"
+                        HeightRequest="45"
                         CornerRadius="12"
                         Margin="0,8,0,20"
                         IsEnabled="{Binding CanComplete}" />
@@ -564,7 +563,7 @@
                                   StaysOpen="True"
                                   ShowCloseButton="True"
                                   WidthRequest="320"
-                                  HeightRequest="450"
+                                  HeightRequest="600"
                                   HeaderHeight="50" />
 
         <modals:VitalsTrendPopup x:Name="VitalsTrendPopup"
