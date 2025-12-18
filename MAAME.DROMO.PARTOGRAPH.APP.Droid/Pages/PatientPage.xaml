@@ -205,6 +205,32 @@
                                         MaximumDate="{StaticResource Today}" />
                         </core:SfTextInputLayout>
 
+
+                        <Grid Grid.Column="0">
+                            <core:SfTextInputLayout Hint="Date of Birth *"
+                                                    Style="{StaticResource PatientInput}">
+                                <Entry Text="{Binding DateOfBirth, Mode=OneWay, StringFormat='{0:dd-MM-yyyy}'}"
+                                       IsReadOnly="True" />
+                            </core:SfTextInputLayout>
+                            <BoxView Color="Transparent" InputTransparent="False">
+                                <BoxView.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="DateOfBirthPicker_Tapped" />
+                                </BoxView.GestureRecognizers>
+                            </BoxView>
+                        </Grid>
+                        <picker:SfDatePicker x:Name="DateOfBirthPicker"
+                                             SelectedDate="{Binding DateOfBirth, Mode=TwoWay}"
+                                             Format="dd_MM_yyyy"
+                                             MinimumDate="01/01/1950"
+                                             MaximumDate="{StaticResource Today}"
+                                             Mode="Dialog"
+                                             IsVisible="False">
+                            <picker:SfDatePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Date of Birth *"
+                                                         Background="{StaticResource PrimaryBlue}" />
+                            </picker:SfDatePicker.HeaderView>
+                        </picker:SfDatePicker>
+                        
                         <core:SfTextInputLayout Grid.Column="1"
                                                 Hint="Age *"
                                                 Style="{StaticResource PatientInput}">
@@ -550,6 +576,56 @@
                                         MinimumDate="01/01/1950"
                                         MaximumDate="{StaticResource Today}" />
                         </core:SfTextInputLayout>
+                        <Grid Grid.Column="0">
+                            <core:SfTextInputLayout Hint="Estimated Delivery Date *"
+                                                    Style="{StaticResource PatientInput}"
+                                                    HelperText="EDD or LMP required">
+                                <Entry Text="{Binding ExpectedDeliveryDate, Mode=OneWay, StringFormat='{0:dd-MM-yyyy}'}"
+                                       IsReadOnly="True" />
+                            </core:SfTextInputLayout>
+                            <BoxView Color="Transparent" InputTransparent="False">
+                                <BoxView.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="EDDPicker_Tapped" />
+                                </BoxView.GestureRecognizers>
+                            </BoxView>
+                        </Grid>
+                        <picker:SfDatePicker x:Name="EDDPicker"
+                                             SelectedDate="{Binding ExpectedDeliveryDate, Mode=TwoWay}"
+                                             Format="dd_MM_yyyy"
+                                             MinimumDate="01/01/1950"
+                                             Mode="Dialog"
+                                             IsVisible="False">
+                            <picker:SfDatePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Estimated Delivery Date *"
+                                                         Background="{StaticResource PrimaryBlue}" />
+                            </picker:SfDatePicker.HeaderView>
+                        </picker:SfDatePicker>
+
+                        <Grid Grid.Column="1">
+                            <core:SfTextInputLayout Hint="Last Menstrual Date *"
+                                                    Style="{StaticResource PatientInput}"
+                                                    HelperText="EDD or LMP required">
+                                <Entry Text="{Binding LastMenstrualDate, Mode=OneWay, StringFormat='{0:dd-MM-yyyy}'}"
+                                       IsReadOnly="True" />
+                            </core:SfTextInputLayout>
+                            <BoxView Color="Transparent" InputTransparent="False">
+                                <BoxView.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="LMPPicker_Tapped" />
+                                </BoxView.GestureRecognizers>
+                            </BoxView>
+                        </Grid>
+                        <picker:SfDatePicker x:Name="LMPPicker"
+                                             SelectedDate="{Binding LastMenstrualDate, Mode=TwoWay}"
+                                             Format="dd_MM_yyyy"
+                                             MinimumDate="01/01/1950"
+                                             MaximumDate="{StaticResource Today}"
+                                             Mode="Dialog"
+                                             IsVisible="False">
+                            <picker:SfDatePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Last Menstrual Date *"
+                                                         Background="{StaticResource PrimaryBlue}" />
+                            </picker:SfDatePicker.HeaderView>
+                        </picker:SfDatePicker>
                     </Grid>
 
                     <!-- Gestational Age Display -->
@@ -661,6 +737,52 @@
                             <TimePicker Time="{Binding LaborStartTime, Mode=TwoWay}"
                                         Format="HH:mm" />
                         </core:SfTextInputLayout>
+                        <Grid Grid.Column="0">
+                            <core:SfTextInputLayout Hint="Date *"
+                                                    Style="{StaticResource PatientInput}">
+                                <Entry Text="{Binding LaborStartDate, Mode=OneWay, StringFormat='{0:dd-MM-yyyy}'}"
+                                       IsReadOnly="True" />
+                            </core:SfTextInputLayout>
+                            <BoxView Color="Transparent" InputTransparent="False">
+                                <BoxView.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="LaborStartDatePicker_Tapped" />
+                                </BoxView.GestureRecognizers>
+                            </BoxView>
+                        </Grid>
+                        <picker:SfDatePicker x:Name="LaborStartDatePicker"
+                                             SelectedDate="{Binding LaborStartDate, Mode=TwoWay}"
+                                             Format="dd_MM_yyyy"
+                                             MinimumDate="01/01/1950"
+                                             Mode="Dialog"
+                                             IsVisible="False">
+                            <picker:SfDatePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Labour Start Date *"
+                                                         Background="{StaticResource PrimaryBlue}" />
+                            </picker:SfDatePicker.HeaderView>
+                        </picker:SfDatePicker>
+
+                        <Grid Grid.Column="1">
+                            <core:SfTextInputLayout Hint="Time *"
+                                                    Style="{StaticResource PatientInput}">
+                                <Entry Text="{Binding LaborStartTime, Mode=OneWay, StringFormat='{0:hh\\:mm}'}"
+                                       IsReadOnly="True" />
+                            </core:SfTextInputLayout>
+                            <BoxView Color="Transparent" InputTransparent="False">
+                                <BoxView.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="LaborStartTimePicker_Tapped" />
+                                </BoxView.GestureRecognizers>
+                            </BoxView>
+                        </Grid>
+                        <picker:SfTimePicker x:Name="LaborStartTimePicker"
+                                             SelectedTime="{Binding LaborStartTime, Mode=TwoWay}"
+                                             Format="HH_mm"
+                                             Mode="Dialog"
+                                             IsVisible="False">
+                            <picker:SfTimePicker.HeaderView>
+                                <picker:PickerHeaderView Text="Labour Start Time *"
+                                                         Background="{StaticResource PrimaryBlue}" />
+                            </picker:SfTimePicker.HeaderView>
+                        </picker:SfTimePicker>
                     </Grid>
 
                     <!-- Active Labour Diagnosis -->
@@ -730,6 +852,52 @@
                                     <TimePicker Time="{Binding RupturedMembraneTime, Mode=TwoWay}"
                                                 Format="HH:mm" />
                                 </core:SfTextInputLayout>
+                                <Grid Grid.Column="0">
+                                    <core:SfTextInputLayout Hint="Rupture Date"
+                                                            Style="{StaticResource PatientInput}">
+                                        <Entry Text="{Binding RupturedMembraneDate, Mode=OneWay, StringFormat='{0:dd-MM-yyyy}'}"
+                                               IsReadOnly="True" />
+                                    </core:SfTextInputLayout>
+                                    <BoxView Color="Transparent" InputTransparent="False">
+                                        <BoxView.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="RuptureDatePicker_Tapped" />
+                                        </BoxView.GestureRecognizers>
+                                    </BoxView>
+                                </Grid>
+                                <picker:SfDatePicker x:Name="RuptureDatePicker"
+                                                     SelectedDate="{Binding RupturedMembraneDate, Mode=TwoWay}"
+                                                     Format="dd_MM_yyyy"
+                                                     MinimumDate="01/01/1950"
+                                                     Mode="Dialog"
+                                                     IsVisible="False">
+                                    <picker:SfDatePicker.HeaderView>
+                                        <picker:PickerHeaderView Text="Rupture Date"
+                                                                 Background="{StaticResource PrimaryBlue}" />
+                                    </picker:SfDatePicker.HeaderView>
+                                </picker:SfDatePicker>
+
+                                <Grid Grid.Column="1">
+                                    <core:SfTextInputLayout Hint="Rupture Time"
+                                                            Style="{StaticResource PatientInput}">
+                                        <Entry Text="{Binding RupturedMembraneTime, Mode=OneWay, StringFormat='{0:hh\\:mm}'}"
+                                               IsReadOnly="True" />
+                                    </core:SfTextInputLayout>
+                                    <BoxView Color="Transparent" InputTransparent="False">
+                                        <BoxView.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="RuptureTimePicker_Tapped" />
+                                        </BoxView.GestureRecognizers>
+                                    </BoxView>
+                                </Grid>
+                                <picker:SfTimePicker x:Name="RuptureTimePicker"
+                                                     SelectedTime="{Binding RupturedMembraneTime, Mode=TwoWay}"
+                                                     Format="HH_mm"
+                                                     Mode="Dialog"
+                                                     IsVisible="False">
+                                    <picker:SfTimePicker.HeaderView>
+                                        <picker:PickerHeaderView Text="Rupture Time"
+                                                                 Background="{StaticResource PrimaryBlue}" />
+                                    </picker:SfTimePicker.HeaderView>
+                                </picker:SfTimePicker>
                             </Grid>
                         </StackLayout>
                     </Border>
