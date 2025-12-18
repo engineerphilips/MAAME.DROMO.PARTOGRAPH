@@ -7,10 +7,17 @@
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:pickers="clr-namespace:Syncfusion.Maui.Picker;assembly=Syncfusion.Maui.Picker"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.DeliveryMomentPopup"
-                 xmlns:sys="clr-namespace:System;assembly=netstandard">
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
+             xmlns:sys="clr-namespace:System;assembly=netstandard">
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+            <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+            <converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:PercentageToDecimalConverter x:Key="PercentageToDecimalConverter" />
+            
             <Style x:Key="SectionTitle" TargetType="Label">
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="FontAttributes" Value="Bold" />

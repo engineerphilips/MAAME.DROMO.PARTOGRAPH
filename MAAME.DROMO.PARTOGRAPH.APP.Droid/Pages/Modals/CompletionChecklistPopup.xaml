@@ -3,10 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.CompletionChecklistPopup">
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+            <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+            <converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:PercentageToDecimalConverter x:Key="PercentageToDecimalConverter" />
+
             <Style x:Key="SectionTitle" TargetType="Label">
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="FontAttributes" Value="Bold" />
@@ -76,7 +83,7 @@
                                    VerticalOptions="Center"
                                    TextColor="#666" />
                         </Grid>
-                        <ProgressBar Progress="{Binding ChecklistProgress, Converter={StaticResource PercentToDecimalConverter}}"
+                        <ProgressBar Progress="{Binding ChecklistProgress, Converter={StaticResource PercentageToDecimalConverter}}"
                                      ProgressColor="{Binding CanComplete, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#4CAF50|#FF9800'}"
                                      HeightRequest="8" />
                     </VerticalStackLayout>

@@ -6,6 +6,7 @@
              xmlns:fonts="clr-namespace:Fonts"
              xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              xmlns:modals="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              Title="Third Stage Partograph">
 
     <ContentPage.Resources>

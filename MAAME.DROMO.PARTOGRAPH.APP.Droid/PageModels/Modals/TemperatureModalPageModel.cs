@@ -55,9 +55,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             set
             {
                 SetProperty(ref _temperatureCelsius, value);
-                AutoCalculateTemperatureFields();
+                //AutoCalculateTemperatureFields();
             }
         }
+
+        //partial void OnTemperatureCelsiusChanged(string value)
+        //{
+        //    // Safe - won't re-trigger if value unchanged
+        //    AutoCalculateTemperatureFields();
+        //}
 
         [ObservableProperty]
         private string _measurementSite = "Oral";
