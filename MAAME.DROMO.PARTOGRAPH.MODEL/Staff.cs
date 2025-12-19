@@ -11,16 +11,21 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
     public class Staff
     {
         public Guid? ID { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string StaffID { get; set; }
+        public string StaffID { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string Role { get; set; } = "Midwife"; // Doctor, Midwife, Nurse
+        public string Role { get; set; } = "Midwife"; // Doctor, Midwife, Nurse, Admin
         public string Department { get; set; } = "Labor Ward";
-        public string Password { get; set; } = string.Empty; // Should be hashed
+        public string Password { get; set; } = string.Empty; // Legacy - use PasswordHash
+        public string? PasswordHash { get; set; } // Hashed password for authentication
         public DateTime LastLogin { get; set; }
+        public long LastLoginTime { get; set; } // Unix timestamp for sync
         public bool IsActive { get; set; } = true;
 
         public Guid? Facility { get; set; }
+        public Guid? FacilityID { get; set; } // Alternative property name
         public string FacilityName { get; set; } = string.Empty;
         // Sync columns
         public long CreatedTime { get; set; }

@@ -63,14 +63,48 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [IgnoreDataMember]
         public bool NeedsSync => SyncStatus == 0;
 
+        /// <summary>
+        /// Calculates a comprehensive hash of all relevant patient fields for change detection.
+        /// This hash is used during sync to detect if the record has been modified.
+        /// </summary>
         public string CalculateHash()
         {
-            var data = $"{ID}|{Handler}";
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
-            {
-                var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
-                return Convert.ToBase64String(hashBytes);
-            }
+            // Include all fields that should trigger a sync when changed
+            var dataBuilder = new StringBuilder();
+            dataBuilder.Append($"{ID}|");
+            dataBuilder.Append($"{FirstName}|");
+            dataBuilder.Append($"{LastName}|");
+            dataBuilder.Append($"{HospitalNumber}|");
+            dataBuilder.Append($"{DateOfBirth}|");
+            dataBuilder.Append($"{Age}|");
+            dataBuilder.Append($"{BloodGroup}|");
+            dataBuilder.Append($"{PhoneNumber}|");
+            dataBuilder.Append($"{Address}|");
+            dataBuilder.Append($"{EmergencyContactName}|");
+            dataBuilder.Append($"{EmergencyContactPhone}|");
+            dataBuilder.Append($"{EmergencyContactRelationship}|");
+            dataBuilder.Append($"{Weight}|");
+            dataBuilder.Append($"{Height}|");
+            dataBuilder.Append($"{HasPreviousCSection}|");
+            dataBuilder.Append($"{NumberOfPreviousCsections}|");
+            dataBuilder.Append($"{LiveBirths}|");
+            dataBuilder.Append($"{Stillbirths}|");
+            dataBuilder.Append($"{NeonatalDeaths}|");
+            dataBuilder.Append($"{Handler}|");
+            dataBuilder.Append($"{UpdatedTime}");
+
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(dataBuilder.ToString()));
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        /// <summary>
+        /// Updates the DataHash property with the current hash value.
+        /// Call this before saving the record.
+        /// </summary>
+        public void UpdateDataHash()
+        {
+            DataHash = CalculateHash();
         }
 
         // Navigation Properties
