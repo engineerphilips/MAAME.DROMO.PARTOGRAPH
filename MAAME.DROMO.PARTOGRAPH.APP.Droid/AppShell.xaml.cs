@@ -1,12 +1,16 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
+using Microsoft.Extensions.Logging;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 {
     public partial class AppShell : Shell
     {
         private readonly ILoadingOverlayService? _loadingService;
+        private readonly BackgroundSyncService? _backgroundSyncService;
+        private readonly IConnectivityService? _connectivityService;
+        private readonly ILogger<AppShell>? _logger;
 
         public AppShell()
         {
@@ -24,12 +28,77 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             // Get loading overlay service for navigation transitions
             _loadingService = IPlatformApplication.Current!.Services.GetService<ILoadingOverlayService>();
 
+            // Get sync services
+            _backgroundSyncService = IPlatformApplication.Current!.Services.GetService<BackgroundSyncService>();
+            _connectivityService = IPlatformApplication.Current!.Services.GetService<IConnectivityService>();
+            _logger = IPlatformApplication.Current!.Services.GetService<ILogger<AppShell>>();
+
             // Subscribe to navigation events for loading indicator
             Navigating += OnShellNavigating;
             Navigated += OnShellNavigated;
 
             // Register additional routes
             RegisterRoutes();
+
+            // Initialize sync services after shell is loaded
+            InitializeSyncServicesAsync();
+        }
+
+        /// <summary>
+        /// Initializes background sync services when the app shell loads.
+        /// This starts the periodic sync timer and triggers an initial sync if connected.
+        /// </summary>
+        private async void InitializeSyncServicesAsync()
+        {
+            try
+            {
+                // Small delay to allow app to fully initialize
+                await Task.Delay(500);
+
+                if (_backgroundSyncService == null)
+                {
+                    _logger?.LogWarning("BackgroundSyncService not available");
+                    return;
+                }
+
+                // Start the background sync service (enables periodic sync timer)
+                _backgroundSyncService.Start();
+                _logger?.LogInformation("Background sync service started");
+
+                // Check if we have connectivity and trigger initial sync
+                if (_connectivityService?.IsConnected == true)
+                {
+                    _logger?.LogInformation("Network available, triggering initial sync");
+
+                    // Trigger initial sync in background (don't block UI)
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _backgroundSyncService.TriggerSyncAsync();
+                            _logger?.LogInformation("Initial sync completed");
+
+                            // Show toast on main thread
+                            MainThread.BeginInvokeOnMainThread(async () =>
+                            {
+                                await DisplayToastAsync("Sync completed");
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger?.LogError(ex, "Initial sync failed");
+                        }
+                    });
+                }
+                else
+                {
+                    _logger?.LogInformation("No network connectivity, sync will start when connected");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Failed to initialize sync services");
+            }
         }
 
         private void OnShellNavigating(object? sender, ShellNavigatingEventArgs e)

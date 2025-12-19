@@ -81,6 +81,16 @@ public class BackgroundSyncService : IDisposable
     }
 
     /// <summary>
+    /// Gets whether the sync service is currently running
+    /// </summary>
+    public bool IsRunning => _syncTimer != null;
+
+    /// <summary>
+    /// Gets the last sync result
+    /// </summary>
+    public SyncResult? LastSyncResult { get; private set; }
+
+    /// <summary>
     /// Starts the background sync service
     /// </summary>
     public void Start()
@@ -97,6 +107,20 @@ public class BackgroundSyncService : IDisposable
 
         var interval = TimeSpan.FromMinutes(_syncIntervalMinutes);
         _syncTimer = new Timer(OnSyncTimerElapsed, null, interval, interval);
+    }
+
+    /// <summary>
+    /// Starts the background sync service and triggers an immediate sync
+    /// </summary>
+    public async Task StartWithImmediateSyncAsync()
+    {
+        Start();
+
+        if (_connectivityService.IsConnected)
+        {
+            _logger.LogInformation("Starting immediate sync on app startup");
+            await PerformFullSyncAsync();
+        }
     }
 
     /// <summary>
@@ -163,6 +187,7 @@ public class BackgroundSyncService : IDisposable
             _logger.LogInformation("Starting background sync with {Count} pending changes", pendingCount);
 
             var result = await _syncService.SyncAsync();
+            LastSyncResult = result;
 
             if (result.Success)
             {
@@ -183,6 +208,56 @@ public class BackgroundSyncService : IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error during background sync");
+        }
+    }
+
+    /// <summary>
+    /// Performs a full sync operation (push and pull) regardless of pending changes.
+    /// This is used for initial sync on app startup to ensure data is up-to-date.
+    /// </summary>
+    private async Task PerformFullSyncAsync()
+    {
+        try
+        {
+            // Check if already syncing
+            if (_syncService.IsSyncing)
+            {
+                _logger.LogInformation("Sync already in progress, skipping full sync");
+                return;
+            }
+
+            // Check connectivity
+            if (!_connectivityService.IsConnected)
+            {
+                _logger.LogInformation("No connectivity, skipping full sync");
+                return;
+            }
+
+            _logger.LogInformation("Starting full sync on app startup");
+
+            var result = await _syncService.SyncAsync();
+            LastSyncResult = result;
+
+            if (result.Success)
+            {
+                _logger.LogInformation(
+                    "Full sync completed successfully: Pushed={Pushed}, Pulled={Pulled}, Duration={Duration}ms",
+                    result.TotalPushed,
+                    result.TotalPulled,
+                    result.Duration?.TotalMilliseconds ?? 0
+                );
+            }
+            else
+            {
+                _logger.LogWarning(
+                    "Full sync completed with errors: {Errors}",
+                    string.Join(", ", result.ErrorMessages)
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during full sync");
         }
     }
 
