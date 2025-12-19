@@ -9,8 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Server=DATABASE-SERVER;Port=1433;InitialCatalog=MAAMEDROMODb;IntegratedSecurity=false;User=sa;Password=.server1;TrustServerCertificate=true;"; // "Server=database-server;Database=MAAMEBROMODb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False";
+//builder.Services.AddDbContext<PartographDbContext>(options =>
+//    options.UseSqlServer(connectionString));
+
 builder.Services.AddDbContext<PartographDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(ConnectionManager.ConnectionConnectionString.ToString()));
 
 // Register services
 builder.Services.AddScoped<IPartographPdfService, PartographPdfService>();

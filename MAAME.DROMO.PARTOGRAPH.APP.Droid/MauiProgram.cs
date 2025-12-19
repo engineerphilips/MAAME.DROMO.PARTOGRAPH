@@ -111,7 +111,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             {
                 // Configure API base URL from preferences or use default
                 // var apiUrl = Preferences.Get("SyncApiUrl", "https://api.partograph.example.com");
-                client.BaseAddress = new Uri("https://localhost:7193/");
+                client.BaseAddress = new Uri("https://192.168.100.4:5218/");
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
             builder.Services.AddSingleton<ISyncService, SyncService>();

@@ -206,7 +206,7 @@
                         </core:SfTextInputLayout>
 
 
-                        <Grid Grid.Column="0">
+                        <!--<Grid Grid.Column="0">
                             <core:SfTextInputLayout Hint="Date of Birth *"
                                                     Style="{StaticResource PatientInput}">
                                 <Entry Text="{Binding DateOfBirth, Mode=OneWay, StringFormat='{0:dd-MM-yyyy}'}"
@@ -229,7 +229,7 @@
                                 <picker:PickerHeaderView Text="Date of Birth *"
                                                          Background="{StaticResource PrimaryBlue}" />
                             </picker:SfDatePicker.HeaderView>
-                        </picker:SfDatePicker>
+                        </picker:SfDatePicker>-->
                         
                         <core:SfTextInputLayout Grid.Column="1"
                                                 Hint="Age *"
@@ -576,7 +576,7 @@
                                         MinimumDate="01/01/1950"
                                         MaximumDate="{StaticResource Today}" />
                         </core:SfTextInputLayout>
-                        <Grid Grid.Column="0">
+                        <!--<Grid Grid.Column="0">
                             <core:SfTextInputLayout Hint="Estimated Delivery Date *"
                                                     Style="{StaticResource PatientInput}"
                                                     HelperText="EDD or LMP required">
@@ -588,8 +588,8 @@
                                     <TapGestureRecognizer Tapped="EDDPicker_Tapped" />
                                 </BoxView.GestureRecognizers>
                             </BoxView>
-                        </Grid>
-                        <picker:SfDatePicker x:Name="EDDPicker"
+                        </Grid>-->
+                        <!--<picker:SfDatePicker x:Name="EDDPicker"
                                              SelectedDate="{Binding ExpectedDeliveryDate, Mode=TwoWay}"
                                              Format="dd_MM_yyyy"
                                              MinimumDate="01/01/1950"
@@ -599,9 +599,9 @@
                                 <picker:PickerHeaderView Text="Estimated Delivery Date *"
                                                          Background="{StaticResource PrimaryBlue}" />
                             </picker:SfDatePicker.HeaderView>
-                        </picker:SfDatePicker>
+                        </picker:SfDatePicker>-->
 
-                        <Grid Grid.Column="1">
+                        <!--<Grid Grid.Column="1">
                             <core:SfTextInputLayout Hint="Last Menstrual Date *"
                                                     Style="{StaticResource PatientInput}"
                                                     HelperText="EDD or LMP required">
@@ -625,7 +625,7 @@
                                 <picker:PickerHeaderView Text="Last Menstrual Date *"
                                                          Background="{StaticResource PrimaryBlue}" />
                             </picker:SfDatePicker.HeaderView>
-                        </picker:SfDatePicker>
+                        </picker:SfDatePicker>-->
                     </Grid>
 
                     <!-- Gestational Age Display -->
@@ -737,7 +737,7 @@
                             <TimePicker Time="{Binding LaborStartTime, Mode=TwoWay}"
                                         Format="HH:mm" />
                         </core:SfTextInputLayout>
-                        <Grid Grid.Column="0">
+                        <!--<Grid Grid.Column="0">
                             <core:SfTextInputLayout Hint="Date *"
                                                     Style="{StaticResource PatientInput}">
                                 <Entry Text="{Binding LaborStartDate, Mode=OneWay, StringFormat='{0:dd-MM-yyyy}'}"
@@ -782,7 +782,7 @@
                                 <picker:PickerHeaderView Text="Labour Start Time *"
                                                          Background="{StaticResource PrimaryBlue}" />
                             </picker:SfTimePicker.HeaderView>
-                        </picker:SfTimePicker>
+                        </picker:SfTimePicker>-->
                     </Grid>
 
                     <!-- Active Labour Diagnosis -->
@@ -852,7 +852,7 @@
                                     <TimePicker Time="{Binding RupturedMembraneTime, Mode=TwoWay}"
                                                 Format="HH:mm" />
                                 </core:SfTextInputLayout>
-                                <Grid Grid.Column="0">
+                                <!--<Grid Grid.Column="0">
                                     <core:SfTextInputLayout Hint="Rupture Date"
                                                             Style="{StaticResource PatientInput}">
                                         <Entry Text="{Binding RupturedMembraneDate, Mode=OneWay, StringFormat='{0:dd-MM-yyyy}'}"
@@ -897,7 +897,7 @@
                                         <picker:PickerHeaderView Text="Rupture Time"
                                                                  Background="{StaticResource PrimaryBlue}" />
                                     </picker:SfTimePicker.HeaderView>
-                                </picker:SfTimePicker>
+                                </picker:SfTimePicker>-->
                             </Grid>
                         </StackLayout>
                     </Border>
