@@ -1,5 +1,6 @@
 using MAAME.DROMO.PARTOGRAPH.SERVICE.Data;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize] // Require authentication for all sync endpoints
     public class SyncController : ControllerBase
     {
         private readonly PartographDbContext _context;
@@ -26,6 +28,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         #region Health Check
 
         [HttpGet("health")]
+        [AllowAnonymous] // Health check doesn't require authentication
         public IActionResult HealthCheck()
         {
             return Ok(new

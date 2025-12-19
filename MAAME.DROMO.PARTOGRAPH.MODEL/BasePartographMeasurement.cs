@@ -40,14 +40,58 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [NotMapped]
         public bool NeedsSync => SyncStatus == 0;
 
-        public string CalculateHash()
+        /// <summary>
+        /// Calculates a comprehensive hash of all base measurement fields for change detection.
+        /// Derived classes should override this to include their specific fields.
+        /// </summary>
+        public virtual string CalculateHash()
         {
-            var data = $"{Time}|{ID}";
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            // Include all base fields that should trigger a sync when changed
+            var dataBuilder = new StringBuilder();
+            dataBuilder.Append($"{ID}|");
+            dataBuilder.Append($"{PartographID}|");
+            dataBuilder.Append($"{Time:O}|"); // ISO 8601 format for consistent hashing
+            dataBuilder.Append($"{HandlerName}|");
+            dataBuilder.Append($"{Handler}|");
+            dataBuilder.Append($"{Notes}|");
+            dataBuilder.Append($"{UpdatedTime}");
+
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(dataBuilder.ToString()));
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        /// <summary>
+        /// Helper method to append additional fields to hash calculation in derived classes.
+        /// </summary>
+        protected string CalculateHashWithAdditionalFields(params object?[] additionalFields)
+        {
+            var dataBuilder = new StringBuilder();
+            dataBuilder.Append($"{ID}|");
+            dataBuilder.Append($"{PartographID}|");
+            dataBuilder.Append($"{Time:O}|");
+            dataBuilder.Append($"{HandlerName}|");
+            dataBuilder.Append($"{Handler}|");
+            dataBuilder.Append($"{Notes}|");
+            dataBuilder.Append($"{UpdatedTime}");
+
+            foreach (var field in additionalFields)
             {
-                var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
-                return Convert.ToBase64String(hashBytes);
+                dataBuilder.Append($"|{field}");
             }
+
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(dataBuilder.ToString()));
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        /// <summary>
+        /// Updates the DataHash property with the current hash value.
+        /// Call this before saving the record.
+        /// </summary>
+        public void UpdateDataHash()
+        {
+            DataHash = CalculateHash();
         }
     }
 

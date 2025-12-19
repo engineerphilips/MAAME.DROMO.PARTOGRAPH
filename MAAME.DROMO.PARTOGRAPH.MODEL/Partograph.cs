@@ -376,14 +376,53 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [JsonIgnore]
         public bool NeedsSync => SyncStatus == 0;
 
+        /// <summary>
+        /// Calculates a comprehensive hash of all relevant partograph fields for change detection.
+        /// This hash is used during sync to detect if the record has been modified.
+        /// </summary>
         public string CalculateHash()
         {
-            var data = $"{ID}|{Handler}";
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
-            {
-                var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
-                return Convert.ToBase64String(hashBytes);
-            }
+            // Include all fields that should trigger a sync when changed
+            var dataBuilder = new StringBuilder();
+            dataBuilder.Append($"{ID}|");
+            dataBuilder.Append($"{PatientID}|");
+            dataBuilder.Append($"{Time:O}|");
+            dataBuilder.Append($"{Gravida}|");
+            dataBuilder.Append($"{Parity}|");
+            dataBuilder.Append($"{Abortion}|");
+            dataBuilder.Append($"{AdmissionDate:O}|");
+            dataBuilder.Append($"{ExpectedDeliveryDate}|");
+            dataBuilder.Append($"{LastMenstrualDate}|");
+            dataBuilder.Append($"{(int)Status}|");
+            dataBuilder.Append($"{(int)CurrentPhase}|");
+            dataBuilder.Append($"{LaborStartTime:O}|");
+            dataBuilder.Append($"{SecondStageStartTime:O}|");
+            dataBuilder.Append($"{ThirdStageStartTime:O}|");
+            dataBuilder.Append($"{FourthStageStartTime:O}|");
+            dataBuilder.Append($"{CompletedTime:O}|");
+            dataBuilder.Append($"{RupturedMembraneTime:O}|");
+            dataBuilder.Append($"{DeliveryTime:O}|");
+            dataBuilder.Append($"{CervicalDilationOnAdmission}|");
+            dataBuilder.Append($"{MembraneStatus}|");
+            dataBuilder.Append($"{LiquorStatus}|");
+            dataBuilder.Append($"{RiskScore}|");
+            dataBuilder.Append($"{RiskLevel}|");
+            dataBuilder.Append($"{Complications}|");
+            dataBuilder.Append($"{Handler}|");
+            dataBuilder.Append($"{UpdatedTime}");
+
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(dataBuilder.ToString()));
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        /// <summary>
+        /// Updates the DataHash property with the current hash value.
+        /// Call this before saving the record.
+        /// </summary>
+        public void UpdateDataHash()
+        {
+            DataHash = CalculateHash();
         }
 
     }

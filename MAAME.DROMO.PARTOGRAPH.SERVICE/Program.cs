@@ -1,32 +1,108 @@
 using MAAME.DROMO.PARTOGRAPH.SERVICE.Data;
 using MAAME.DROMO.PARTOGRAPH.SERVICE.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Configure Database
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Server=DATABASE-SERVER;Port=1433;InitialCatalog=MAAMEDROMODb;IntegratedSecurity=false;User=sa;Password=.server1;TrustServerCertificate=true;"; // "Server=database-server;Database=MAAMEBROMODb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False";
-//builder.Services.AddDbContext<PartographDbContext>(options =>
-//    options.UseSqlServer(connectionString));
+// Configure Database - prefer environment variable, then configuration
+var connectionString = Environment.GetEnvironmentVariable("PARTOGRAPH_DB_CONNECTION")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException(
+        "Database connection string not configured. " +
+        "Set PARTOGRAPH_DB_CONNECTION environment variable or configure ConnectionStrings:DefaultConnection in appsettings.");
+}
 
 builder.Services.AddDbContext<PartographDbContext>(options =>
-    options.UseSqlServer(ConnectionManager.ConnectionConnectionString.ToString()));
+    options.UseSqlServer(connectionString));
 
 // Register services
 builder.Services.AddScoped<IPartographPdfService, PartographPdfService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Configure CORS for mobile app access
+// Configure JWT Authentication
+var jwtSecretKey = Environment.GetEnvironmentVariable("PARTOGRAPH_JWT_SECRET")
+    ?? builder.Configuration["JwtSettings:SecretKey"];
+
+if (string.IsNullOrEmpty(jwtSecretKey) || jwtSecretKey.Length < 32)
+{
+    throw new InvalidOperationException(
+        "JWT Secret Key not configured or too short (minimum 32 characters). " +
+        "Set PARTOGRAPH_JWT_SECRET environment variable or configure JwtSettings:SecretKey in appsettings.");
+}
+
+var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "PartographSyncService";
+var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "PartographMobileApp";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)),
+        ClockSkew = TimeSpan.FromMinutes(5)
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogWarning("Authentication failed: {Message}", context.Exception.Message);
+            return Task.CompletedTask;
+        }
+    };
+});
+
+builder.Services.AddAuthorization();
+
+// Configure CORS - restrict based on environment
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowMobileApp", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        if (builder.Environment.IsDevelopment() ||
+            (allowedOrigins.Length == 1 && allowedOrigins[0] == "*"))
+        {
+            // Development mode - allow any origin for testing
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        }
+        else if (allowedOrigins.Length > 0)
+        {
+            // Production mode - restrict to configured origins
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        }
+        else
+        {
+            // No origins configured - deny all cross-origin requests
+            policy.SetIsOriginAllowed(_ => false);
+        }
     });
 });
 
@@ -42,11 +118,37 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Partograph Service API",
         Version = "v2",
         Description = "API for Partograph mobile app synchronization, data management, and analytics for external web applications"
+    });
+
+    // Add JWT Bearer authentication to Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
     });
 });
 
@@ -80,6 +182,8 @@ app.UseHttpsRedirection();
 // Enable CORS
 app.UseCors("AllowMobileApp");
 
+// Authentication must come before Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

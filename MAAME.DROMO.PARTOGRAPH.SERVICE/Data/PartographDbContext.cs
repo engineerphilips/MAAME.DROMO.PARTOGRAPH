@@ -330,9 +330,62 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Configure Analytics Tables
             ConfigureAnalyticsTables(modelBuilder);
 
+            // Configure Global Query Filters for Soft Deletes
+            // These filters automatically exclude soft-deleted records from all queries
+            // Use .IgnoreQueryFilters() to include deleted records when needed
+            ConfigureSoftDeleteFilters(modelBuilder);
+
             // Ignore types that are defined but not intended for database persistence
             // EnhancedVitalSignEntry is defined in BasePartographMeasurement.cs but not used as a DbSet
             modelBuilder.Ignore<EnhancedVitalSignEntry>();
+        }
+
+        /// <summary>
+        /// Configures global query filters to automatically exclude soft-deleted records.
+        /// This ensures that deleted records are never accidentally returned in queries.
+        /// To include deleted records, use .IgnoreQueryFilters() on the query.
+        /// </summary>
+        private void ConfigureSoftDeleteFilters(ModelBuilder modelBuilder)
+        {
+            // Core entities
+            modelBuilder.Entity<Patient>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Partograph>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Staff>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Facility>().HasQueryFilter(e => e.Deleted == 0);
+
+            // Partograph Measurements
+            modelBuilder.Entity<FHR>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Contraction>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<CervixDilatation>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<HeadDescent>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<BP>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Temperature>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<AmnioticFluid>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Urine>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Caput>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Moulding>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<FetalPosition>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<PainReliefEntry>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<PostureEntry>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<OralFluidEntry>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<IVFluidEntry>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<MedicationEntry>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Oxytocin>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<CompanionEntry>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Assessment>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<MedicalNote>().HasQueryFilter(e => e.Deleted == 0);
+
+            // Extended Partograph Measurements
+            modelBuilder.Entity<FourthStageVitals>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<BishopScore>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<PartographDiagnosis>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<PartographRiskFactor>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Plan>().HasQueryFilter(e => e.Deleted == 0);
+
+            // Birth Outcome and Referral Entities
+            modelBuilder.Entity<BirthOutcome>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<BabyDetails>().HasQueryFilter(e => e.Deleted == 0);
+            modelBuilder.Entity<Referral>().HasQueryFilter(e => e.Deleted == 0);
         }
 
         private void ConfigureMeasurement<T>(ModelBuilder modelBuilder, string tableName) where T : BasePartographMeasurement

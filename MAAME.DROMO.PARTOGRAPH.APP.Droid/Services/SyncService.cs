@@ -263,57 +263,53 @@ public class SyncService : ISyncService
 
             var deviceId = DeviceIdentity.GetOrCreateDeviceId();
             var lastPullTimestamp = Preferences.Get("LastPullTimestamp", 0L);
+            long latestServerTimestamp = lastPullTimestamp;
 
-            // Pull patients
+            // Pull patients with pagination
             var patientsProgress = new SyncProgress { TableName = "Tbl_Patient", CurrentOperation = "Pulling patients" };
             ProgressChanged?.Invoke(this, patientsProgress);
 
-            var patientPullRequest = new SyncPullRequest
-            {
-                DeviceId = deviceId,
-                LastSyncTimestamp = lastPullTimestamp,
-                TableName = "Tbl_Patient"
-            };
+            var patientsPulled = await PullWithPaginationAsync<Patient>(
+                deviceId,
+                lastPullTimestamp,
+                "Tbl_Patient",
+                async (request) => await _apiClient.PullPatientsAsync(request),
+                async (records) => await MergePatients(records),
+                patientsProgress,
+                cancellationToken);
 
-            var patientPullResponse = await _apiClient.PullPatientsAsync(patientPullRequest);
-
-            if (patientPullResponse.Records.Any())
+            result.TotalPulled += patientsPulled.recordCount;
+            if (patientsPulled.serverTimestamp > latestServerTimestamp)
             {
-                await MergePatients(patientPullResponse.Records);
-                result.TotalPulled += patientPullResponse.Records.Count;
+                latestServerTimestamp = patientsPulled.serverTimestamp;
             }
 
-            patientsProgress.TotalRecords = patientPullResponse.Records.Count;
-            patientsProgress.ProcessedRecords = patientPullResponse.Records.Count;
-            patientsProgress.SuccessCount = patientPullResponse.Records.Count;
-            ProgressChanged?.Invoke(this, patientsProgress);
-
-            // Pull partographs
+            // Pull partographs with pagination
             var partographsProgress = new SyncProgress { TableName = "Tbl_Partograph", CurrentOperation = "Pulling partographs" };
             ProgressChanged?.Invoke(this, partographsProgress);
 
-            var partographPullRequest = new SyncPullRequest
-            {
-                DeviceId = deviceId,
-                LastSyncTimestamp = lastPullTimestamp,
-                TableName = "Tbl_Partograph"
-            };
+            var partographsPulled = await PullWithPaginationAsync<Partograph>(
+                deviceId,
+                lastPullTimestamp,
+                "Tbl_Partograph",
+                async (request) => await _apiClient.PullPartographsAsync(request),
+                async (records) => await MergePartographs(records),
+                partographsProgress,
+                cancellationToken);
 
-            var partographPullResponse = await _apiClient.PullPartographsAsync(partographPullRequest);
-
-            if (partographPullResponse.Records.Any())
+            result.TotalPulled += partographsPulled.recordCount;
+            if (partographsPulled.serverTimestamp > latestServerTimestamp)
             {
-                await MergePartographs(partographPullResponse.Records);
-                result.TotalPulled += partographPullResponse.Records.Count;
+                latestServerTimestamp = partographsPulled.serverTimestamp;
             }
 
-            partographsProgress.TotalRecords = partographPullResponse.Records.Count;
-            partographsProgress.ProcessedRecords = partographPullResponse.Records.Count;
-            partographsProgress.SuccessCount = partographPullResponse.Records.Count;
-            ProgressChanged?.Invoke(this, partographsProgress);
-
-            // Update last pull timestamp
-            Preferences.Set("LastPullTimestamp", DateTimeOffset.Now.ToUnixTimeMilliseconds());
+            // Update last pull timestamp using SERVER timestamp (not device time)
+            // This prevents clock skew issues between device and server
+            if (latestServerTimestamp > lastPullTimestamp)
+            {
+                Preferences.Set("LastPullTimestamp", latestServerTimestamp);
+                _logger.LogInformation("Updated LastPullTimestamp to server time: {Timestamp}", latestServerTimestamp);
+            }
 
             result.Success = true;
             result.Duration = stopwatch.Elapsed;
@@ -328,6 +324,63 @@ public class SyncService : ISyncService
             result.Duration = stopwatch.Elapsed;
             return result;
         }
+    }
+
+    /// <summary>
+    /// Pulls data from server with pagination support
+    /// </summary>
+    private async Task<(int recordCount, long serverTimestamp)> PullWithPaginationAsync<T>(
+        string deviceId,
+        long lastSyncTimestamp,
+        string tableName,
+        Func<SyncPullRequest, Task<SyncPullResponse<T>>> pullFunc,
+        Func<List<T>, Task> mergeFunc,
+        SyncProgress progress,
+        CancellationToken cancellationToken)
+    {
+        int totalPulled = 0;
+        long latestServerTimestamp = lastSyncTimestamp;
+        bool hasMore = true;
+        var currentTimestamp = lastSyncTimestamp;
+
+        while (hasMore && !cancellationToken.IsCancellationRequested)
+        {
+            var pullRequest = new SyncPullRequest
+            {
+                DeviceId = deviceId,
+                LastSyncTimestamp = currentTimestamp,
+                TableName = tableName
+            };
+
+            var pullResponse = await pullFunc(pullRequest);
+
+            if (pullResponse.Records.Any())
+            {
+                await mergeFunc(pullResponse.Records);
+                totalPulled += pullResponse.Records.Count;
+
+                // Update progress
+                progress.TotalRecords += pullResponse.Records.Count;
+                progress.ProcessedRecords = totalPulled;
+                progress.SuccessCount = totalPulled;
+                ProgressChanged?.Invoke(this, progress);
+            }
+
+            // Use server timestamp for next page and final storage
+            if (pullResponse.ServerTimestamp > latestServerTimestamp)
+            {
+                latestServerTimestamp = pullResponse.ServerTimestamp;
+            }
+
+            // For pagination, use the timestamp from the last record to get next page
+            currentTimestamp = pullResponse.ServerTimestamp;
+            hasMore = pullResponse.HasMore;
+
+            _logger.LogDebug("Pulled {Count} {Table} records, hasMore={HasMore}",
+                pullResponse.Records.Count, tableName, hasMore);
+        }
+
+        return (totalPulled, latestServerTimestamp);
     }
 
     /// <inheritdoc/>
@@ -488,6 +541,9 @@ public class SyncService : ISyncService
         return partographs;
     }
 
+    /// <summary>
+    /// Marks records as synced using batch update for better performance
+    /// </summary>
     private async Task MarkRecordsAsSyncedAsync(string tableName, List<string> recordIds)
     {
         if (!recordIds.Any()) return;
@@ -495,37 +551,90 @@ public class SyncService : ISyncService
         using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
         await connection.OpenAsync();
 
-        foreach (var id in recordIds)
+        // Use transaction for batch operations (DATA INTEGRITY)
+        using var transaction = connection.BeginTransaction();
+
+        try
         {
-            using var command = connection.CreateCommand();
-            command.CommandText = $"UPDATE {tableName} SET SyncStatus = 1 WHERE ID = @id";
-            command.Parameters.AddWithValue("@id", id);
-            await command.ExecuteNonQueryAsync();
+            // Batch update using parameterized IN clause
+            // SQLite doesn't support array parameters, so we batch in chunks
+            const int batchSize = 100;
+            var batches = recordIds
+                .Select((id, index) => new { id, index })
+                .GroupBy(x => x.index / batchSize)
+                .Select(g => g.Select(x => x.id).ToList());
+
+            foreach (var batch in batches)
+            {
+                using var command = connection.CreateCommand();
+                command.Transaction = transaction;
+
+                // Build parameterized query for this batch
+                var parameters = batch.Select((id, i) => $"@id{i}").ToList();
+                command.CommandText = $"UPDATE {tableName} SET SyncStatus = 1 WHERE ID IN ({string.Join(",", parameters)})";
+
+                for (int i = 0; i < batch.Count; i++)
+                {
+                    command.Parameters.AddWithValue($"@id{i}", batch[i]);
+                }
+
+                await command.ExecuteNonQueryAsync();
+            }
+
+            transaction.Commit();
+            _logger.LogDebug("Batch marked {Count} records as synced in {Table}", recordIds.Count, tableName);
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            _logger.LogError(ex, "Failed to batch mark records as synced, rolling back");
+            throw;
         }
     }
 
+    /// <summary>
+    /// Stores conflicts with transaction scope for data integrity
+    /// </summary>
     private async Task StoreConflictsAsync<T>(List<ConflictRecord<T>> conflicts)
     {
-        foreach (var conflict in conflicts)
+        if (!conflicts.Any()) return;
+
+        using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
+        await connection.OpenAsync();
+
+        // Use transaction for batch operations (DATA INTEGRITY)
+        using var transaction = connection.BeginTransaction();
+
+        try
         {
-            using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
-            await connection.OpenAsync();
-
-            using var command = connection.CreateCommand();
-
             // Determine table name
             var tableName = typeof(T) == typeof(Patient) ? "Tbl_Patient" : "Tbl_Partograph";
 
-            command.CommandText = $@"
-                UPDATE {tableName}
-                SET SyncStatus = 2,
-                    ConflictData = @conflictData
-                WHERE ID = @id";
+            foreach (var conflict in conflicts)
+            {
+                using var command = connection.CreateCommand();
+                command.Transaction = transaction;
 
-            command.Parameters.AddWithValue("@id", conflict.Id);
-            command.Parameters.AddWithValue("@conflictData", System.Text.Json.JsonSerializer.Serialize(conflict.ServerRecord));
+                command.CommandText = $@"
+                    UPDATE {tableName}
+                    SET SyncStatus = 2,
+                        ConflictData = @conflictData
+                    WHERE ID = @id";
 
-            await command.ExecuteNonQueryAsync();
+                command.Parameters.AddWithValue("@id", conflict.Id);
+                command.Parameters.AddWithValue("@conflictData", System.Text.Json.JsonSerializer.Serialize(conflict.ServerRecord));
+
+                await command.ExecuteNonQueryAsync();
+            }
+
+            transaction.Commit();
+            _logger.LogDebug("Stored {Count} conflicts for {Table}", conflicts.Count, tableName);
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            _logger.LogError(ex, "Failed to store conflicts, rolling back");
+            throw;
         }
     }
 
