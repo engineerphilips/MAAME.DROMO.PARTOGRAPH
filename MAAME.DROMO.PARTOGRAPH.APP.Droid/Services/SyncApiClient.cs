@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
@@ -6,18 +8,23 @@ using Microsoft.Extensions.Logging;
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 
 /// <summary>
-/// HTTP API client for sync operations with retry logic
+/// HTTP API client for sync operations with retry logic and JWT authentication
 /// </summary>
 public class SyncApiClient : ISyncApiClient
 {
     private readonly HttpClient _httpClient;
+    private readonly IAuthenticationService _authService;
     private readonly ILogger<SyncApiClient> _logger;
     private readonly JsonSerializerOptions _jsonOptions;
     private const int MaxRetries = 3;
 
-    public SyncApiClient(HttpClient httpClient, ILogger<SyncApiClient> logger)
+    public SyncApiClient(
+        HttpClient httpClient,
+        IAuthenticationService authService,
+        ILogger<SyncApiClient> logger)
     {
         _httpClient = httpClient;
+        _authService = authService;
         _logger = logger;
 
         // Configure JSON options
@@ -29,17 +36,63 @@ public class SyncApiClient : ISyncApiClient
     }
 
     /// <summary>
-    /// Executes an HTTP request with exponential backoff retry logic
+    /// Sets the Authorization header with the current access token
     /// </summary>
-    private async Task<HttpResponseMessage> ExecuteWithRetryAsync(Func<Task<HttpResponseMessage>> action)
+    private async Task<bool> SetAuthorizationHeaderAsync()
+    {
+        try
+        {
+            var token = await _authService.GetValidAccessTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+                return true;
+            }
+
+            _logger.LogWarning("No valid access token available for sync request");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error setting authorization header");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Executes an HTTP request with exponential backoff retry logic and token refresh
+    /// </summary>
+    private async Task<HttpResponseMessage> ExecuteWithRetryAsync(
+        Func<Task<HttpResponseMessage>> action,
+        bool requiresAuth = true)
     {
         Exception? lastException = null;
+
+        // Set authorization header before first attempt
+        if (requiresAuth)
+        {
+            await SetAuthorizationHeaderAsync();
+        }
 
         for (int attempt = 0; attempt < MaxRetries; attempt++)
         {
             try
             {
                 var response = await action();
+
+                // Handle 401 Unauthorized - try to refresh token and retry
+                if (response.StatusCode == HttpStatusCode.Unauthorized && requiresAuth && attempt == 0)
+                {
+                    _logger.LogInformation("Received 401, attempting token refresh");
+
+                    if (await _authService.RefreshAccessTokenAsync())
+                    {
+                        await SetAuthorizationHeaderAsync();
+                        // Retry the request with new token
+                        response = await action();
+                    }
+                }
 
                 // Retry on server errors (5xx) only
                 if (response.IsSuccessStatusCode || (int)response.StatusCode < 500)
@@ -239,7 +292,11 @@ public class SyncApiClient : ISyncApiClient
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/sync/health");
+            // Health check doesn't require authentication
+            var response = await ExecuteWithRetryAsync(
+                async () => await _httpClient.GetAsync("api/sync/health"),
+                requiresAuth: false
+            );
             return response.IsSuccessStatusCode;
         }
         catch (Exception ex)
