@@ -51,7 +51,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
             // Register Repositories
-            builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
             builder.Services.AddSingleton<PatientRepository>();
             builder.Services.AddSingleton<PartographRepository>();
             //builder.Services.AddSingleton<VitalSignRepository>();
@@ -103,7 +102,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<PartographNotesService>(); // Dynamic clinical notes generation
             builder.Services.AddSingleton<IReportService, ReportService>(); // Comprehensive reporting service
             builder.Services.AddHttpClient<IPartographPdfService, PartographPdfService>(); // PDF generation service
-            //builder.Services.AddSingleton<AuthenticationService>();
+
+            // Register JWT Token Storage Service
+            builder.Services.AddSingleton<ITokenStorageService, TokenStorageService>();
+
+            // Register Auth API Client for JWT authentication
+            builder.Services.AddHttpClient<IAuthApiClient, AuthApiClient>(client =>
+            {
+                // Use same base URL as sync API
+                client.BaseAddress = new Uri("https://192.168.100.4:5218/");
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+
+            // Register Authentication Service (with JWT support)
+            // Must be registered after ITokenStorageService and IAuthApiClient
+            builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
             // Register Sync Services
             builder.Services.AddSingleton<IConnectivityService, ConnectivityService>();
