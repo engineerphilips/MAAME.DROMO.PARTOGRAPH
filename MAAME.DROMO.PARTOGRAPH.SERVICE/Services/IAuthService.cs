@@ -51,6 +51,7 @@ public interface IAuthService
     /// </summary>
     /// <returns>Refresh token string</returns>
     string GenerateRefreshToken();
+    //Task AuthenticateAsync(string email, string password, object deviceId);
 }
 
 /// <summary>

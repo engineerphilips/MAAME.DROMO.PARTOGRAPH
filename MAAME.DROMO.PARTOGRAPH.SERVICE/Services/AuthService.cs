@@ -313,4 +313,5 @@ public class AuthService : IAuthService
 
         return hashedPassword == storedHash;
     }
+
 }

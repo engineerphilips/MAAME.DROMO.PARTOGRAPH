@@ -424,5 +424,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
     {
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public string DeviceId { get; set; }
     }
 }
