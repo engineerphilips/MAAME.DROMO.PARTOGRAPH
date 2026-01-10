@@ -58,6 +58,8 @@
 	  <AndroidKeyStore>False</AndroidKeyStore>
 	  <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
 	  <ApplicationIdGuid>5f021d67-3ceb-44cd-8f55-5b10ca9039e1</ApplicationIdGuid>
+	  <!-- Use managed .NET SocketsHttpHandler instead of native AndroidMessageHandler for HTTP sync -->
+	  <UseNativeHttpHandler>false</UseNativeHttpHandler>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
@@ -94,6 +96,8 @@
 	  <PublishTrimmed>False</PublishTrimmed>
     <RunAOTCompilation>False</RunAOTCompilation>
     <AndroidLinkMode>None</AndroidLinkMode>
+	  <!-- Use managed .NET SocketsHttpHandler instead of native AndroidMessageHandler for HTTP sync -->
+	  <UseNativeHttpHandler>false</UseNativeHttpHandler>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">
