@@ -130,7 +130,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
                 //client.BaseAddress = new Uri("http://emperor-dev:5218/");
                 client.BaseAddress = new Uri("http://192.168.8.4:5218/");
 
-                client.Timeout = TimeSpan.FromSeconds(30);
+                // Increased timeout for large sync operations (patients, partographs, etc.)
+                client.Timeout = TimeSpan.FromSeconds(120);
             });
             builder.Services.AddSingleton<ISyncService, SyncService>();
             builder.Services.AddSingleton<BackgroundSyncService>();
