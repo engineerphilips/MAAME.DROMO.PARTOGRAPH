@@ -115,6 +115,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
                 client.BaseAddress = new Uri("http://192.168.8.4:5218/");
 
                 client.Timeout = TimeSpan.FromSeconds(30);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                // Allow all server certificates for development (HTTP doesn't use certs, but good for future HTTPS)
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
             });
 
             // Register Authentication Service (with JWT support)
@@ -130,6 +135,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
                 //client.BaseAddress = new Uri("http://emperor-dev:5218/");
                 client.BaseAddress = new Uri("http://192.168.8.4:5218/");
 
+                client.Timeout = TimeSpan.FromSeconds(120); // Increased timeout for sync operations
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                // Allow all server certificates for development (HTTP doesn't use certs, but good for future HTTPS)
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 // Increased timeout for large sync operations (patients, partographs, etc.)
                 client.Timeout = TimeSpan.FromSeconds(120);
             });
