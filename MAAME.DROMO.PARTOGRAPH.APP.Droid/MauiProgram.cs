@@ -141,6 +141,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             {
                 // Allow all server certificates for development (HTTP doesn't use certs, but good for future HTTPS)
                 ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                // Increased timeout for large sync operations (patients, partographs, etc.)
+                client.Timeout = TimeSpan.FromSeconds(120);
             });
             builder.Services.AddSingleton<ISyncService, SyncService>();
             builder.Services.AddSingleton<BackgroundSyncService>();
