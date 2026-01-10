@@ -182,7 +182,8 @@ public partial class SyncSettingsPageModel : ObservableObject
 
     private void LoadSettings()
     {
-        ApiUrl = Preferences.Get("SyncApiUrl", "https://api.partograph.example.com");
+        // Using HTTP for now - will revisit HTTPS later once SSL/TLS issues are resolved
+        ApiUrl = Preferences.Get("SyncApiUrl", "http://192.168.8.4:5218");
         BackgroundSyncEnabled = _backgroundSyncService.IsEnabled;
         SyncIntervalMinutes = _backgroundSyncService.SyncIntervalMinutes;
         IsConnected = _connectivityService.IsConnected;
