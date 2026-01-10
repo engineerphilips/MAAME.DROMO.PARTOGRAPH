@@ -244,7 +244,7 @@ public class BackgroundSyncService : IDisposable
                     "Full sync completed successfully: Pushed={Pushed}, Pulled={Pulled}, Duration={Duration}ms",
                     result.TotalPushed,
                     result.TotalPulled,
-                    result.Duration?.TotalMilliseconds ?? 0
+                    result.Duration.TotalMilliseconds
                 );
             }
             else

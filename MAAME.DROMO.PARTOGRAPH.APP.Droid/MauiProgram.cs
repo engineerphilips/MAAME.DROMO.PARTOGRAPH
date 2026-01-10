@@ -110,7 +110,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddHttpClient<IAuthApiClient, AuthApiClient>(client =>
             {
                 // Use same base URL as sync API
-                client.BaseAddress = new Uri("https://192.168.100.4:5218/");
+                //client.BaseAddress = new Uri("https://172.20.10.4:5218/");
+                //client.BaseAddress = new Uri("http://emperor-dev:5218/");
+                client.BaseAddress = new Uri("http://192.168.8.4:5218/");
+
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
 
@@ -124,7 +127,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             {
                 // Configure API base URL from preferences or use default
                 // var apiUrl = Preferences.Get("SyncApiUrl", "https://api.partograph.example.com");
-                client.BaseAddress = new Uri("https://192.168.100.4:5218/");
+                //client.BaseAddress = new Uri("http://emperor-dev:5218/");
+                client.BaseAddress = new Uri("http://192.168.8.4:5218/");
+
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
             builder.Services.AddSingleton<ISyncService, SyncService>();

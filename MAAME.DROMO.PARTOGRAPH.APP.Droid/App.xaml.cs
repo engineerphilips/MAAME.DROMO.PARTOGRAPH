@@ -51,6 +51,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             //Preferences.Remove("LastLogin");
             //Preferences.Remove("StaffId");
 
+            Preferences.Get("BackgroundSyncEnabled", true);
+            Preferences.Get("SyncIntervalMinutes", 15);
+
             // Initialize database if needed
             await InitializeDatabase();
         }

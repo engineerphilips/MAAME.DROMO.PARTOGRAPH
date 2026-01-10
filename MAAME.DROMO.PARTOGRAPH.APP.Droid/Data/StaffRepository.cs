@@ -355,5 +355,62 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 throw;
             }
         }
+
+        public async Task<Staff?> GetByIdAsync(Guid staffGuid)
+        {
+            await Init();
+            var user = new Staff();
+            try
+            {
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = @"
+                SELECT ID, name, staffid, email, role, department, password, lastlogin, active, facility, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, conflictdata, datahash FROM Tbl_Staff WHERE ID = @id";
+                selectCmd.Parameters.AddWithValue("@id", staffGuid.ToString());
+
+                await using var reader = await selectCmd.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    user = new Staff
+                    {
+                        ID = Guid.Parse(reader["ID"].ToString()),
+                        Name = reader["name"].ToString(),
+                        StaffID = reader["staffid"].ToString(),
+                        Email = reader["email"].ToString(),
+                        Role = reader["role"].ToString(),
+                        Department = reader["department"].ToString(),
+                        Password = reader["password"].ToString(),
+                        LastLogin = reader["lastlogin"] is DBNull ? DateTime.Now : DateTime.Parse(reader["lastlogin"].ToString()),
+                        IsActive = Convert.ToBoolean(reader["active"]),
+                        Facility = reader["facility"] is DBNull ? null : Guid.Parse(reader["facility"].ToString()),
+                        CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                        UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                        DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
+                        DeviceId = reader["deviceid"].ToString(),
+                        OriginDeviceId = reader["origindeviceid"].ToString(),
+                        SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                        Version = Convert.ToInt32(reader["version"]),
+                        ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+                        Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
+                        //ConflictData = reader["conflictdata"].ToString(),
+                        //DataHash = reader["datahash"].ToString()
+                    };
+                }
+            }
+            catch (SqliteException e)
+            {
+                _logger.LogError(e, "Error getting Staff");
+                throw;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error getting Staff");
+                throw;
+            }
+
+            return user;
+        }
     }
 }

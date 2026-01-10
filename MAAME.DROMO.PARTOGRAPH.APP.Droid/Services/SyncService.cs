@@ -172,7 +172,7 @@ public class SyncService : ISyncService
             var deviceId = DeviceIdentity.GetOrCreateDeviceId();
 
             // Push patients
-            var patientsProgress = new SyncProgress { TableName = "Patients", CurrentOperation = "Pushing patients" };
+            var patientsProgress = new SyncProgress { TableName = "Tbl_Patient", CurrentOperation = "Pushing patients" };
             ProgressChanged?.Invoke(this, patientsProgress);
 
             var pendingPatients = await GetPendingPatientsAsync();
@@ -206,7 +206,7 @@ public class SyncService : ISyncService
             }
 
             // Push partographs
-            var partographsProgress = new SyncProgress { TableName = "Partographs", CurrentOperation = "Pushing partographs" };
+            var partographsProgress = new SyncProgress { TableName = "Tbl_Partograph", CurrentOperation = "Pushing partographs" };
             ProgressChanged?.Invoke(this, partographsProgress);
 
             var pendingPartographs = await GetPendingPartographsAsync();
@@ -390,7 +390,8 @@ public class SyncService : ISyncService
         {
             var count = 0;
 
-            using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            //using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
             await connection.OpenAsync();
 
             // Count pending patients
@@ -425,7 +426,8 @@ public class SyncService : ISyncService
         {
             var count = 0;
 
-            using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            //using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
             await connection.OpenAsync();
 
             // Count conflicted patients
@@ -458,7 +460,8 @@ public class SyncService : ISyncService
     {
         _logger.LogInformation("Resolving conflict for record {RecordId}, useLocal={UseLocal}", recordId, useLocalVersion);
 
-        using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
+        //using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
         await connection.OpenAsync();
 
         using var command = connection.CreateCommand();
@@ -505,7 +508,8 @@ public class SyncService : ISyncService
 
     private async Task<List<Patient>> GetPendingPatientsAsync()
     {
-        using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
+        //using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
         await connection.OpenAsync();
 
         using var command = connection.CreateCommand();
@@ -524,7 +528,8 @@ public class SyncService : ISyncService
 
     private async Task<List<Partograph>> GetPendingPartographsAsync()
     {
-        using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
+        //using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
         await connection.OpenAsync();
 
         using var command = connection.CreateCommand();
@@ -599,7 +604,8 @@ public class SyncService : ISyncService
     {
         if (!conflicts.Any()) return;
 
-        using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
+        //using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
         await connection.OpenAsync();
 
         // Use transaction for batch operations (DATA INTEGRITY)

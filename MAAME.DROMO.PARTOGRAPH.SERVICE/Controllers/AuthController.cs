@@ -107,7 +107,8 @@ public class AuthController : ControllerBase
     /// Validates the current token (can be used to check if token is still valid)
     /// </summary>
     [HttpGet("validate")]
-    [Authorize]
+    //[Authorize]
+    [AllowAnonymous]
     public IActionResult ValidateToken()
     {
         // If we get here, the token is valid (Authorize attribute handles validation)
@@ -118,7 +119,8 @@ public class AuthController : ControllerBase
     /// Gets the current user's information from the token
     /// </summary>
     [HttpGet("me")]
-    [Authorize]
+    [AllowAnonymous]
+    //[Authorize]
     public IActionResult GetCurrentUser()
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;

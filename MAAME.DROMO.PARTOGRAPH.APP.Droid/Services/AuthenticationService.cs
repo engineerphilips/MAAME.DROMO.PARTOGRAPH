@@ -43,14 +43,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 }
 
                 // If API failed due to network, try local authentication
-                if (apiResult.IsNetworkError)
+                if (apiResult.IsNetworkError || !apiResult.Success)
                 {
                     _logger.LogInformation("API login failed due to network, trying local authentication");
                     return await LoginLocalAsync(emailOrStaffId, password);
                 }
 
                 // If invalid credentials on API, still try local (for offline-first scenario)
-                if (apiResult.IsInvalidCredentials)
+                if (apiResult.IsInvalidCredentials || !apiResult.Success)
                 {
                     _logger.LogInformation("API credentials invalid, trying local authentication");
                     return await LoginLocalAsync(emailOrStaffId, password);

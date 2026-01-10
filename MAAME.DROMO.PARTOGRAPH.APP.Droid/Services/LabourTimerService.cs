@@ -438,9 +438,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         public string RemainingTimeText { get; set; } = string.Empty;
     }
 
-    /// <summary>
-    /// Alert severity levels
-    /// </summary>
+    ///// <summary>
+    ///// Alert severity levels
+    ///// </summary>
     //public enum AlertSeverity
     //{
     //    Info,

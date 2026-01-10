@@ -8,7 +8,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // Require authentication for all sync endpoints
+    //[Authorize] // Require authentication for all sync endpoints
     public class SyncController : ControllerBase
     {
         private readonly PartographDbContext _context;
