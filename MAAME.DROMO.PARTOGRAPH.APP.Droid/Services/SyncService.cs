@@ -1496,7 +1496,40 @@ public class SyncService : ISyncService
         try
         {
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT P.*, PA.firstName, PA.lastName, PA.hospitalNumber FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.SyncStatus = 0";
+            command.CommandText = @"
+                SELECT
+                    P.ID, P.patientid, P.time, P.gravida, P.parity, P.abortion,
+                    P.admissiondate, P.expecteddeliverydate, P.lastmenstrualdate,
+                    P.status, P.currentphase, P.laborstarttime, P.secondstagestarttime,
+                    P.thirdstagestarttime, P.fourthstagestarttime, P.completedtime,
+                    P.rupturedmembranetime, P.deliverytime, P.cervicaldilationonadmission,
+                    P.membranestatus, P.liquorstatus, P.riskscore, P.risklevel, P.riskcolor,
+                    P.complications, P.handlername, P.handler,
+                    P.createdtime, P.updatedtime, P.deletedtime,
+                    P.deviceid, P.origindeviceid, P.syncstatus, P.version, P.serverversion,
+                    P.deleted, P.conflictdata, P.datahash,
+                    PA.ID as patient_id, PA.firstname as patient_firstname, PA.lastname as patient_lastname,
+                    PA.hospitalnumber as patient_hospitalnumber, PA.dateofbirth as patient_dateofbirth,
+                    PA.age as patient_age, PA.bloodgroup as patient_bloodgroup,
+                    PA.phonenumber as patient_phonenumber, PA.address as patient_address,
+                    PA.emergencycontactname as patient_emergencycontactname,
+                    PA.emergencycontactphone as patient_emergencycontactphone,
+                    PA.emergencycontactrelationship as patient_emergencycontactrelationship,
+                    PA.weight as patient_weight, PA.height as patient_height,
+                    PA.haspreviouscsection as patient_haspreviouscsection,
+                    PA.numberofpreviouscsections as patient_numberofpreviouscsections,
+                    PA.livebirths as patient_livebirths, PA.stillbirths as patient_stillbirths,
+                    PA.neonataldeaths as patient_neonataldeaths,
+                    PA.handlername as patient_handlername, PA.handler as patient_handler,
+                    PA.createdtime as patient_createdtime, PA.updatedtime as patient_updatedtime,
+                    PA.deletedtime as patient_deletedtime,
+                    PA.deviceid as patient_deviceid, PA.origindeviceid as patient_origindeviceid,
+                    PA.syncstatus as patient_syncstatus, PA.version as patient_version,
+                    PA.serverversion as patient_serverversion, PA.deleted as patient_deleted,
+                    PA.conflictdata as patient_conflictdata, PA.datahash as patient_datahash
+                FROM Tbl_Partograph P
+                INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID
+                WHERE P.SyncStatus = 0";
 
             using var reader = await command.ExecuteReaderAsync();
 
@@ -1793,10 +1826,37 @@ public class SyncService : ISyncService
         return new Patient
         {
             ID = Guid.Parse(reader["ID"].ToString()!),
-            FirstName = reader["FirstName"]?.ToString() ?? string.Empty,
-            LastName = reader["LastName"]?.ToString() ?? string.Empty,
-            DateOfBirth = DateOnly.Parse(reader["DateOfBirth"]?.ToString() ?? DateTime.Now.ToString()),
-            // Add other properties as needed
+            FirstName = reader["firstname"]?.ToString() ?? string.Empty,
+            LastName = reader["lastname"]?.ToString() ?? string.Empty,
+            HospitalNumber = reader["hospitalnumber"]?.ToString() ?? string.Empty,
+            DateOfBirth = reader["dateofbirth"] is DBNull ? null : DateOnly.Parse(reader["dateofbirth"].ToString()!),
+            Age = reader["age"] is DBNull ? null : Convert.ToInt32(reader["age"]),
+            BloodGroup = reader["bloodgroup"]?.ToString() ?? string.Empty,
+            PhoneNumber = reader["phonenumber"]?.ToString() ?? string.Empty,
+            Address = reader["address"]?.ToString() ?? string.Empty,
+            EmergencyContactName = reader["emergencycontactname"]?.ToString() ?? string.Empty,
+            EmergencyContactPhone = reader["emergencycontactphone"]?.ToString() ?? string.Empty,
+            EmergencyContactRelationship = reader["emergencycontactrelationship"]?.ToString() ?? string.Empty,
+            Weight = reader["weight"] is DBNull ? null : Convert.ToDouble(reader["weight"]),
+            Height = reader["height"] is DBNull ? null : Convert.ToDouble(reader["height"]),
+            HasPreviousCSection = reader["haspreviouscsection"] is DBNull ? false : Convert.ToBoolean(reader["haspreviouscsection"]),
+            NumberOfPreviousCsections = reader["numberofpreviouscsections"] is DBNull ? null : Convert.ToInt32(reader["numberofpreviouscsections"]),
+            LiveBirths = reader["livebirths"] is DBNull ? null : Convert.ToInt32(reader["livebirths"]),
+            Stillbirths = reader["stillbirths"] is DBNull ? null : Convert.ToInt32(reader["stillbirths"]),
+            NeonatalDeaths = reader["neonataldeaths"] is DBNull ? null : Convert.ToInt32(reader["neonataldeaths"]),
+            HandlerName = reader["handlername"]?.ToString() ?? string.Empty,
+            Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()!),
+            CreatedTime = Convert.ToInt64(reader["createdtime"]),
+            UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+            DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
+            DeviceId = reader["deviceid"]?.ToString() ?? string.Empty,
+            OriginDeviceId = reader["origindeviceid"]?.ToString() ?? string.Empty,
+            SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+            Version = Convert.ToInt32(reader["version"]),
+            ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+            Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
+            ConflictData = reader["conflictdata"]?.ToString() ?? string.Empty,
+            DataHash = reader["datahash"]?.ToString() ?? string.Empty
         };
     }
 
@@ -1805,15 +1865,78 @@ public class SyncService : ISyncService
         return new Partograph
         {
             ID = Guid.Parse(reader["ID"].ToString()!),
-            PatientID = Guid.Parse(reader["PatientID"].ToString()!),
-            AdmissionDate = DateTime.Parse(reader["AdmissionDate"]?.ToString() ?? DateTime.Now.ToString()),
+            PatientID = Guid.Parse(reader["patientid"].ToString()!),
+            Time = reader["time"] is DBNull ? DateTime.Now : DateTime.Parse(reader["time"].ToString()!),
+            Gravida = reader["gravida"] is DBNull ? 0 : Convert.ToInt32(reader["gravida"]),
+            Parity = reader["parity"] is DBNull ? 0 : Convert.ToInt32(reader["parity"]),
+            Abortion = reader["abortion"] is DBNull ? 0 : Convert.ToInt32(reader["abortion"]),
+            AdmissionDate = reader["admissiondate"] is DBNull ? DateTime.Now : DateTime.Parse(reader["admissiondate"].ToString()!),
+            ExpectedDeliveryDate = reader["expecteddeliverydate"] is DBNull ? null : DateOnly.Parse(reader["expecteddeliverydate"].ToString()!),
+            LastMenstrualDate = reader["lastmenstrualdate"] is DBNull ? null : DateOnly.Parse(reader["lastmenstrualdate"].ToString()!),
+            Status = reader["status"] is DBNull ? LaborStatus.Pending : (LaborStatus)Convert.ToInt32(reader["status"]),
+            CurrentPhase = reader["currentphase"] is DBNull ? FirstStagePhase.NotDetermined : (FirstStagePhase)Convert.ToInt32(reader["currentphase"]),
+            LaborStartTime = reader["laborstarttime"] is DBNull ? null : DateTime.Parse(reader["laborstarttime"].ToString()!),
+            SecondStageStartTime = reader["secondstagestarttime"] is DBNull ? null : DateTime.Parse(reader["secondstagestarttime"].ToString()!),
+            ThirdStageStartTime = reader["thirdstagestarttime"] is DBNull ? null : DateTime.Parse(reader["thirdstagestarttime"].ToString()!),
+            FourthStageStartTime = reader["fourthstagestarttime"] is DBNull ? null : DateTime.Parse(reader["fourthstagestarttime"].ToString()!),
+            CompletedTime = reader["completedtime"] is DBNull ? null : DateTime.Parse(reader["completedtime"].ToString()!),
+            RupturedMembraneTime = reader["rupturedmembranetime"] is DBNull ? null : DateTime.Parse(reader["rupturedmembranetime"].ToString()!),
+            DeliveryTime = reader["deliverytime"] is DBNull ? null : DateTime.Parse(reader["deliverytime"].ToString()!),
+            CervicalDilationOnAdmission = reader["cervicaldilationonadmission"] is DBNull ? null : Convert.ToInt32(reader["cervicaldilationonadmission"]),
+            MembraneStatus = reader["membranestatus"]?.ToString() ?? "Intact",
+            LiquorStatus = reader["liquorstatus"]?.ToString() ?? "Clear",
+            RiskScore = reader["riskscore"] is DBNull ? 0 : Convert.ToInt32(reader["riskscore"]),
+            RiskLevel = reader["risklevel"]?.ToString() ?? "Low Risk",
+            RiskColor = reader["riskcolor"]?.ToString() ?? "#4CAF50",
+            Complications = reader["complications"]?.ToString() ?? string.Empty,
+            HandlerName = reader["handlername"]?.ToString() ?? string.Empty,
+            Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()!),
+            CreatedTime = Convert.ToInt64(reader["createdtime"]),
+            UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+            DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
+            DeviceId = reader["deviceid"]?.ToString() ?? string.Empty,
+            OriginDeviceId = reader["origindeviceid"]?.ToString() ?? string.Empty,
+            SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+            Version = Convert.ToInt32(reader["version"]),
+            ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+            Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
+            ConflictData = reader["conflictdata"]?.ToString() ?? string.Empty,
+            DataHash = reader["datahash"]?.ToString() ?? string.Empty,
             Patient = new Patient()
             {
-                FirstName = reader["FirstName"]?.ToString() ?? string.Empty,
-                LastName = reader["LastName"]?.ToString() ?? string.Empty,
-                HospitalNumber = reader["hospitalNumber"]?.ToString() ?? string.Empty
+                ID = Guid.Parse(reader["patient_id"].ToString()!),
+                FirstName = reader["patient_firstname"]?.ToString() ?? string.Empty,
+                LastName = reader["patient_lastname"]?.ToString() ?? string.Empty,
+                HospitalNumber = reader["patient_hospitalnumber"]?.ToString() ?? string.Empty,
+                DateOfBirth = reader["patient_dateofbirth"] is DBNull ? null : DateOnly.Parse(reader["patient_dateofbirth"].ToString()!),
+                Age = reader["patient_age"] is DBNull ? null : Convert.ToInt32(reader["patient_age"]),
+                BloodGroup = reader["patient_bloodgroup"]?.ToString() ?? string.Empty,
+                PhoneNumber = reader["patient_phonenumber"]?.ToString() ?? string.Empty,
+                Address = reader["patient_address"]?.ToString() ?? string.Empty,
+                EmergencyContactName = reader["patient_emergencycontactname"]?.ToString() ?? string.Empty,
+                EmergencyContactPhone = reader["patient_emergencycontactphone"]?.ToString() ?? string.Empty,
+                EmergencyContactRelationship = reader["patient_emergencycontactrelationship"]?.ToString() ?? string.Empty,
+                Weight = reader["patient_weight"] is DBNull ? null : Convert.ToDouble(reader["patient_weight"]),
+                Height = reader["patient_height"] is DBNull ? null : Convert.ToDouble(reader["patient_height"]),
+                HasPreviousCSection = reader["patient_haspreviouscsection"] is DBNull ? false : Convert.ToBoolean(reader["patient_haspreviouscsection"]),
+                NumberOfPreviousCsections = reader["patient_numberofpreviouscsections"] is DBNull ? null : Convert.ToInt32(reader["patient_numberofpreviouscsections"]),
+                LiveBirths = reader["patient_livebirths"] is DBNull ? null : Convert.ToInt32(reader["patient_livebirths"]),
+                Stillbirths = reader["patient_stillbirths"] is DBNull ? null : Convert.ToInt32(reader["patient_stillbirths"]),
+                NeonatalDeaths = reader["patient_neonataldeaths"] is DBNull ? null : Convert.ToInt32(reader["patient_neonataldeaths"]),
+                HandlerName = reader["patient_handlername"]?.ToString() ?? string.Empty,
+                Handler = reader["patient_handler"] is DBNull ? null : Guid.Parse(reader["patient_handler"].ToString()!),
+                CreatedTime = Convert.ToInt64(reader["patient_createdtime"]),
+                UpdatedTime = Convert.ToInt64(reader["patient_updatedtime"]),
+                DeletedTime = reader["patient_deletedtime"] is DBNull ? null : Convert.ToInt64(reader["patient_deletedtime"]),
+                DeviceId = reader["patient_deviceid"]?.ToString() ?? string.Empty,
+                OriginDeviceId = reader["patient_origindeviceid"]?.ToString() ?? string.Empty,
+                SyncStatus = Convert.ToInt32(reader["patient_syncstatus"]),
+                Version = Convert.ToInt32(reader["patient_version"]),
+                ServerVersion = reader["patient_serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["patient_serverversion"]),
+                Deleted = reader["patient_deleted"] is DBNull ? 0 : Convert.ToInt32(reader["patient_deleted"]),
+                ConflictData = reader["patient_conflictdata"]?.ToString() ?? string.Empty,
+                DataHash = reader["patient_datahash"]?.ToString() ?? string.Empty
             }
-            // Add other properties as needed
         };
     }
 
