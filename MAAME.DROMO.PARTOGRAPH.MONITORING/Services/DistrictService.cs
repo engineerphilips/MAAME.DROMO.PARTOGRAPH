@@ -1,197 +1,173 @@
-using MAAME.DROMO.PARTOGRAPH.MONITORING.Data;
+using System.Net.Http.Json;
 using MAAME.DROMO.PARTOGRAPH.MONITORING.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
 {
     public class DistrictService : IDistrictService
     {
-        private readonly MonitoringDbContext _context;
+        private readonly HttpClient _httpClient;
 
-        public DistrictService(MonitoringDbContext context)
+        public DistrictService(HttpClient httpClient)
         {
-            _context = context;
+            _httpClient = httpClient;
         }
 
         public async Task<List<DistrictSummary>> GetDistrictsByRegionAsync(Guid regionId)
         {
-            var districts = await _context.Districts
-                .Include(d => d.Region)
-                .Where(d => d.RegionID == regionId)
-                .ToListAsync();
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<ApiDistrictSummary>>($"api/monitoring/districts?regionId={regionId}");
+                return MapToDistrictSummaries(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting districts by region: {ex.Message}");
+            }
 
-            return await GetDistrictSummariesAsync(districts);
+            return new List<DistrictSummary>();
         }
 
         public async Task<List<DistrictSummary>> GetAllDistrictSummariesAsync()
         {
-            var districts = await _context.Districts
-                .Include(d => d.Region)
-                .ToListAsync();
-
-            return await GetDistrictSummariesAsync(districts);
-        }
-
-        private async Task<List<DistrictSummary>> GetDistrictSummariesAsync(List<MAAME.DROMO.PARTOGRAPH.MODEL.District> districts)
-        {
-            var today = DateTime.UtcNow.Date;
-            var summaries = new List<DistrictSummary>();
-
-            foreach (var district in districts)
+            try
             {
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.DistrictID == district.ID)
-                    .Select(f => f.ID)
-                    .ToListAsync();
-
-                var activeFacilities = await _context.Facilities
-                    .Where(f => f.DistrictID == district.ID && f.IsActive)
-                    .CountAsync();
-
-                var todayStats = await _context.DailyFacilityStats
-                    .Where(s => s.Date >= today && facilityIds.Contains(s.FacilityID))
-                    .ToListAsync();
-
-                var monthlyStats = await _context.MonthlyFacilityStats
-                    .Where(s => s.Year == today.Year && s.Month == today.Month && facilityIds.Contains(s.FacilityID))
-                    .ToListAsync();
-
-                var activeLabors = await _context.Partographs
-                    .Where(p => facilityIds.Contains(p.FacilityID) &&
-                               (p.LaborStatus == "Active" || p.LaborStatus == "InProgress"))
-                    .CountAsync();
-
-                var complications = await _context.ComplicationAnalytics
-                    .Where(c => c.OccurrenceDateTime >= today && facilityIds.Contains(c.FacilityID))
-                    .CountAsync();
-
-                var referrals = await _context.ReferralAnalytics
-                    .Where(r => r.ReferralDateTime >= today && facilityIds.Contains(r.SourceFacilityID))
-                    .CountAsync();
-
-                var totalDeliveries = monthlyStats.Sum(s => s.TotalDeliveries);
-                var caesareanSections = monthlyStats.Sum(s => s.CaesareanSections);
-
-                summaries.Add(new DistrictSummary
-                {
-                    ID = district.ID,
-                    Name = district.Name,
-                    Code = district.Code,
-                    Type = district.Type,
-                    RegionName = district.Region?.Name ?? district.RegionName,
-                    FacilityCount = facilityIds.Count,
-                    ActiveFacilities = activeFacilities,
-                    DeliveriesToday = todayStats.Sum(s => s.TotalDeliveries),
-                    DeliveriesThisMonth = totalDeliveries,
-                    ActiveLabors = activeLabors,
-                    Complications = complications,
-                    Referrals = referrals,
-                    CaesareanRate = totalDeliveries > 0 ? (double)caesareanSections / totalDeliveries * 100 : 0,
-                    PerformanceStatus = DeterminePerformanceStatus(complications, referrals, activeLabors)
-                });
+                var response = await _httpClient.GetFromJsonAsync<List<ApiDistrictSummary>>("api/monitoring/districts");
+                return MapToDistrictSummaries(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting all districts: {ex.Message}");
             }
 
-            return summaries.OrderBy(d => d.Name).ToList();
+            return new List<DistrictSummary>();
         }
 
         public async Task<DistrictSummary?> GetDistrictSummaryAsync(Guid districtId)
         {
-            var district = await _context.Districts
-                .Include(d => d.Region)
-                .FirstOrDefaultAsync(d => d.ID == districtId);
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<ApiDistrictSummary>($"api/monitoring/districts/{districtId}");
 
-            if (district == null) return null;
+                if (response != null)
+                {
+                    return new DistrictSummary
+                    {
+                        ID = response.Id,
+                        Name = response.Name,
+                        Code = response.Code,
+                        Type = response.Type,
+                        RegionName = response.RegionName,
+                        FacilityCount = response.FacilityCount,
+                        ActiveFacilities = response.ActiveFacilities,
+                        DeliveriesToday = response.DeliveriesToday,
+                        DeliveriesThisMonth = response.DeliveriesThisMonth,
+                        ActiveLabors = response.ActiveLabors,
+                        CaesareanRate = response.CaesareanRate,
+                        PerformanceStatus = response.PerformanceStatus ?? "Normal"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting district: {ex.Message}");
+            }
 
-            var summaries = await GetDistrictSummariesAsync(new List<MAAME.DROMO.PARTOGRAPH.MODEL.District> { district });
-            return summaries.FirstOrDefault();
+            return null;
         }
 
         public async Task<DashboardSummary> GetDistrictDashboardAsync(Guid districtId)
         {
-            var today = DateTime.UtcNow.Date;
-
-            var facilityIds = await _context.Facilities
-                .Where(f => f.DistrictID == districtId)
-                .Select(f => f.ID)
-                .ToListAsync();
-
-            var summary = new DashboardSummary
+            try
             {
-                TotalRegions = 1,
-                TotalDistricts = 1,
-                TotalFacilities = facilityIds.Count,
-                ActiveFacilities = await _context.Facilities.Where(f => f.DistrictID == districtId && f.IsActive).CountAsync()
-            };
+                var response = await _httpClient.GetFromJsonAsync<ApiDashboardSummary>($"api/monitoring/dashboard/summary?districtId={districtId}");
 
-            var todayStats = await _context.DailyFacilityStats
-                .Where(s => s.Date >= today && facilityIds.Contains(s.FacilityID))
-                .ToListAsync();
+                if (response != null)
+                {
+                    return new DashboardSummary
+                    {
+                        TotalRegions = 1,
+                        TotalDistricts = 1,
+                        TotalFacilities = response.TotalFacilities,
+                        ActiveFacilities = response.ActiveFacilities,
+                        TotalDeliveriesToday = response.TotalDeliveriesToday,
+                        TotalDeliveriesThisMonth = response.TotalDeliveriesThisMonth,
+                        TotalDeliveriesThisYear = response.TotalDeliveriesThisYear,
+                        ActiveLabors = response.ActiveLabors,
+                        HighRiskLabors = response.HighRiskLabors,
+                        ComplicationsToday = response.ComplicationsToday
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting district dashboard: {ex.Message}");
+            }
 
-            var monthlyStats = await _context.MonthlyFacilityStats
-                .Where(s => s.Year == today.Year && s.Month == today.Month && facilityIds.Contains(s.FacilityID))
-                .ToListAsync();
-
-            var yearlyStats = await _context.MonthlyFacilityStats
-                .Where(s => s.Year == today.Year && facilityIds.Contains(s.FacilityID))
-                .ToListAsync();
-
-            summary.TotalDeliveriesToday = todayStats.Sum(s => s.TotalDeliveries);
-            summary.TotalDeliveriesThisMonth = monthlyStats.Sum(s => s.TotalDeliveries);
-            summary.TotalDeliveriesThisYear = yearlyStats.Sum(s => s.TotalDeliveries);
-            summary.NormalDeliveries = todayStats.Sum(s => s.NormalDeliveries);
-            summary.CaesareanSections = todayStats.Sum(s => s.CaesareanSections);
-            summary.AssistedDeliveries = todayStats.Sum(s => s.AssistedDeliveries);
-
-            summary.ActiveLabors = await _context.Partographs
-                .Where(p => facilityIds.Contains(p.FacilityID) &&
-                           (p.LaborStatus == "Active" || p.LaborStatus == "InProgress"))
-                .CountAsync();
-
-            summary.HighRiskLabors = await _context.Partographs
-                .Where(p => facilityIds.Contains(p.FacilityID) &&
-                           (p.LaborStatus == "Active" || p.LaborStatus == "InProgress") &&
-                           p.IsHighRisk == true)
-                .CountAsync();
-
-            summary.ComplicationsToday = await _context.ComplicationAnalytics
-                .Where(c => c.OccurrenceDateTime >= today && facilityIds.Contains(c.FacilityID))
-                .CountAsync();
-
-            return summary;
+            return new DashboardSummary();
         }
 
         public async Task<List<TrendData>> GetDistrictDeliveryTrendAsync(Guid districtId, int days = 30)
         {
-            var endDate = DateTime.UtcNow.Date;
-            var startDate = endDate.AddDays(-days);
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<ApiTrendData>>(
+                    $"api/monitoring/dashboard/trends/deliveries?districtId={districtId}&days={days}");
 
-            var facilityIds = await _context.Facilities
-                .Where(f => f.DistrictID == districtId)
-                .Select(f => f.ID)
-                .ToListAsync();
-
-            var stats = await _context.DailyFacilityStats
-                .Where(s => s.Date >= startDate && s.Date <= endDate && facilityIds.Contains(s.FacilityID))
-                .GroupBy(s => s.Date)
-                .Select(g => new TrendData
+                if (response != null)
                 {
-                    Date = g.Key,
-                    Label = g.Key.ToString("MMM dd"),
-                    Value = g.Sum(s => s.TotalDeliveries)
-                })
-                .OrderBy(t => t.Date)
-                .ToListAsync();
+                    return response.Select(t => new TrendData
+                    {
+                        Date = t.Date,
+                        Label = t.Label,
+                        Value = t.Value
+                    }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting district delivery trend: {ex.Message}");
+            }
 
-            return stats;
+            return new List<TrendData>();
         }
 
-        private string DeterminePerformanceStatus(int complications, int referrals, int activeLabors)
+        private List<DistrictSummary> MapToDistrictSummaries(List<ApiDistrictSummary>? response)
         {
-            if (complications > 5 || referrals > 3)
-                return "Critical";
-            if (complications > 2 || referrals > 1)
-                return "Warning";
-            return "Normal";
+            if (response == null) return new List<DistrictSummary>();
+
+            return response.Select(d => new DistrictSummary
+            {
+                ID = d.Id,
+                Name = d.Name,
+                Code = d.Code,
+                Type = d.Type,
+                RegionName = d.RegionName,
+                FacilityCount = d.FacilityCount,
+                ActiveFacilities = d.ActiveFacilities,
+                DeliveriesToday = d.DeliveriesToday,
+                DeliveriesThisMonth = d.DeliveriesThisMonth,
+                ActiveLabors = d.ActiveLabors,
+                CaesareanRate = d.CaesareanRate,
+                PerformanceStatus = d.PerformanceStatus ?? "Normal"
+            }).ToList();
         }
+    }
+
+    // API Response models for District
+    internal class ApiDistrictSummary
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Code { get; set; } = "";
+        public string Type { get; set; } = "";
+        public Guid? RegionId { get; set; }
+        public string RegionName { get; set; } = "";
+        public int FacilityCount { get; set; }
+        public int ActiveFacilities { get; set; }
+        public int DeliveriesToday { get; set; }
+        public int DeliveriesThisMonth { get; set; }
+        public int ActiveLabors { get; set; }
+        public double CaesareanRate { get; set; }
+        public string? PerformanceStatus { get; set; }
     }
 }

@@ -1,30 +1,18 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
+using System.Net.Http.Json;
 using Blazored.LocalStorage;
-using MAAME.DROMO.PARTOGRAPH.MODEL;
-using MAAME.DROMO.PARTOGRAPH.MONITORING.Data;
 using MAAME.DROMO.PARTOGRAPH.MONITORING.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly MonitoringDbContext _context;
-        private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorage;
         private const string SessionKey = "monitoring_session";
 
-        public AuthService(
-            MonitoringDbContext context,
-            IConfiguration configuration,
-            ILocalStorageService localStorage)
+        public AuthService(HttpClient httpClient, ILocalStorageService localStorage)
         {
-            _context = context;
-            _configuration = configuration;
+            _httpClient = httpClient;
             _localStorage = localStorage;
         }
 
@@ -32,104 +20,56 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
         {
             try
             {
-                var user = await _context.MonitoringUsers
-                    .Include(u => u.Region)
-                    .Include(u => u.District)
-                    .FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower());
-
-                if (user == null)
+                var response = await _httpClient.PostAsJsonAsync("api/monitoring/auth/login", new
                 {
-                    return new LoginResult
-                    {
-                        Success = false,
-                        ErrorMessage = "Invalid email or password"
-                    };
-                }
+                    email = request.Email,
+                    password = request.Password
+                });
 
-                if (!user.IsActive)
+                if (response.IsSuccessStatusCode)
                 {
-                    return new LoginResult
-                    {
-                        Success = false,
-                        ErrorMessage = "Your account is inactive. Please contact administrator."
-                    };
-                }
+                    var result = await response.Content.ReadFromJsonAsync<ApiLoginResponse>();
 
-                if (user.IsLocked && user.LockedUntil.HasValue && user.LockedUntil > DateTimeOffset.UtcNow.ToUnixTimeSeconds())
-                {
-                    return new LoginResult
+                    if (result?.Success == true && result.User != null)
                     {
-                        Success = false,
-                        ErrorMessage = "Your account is locked. Please try again later or contact administrator."
-                    };
-                }
+                        var userDto = new MonitoringUserDto
+                        {
+                            ID = result.User.Id,
+                            FullName = result.User.FullName,
+                            Email = result.User.Email,
+                            AccessLevel = result.User.AccessLevel,
+                            Role = result.User.Role,
+                            RegionID = result.User.RegionId,
+                            RegionName = result.User.RegionName,
+                            DistrictID = result.User.DistrictId,
+                            DistrictName = result.User.DistrictName
+                        };
 
-                // Verify password
-                if (!VerifyPassword(request.Password, user.PasswordHash))
-                {
-                    user.FailedLoginAttempts++;
-                    if (user.FailedLoginAttempts >= 5)
-                    {
-                        user.IsLocked = true;
-                        user.LockedUntil = DateTimeOffset.UtcNow.AddMinutes(30).ToUnixTimeSeconds();
+                        var session = new UserSession
+                        {
+                            Token = result.Token ?? "",
+                            RefreshToken = result.RefreshToken ?? "",
+                            User = userDto,
+                            ExpiresAt = DateTime.UtcNow.AddHours(8)
+                        };
+
+                        await _localStorage.SetItemAsync(SessionKey, session);
+
+                        return new LoginResult
+                        {
+                            Success = true,
+                            Token = result.Token,
+                            RefreshToken = result.RefreshToken,
+                            User = userDto
+                        };
                     }
-                    await _context.SaveChangesAsync();
-
-                    return new LoginResult
-                    {
-                        Success = false,
-                        ErrorMessage = "Invalid email or password"
-                    };
                 }
 
-                // Reset failed attempts on successful login
-                user.FailedLoginAttempts = 0;
-                user.IsLocked = false;
-                user.LockedUntil = null;
-                user.LastLogin = DateTime.UtcNow;
-                user.LastLoginTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                user.LoginCount++;
-                await _context.SaveChangesAsync();
-
-                // Generate tokens
-                var token = GenerateJwtToken(user);
-                var refreshToken = GenerateRefreshToken();
-
-                // Save refresh token
-                user.RefreshToken = refreshToken;
-                user.RefreshTokenExpiryTime = DateTimeOffset.UtcNow.AddDays(7).ToUnixTimeSeconds();
-                await _context.SaveChangesAsync();
-
-                var userDto = new MonitoringUserDto
-                {
-                    ID = user.ID,
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    AccessLevel = user.AccessLevel,
-                    Role = user.Role,
-                    RegionID = user.RegionID,
-                    RegionName = user.Region?.Name,
-                    DistrictID = user.DistrictID,
-                    DistrictName = user.District?.Name
-                };
-
-                var session = new UserSession
-                {
-                    Token = token,
-                    RefreshToken = refreshToken,
-                    User = userDto,
-                    ExpiresAt = DateTime.UtcNow.AddMinutes(
-                        int.Parse(_configuration["JwtSettings:ExpirationMinutes"] ?? "480"))
-                };
-
-                await _localStorage.SetItemAsync(SessionKey, session);
-
+                var errorContent = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
                 return new LoginResult
                 {
-                    Success = true,
-                    Token = token,
-                    RefreshToken = refreshToken,
-                    User = userDto
+                    Success = false,
+                    ErrorMessage = errorContent?.Error ?? "Login failed. Please try again."
                 };
             }
             catch (Exception ex)
@@ -137,7 +77,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
                 return new LoginResult
                 {
                     Success = false,
-                    ErrorMessage = $"An error occurred during login: {ex.Message}"
+                    ErrorMessage = $"An error occurred: {ex.Message}"
                 };
             }
         }
@@ -146,16 +86,6 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
         {
             try
             {
-                var session = await _localStorage.GetItemAsync<UserSession>(SessionKey);
-                if (session?.User != null)
-                {
-                    var user = await _context.MonitoringUsers.FindAsync(session.User.ID);
-                    if (user != null)
-                    {
-                        user.RefreshToken = null;
-                        await _context.SaveChangesAsync();
-                    }
-                }
                 await _localStorage.RemoveItemAsync(SessionKey);
             }
             catch
@@ -197,92 +127,64 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
                 if (session == null || string.IsNullOrEmpty(session.RefreshToken))
                     return false;
 
-                var user = await _context.MonitoringUsers
-                    .Include(u => u.Region)
-                    .Include(u => u.District)
-                    .FirstOrDefaultAsync(u =>
-                        u.RefreshToken == session.RefreshToken &&
-                        u.RefreshTokenExpiryTime > DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                var response = await _httpClient.PostAsJsonAsync("api/monitoring/auth/refresh", new
+                {
+                    refreshToken = session.RefreshToken
+                });
 
-                if (user == null)
-                    return false;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<ApiRefreshResponse>();
+                    if (result != null)
+                    {
+                        session.Token = result.Token ?? session.Token;
+                        session.RefreshToken = result.RefreshToken ?? session.RefreshToken;
+                        session.ExpiresAt = DateTime.UtcNow.AddHours(8);
 
-                // Generate new tokens
-                var newToken = GenerateJwtToken(user);
-                var newRefreshToken = GenerateRefreshToken();
+                        await _localStorage.SetItemAsync(SessionKey, session);
+                        return true;
+                    }
+                }
 
-                user.RefreshToken = newRefreshToken;
-                user.RefreshTokenExpiryTime = DateTimeOffset.UtcNow.AddDays(7).ToUnixTimeSeconds();
-                await _context.SaveChangesAsync();
-
-                session.Token = newToken;
-                session.RefreshToken = newRefreshToken;
-                session.ExpiresAt = DateTime.UtcNow.AddMinutes(
-                    int.Parse(_configuration["JwtSettings:ExpirationMinutes"] ?? "480"));
-
-                await _localStorage.SetItemAsync(SessionKey, session);
-                return true;
+                return false;
             }
             catch
             {
                 return false;
             }
         }
+    }
 
-        private string GenerateJwtToken(MonitoringUser user)
-        {
-            var secret = _configuration["JwtSettings:Secret"] ?? "5f021d67-3ceb-44cd-8f55-5b10ca9039e1-monitoring";
-            var issuer = _configuration["JwtSettings:Issuer"] ?? "PartographMonitoringDashboard";
-            var audience = _configuration["JwtSettings:Audience"] ?? "MonitoringUsers";
-            var expirationMinutes = int.Parse(_configuration["JwtSettings:ExpirationMinutes"] ?? "480");
+    // API Response models
+    internal class ApiLoginResponse
+    {
+        public bool Success { get; set; }
+        public string? Token { get; set; }
+        public string? RefreshToken { get; set; }
+        public ApiUserResponse? User { get; set; }
+    }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    internal class ApiUserResponse
+    {
+        public Guid Id { get; set; }
+        public string FullName { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string AccessLevel { get; set; } = "";
+        public string Role { get; set; } = "";
+        public Guid? RegionId { get; set; }
+        public string? RegionName { get; set; }
+        public Guid? DistrictId { get; set; }
+        public string? DistrictName { get; set; }
+    }
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-                new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role),
-                new Claim("AccessLevel", user.AccessLevel)
-            };
+    internal class ApiRefreshResponse
+    {
+        public string? Token { get; set; }
+        public string? RefreshToken { get; set; }
+    }
 
-            if (user.RegionID.HasValue)
-                claims.Add(new Claim("RegionID", user.RegionID.Value.ToString()));
-
-            if (user.DistrictID.HasValue)
-                claims.Add(new Claim("DistrictID", user.DistrictID.Value.ToString()));
-
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[64];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
-        }
-
-        private bool VerifyPassword(string password, string? passwordHash)
-        {
-            if (string.IsNullOrEmpty(passwordHash))
-                return false;
-
-            // Use SHA256 for password verification (should match what's used in the SERVICE project)
-            using var sha256 = SHA256.Create();
-            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            var computedHash = Convert.ToBase64String(hashBytes);
-
-            return computedHash == passwordHash;
-        }
+    internal class ApiErrorResponse
+    {
+        public string? Error { get; set; }
     }
 }

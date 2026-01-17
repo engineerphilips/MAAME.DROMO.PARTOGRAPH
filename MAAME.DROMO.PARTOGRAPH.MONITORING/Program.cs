@@ -1,7 +1,5 @@
-using MAAME.DROMO.PARTOGRAPH.MONITORING.Data;
 using MAAME.DROMO.PARTOGRAPH.MONITORING.Services;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,14 +8,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-// Configure database context
-builder.Services.AddDbContext<MonitoringDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 // Add Blazored LocalStorage for token persistence
 builder.Services.AddBlazoredLocalStorage();
 
-// Add authentication services
+// Add HTTP client for API calls to the SERVICE project
+builder.Services.AddHttpClient("PartographAPI", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7001");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
+// Register HttpClient factory
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("PartographAPI"));
+
+// Add authentication services (using API)
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -46,19 +50,12 @@ builder.Services.AddAuthorizationCore(options =>
         policy.RequireRole("Admin"));
 });
 
-// Add monitoring services
+// Add monitoring services (all using HTTP client to call SERVICE API)
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IRegionService, RegionService>();
 builder.Services.AddScoped<IDistrictService, DistrictService>();
 builder.Services.AddScoped<IFacilityService, FacilityService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
-
-// Add HTTP client for API calls
-builder.Services.AddHttpClient("PartographAPI", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7001");
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-});
 
 var app = builder.Build();
 

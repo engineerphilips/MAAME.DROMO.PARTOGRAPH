@@ -1,162 +1,148 @@
-using MAAME.DROMO.PARTOGRAPH.MONITORING.Data;
+using System.Net.Http.Json;
 using MAAME.DROMO.PARTOGRAPH.MONITORING.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
 {
     public class FacilityService : IFacilityService
     {
-        private readonly MonitoringDbContext _context;
+        private readonly HttpClient _httpClient;
 
-        public FacilityService(MonitoringDbContext context)
+        public FacilityService(HttpClient httpClient)
         {
-            _context = context;
+            _httpClient = httpClient;
         }
 
         public async Task<List<FacilitySummary>> GetFacilitiesByDistrictAsync(Guid districtId)
         {
-            var facilities = await _context.Facilities
-                .Include(f => f.District)
-                .Where(f => f.DistrictID == districtId)
-                .ToListAsync();
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<ApiFacilitySummary>>($"api/monitoring/facilities?districtId={districtId}");
+                return MapToFacilitySummaries(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting facilities by district: {ex.Message}");
+            }
 
-            return await GetFacilitySummariesAsync(facilities);
+            return new List<FacilitySummary>();
         }
 
         public async Task<List<FacilitySummary>> GetAllFacilitySummariesAsync()
         {
-            var facilities = await _context.Facilities
-                .Include(f => f.District)
-                .ToListAsync();
-
-            return await GetFacilitySummariesAsync(facilities);
-        }
-
-        private async Task<List<FacilitySummary>> GetFacilitySummariesAsync(List<MAAME.DROMO.PARTOGRAPH.MODEL.Facility> facilities)
-        {
-            var today = DateTime.UtcNow.Date;
-            var summaries = new List<FacilitySummary>();
-
-            foreach (var facility in facilities)
+            try
             {
-                if (!facility.ID.HasValue) continue;
-
-                var facilityId = facility.ID.Value;
-
-                var todayStats = await _context.DailyFacilityStats
-                    .FirstOrDefaultAsync(s => s.Date >= today && s.FacilityID == facilityId);
-
-                var monthlyStats = await _context.MonthlyFacilityStats
-                    .FirstOrDefaultAsync(s => s.Year == today.Year && s.Month == today.Month && s.FacilityID == facilityId);
-
-                var activeLabors = await _context.Partographs
-                    .Where(p => p.FacilityID == facilityId &&
-                               (p.LaborStatus == "Active" || p.LaborStatus == "InProgress"))
-                    .CountAsync();
-
-                var staffCount = await _context.Staff
-                    .Where(s => s.Facility == facilityId || s.FacilityID == facilityId)
-                    .CountAsync();
-
-                var lastActivity = await _context.Partographs
-                    .Where(p => p.FacilityID == facilityId)
-                    .OrderByDescending(p => p.UpdatedTime)
-                    .Select(p => p.UpdatedTime)
-                    .FirstOrDefaultAsync();
-
-                summaries.Add(new FacilitySummary
-                {
-                    ID = facilityId,
-                    Name = facility.Name,
-                    Code = facility.Code,
-                    Type = facility.Type,
-                    Level = facility.Level,
-                    DistrictName = facility.District?.Name ?? facility.DistrictName,
-                    IsActive = facility.IsActive,
-                    DeliveriesToday = todayStats?.TotalDeliveries ?? 0,
-                    DeliveriesThisMonth = monthlyStats?.TotalDeliveries ?? 0,
-                    ActiveLabors = activeLabors,
-                    StaffCount = staffCount,
-                    LastActivityTime = lastActivity > 0 ? DateTimeOffset.FromUnixTimeSeconds(lastActivity).DateTime : null,
-                    PerformanceStatus = DeterminePerformanceStatus(facility.IsActive, activeLabors, lastActivity)
-                });
+                var response = await _httpClient.GetFromJsonAsync<List<ApiFacilitySummary>>("api/monitoring/facilities");
+                return MapToFacilitySummaries(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting all facilities: {ex.Message}");
             }
 
-            return summaries.OrderBy(f => f.Name).ToList();
+            return new List<FacilitySummary>();
         }
 
         public async Task<FacilitySummary?> GetFacilitySummaryAsync(Guid facilityId)
         {
-            var facility = await _context.Facilities
-                .Include(f => f.District)
-                .FirstOrDefaultAsync(f => f.ID == facilityId);
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<ApiFacilitySummary>($"api/monitoring/facilities/{facilityId}");
 
-            if (facility == null) return null;
+                if (response != null)
+                {
+                    return new FacilitySummary
+                    {
+                        ID = response.Id,
+                        Name = response.Name,
+                        Code = response.Code,
+                        Type = response.Type,
+                        Level = response.Level,
+                        DistrictName = response.DistrictName,
+                        IsActive = response.IsActive,
+                        DeliveriesToday = response.DeliveriesToday,
+                        DeliveriesThisMonth = response.DeliveriesThisMonth,
+                        ActiveLabors = response.ActiveLabors,
+                        StaffCount = response.StaffCount,
+                        LastActivityTime = response.LastActivityTime,
+                        PerformanceStatus = response.PerformanceStatus ?? "Normal"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting facility: {ex.Message}");
+            }
 
-            var summaries = await GetFacilitySummariesAsync(new List<MAAME.DROMO.PARTOGRAPH.MODEL.Facility> { facility });
-            return summaries.FirstOrDefault();
+            return null;
         }
 
         public async Task<DashboardSummary> GetFacilityDashboardAsync(Guid facilityId)
         {
-            var today = DateTime.UtcNow.Date;
-
-            var summary = new DashboardSummary
+            try
             {
-                TotalRegions = 1,
-                TotalDistricts = 1,
-                TotalFacilities = 1,
-                ActiveFacilities = await _context.Facilities.AnyAsync(f => f.ID == facilityId && f.IsActive) ? 1 : 0
-            };
+                var response = await _httpClient.GetFromJsonAsync<ApiFacilitySummary>($"api/monitoring/facilities/{facilityId}");
 
-            var todayStats = await _context.DailyFacilityStats
-                .FirstOrDefaultAsync(s => s.Date >= today && s.FacilityID == facilityId);
+                if (response != null)
+                {
+                    return new DashboardSummary
+                    {
+                        TotalRegions = 1,
+                        TotalDistricts = 1,
+                        TotalFacilities = 1,
+                        ActiveFacilities = response.IsActive ? 1 : 0,
+                        TotalDeliveriesToday = response.DeliveriesToday,
+                        TotalDeliveriesThisMonth = response.DeliveriesThisMonth,
+                        ActiveLabors = response.ActiveLabors
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting facility dashboard: {ex.Message}");
+            }
 
-            var monthlyStats = await _context.MonthlyFacilityStats
-                .FirstOrDefaultAsync(s => s.Year == today.Year && s.Month == today.Month && s.FacilityID == facilityId);
-
-            var yearlyStats = await _context.MonthlyFacilityStats
-                .Where(s => s.Year == today.Year && s.FacilityID == facilityId)
-                .ToListAsync();
-
-            summary.TotalDeliveriesToday = todayStats?.TotalDeliveries ?? 0;
-            summary.TotalDeliveriesThisMonth = monthlyStats?.TotalDeliveries ?? 0;
-            summary.TotalDeliveriesThisYear = yearlyStats.Sum(s => s.TotalDeliveries);
-            summary.NormalDeliveries = todayStats?.NormalDeliveries ?? 0;
-            summary.CaesareanSections = todayStats?.CaesareanSections ?? 0;
-            summary.AssistedDeliveries = todayStats?.AssistedDeliveries ?? 0;
-
-            summary.ActiveLabors = await _context.Partographs
-                .Where(p => p.FacilityID == facilityId &&
-                           (p.LaborStatus == "Active" || p.LaborStatus == "InProgress"))
-                .CountAsync();
-
-            summary.HighRiskLabors = await _context.Partographs
-                .Where(p => p.FacilityID == facilityId &&
-                           (p.LaborStatus == "Active" || p.LaborStatus == "InProgress") &&
-                           p.IsHighRisk == true)
-                .CountAsync();
-
-            summary.ComplicationsToday = await _context.ComplicationAnalytics
-                .Where(c => c.OccurrenceDateTime >= today && c.FacilityID == facilityId)
-                .CountAsync();
-
-            return summary;
+            return new DashboardSummary();
         }
 
-        private string DeterminePerformanceStatus(bool isActive, int activeLabors, long lastActivity)
+        private List<FacilitySummary> MapToFacilitySummaries(List<ApiFacilitySummary>? response)
         {
-            if (!isActive)
-                return "Inactive";
+            if (response == null) return new List<FacilitySummary>();
 
-            var lastActivityTime = lastActivity > 0
-                ? DateTimeOffset.FromUnixTimeSeconds(lastActivity).DateTime
-                : DateTime.MinValue;
-
-            if (lastActivityTime < DateTime.UtcNow.AddDays(-7))
-                return "Warning"; // No activity in a week
-
-            return "Normal";
+            return response.Select(f => new FacilitySummary
+            {
+                ID = f.Id,
+                Name = f.Name,
+                Code = f.Code,
+                Type = f.Type,
+                Level = f.Level,
+                DistrictName = f.DistrictName,
+                IsActive = f.IsActive,
+                DeliveriesToday = f.DeliveriesToday,
+                DeliveriesThisMonth = f.DeliveriesThisMonth,
+                ActiveLabors = f.ActiveLabors,
+                StaffCount = f.StaffCount,
+                LastActivityTime = f.LastActivityTime,
+                PerformanceStatus = f.PerformanceStatus ?? "Normal"
+            }).ToList();
         }
+    }
+
+    // API Response models for Facility
+    internal class ApiFacilitySummary
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Code { get; set; } = "";
+        public string Type { get; set; } = "";
+        public string Level { get; set; } = "";
+        public Guid? DistrictId { get; set; }
+        public string DistrictName { get; set; } = "";
+        public bool IsActive { get; set; }
+        public int DeliveriesToday { get; set; }
+        public int DeliveriesThisMonth { get; set; }
+        public int ActiveLabors { get; set; }
+        public int StaffCount { get; set; }
+        public DateTime? LastActivityTime { get; set; }
+        public string? PerformanceStatus { get; set; }
     }
 }

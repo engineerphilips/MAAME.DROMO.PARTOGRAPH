@@ -17,6 +17,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Facility> Facilities { get; set; }
 
+        // Monitoring Hierarchy Entities
+        public DbSet<Region> Regions { get; set; }
+        public DbSet<District> Districts { get; set; }
+        public DbSet<MonitoringUser> MonitoringUsers { get; set; }
+
         // Partograph Measurements
         public DbSet<FHR> FHRs { get; set; }
         public DbSet<Contraction> Contractions { get; set; }
@@ -147,6 +152,47 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.UpdatedTime);
                 entity.HasIndex(e => e.SyncStatus);
                 entity.HasIndex(e => e.Region);
+                entity.HasIndex(e => e.DistrictID);
+                entity.HasIndex(e => e.RegionID);
+            });
+
+            // Configure Region
+            modelBuilder.Entity<Region>(entity =>
+            {
+                entity.ToTable("Tbl_Region");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Code).HasMaxLength(20);
+                entity.HasIndex(e => e.Code).IsUnique();
+                entity.HasIndex(e => e.Name);
+            });
+
+            // Configure District
+            modelBuilder.Entity<District>(entity =>
+            {
+                entity.ToTable("Tbl_District");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Code).HasMaxLength(20);
+                entity.HasIndex(e => e.Code).IsUnique();
+                entity.HasIndex(e => e.RegionID);
+                entity.HasIndex(e => e.Name);
+            });
+
+            // Configure MonitoringUser
+            modelBuilder.Entity<MonitoringUser>(entity =>
+            {
+                entity.ToTable("Tbl_MonitoringUser");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(256);
+                entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.AccessLevel).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Role).HasMaxLength(50);
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.AccessLevel);
+                entity.HasIndex(e => e.RegionID);
+                entity.HasIndex(e => e.DistrictID);
             });
 
             // Configure measurement types with proper navigation property references

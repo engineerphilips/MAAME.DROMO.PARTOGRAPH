@@ -1,272 +1,225 @@
-using MAAME.DROMO.PARTOGRAPH.MONITORING.Data;
+using System.Net.Http.Json;
 using MAAME.DROMO.PARTOGRAPH.MONITORING.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
 {
     public class DashboardService : IDashboardService
     {
-        private readonly MonitoringDbContext _context;
+        private readonly HttpClient _httpClient;
 
-        public DashboardService(MonitoringDbContext context)
+        public DashboardService(HttpClient httpClient)
         {
-            _context = context;
+            _httpClient = httpClient;
         }
 
         public async Task<DashboardSummary> GetDashboardSummaryAsync(DashboardFilter? filter = null)
         {
-            var today = DateTime.UtcNow.Date;
-            var monthStart = new DateTime(today.Year, today.Month, 1);
-            var yearStart = new DateTime(today.Year, 1, 1);
-
-            var todayUnix = new DateTimeOffset(today).ToUnixTimeSeconds();
-            var monthStartUnix = new DateTimeOffset(monthStart).ToUnixTimeSeconds();
-            var yearStartUnix = new DateTimeOffset(yearStart).ToUnixTimeSeconds();
-
-            var summary = new DashboardSummary
+            try
             {
-                TotalRegions = await _context.Regions.CountAsync(),
-                TotalDistricts = await _context.Districts.CountAsync(),
-                TotalFacilities = await _context.Facilities.CountAsync(),
-                ActiveFacilities = await _context.Facilities.Where(f => f.IsActive).CountAsync()
-            };
+                var queryParams = BuildQueryParams(filter);
+                var response = await _httpClient.GetFromJsonAsync<ApiDashboardSummary>($"api/monitoring/dashboard/summary{queryParams}");
 
-            // Build facility query based on filter
-            IQueryable<MAAME.DROMO.PARTOGRAPH.MODEL.Facility> facilityQuery = _context.Facilities;
-            if (filter?.RegionID.HasValue == true)
-            {
-                facilityQuery = facilityQuery.Where(f => f.RegionID == filter.RegionID);
+                if (response != null)
+                {
+                    return new DashboardSummary
+                    {
+                        TotalRegions = response.TotalRegions,
+                        TotalDistricts = response.TotalDistricts,
+                        TotalFacilities = response.TotalFacilities,
+                        ActiveFacilities = response.ActiveFacilities,
+                        TotalDeliveriesToday = response.TotalDeliveriesToday,
+                        TotalDeliveriesThisMonth = response.TotalDeliveriesThisMonth,
+                        TotalDeliveriesThisYear = response.TotalDeliveriesThisYear,
+                        ActiveLabors = response.ActiveLabors,
+                        HighRiskLabors = response.HighRiskLabors,
+                        ComplicationsToday = response.ComplicationsToday,
+                        ReferralsToday = response.ReferralsToday,
+                        MaternalDeaths = response.MaternalDeaths,
+                        NeonatalDeaths = response.NeonatalDeaths,
+                        Stillbirths = response.Stillbirths
+                    };
+                }
             }
-            if (filter?.DistrictID.HasValue == true)
+            catch (Exception ex)
             {
-                facilityQuery = facilityQuery.Where(f => f.DistrictID == filter.DistrictID);
+                Console.WriteLine($"Error getting dashboard summary: {ex.Message}");
             }
 
-            var facilityIds = await facilityQuery.Select(f => f.ID).ToListAsync();
-
-            // Get delivery statistics from DailyFacilityStats
-            var todayStats = await _context.DailyFacilityStats
-                .Where(s => s.Date >= today && facilityIds.Contains(s.FacilityID))
-                .ToListAsync();
-
-            summary.TotalDeliveriesToday = todayStats.Sum(s => s.TotalDeliveries);
-            summary.NormalDeliveries = todayStats.Sum(s => s.NormalDeliveries);
-            summary.CaesareanSections = todayStats.Sum(s => s.CaesareanSections);
-            summary.AssistedDeliveries = todayStats.Sum(s => s.AssistedDeliveries);
-
-            // Monthly statistics
-            var monthlyStats = await _context.MonthlyFacilityStats
-                .Where(s => s.Year == today.Year && s.Month == today.Month && facilityIds.Contains(s.FacilityID))
-                .ToListAsync();
-
-            summary.TotalDeliveriesThisMonth = monthlyStats.Sum(s => s.TotalDeliveries);
-
-            // Year statistics
-            var yearlyStats = await _context.MonthlyFacilityStats
-                .Where(s => s.Year == today.Year && facilityIds.Contains(s.FacilityID))
-                .ToListAsync();
-
-            summary.TotalDeliveriesThisYear = yearlyStats.Sum(s => s.TotalDeliveries);
-
-            // Active labors (partographs with LaborStatus = Active or InProgress)
-            summary.ActiveLabors = await _context.Partographs
-                .Where(p => facilityIds.Contains(p.FacilityID) &&
-                           (p.LaborStatus == "Active" || p.LaborStatus == "InProgress"))
-                .CountAsync();
-
-            // High risk labors
-            summary.HighRiskLabors = await _context.Partographs
-                .Where(p => facilityIds.Contains(p.FacilityID) &&
-                           (p.LaborStatus == "Active" || p.LaborStatus == "InProgress") &&
-                           p.IsHighRisk == true)
-                .CountAsync();
-
-            // Complications today
-            summary.ComplicationsToday = await _context.ComplicationAnalytics
-                .Where(c => c.OccurrenceDateTime >= today &&
-                           facilityIds.Contains(c.FacilityID))
-                .CountAsync();
-
-            // Referrals today
-            summary.ReferralsToday = await _context.Referrals
-                .Where(r => r.ReferralTime >= todayUnix &&
-                           facilityIds.Contains(r.SourceFacilityID ?? Guid.Empty))
-                .CountAsync();
-
-            // Mortality this month
-            summary.MaternalDeaths = await _context.MaternalMortalityRecords
-                .Where(m => m.Year == today.Year && m.Month == today.Month &&
-                           facilityIds.Contains(m.FacilityID))
-                .CountAsync();
-
-            summary.NeonatalDeaths = await _context.NeonatalOutcomeRecords
-                .Where(n => n.Year == today.Year && n.Month == today.Month &&
-                           n.OutcomeType == "Death" &&
-                           facilityIds.Contains(n.FacilityID))
-                .CountAsync();
-
-            summary.Stillbirths = await _context.BirthOutcomes
-                .Where(b => b.RecordedTime >= monthStartUnix &&
-                           b.FetalStatus == "Stillbirth")
-                .CountAsync();
-
-            return summary;
+            return new DashboardSummary();
         }
 
         public async Task<List<TrendData>> GetDeliveryTrendAsync(DashboardFilter? filter = null)
         {
-            var endDate = DateTime.UtcNow.Date;
-            var startDate = endDate.AddDays(-30);
-
-            var query = _context.DailyFacilityStats
-                .Where(s => s.Date >= startDate && s.Date <= endDate);
-
-            if (filter?.RegionID.HasValue == true)
+            try
             {
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.RegionID == filter.RegionID)
-                    .Select(f => f.ID)
-                    .ToListAsync();
-                query = query.Where(s => facilityIds.Contains(s.FacilityID));
-            }
+                var queryParams = BuildQueryParams(filter);
+                var response = await _httpClient.GetFromJsonAsync<List<ApiTrendData>>($"api/monitoring/dashboard/trends/deliveries{queryParams}");
 
-            if (filter?.DistrictID.HasValue == true)
-            {
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.DistrictID == filter.DistrictID)
-                    .Select(f => f.ID)
-                    .ToListAsync();
-                query = query.Where(s => facilityIds.Contains(s.FacilityID));
-            }
-
-            var stats = await query
-                .GroupBy(s => s.Date)
-                .Select(g => new TrendData
+                if (response != null)
                 {
-                    Date = g.Key,
-                    Label = g.Key.ToString("MMM dd"),
-                    Value = g.Sum(s => s.TotalDeliveries)
-                })
-                .OrderBy(t => t.Date)
-                .ToListAsync();
+                    return response.Select(t => new TrendData
+                    {
+                        Date = t.Date,
+                        Label = t.Label,
+                        Value = t.Value
+                    }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting delivery trends: {ex.Message}");
+            }
 
-            return stats;
+            return new List<TrendData>();
         }
 
         public async Task<DeliveryModeDistribution> GetDeliveryModeDistributionAsync(DashboardFilter? filter = null)
         {
-            var today = DateTime.UtcNow.Date;
-            var monthStart = new DateTime(today.Year, today.Month, 1);
-
-            var query = _context.MonthlyFacilityStats
-                .Where(s => s.Year == today.Year && s.Month == today.Month);
-
-            if (filter?.RegionID.HasValue == true)
+            try
             {
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.RegionID == filter.RegionID)
-                    .Select(f => f.ID)
-                    .ToListAsync();
-                query = query.Where(s => facilityIds.Contains(s.FacilityID));
+                var queryParams = BuildQueryParams(filter);
+                var response = await _httpClient.GetFromJsonAsync<ApiDeliveryModeDistribution>($"api/monitoring/dashboard/delivery-modes{queryParams}");
+
+                if (response != null)
+                {
+                    return new DeliveryModeDistribution
+                    {
+                        NormalVaginal = response.NormalVaginal,
+                        AssistedVaginal = response.AssistedVaginal,
+                        ElectiveCaesarean = response.ElectiveCaesarean,
+                        EmergencyCaesarean = response.EmergencyCaesarean
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting delivery mode distribution: {ex.Message}");
             }
 
-            if (filter?.DistrictID.HasValue == true)
-            {
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.DistrictID == filter.DistrictID)
-                    .Select(f => f.ID)
-                    .ToListAsync();
-                query = query.Where(s => facilityIds.Contains(s.FacilityID));
-            }
-
-            var stats = await query.ToListAsync();
-
-            return new DeliveryModeDistribution
-            {
-                NormalVaginal = stats.Sum(s => s.NormalDeliveries),
-                AssistedVaginal = stats.Sum(s => s.AssistedDeliveries),
-                ElectiveCaesarean = stats.Sum(s => s.ElectiveCaesareans),
-                EmergencyCaesarean = stats.Sum(s => s.EmergencyCaesareans)
-            };
+            return new DeliveryModeDistribution();
         }
 
         public async Task<List<DashboardAlert>> GetActiveAlertsAsync(DashboardFilter? filter = null)
         {
-            var query = _context.AlertSummaries
-                .Where(a => !a.Resolved)
-                .OrderByDescending(a => a.AlertDateTime);
-
-            if (filter?.RegionID.HasValue == true)
+            try
             {
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.RegionID == filter.RegionID)
-                    .Select(f => f.ID)
-                    .ToListAsync();
-                query = (IOrderedQueryable<MAAME.DROMO.PARTOGRAPH.MODEL.AlertSummary>)query.Where(a => facilityIds.Contains(a.FacilityID));
+                var queryParams = BuildQueryParams(filter);
+                var response = await _httpClient.GetFromJsonAsync<List<ApiAlert>>($"api/monitoring/dashboard/alerts{queryParams}");
+
+                if (response != null)
+                {
+                    return response.Select(a => new DashboardAlert
+                    {
+                        ID = a.Id,
+                        Title = a.Title ?? "Alert",
+                        Message = a.Message ?? "",
+                        Severity = a.Severity ?? "Info",
+                        Category = a.Category ?? "General",
+                        FacilityName = a.FacilityName ?? "",
+                        CreatedAt = a.CreatedAt,
+                        IsResolved = a.IsResolved
+                    }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting active alerts: {ex.Message}");
             }
 
-            if (filter?.DistrictID.HasValue == true)
-            {
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.DistrictID == filter.DistrictID)
-                    .Select(f => f.ID)
-                    .ToListAsync();
-                query = (IOrderedQueryable<MAAME.DROMO.PARTOGRAPH.MODEL.AlertSummary>)query.Where(a => facilityIds.Contains(a.FacilityID));
-            }
-
-            var alerts = await query.Take(50).ToListAsync();
-
-            return alerts.Select(a => new DashboardAlert
-            {
-                ID = a.ID,
-                Title = a.AlertType ?? "Alert",
-                Message = a.Description ?? "",
-                Severity = a.AlertSeverity ?? "Info",
-                Category = a.AlertType ?? "General",
-                FacilityName = a.FacilityName ?? "",
-                CreatedAt = a.AlertDateTime,
-                IsResolved = a.Resolved
-            }).ToList();
+            return new List<DashboardAlert>();
         }
 
         public async Task<List<TrendData>> GetComplicationTrendAsync(DashboardFilter? filter = null)
         {
-            var endDate = DateTime.UtcNow.Date;
-            var startDate = endDate.AddDays(-30);
-
-            var query = _context.ComplicationAnalytics
-                .Where(c => c.OccurrenceDateTime >= startDate && c.OccurrenceDateTime <= endDate);
-
-            if (filter?.RegionID.HasValue == true)
+            try
             {
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.RegionID == filter.RegionID)
-                    .Select(f => f.ID)
-                    .ToListAsync();
-                query = query.Where(c => facilityIds.Contains(c.FacilityID));
-            }
+                var queryParams = BuildQueryParams(filter);
+                // Use the analytics endpoint for complications
+                var today = DateTime.UtcNow.Date;
+                var startDate = today.AddDays(-30);
+                var response = await _httpClient.GetFromJsonAsync<List<ApiTrendData>>(
+                    $"api/analytics/complications?startDate={startDate:yyyy-MM-dd}&endDate={today:yyyy-MM-dd}");
 
-            if (filter?.DistrictID.HasValue == true)
-            {
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.DistrictID == filter.DistrictID)
-                    .Select(f => f.ID)
-                    .ToListAsync();
-                query = query.Where(c => facilityIds.Contains(c.FacilityID));
-            }
-
-            var stats = await query
-                .GroupBy(c => c.OccurrenceDateTime.Date)
-                .Select(g => new TrendData
+                if (response != null)
                 {
-                    Date = g.Key,
-                    Label = g.Key.ToString("MMM dd"),
-                    Value = g.Count()
-                })
-                .OrderBy(t => t.Date)
-                .ToListAsync();
+                    return response.Select(t => new TrendData
+                    {
+                        Date = t.Date,
+                        Label = t.Label,
+                        Value = t.Value
+                    }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting complication trends: {ex.Message}");
+            }
 
-            return stats;
+            return new List<TrendData>();
         }
+
+        private string BuildQueryParams(DashboardFilter? filter)
+        {
+            if (filter == null) return "";
+
+            var parameters = new List<string>();
+
+            if (filter.RegionID.HasValue)
+                parameters.Add($"regionId={filter.RegionID.Value}");
+
+            if (filter.DistrictID.HasValue)
+                parameters.Add($"districtId={filter.DistrictID.Value}");
+
+            if (filter.FacilityID.HasValue)
+                parameters.Add($"facilityId={filter.FacilityID.Value}");
+
+            return parameters.Count > 0 ? "?" + string.Join("&", parameters) : "";
+        }
+    }
+
+    // API Response models for Dashboard
+    internal class ApiDashboardSummary
+    {
+        public int TotalRegions { get; set; }
+        public int TotalDistricts { get; set; }
+        public int TotalFacilities { get; set; }
+        public int ActiveFacilities { get; set; }
+        public int TotalDeliveriesToday { get; set; }
+        public int TotalDeliveriesThisMonth { get; set; }
+        public int TotalDeliveriesThisYear { get; set; }
+        public int ActiveLabors { get; set; }
+        public int HighRiskLabors { get; set; }
+        public int ComplicationsToday { get; set; }
+        public int ReferralsToday { get; set; }
+        public int MaternalDeaths { get; set; }
+        public int NeonatalDeaths { get; set; }
+        public int Stillbirths { get; set; }
+    }
+
+    internal class ApiTrendData
+    {
+        public DateTime Date { get; set; }
+        public string Label { get; set; } = "";
+        public int Value { get; set; }
+    }
+
+    internal class ApiDeliveryModeDistribution
+    {
+        public int NormalVaginal { get; set; }
+        public int AssistedVaginal { get; set; }
+        public int ElectiveCaesarean { get; set; }
+        public int EmergencyCaesarean { get; set; }
+    }
+
+    internal class ApiAlert
+    {
+        public Guid Id { get; set; }
+        public string? Title { get; set; }
+        public string? Message { get; set; }
+        public string? Severity { get; set; }
+        public string? Category { get; set; }
+        public string? FacilityName { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public bool IsResolved { get; set; }
     }
 }
