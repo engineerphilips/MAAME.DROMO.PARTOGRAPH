@@ -77,6 +77,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.Property(e => e.HospitalNumber).HasMaxLength(50);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
 
                 // Configure indexes for sync
                 entity.HasIndex(e => e.UpdatedTime);
@@ -94,6 +95,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
 
                 // Configure indexes for sync
                 entity.HasIndex(e => e.UpdatedTime);
@@ -119,6 +121,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.Property(e => e.Email).HasMaxLength(100);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
 
                 // Configure indexes
                 entity.HasIndex(e => e.Email).IsUnique();
@@ -137,6 +140,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.Property(e => e.Type).HasMaxLength(50);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
 
                 // Configure indexes
                 entity.HasIndex(e => e.Code).IsUnique();
@@ -246,6 +250,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
 
                 // Configure indexes
                 entity.HasIndex(e => e.PartographID);
@@ -269,6 +274,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
 
                 // Configure decimal precision for BabyDetails
                 entity.Property(e => e.BirthWeight).HasPrecision(10, 2);
@@ -307,6 +313,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
 
                 // Configure decimal precision for Referral
                 entity.Property(e => e.MaternalTemperature).HasPrecision(4, 1);
@@ -396,6 +403,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
 
                 // Configure indexes for sync and queries
                 entity.HasIndex(e => e.PartographID);
@@ -421,6 +429,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.DeviceId).HasMaxLength(100);
                 entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
 
                 // Configure indexes for sync and queries
                 entity.HasIndex(e => e.PartographID);
