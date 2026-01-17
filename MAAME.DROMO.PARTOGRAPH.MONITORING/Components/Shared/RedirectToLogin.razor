@@ -1,13 +1,18 @@
 @inject NavigationManager Navigation
 
-@code {
-    // protected override void OnInitialized()
-    // {
-    //     Navigation.NavigateTo("login", forceLoad: true);
-    // }
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="text-center">
+        <div class="spinner-border text-white mb-3" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Redirecting...</span>
+        </div>
+        <p class="text-white">Redirecting to login...</p>
+    </div>
+</div>
 
-    protected override void OnAfterRender(bool firstRender)
+@code {
+    protected override void OnInitialized()
     {
-        Navigation.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}", true);
+        var returnUrl = Uri.EscapeDataString(Navigation.Uri);
+        Navigation.NavigateTo($"/login?returnUrl={returnUrl}", forceLoad: true);
     }
 }
