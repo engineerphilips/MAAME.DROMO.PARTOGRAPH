@@ -41,6 +41,10 @@ public class SyncService : ISyncService
     private readonly PartographDiagnosisRepository _partographDiagnosisRepository;
     private readonly PartographRiskFactorRepository _partographRiskFactorRepository;
     private readonly StaffRepository _staffRepository;
+    private readonly BirthOutcomeRepository _birthOutcomeRepository;
+    private readonly BabyDetailsRepository _babyDetailsRepository;
+    private readonly ReferralRepository _referralRepository;
+    private readonly FacilityRepository _facilityRepository;
     private readonly ILogger<SyncService> _logger;
 
     private SyncStatus _currentStatus = SyncStatus.Idle;
@@ -78,6 +82,10 @@ public class SyncService : ISyncService
         PartographDiagnosisRepository partographDiagnosisRepository,
         PartographRiskFactorRepository partographRiskFactorRepository,
         StaffRepository staffRepository,
+        BirthOutcomeRepository birthOutcomeRepository,
+        BabyDetailsRepository babyDetailsRepository,
+        ReferralRepository referralRepository,
+        FacilityRepository facilityRepository,
         ILogger<SyncService> logger)
     {
         _apiClient = apiClient;
@@ -110,6 +118,10 @@ public class SyncService : ISyncService
         _partographDiagnosisRepository = partographDiagnosisRepository;
         _partographRiskFactorRepository = partographRiskFactorRepository;
         _staffRepository = staffRepository;
+        _birthOutcomeRepository = birthOutcomeRepository;
+        _babyDetailsRepository = babyDetailsRepository;
+        _referralRepository = referralRepository;
+        _facilityRepository = facilityRepository;
         _logger = logger;
 
         // Load last sync time from preferences
@@ -805,6 +817,132 @@ public class SyncService : ISyncService
                 ProgressChanged?.Invoke(this, staffProgress);
             }
 
+            // Push birth outcomes
+            var birthOutcomeProgress = new SyncProgress { TableName = "Tbl_BirthOutcome", CurrentOperation = "Pushing birth outcomes" };
+            ProgressChanged?.Invoke(this, birthOutcomeProgress);
+
+            var pendingBirthOutcomes = await GetPendingBirthOutcomesAsync();
+            birthOutcomeProgress.TotalRecords = pendingBirthOutcomes.Count;
+
+            foreach (var item in pendingBirthOutcomes)
+            {
+                if (string.IsNullOrWhiteSpace(item.DeviceId))
+                    item.DeviceId = deviceId;
+                if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                    item.OriginDeviceId = deviceId;
+                if (string.IsNullOrWhiteSpace(item.DataHash))
+                    item.DataHash = item.CalculateHash();
+                if (string.IsNullOrWhiteSpace(item.ConflictData))
+                    item.ConflictData = "{}";
+            }
+
+            if (pendingBirthOutcomes.Any())
+            {
+                var pushRequest = new SyncPushRequest<BirthOutcome>
+                {
+                    DeviceId = deviceId,
+                    Changes = pendingBirthOutcomes
+                };
+
+                var pushResponse = await _apiClient.PushBirthOutcomesAsync(pushRequest);
+
+                result.TotalPushed += pushResponse.SuccessIds.Count;
+                result.TotalConflicts += pushResponse.Conflicts.Count;
+                result.TotalErrors += pushResponse.Errors.Count;
+
+                await MarkRecordsAsSyncedAsync("Tbl_BirthOutcome", pushResponse.SuccessIds);
+
+                birthOutcomeProgress.SuccessCount = pushResponse.SuccessIds.Count;
+                birthOutcomeProgress.ConflictCount = pushResponse.Conflicts.Count;
+                birthOutcomeProgress.ErrorCount = pushResponse.Errors.Count;
+                birthOutcomeProgress.ProcessedRecords = pendingBirthOutcomes.Count;
+                ProgressChanged?.Invoke(this, birthOutcomeProgress);
+            }
+
+            // Push baby details
+            var babyDetailsProgress = new SyncProgress { TableName = "Tbl_Baby", CurrentOperation = "Pushing baby details" };
+            ProgressChanged?.Invoke(this, babyDetailsProgress);
+
+            var pendingBabyDetails = await GetPendingBabyDetailsAsync();
+            babyDetailsProgress.TotalRecords = pendingBabyDetails.Count;
+
+            foreach (var item in pendingBabyDetails)
+            {
+                if (string.IsNullOrWhiteSpace(item.DeviceId))
+                    item.DeviceId = deviceId;
+                if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                    item.OriginDeviceId = deviceId;
+                if (string.IsNullOrWhiteSpace(item.DataHash))
+                    item.DataHash = item.CalculateHash();
+                if (string.IsNullOrWhiteSpace(item.ConflictData))
+                    item.ConflictData = "{}";
+            }
+
+            if (pendingBabyDetails.Any())
+            {
+                var pushRequest = new SyncPushRequest<BabyDetails>
+                {
+                    DeviceId = deviceId,
+                    Changes = pendingBabyDetails
+                };
+
+                var pushResponse = await _apiClient.PushBabyDetailsAsync(pushRequest);
+
+                result.TotalPushed += pushResponse.SuccessIds.Count;
+                result.TotalConflicts += pushResponse.Conflicts.Count;
+                result.TotalErrors += pushResponse.Errors.Count;
+
+                await MarkRecordsAsSyncedAsync("Tbl_Baby", pushResponse.SuccessIds);
+
+                babyDetailsProgress.SuccessCount = pushResponse.SuccessIds.Count;
+                babyDetailsProgress.ConflictCount = pushResponse.Conflicts.Count;
+                babyDetailsProgress.ErrorCount = pushResponse.Errors.Count;
+                babyDetailsProgress.ProcessedRecords = pendingBabyDetails.Count;
+                ProgressChanged?.Invoke(this, babyDetailsProgress);
+            }
+
+            // Push referrals
+            var referralProgress = new SyncProgress { TableName = "Tbl_Referral", CurrentOperation = "Pushing referrals" };
+            ProgressChanged?.Invoke(this, referralProgress);
+
+            var pendingReferrals = await GetPendingReferralsAsync();
+            referralProgress.TotalRecords = pendingReferrals.Count;
+
+            foreach (var item in pendingReferrals)
+            {
+                if (string.IsNullOrWhiteSpace(item.DeviceId))
+                    item.DeviceId = deviceId;
+                if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                    item.OriginDeviceId = deviceId;
+                if (string.IsNullOrWhiteSpace(item.DataHash))
+                    item.DataHash = item.CalculateHash();
+                if (string.IsNullOrWhiteSpace(item.ConflictData))
+                    item.ConflictData = "{}";
+            }
+
+            if (pendingReferrals.Any())
+            {
+                var pushRequest = new SyncPushRequest<Referral>
+                {
+                    DeviceId = deviceId,
+                    Changes = pendingReferrals
+                };
+
+                var pushResponse = await _apiClient.PushReferralsAsync(pushRequest);
+
+                result.TotalPushed += pushResponse.SuccessIds.Count;
+                result.TotalConflicts += pushResponse.Conflicts.Count;
+                result.TotalErrors += pushResponse.Errors.Count;
+
+                await MarkRecordsAsSyncedAsync("Tbl_Referral", pushResponse.SuccessIds);
+
+                referralProgress.SuccessCount = pushResponse.SuccessIds.Count;
+                referralProgress.ConflictCount = pushResponse.Conflicts.Count;
+                referralProgress.ErrorCount = pushResponse.Errors.Count;
+                referralProgress.ProcessedRecords = pendingReferrals.Count;
+                ProgressChanged?.Invoke(this, referralProgress);
+            }
+
             result.Success = result.TotalErrors == 0;
             result.Duration = stopwatch.Elapsed;
 
@@ -887,6 +1025,82 @@ public class SyncService : ISyncService
             if (staffPulled.serverTimestamp > latestServerTimestamp)
             {
                 latestServerTimestamp = staffPulled.serverTimestamp;
+            }
+
+            // Pull birth outcomes with pagination
+            var birthOutcomeProgress = new SyncProgress { TableName = "Tbl_BirthOutcome", CurrentOperation = "Pulling birth outcomes" };
+            ProgressChanged?.Invoke(this, birthOutcomeProgress);
+
+            var birthOutcomesPulled = await PullWithPaginationAsync<BirthOutcome>(
+                deviceId,
+                lastPullTimestamp,
+                "Tbl_BirthOutcome",
+                async (request) => await _apiClient.PullBirthOutcomesAsync(request),
+                async (records) => await MergeBirthOutcomes(records),
+                birthOutcomeProgress,
+                cancellationToken);
+
+            result.TotalPulled += birthOutcomesPulled.recordCount;
+            if (birthOutcomesPulled.serverTimestamp > latestServerTimestamp)
+            {
+                latestServerTimestamp = birthOutcomesPulled.serverTimestamp;
+            }
+
+            // Pull baby details with pagination
+            var babyDetailsProgress = new SyncProgress { TableName = "Tbl_Baby", CurrentOperation = "Pulling baby details" };
+            ProgressChanged?.Invoke(this, babyDetailsProgress);
+
+            var babyDetailsPulled = await PullWithPaginationAsync<BabyDetails>(
+                deviceId,
+                lastPullTimestamp,
+                "Tbl_Baby",
+                async (request) => await _apiClient.PullBabyDetailsAsync(request),
+                async (records) => await MergeBabyDetails(records),
+                babyDetailsProgress,
+                cancellationToken);
+
+            result.TotalPulled += babyDetailsPulled.recordCount;
+            if (babyDetailsPulled.serverTimestamp > latestServerTimestamp)
+            {
+                latestServerTimestamp = babyDetailsPulled.serverTimestamp;
+            }
+
+            // Pull referrals with pagination
+            var referralProgress = new SyncProgress { TableName = "Tbl_Referral", CurrentOperation = "Pulling referrals" };
+            ProgressChanged?.Invoke(this, referralProgress);
+
+            var referralsPulled = await PullWithPaginationAsync<Referral>(
+                deviceId,
+                lastPullTimestamp,
+                "Tbl_Referral",
+                async (request) => await _apiClient.PullReferralsAsync(request),
+                async (records) => await MergeReferrals(records),
+                referralProgress,
+                cancellationToken);
+
+            result.TotalPulled += referralsPulled.recordCount;
+            if (referralsPulled.serverTimestamp > latestServerTimestamp)
+            {
+                latestServerTimestamp = referralsPulled.serverTimestamp;
+            }
+
+            // Pull facilities with pagination (reference data - pull only)
+            var facilityProgress = new SyncProgress { TableName = "Tbl_Facility", CurrentOperation = "Pulling facilities" };
+            ProgressChanged?.Invoke(this, facilityProgress);
+
+            var facilitiesPulled = await PullWithPaginationAsync<Facility>(
+                deviceId,
+                lastPullTimestamp,
+                "Tbl_Facility",
+                async (request) => await _apiClient.PullFacilitiesAsync(request),
+                async (records) => await MergeFacilities(records),
+                facilityProgress,
+                cancellationToken);
+
+            result.TotalPulled += facilitiesPulled.recordCount;
+            if (facilitiesPulled.serverTimestamp > latestServerTimestamp)
+            {
+                latestServerTimestamp = facilitiesPulled.serverTimestamp;
             }
 
             // Update last pull timestamp using SERVER timestamp (not device time)
@@ -1056,6 +1270,30 @@ public class SyncService : ISyncService
                 count += Convert.ToInt32(result);
             }
 
+            // Count pending birth outcomes
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT COUNT(*) FROM Tbl_BirthOutcome WHERE SyncStatus = 0";
+                var result = await command.ExecuteScalarAsync();
+                count += Convert.ToInt32(result);
+            }
+
+            // Count pending baby details
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT COUNT(*) FROM Tbl_Baby WHERE SyncStatus = 0";
+                var result = await command.ExecuteScalarAsync();
+                count += Convert.ToInt32(result);
+            }
+
+            // Count pending referrals
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT COUNT(*) FROM Tbl_Referral WHERE SyncStatus = 0";
+                var result = await command.ExecuteScalarAsync();
+                count += Convert.ToInt32(result);
+            }
+
             return count;
         }
         catch (Exception ex)
@@ -1100,6 +1338,30 @@ public class SyncService : ISyncService
                 count += Convert.ToInt32(result);
             }
 
+            // Count conflicted birth outcomes
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT COUNT(*) FROM Tbl_BirthOutcome WHERE SyncStatus = 2";
+                var result = await command.ExecuteScalarAsync();
+                count += Convert.ToInt32(result);
+            }
+
+            // Count conflicted baby details
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT COUNT(*) FROM Tbl_Baby WHERE SyncStatus = 2";
+                var result = await command.ExecuteScalarAsync();
+                count += Convert.ToInt32(result);
+            }
+
+            // Count conflicted referrals
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT COUNT(*) FROM Tbl_Referral WHERE SyncStatus = 2";
+                var result = await command.ExecuteScalarAsync();
+                count += Convert.ToInt32(result);
+            }
+
             return count;
         }
         catch (Exception ex)
@@ -1132,6 +1394,15 @@ public class SyncService : ISyncService
                 WHERE ID = @id;
                 UPDATE Tbl_Staff
                 SET SyncStatus = 0, ConflictData = NULL
+                WHERE ID = @id;
+                UPDATE Tbl_BirthOutcome
+                SET SyncStatus = 0, ConflictData = NULL
+                WHERE ID = @id;
+                UPDATE Tbl_Baby
+                SET SyncStatus = 0, ConflictData = NULL
+                WHERE ID = @id;
+                UPDATE Tbl_Referral
+                SET SyncStatus = 0, ConflictData = NULL
                 WHERE ID = @id;";
         }
         else
@@ -1145,6 +1416,15 @@ public class SyncService : ISyncService
                 SET SyncStatus = 1, ConflictData = NULL
                 WHERE ID = @id;
                 UPDATE Tbl_Staff
+                SET SyncStatus = 1, ConflictData = NULL
+                WHERE ID = @id;
+                UPDATE Tbl_BirthOutcome
+                SET SyncStatus = 1, ConflictData = NULL
+                WHERE ID = @id;
+                UPDATE Tbl_Baby
+                SET SyncStatus = 1, ConflictData = NULL
+                WHERE ID = @id;
+                UPDATE Tbl_Referral
                 SET SyncStatus = 1, ConflictData = NULL
                 WHERE ID = @id;";
         }
@@ -1535,5 +1815,149 @@ public class SyncService : ISyncService
             }
             // Add other properties as needed
         };
+    }
+
+    private async Task<List<BirthOutcome>> GetPendingBirthOutcomesAsync()
+    {
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
+        await connection.OpenAsync();
+
+        var items = new List<BirthOutcome>();
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Tbl_BirthOutcome WHERE SyncStatus = 0 AND deleted = 0";
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                items.Add(new BirthOutcome
+                {
+                    ID = Guid.Parse(reader["ID"].ToString()!),
+                    PartographID = Guid.Parse(reader["partographid"].ToString()!),
+                    RecordedTime = DateTime.Parse(reader["recordedtime"].ToString()!),
+                    MaternalStatus = (MaternalOutcomeStatus)Convert.ToInt32(reader["maternalstatus"]),
+                    DeliveryMode = (DeliveryMode)Convert.ToInt32(reader["deliverymode"]),
+                    NumberOfBabies = Convert.ToInt32(reader["numberofbabies"]),
+                    PerinealStatus = (PerinealStatus)Convert.ToInt32(reader["perinealstatus"]),
+                    PlacentaComplete = Convert.ToBoolean(reader["placentacomplete"]),
+                    EstimatedBloodLoss = Convert.ToInt32(reader["estimatedbloodloss"]),
+                    PostpartumHemorrhage = Convert.ToBoolean(reader["postpartumhemorrhage"]),
+                    Eclampsia = Convert.ToBoolean(reader["eclampsia"]),
+                    SepticShock = Convert.ToBoolean(reader["septicshock"]),
+                    ObstructedLabor = Convert.ToBoolean(reader["obstructedlabor"]),
+                    RupturedUterus = Convert.ToBoolean(reader["ruptureduterus"]),
+                    OxytocinGiven = Convert.ToBoolean(reader["oxytocingiven"]),
+                    AntibioticsGiven = Convert.ToBoolean(reader["antibioticsgiven"]),
+                    BloodTransfusionGiven = Convert.ToBoolean(reader["bloodtransfusiongiven"]),
+                    Notes = reader["notes"]?.ToString() ?? string.Empty,
+                    CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                    UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                    DeviceId = reader["deviceid"]?.ToString() ?? string.Empty,
+                    OriginDeviceId = reader["origindeviceid"]?.ToString() ?? string.Empty,
+                    SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                    Version = Convert.ToInt32(reader["version"]),
+                    ServerVersion = Convert.ToInt32(reader["serverversion"]),
+                    Deleted = Convert.ToInt32(reader["deleted"]),
+                    DataHash = reader["datahash"]?.ToString()
+                });
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error retrieving BirthOutcome table");
+            throw;
+        }
+
+        return items;
+    }
+
+    private async Task<List<BabyDetails>> GetPendingBabyDetailsAsync()
+    {
+        var items = await _babyDetailsRepository.ListAsync();
+        return items.Where(x => x.SyncStatus == 0).ToList();
+    }
+
+    private async Task<List<Referral>> GetPendingReferralsAsync()
+    {
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
+        await connection.OpenAsync();
+
+        var items = new List<Referral>();
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Tbl_Referral WHERE SyncStatus = 0 AND deleted = 0";
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                items.Add(new Referral
+                {
+                    ID = Guid.Parse(reader["ID"].ToString()!),
+                    PartographID = Guid.Parse(reader["partographid"].ToString()!),
+                    ReferralTime = DateTime.Parse(reader["referraltime"].ToString()!),
+                    ReferralType = (ReferralType)Convert.ToInt32(reader["referraltype"]),
+                    Urgency = (ReferralUrgency)Convert.ToInt32(reader["urgency"]),
+                    Status = (ReferralStatus)Convert.ToInt32(reader["status"]),
+                    TransportMode = (TransportMode)Convert.ToInt32(reader["transportmode"]),
+                    ReferringFacilityName = reader["referringfacilityname"]?.ToString() ?? string.Empty,
+                    DestinationFacilityName = reader["destinationfacilityname"]?.ToString() ?? string.Empty,
+                    PrimaryDiagnosis = reader["primarydiagnosis"]?.ToString() ?? string.Empty,
+                    ClinicalSummary = reader["clinicalsummary"]?.ToString() ?? string.Empty,
+                    Notes = reader["notes"]?.ToString() ?? string.Empty,
+                    CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                    UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                    DeviceId = reader["deviceid"]?.ToString() ?? string.Empty,
+                    OriginDeviceId = reader["origindeviceid"]?.ToString() ?? string.Empty,
+                    SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                    Version = Convert.ToInt32(reader["version"]),
+                    ServerVersion = Convert.ToInt32(reader["serverversion"]),
+                    Deleted = Convert.ToInt32(reader["deleted"]),
+                    DataHash = reader["datahash"]?.ToString()
+                });
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error retrieving Referral table");
+            throw;
+        }
+
+        return items;
+    }
+
+    private async Task MergeBirthOutcomes(List<BirthOutcome> items)
+    {
+        foreach (var item in items)
+        {
+            await _birthOutcomeRepository.SaveItemAsync(item);
+        }
+    }
+
+    private async Task MergeBabyDetails(List<BabyDetails> items)
+    {
+        foreach (var item in items)
+        {
+            await _babyDetailsRepository.SaveItemAsync(item);
+        }
+    }
+
+    private async Task MergeReferrals(List<Referral> items)
+    {
+        foreach (var item in items)
+        {
+            await _referralRepository.SaveItemAsync(item);
+        }
+    }
+
+    private async Task MergeFacilities(List<Facility> items)
+    {
+        foreach (var item in items)
+        {
+            await _facilityRepository.AddAsync(item);
+        }
     }
 }

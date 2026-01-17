@@ -359,6 +359,179 @@ public class SyncApiClient : ISyncApiClient
     }
 
     /// <inheritdoc/>
+    public async Task<SyncPullResponse<BirthOutcome>> PullBirthOutcomesAsync(SyncPullRequest request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/pull/birthoutcomes", request)
+            );
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<BirthOutcome>>();
+            return result ?? new SyncPullResponse<BirthOutcome> { Records = new List<BirthOutcome>() };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pulling birth outcomes data");
+            throw new SyncException("Failed to pull birth outcomes data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<SyncPushResponse<BirthOutcome>> PushBirthOutcomesAsync(SyncPushRequest<BirthOutcome> request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/push/birthoutcomes", request)
+            );
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<BirthOutcome>>();
+            return result ?? new SyncPushResponse<BirthOutcome>
+            {
+                SuccessIds = new List<string>(),
+                Conflicts = new List<ConflictRecord<BirthOutcome>>(),
+                Errors = new List<SyncError>()
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pushing birth outcomes data");
+            throw new SyncException("Failed to push birth outcomes data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<SyncPullResponse<BabyDetails>> PullBabyDetailsAsync(SyncPullRequest request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/pull/babydetails", request)
+            );
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<BabyDetails>>();
+            return result ?? new SyncPullResponse<BabyDetails> { Records = new List<BabyDetails>() };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pulling baby details data");
+            throw new SyncException("Failed to pull baby details data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<SyncPushResponse<BabyDetails>> PushBabyDetailsAsync(SyncPushRequest<BabyDetails> request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/push/babydetails", request)
+            );
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<BabyDetails>>();
+            return result ?? new SyncPushResponse<BabyDetails>
+            {
+                SuccessIds = new List<string>(),
+                Conflicts = new List<ConflictRecord<BabyDetails>>(),
+                Errors = new List<SyncError>()
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pushing baby details data");
+            throw new SyncException("Failed to push baby details data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<SyncPullResponse<Referral>> PullReferralsAsync(SyncPullRequest request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/pull/referrals", request)
+            );
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Referral>>();
+            return result ?? new SyncPullResponse<Referral> { Records = new List<Referral>() };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pulling referrals data");
+            throw new SyncException("Failed to pull referrals data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<SyncPushResponse<Referral>> PushReferralsAsync(SyncPushRequest<Referral> request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/push/referrals", request)
+            );
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<Referral>>();
+            return result ?? new SyncPushResponse<Referral>
+            {
+                SuccessIds = new List<string>(),
+                Conflicts = new List<ConflictRecord<Referral>>(),
+                Errors = new List<SyncError>()
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pushing referrals data");
+            throw new SyncException("Failed to push referrals data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<SyncPullResponse<Facility>> PullFacilitiesAsync(SyncPullRequest request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/pull/facilities", request)
+            );
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Facility>>();
+            return result ?? new SyncPullResponse<Facility> { Records = new List<Facility>() };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pulling facilities data");
+            throw new SyncException("Failed to pull facilities data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
     public async Task<bool> TestConnectionAsync()
     {
         try
