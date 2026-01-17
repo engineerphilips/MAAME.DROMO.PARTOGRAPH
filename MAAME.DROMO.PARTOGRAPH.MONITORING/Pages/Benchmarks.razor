@@ -1,0 +1,337 @@
+@page "/benchmarks"
+@page "/performance-benchmarks"
+@attribute [Authorize]
+@inject IBenchmarkService BenchmarkService
+
+<PageTitle>Performance Benchmarks - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-bar-chart-line me-2 text-primary"></i>
+                Performance Benchmarks
+            </h2>
+            <p class="text-muted mb-0">
+                Compare performance against national standards and WHO targets
+            </p>
+        </div>
+        <div class="btn-group">
+            <button class="btn @(viewMode == "facilities" ? "btn-primary" : "btn-outline-primary")"
+                    @onclick="() => SetViewMode(\"facilities\")">Facilities</button>
+            <button class="btn @(viewMode == "districts" ? "btn-primary" : "btn-outline-primary")"
+                    @onclick="() => SetViewMode(\"districts\")">Districts</button>
+            <button class="btn @(viewMode == "regions" ? "btn-primary" : "btn-outline-primary")"
+                    @onclick="() => SetViewMode(\"regions\")">Regions</button>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else
+{
+    <!-- National Benchmarks Overview -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="bi bi-globe me-2"></i>National Benchmarks vs WHO Targets</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                @{
+                    var benchmarkMetrics = new (string Name, string Key, double WHO, string Unit, bool LowerBetter)[]
+                    {
+                        ("C-Section Rate", "CaesareanRate", 15.0, "%", false),
+                        ("Stillbirth Rate", "StillbirthRate", 12.0, "/1000", true),
+                        ("Neonatal Mortality", "NeonatalMortalityRate", 12.0, "/1000", true),
+                        ("Alert Response", "AlertResponseTime", 5.0, "min", true)
+                    };
+                }
+                @foreach (var (name, key, who, unit, lowerBetter) in benchmarkMetrics)
+                {
+                    var current = nationalBenchmarks.GetValueOrDefault(key, 0);
+                    var variance = current - who;
+                    var isGood = lowerBetter ? current <= who : current >= who * 0.8;
+
+                    <div class="col-md-3">
+                        <div class="benchmark-card p-3 border rounded">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="text-muted small">@name</span>
+                                @if (isGood)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-exclamation-circle-fill text-warning"></i>
+                                }
+                            </div>
+                            <div class="d-flex align-items-end justify-content-between">
+                                <div>
+                                    <h3 class="mb-0">@current.ToString("F1")@unit</h3>
+                                    <small class="text-muted">WHO: @who@unit</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge @(isGood ? "bg-success" : "bg-warning text-dark")">
+                                        @(variance > 0 ? "+" : "")@variance.ToString("F1")
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Rankings Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-trophy me-2 text-warning"></i>
+                @(viewMode == "facilities" ? "Facility" : viewMode == "districts" ? "District" : "Region") Performance Rankings
+            </h5>
+            <span class="badge bg-primary">@rankings.Count entities</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 60px;">Rank</th>
+                            <th>Name</th>
+                            <th class="text-center">Score</th>
+                            <th class="text-center">Grade</th>
+                            <th class="text-center">C-Section</th>
+                            <th class="text-center">Complications</th>
+                            <th class="text-center">Data Quality</th>
+                            <th class="text-center">Alert Response</th>
+                            <th class="text-center">Deliveries</th>
+                            <th class="text-center">Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in rankings)
+                        {
+                            <tr class="@(item.OverallRank <= 3 ? "table-success" : item.OverallRank > rankings.Count - 3 ? "table-warning" : "")">
+                                <td>
+                                    @if (item.OverallRank == 1)
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-trophy-fill me-1"></i>1
+                                        </span>
+                                    }
+                                    else if (item.OverallRank == 2)
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-award me-1"></i>2
+                                        </span>
+                                    }
+                                    else if (item.OverallRank == 3)
+                                    {
+                                        <span class="badge" style="background: #cd7f32;">
+                                            <i class="bi bi-award me-1"></i>3
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">@item.OverallRank</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="fw-semibold">@item.FacilityName</div>
+                                    @if (!string.IsNullOrEmpty(item.DistrictName))
+                                    {
+                                        <small class="text-muted">@item.DistrictName</small>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <div class="progress me-2" style="width: 50px; height: 6px;">
+                                            <div class="progress-bar @GetScoreBarClass(item.OverallScore)"
+                                                 style="width: @item.OverallScore%"></div>
+                                        </div>
+                                        <span class="fw-bold">@item.OverallScore.ToString("F0")</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge fs-6 @GetGradeBadgeClass(item.PerformanceGrade)">
+                                        @item.PerformanceGrade
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="@(item.CaesareanRate > 20 ? "text-danger" : item.CaesareanRate > 15 ? "text-warning" : "text-success")">
+                                        @item.CaesareanRate.ToString("F1")%
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="@(item.ComplicationRate > 10 ? "text-danger" : item.ComplicationRate > 5 ? "text-warning" : "text-success")">
+                                        @item.ComplicationRate.ToString("F1")%
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="@(item.DataQualityScore >= 80 ? "text-success" : item.DataQualityScore >= 60 ? "text-warning" : "text-danger")">
+                                        @item.DataQualityScore.ToString("F0")%
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="@(item.AlertResponseScore >= 80 ? "text-success" : item.AlertResponseScore >= 60 ? "text-warning" : "text-danger")">
+                                        @item.AlertResponseScore.ToString("F0")%
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary">@item.TotalDeliveries</span>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.RankChange > 0)
+                                    {
+                                        <span class="text-success">
+                                            <i class="bi bi-arrow-up"></i>@item.RankChange
+                                        </span>
+                                    }
+                                    else if (item.RankChange < 0)
+                                    {
+                                        <span class="text-danger">
+                                            <i class="bi bi-arrow-down"></i>@Math.Abs(item.RankChange)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            <i class="bi bi-dash"></i>
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Indicators Legend -->
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-body">
+            <h6 class="mb-3"><i class="bi bi-info-circle me-2"></i>Performance Indicators Legend</h6>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge bg-success me-2">A</span>
+                        <span class="small">Excellent (90-100)</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-info me-2">B</span>
+                        <span class="small">Good (80-89)</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge bg-warning text-dark me-2">C</span>
+                        <span class="small">Average (70-79)</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-orange me-2">D</span>
+                        <span class="small">Below Average (60-69)</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge bg-danger me-2">F</span>
+                        <span class="small">Poor (&lt;60)</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="small text-muted">
+                        <strong>WHO Targets:</strong><br />
+                        C-Section: 10-15%<br />
+                        Stillbirth: &lt;12/1000
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .benchmark-card {
+        background: #f8f9fa;
+        transition: transform 0.2s;
+    }
+    .benchmark-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.1);
+    }
+    .bg-orange {
+        background-color: #fd7e14 !important;
+        color: white;
+    }
+</style>
+
+@code {
+    private bool isLoading = true;
+    private string viewMode = "facilities";
+
+    private Dictionary<string, double> nationalBenchmarks = new();
+    private List<FacilityRanking> rankings = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            nationalBenchmarks = await BenchmarkService.GetNationalBenchmarksAsync();
+            await LoadRankings();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadRankings()
+    {
+        rankings = viewMode switch
+        {
+            "facilities" => await BenchmarkService.GetFacilityRankingsAsync(),
+            "districts" => await BenchmarkService.GetDistrictRankingsAsync(),
+            "regions" => await BenchmarkService.GetRegionRankingsAsync(),
+            _ => new List<FacilityRanking>()
+        };
+    }
+
+    private async Task SetViewMode(string mode)
+    {
+        viewMode = mode;
+        await LoadRankings();
+    }
+
+    private string GetScoreBarClass(double score) => score switch
+    {
+        >= 90 => "bg-success",
+        >= 80 => "bg-info",
+        >= 70 => "bg-warning",
+        >= 60 => "bg-orange",
+        _ => "bg-danger"
+    };
+
+    private string GetGradeBadgeClass(string grade) => grade switch
+    {
+        "A" => "bg-success",
+        "B" => "bg-info",
+        "C" => "bg-warning text-dark",
+        "D" => "bg-orange",
+        _ => "bg-danger"
+    };
+}

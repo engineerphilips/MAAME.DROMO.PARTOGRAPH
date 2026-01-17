@@ -1,6 +1,9 @@
 using MAAME.DROMO.PARTOGRAPH.MONITORING.Services;
+using MAAME.DROMO.PARTOGRAPH.MONITORING.Hubs;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.ResponseCompression;
 using Blazored.LocalStorage;
+using Blazored.Toast;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,15 +11,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-// Add Blazored LocalStorage for token persistence
+// Add SignalR for real-time updates
+builder.Services.AddSignalR();
+
+// Add response compression for SignalR
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+
+// Add Blazored LocalStorage for token persistence and offline queue
 builder.Services.AddBlazoredLocalStorage();
+
+// Add Blazored Toast for notifications
+builder.Services.AddBlazoredToast();
 
 // Add HTTP client for API calls to the SERVICE project
 builder.Services.AddHttpClient("PartographAPI", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "http://192.168.100.4:5218");
-
-    //client.BaseAddress = new Uri("http://192.168.100.4:5218/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
@@ -59,6 +73,20 @@ builder.Services.AddScoped<IDistrictService, DistrictService>();
 builder.Services.AddScoped<IFacilityService, FacilityService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
+// Enhanced Monitoring Services
+builder.Services.AddScoped<ILiveLaborService, LiveLaborService>();
+builder.Services.AddScoped<IEnhancedAlertService, EnhancedAlertService>();
+builder.Services.AddScoped<IPredictiveAnalyticsService, PredictiveAnalyticsService>();
+builder.Services.AddScoped<IDataQualityService, DataQualityService>();
+builder.Services.AddScoped<IBenchmarkService, BenchmarkService>();
+builder.Services.AddScoped<IAlertThresholdService, AlertThresholdService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IOfflineQueueService, OfflineQueueService>();
+builder.Services.AddScoped<IReportVisualizationService, ReportVisualizationService>();
+
+// SignalR notification service
+builder.Services.AddSingleton<IMonitoringNotificationService, MonitoringNotificationService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -68,11 +96,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseResponseCompression();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
 app.MapBlazorHub();
+app.MapHub<MonitoringHub>("/monitoringhub");
 app.MapFallbackToPage("/_Host");
 
 app.Run();

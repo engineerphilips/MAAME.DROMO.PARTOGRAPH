@@ -33,7 +33,7 @@
     </AuthorizeView>
 
     <!-- Navigation -->
-    <nav class="flex-grow-1 py-3">
+    <nav class="flex-grow-1 py-3 overflow-auto">
         <ul class="nav nav-pills flex-column px-2">
             <li class="nav-item mb-1">
                 <NavLink class="nav-link text-white" href="" Match="NavLinkMatch.All">
@@ -41,8 +41,26 @@
                 </NavLink>
             </li>
 
+            <!-- Live Monitoring Section -->
+            <li class="nav-item mt-3 mb-1">
+                <span class="text-muted small px-3 text-uppercase">Live Monitoring</span>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="live-labor">
+                    <i class="bi bi-activity me-2 text-danger"></i> Live Labor Board
+                </NavLink>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="alerts">
+                    <i class="bi bi-bell me-2 text-warning"></i> Alert Management
+                </NavLink>
+            </li>
+
             <AuthorizeView Policy="NationalAccess">
                 <Authorized>
+                    <li class="nav-item mt-3 mb-1">
+                        <span class="text-muted small px-3 text-uppercase">National</span>
+                    </li>
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-white" href="national">
                             <i class="bi bi-globe me-2"></i> National Overview
@@ -58,6 +76,9 @@
 
             <AuthorizeView Policy="RegionalAccess">
                 <Authorized>
+                    <li class="nav-item mt-3 mb-1">
+                        <span class="text-muted small px-3 text-uppercase">Regional</span>
+                    </li>
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-white" href="regional">
                             <i class="bi bi-geo-alt me-2"></i> Regional Overview
@@ -73,6 +94,9 @@
 
             <AuthorizeView Policy="DistrictAccess">
                 <Authorized>
+                    <li class="nav-item mt-3 mb-1">
+                        <span class="text-muted small px-3 text-uppercase">District</span>
+                    </li>
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-white" href="district">
                             <i class="bi bi-buildings me-2"></i> District Overview
@@ -110,6 +134,26 @@
                 </NavLink>
             </li>
 
+            <!-- Advanced Analytics Section -->
+            <li class="nav-item mt-3 mb-1">
+                <span class="text-muted small px-3 text-uppercase">Advanced Analytics</span>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="predictive-analytics">
+                    <i class="bi bi-graph-up-arrow me-2 text-info"></i> Risk Prediction
+                </NavLink>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="data-quality">
+                    <i class="bi bi-clipboard-check me-2 text-success"></i> Data Quality
+                </NavLink>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="benchmarks">
+                    <i class="bi bi-bar-chart-line me-2 text-primary"></i> Benchmarks
+                </NavLink>
+            </li>
+
             <li class="nav-item mt-3 mb-1">
                 <span class="text-muted small px-3 text-uppercase">Reports</span>
             </li>
@@ -118,9 +162,14 @@
                     <i class="bi bi-file-earmark-bar-graph me-2"></i> Generate Reports
                 </NavLink>
             </li>
+
+            <!-- Settings Section -->
+            <li class="nav-item mt-3 mb-1">
+                <span class="text-muted small px-3 text-uppercase">Settings</span>
+            </li>
             <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="alerts">
-                    <i class="bi bi-bell me-2"></i> Alerts
+                <NavLink class="nav-link text-white" href="alert-settings">
+                    <i class="bi bi-gear me-2"></i> Alert Settings
                 </NavLink>
             </li>
 
@@ -136,7 +185,7 @@
                     </li>
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-white" href="admin/regions">
-                            <i class="bi bi-gear me-2"></i> Manage Regions
+                            <i class="bi bi-sliders me-2"></i> Manage Regions
                         </NavLink>
                     </li>
                 </Authorized>
@@ -147,7 +196,10 @@
     <!-- Footer -->
     <div class="px-3 py-3 border-top border-secondary">
         <small class="text-muted d-block">
-            <i class="bi bi-info-circle me-1"></i> Version 1.0.0
+            <i class="bi bi-info-circle me-1"></i> Version 2.0.0
+        </small>
+        <small class="text-muted d-block">
+            <i class="bi bi-check-circle me-1 text-success"></i> Enhanced Monitoring
         </small>
     </div>
 </div>
