@@ -43,6 +43,46 @@ public interface ISyncApiClient
     Task<SyncPullResponse<Staff>> PullStaffAsync(SyncPullRequest request);
 
     /// <summary>
+    /// Pushes staff changes to server
+    /// </summary>
+    Task<SyncPushResponse<Staff>> PushStaffAsync(SyncPushRequest<Staff> request);
+
+    /// <summary>
+    /// Pulls birth outcome data from server
+    /// </summary>
+    Task<SyncPullResponse<BirthOutcome>> PullBirthOutcomesAsync(SyncPullRequest request);
+
+    /// <summary>
+    /// Pushes birth outcome changes to server
+    /// </summary>
+    Task<SyncPushResponse<BirthOutcome>> PushBirthOutcomesAsync(SyncPushRequest<BirthOutcome> request);
+
+    /// <summary>
+    /// Pulls baby details data from server
+    /// </summary>
+    Task<SyncPullResponse<BabyDetails>> PullBabyDetailsAsync(SyncPullRequest request);
+
+    /// <summary>
+    /// Pushes baby details changes to server
+    /// </summary>
+    Task<SyncPushResponse<BabyDetails>> PushBabyDetailsAsync(SyncPushRequest<BabyDetails> request);
+
+    /// <summary>
+    /// Pulls referral data from server
+    /// </summary>
+    Task<SyncPullResponse<Referral>> PullReferralsAsync(SyncPullRequest request);
+
+    /// <summary>
+    /// Pushes referral changes to server
+    /// </summary>
+    Task<SyncPushResponse<Referral>> PushReferralsAsync(SyncPushRequest<Referral> request);
+
+    /// <summary>
+    /// Pulls facility data from server (reference data - pull only)
+    /// </summary>
+    Task<SyncPullResponse<Facility>> PullFacilitiesAsync(SyncPullRequest request);
+
+    /// <summary>
     /// Gets the configured API base URL
     /// </summary>
     string BaseUrl { get; }

@@ -49,14 +49,14 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [IgnoreDataMember]
         public bool NeedsSync => SyncStatus == 0;
 
-        //public string CalculateHash()
-        //{
-        //    var data = $"{Time}|{Handler}";
-        //    using (var sha256 = System.Security.Cryptography.SHA256.Create())
-        //    {
-        //        var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
-        //        return Convert.ToBase64String(hashBytes);
-        //    }
-        //}
+        public string CalculateHash()
+        {
+            var data = $"{ID}|{StaffID}|{Name}|{Email}|{Role}|{Department}|{IsActive}|{Facility}";
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
+                return Convert.ToBase64String(hashBytes);
+            }
+        }
     }
 }

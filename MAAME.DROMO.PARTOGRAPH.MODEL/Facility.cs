@@ -48,5 +48,15 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
 
         [IgnoreDataMember]
         public bool NeedsSync => SyncStatus == 0;
+
+        public string CalculateHash()
+        {
+            var data = $"{ID}|{Name}|{Code}|{Type}|{Address}|{City}|{Region}|{Country}|{IsActive}";
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
+                return Convert.ToBase64String(hashBytes);
+            }
+        }
     }
 }
