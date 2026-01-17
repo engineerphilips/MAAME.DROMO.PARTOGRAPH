@@ -14,7 +14,9 @@ builder.Services.AddBlazoredLocalStorage();
 // Add HTTP client for API calls to the SERVICE project
 builder.Services.AddHttpClient("PartographAPI", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7001");
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "http://192.168.100.4:5218");
+
+    //client.BaseAddress = new Uri("http://192.168.100.4:5218/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
