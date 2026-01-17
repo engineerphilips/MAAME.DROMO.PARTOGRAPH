@@ -13,12 +13,18 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Name { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty; // Unique facility code
         public string Type { get; set; } = "Hospital"; // Hospital, Clinic, Health Center
+        public string Level { get; set; } = "Primary"; // Primary, Secondary, Tertiary
         public string Address { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string Region { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+
+        // Hierarchical references for monitoring
+        public Guid? RegionID { get; set; }
+        public Guid? DistrictID { get; set; }
+        public string DistrictName { get; set; } = string.Empty;
 
         // GPS Location fields
         public double? Latitude { get; set; }
@@ -48,6 +54,10 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
 
         [IgnoreDataMember]
         public bool NeedsSync => SyncStatus == 0;
+
+        // Navigation properties for monitoring hierarchy
+        [IgnoreDataMember]
+        public District? District { get; set; }
 
         public string CalculateHash()
         {
