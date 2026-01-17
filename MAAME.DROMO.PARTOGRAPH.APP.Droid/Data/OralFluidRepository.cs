@@ -51,6 +51,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
+            CREATE INDEX IF NOT EXISTS idx_oralfluid_partographid ON Tbl_OralFluid(partographid);
             CREATE INDEX IF NOT EXISTS idx_oralfluid_sync ON Tbl_OralFluid(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_oralfluid_server_version ON Tbl_OralFluid(serverversion);
 

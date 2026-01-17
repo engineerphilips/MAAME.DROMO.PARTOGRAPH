@@ -74,6 +74,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
+            CREATE INDEX IF NOT EXISTS idx_contraction_partographid ON Tbl_Contraction(partographid);
             CREATE INDEX IF NOT EXISTS idx_contraction_sync ON Tbl_Contraction(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_contraction_server_version ON Tbl_Contraction(serverversion);
 

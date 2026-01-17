@@ -41,8 +41,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
-            CREATE INDEX IF NOT EXISTS idx_companion_sync ON Tbl_FetalPosition(updatedtime, syncstatus);
-            CREATE INDEX IF NOT EXISTS idx_companion_server_version ON Tbl_FetalPosition(serverversion);
+            CREATE INDEX IF NOT EXISTS idx_fetalposition_partographid ON Tbl_FetalPosition(partographid);
+            CREATE INDEX IF NOT EXISTS idx_fetalposition_sync ON Tbl_FetalPosition(updatedtime, syncstatus);
+            CREATE INDEX IF NOT EXISTS idx_fetalposition_server_version ON Tbl_FetalPosition(serverversion);
 
             DROP TRIGGER IF EXISTS trg_companion_insert;
             CREATE TRIGGER trg_companion_insert

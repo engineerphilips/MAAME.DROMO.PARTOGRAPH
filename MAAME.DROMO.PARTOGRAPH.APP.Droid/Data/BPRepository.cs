@@ -72,6 +72,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
+            CREATE INDEX IF NOT EXISTS idx_bp_partographid ON Tbl_BP(partographid);
             CREATE INDEX IF NOT EXISTS idx_bp_sync ON Tbl_BP(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_bp_server_version ON Tbl_BP(serverversion);
 

@@ -64,6 +64,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
+            CREATE INDEX IF NOT EXISTS idx_amnioticfluid_partographid ON Tbl_AmnioticFluid(partographid);
             CREATE INDEX IF NOT EXISTS idx_amnioticfluid_sync ON Tbl_AmnioticFluid(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_amnioticfluid_server_version ON Tbl_AmnioticFluid(serverversion);
 
