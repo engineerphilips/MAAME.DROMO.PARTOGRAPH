@@ -37,7 +37,7 @@ public class SyncService : ISyncService
     private readonly AmnioticFluidRepository _amnioticFluidRepository;
     private readonly FetalPositionRepository _fetalPositionRepository;
     private readonly FourthStageVitalsRepository _fourthStageVitalsRepository;
-    private readonly MedicalNoteRepository _medicalNoteRepository;
+    //private readonly MedicalNoteRepository _medicalNoteRepository;
     private readonly PartographDiagnosisRepository _partographDiagnosisRepository;
     private readonly PartographRiskFactorRepository _partographRiskFactorRepository;
     private readonly StaffRepository _staffRepository;
@@ -78,7 +78,6 @@ public class SyncService : ISyncService
         AmnioticFluidRepository amnioticFluidRepository,
         FetalPositionRepository fetalPositionRepository,
         FourthStageVitalsRepository fourthStageVitalsRepository,
-        MedicalNoteRepository medicalNoteRepository,
         PartographDiagnosisRepository partographDiagnosisRepository,
         PartographRiskFactorRepository partographRiskFactorRepository,
         StaffRepository staffRepository,
@@ -88,6 +87,7 @@ public class SyncService : ISyncService
         FacilityRepository facilityRepository,
         ILogger<SyncService> logger)
     {
+        //MedicalNoteRepository medicalNoteRepository,
         _apiClient = apiClient;
         _connectivityService = connectivityService;
         _patientRepository = patientRepository;
@@ -114,7 +114,7 @@ public class SyncService : ISyncService
         _amnioticFluidRepository = amnioticFluidRepository;
         _fetalPositionRepository = fetalPositionRepository;
         _fourthStageVitalsRepository = fourthStageVitalsRepository;
-        _medicalNoteRepository = medicalNoteRepository;
+        //_medicalNoteRepository = medicalNoteRepository;
         _partographDiagnosisRepository = partographDiagnosisRepository;
         _partographRiskFactorRepository = partographRiskFactorRepository;
         _staffRepository = staffRepository;
@@ -373,7 +373,7 @@ public class SyncService : ISyncService
                 var amnioticFluidsTask = _amnioticFluidRepository.ListByPartographIdsAsync(partographIds);
                 var fetalPositionsTask = _fetalPositionRepository.ListByPartographIdsAsync(partographIds);
                 var fourthStageVitalsTask = _fourthStageVitalsRepository.ListByPartographIdsAsync(partographIds);
-                var medicalNotesTask = _medicalNoteRepository.ListByPartographIdsAsync(partographIds);
+                //var medicalNotesTask = _medicalNoteRepository.ListByPartographIdsAsync(partographIds);
                 var diagnosesTask = _partographDiagnosisRepository.ListByPartographIdsAsync(partographIds);
                 var riskFactorsTask = _partographRiskFactorRepository.ListByPartographIdsAsync(partographIds);
 
@@ -382,7 +382,7 @@ public class SyncService : ISyncService
                     posturesTask, mouldingsTask, oxytocinsTask, companionsTask, oralFluidsTask,
                     assessmentsTask, dilatationsTask, medicationsTask, painReliefsTask, bishopScoresTask,
                     contractionsTask, headDescentsTask, temperaturesTask, amnioticFluidsTask, fetalPositionsTask,
-                    fourthStageVitalsTask, medicalNotesTask, diagnosesTask, riskFactorsTask
+                    fourthStageVitalsTask, diagnosesTask, riskFactorsTask
                 );
 
                 // Get results
@@ -408,7 +408,7 @@ public class SyncService : ISyncService
                 var allAmnioticFluids = await amnioticFluidsTask;
                 var allFetalPositions = await fetalPositionsTask;
                 var allFourthStageVitals = await fourthStageVitalsTask;
-                var allMedicalNotes = await medicalNotesTask;
+                //var allMedicalNotes = await medicalNotesTask;
                 var allDiagnoses = await diagnosesTask;
                 var allRiskFactors = await riskFactorsTask;
 
@@ -677,17 +677,17 @@ public class SyncService : ISyncService
                         item.ConflictData = "{}";
                 }
 
-                foreach (var item in allMedicalNotes.Values.SelectMany(x => x))
-                {
-                    if (string.IsNullOrWhiteSpace(item.DeviceId))
-                        item.DeviceId = deviceId;
-                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
-                        item.OriginDeviceId = deviceId;
-                    if (string.IsNullOrWhiteSpace(item.DataHash))
-                        item.DataHash = item.CalculateHash();
-                    if (string.IsNullOrWhiteSpace(item.ConflictData))
-                        item.ConflictData = "{}";
-                }
+                //foreach (var item in allMedicalNotes.Values.SelectMany(x => x))
+                //{
+                //    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                //        item.DeviceId = deviceId;
+                //    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                //        item.OriginDeviceId = deviceId;
+                //    if (string.IsNullOrWhiteSpace(item.DataHash))
+                //        item.DataHash = item.CalculateHash();
+                //    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                //        item.ConflictData = "{}";
+                //}
 
                 foreach (var item in allDiagnoses.Values.SelectMany(x => x))
                 {
@@ -741,7 +741,7 @@ public class SyncService : ISyncService
                     item.AmnioticFluids = allAmnioticFluids.TryGetValue(id, out var amnioticFluids) ? amnioticFluids : new List<AmnioticFluid>();
                     item.FetalPositions = allFetalPositions.TryGetValue(id, out var fetalPositions) ? fetalPositions : new List<FetalPosition>();
                     item.FourthStageVitals = allFourthStageVitals.TryGetValue(id, out var fourthStageVitals) ? fourthStageVitals : new List<FourthStageVitals>();
-                    item.MedicalNotes = allMedicalNotes.TryGetValue(id, out var medicalNotes) ? medicalNotes : new List<MedicalNote>();
+                    //item.MedicalNotes = allMedicalNotes.TryGetValue(id, out var medicalNotes) ? medicalNotes : new List<MedicalNote>();
                     item.Diagnoses = allDiagnoses.TryGetValue(id, out var diagnoses) ? diagnoses : new List<PartographDiagnosis>();
                     item.RiskFactors = allRiskFactors.TryGetValue(id, out var riskFactors) ? riskFactors : new List<PartographRiskFactor>();
                 }
