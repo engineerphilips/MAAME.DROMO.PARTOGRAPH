@@ -170,6 +170,11 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<PartographDbContext>();
     dbContext.Database.Migrate();
+
+    // Seed data for regions, districts, and monitoring users
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<DataSeeder>>();
+    var dataSeeder = new DataSeeder(dbContext, logger);
+    dataSeeder.SeedAllDataAsync().GetAwaiter().GetResult();
 }
 
 // Configure the HTTP request pipeline.
