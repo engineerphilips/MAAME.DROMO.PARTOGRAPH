@@ -240,28 +240,28 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Complications { get; set; } = string.Empty;
 
         // Partographs
-        public List<CompanionEntry> Companions { get; set; }
-        public List<Contraction> Contractions { get; set; }
-        public List<Caput> Caputs { get; set; }
-        public List<BP> BPs { get; set; }
-        public List<Assessment> Assessments { get; set; }
-        public List<Plan> Plans { get; set; }
-        public List<BishopScore> BishopScores { get; set; }
-        public List<Moulding> Mouldings { get; set; }
-        public List<FetalPosition> FetalPositions { get; set; }
-        public List<CervixDilatation> Dilatations { get; set; }
-        public List<AmnioticFluid> AmnioticFluids { get; set; }
-        public List<HeadDescent> HeadDescents { get; set; }
-        public List<FHR> Fhrs { get; set; }
-        public List<PainReliefEntry> PainReliefs { get; set; }
-        public List<PostureEntry> Postures { get; set; }
-        public List<Temperature> Temperatures { get; set; }
-        public List<Urine> Urines { get; set; }
-        public List<OralFluidEntry> OralFluids { get; set; }
-        public List<Oxytocin> Oxytocins { get; set; }
-        public List<IVFluidEntry> IVFluids { get; set; }
-        public List<MedicationEntry> Medications { get; set; }
-        
+        public List<CompanionEntry> Companions { get; set; } = new();
+        public List<Contraction> Contractions { get; set; } = new();
+        public List<Caput> Caputs { get; set; } = new();
+        public List<BP> BPs { get; set; } = new();
+        public List<Assessment> Assessments { get; set; } = new();
+        public List<Plan> Plans { get; set; } = new();
+        public List<BishopScore> BishopScores { get; set; } = new();
+        public List<Moulding> Mouldings { get; set; } = new();
+        public List<FetalPosition> FetalPositions { get; set; } = new();
+        public List<CervixDilatation> Dilatations { get; set; } = new();
+        public List<AmnioticFluid> AmnioticFluids { get; set; } = new();
+        public List<HeadDescent> HeadDescents { get; set; } = new();
+        public List<FHR> Fhrs { get; set; } = new();
+        public List<PainReliefEntry> PainReliefs { get; set; } = new();
+        public List<PostureEntry> Postures { get; set; } = new();
+        public List<Temperature> Temperatures { get; set; } = new();
+        public List<Urine> Urines { get; set; } = new();
+        public List<OralFluidEntry> OralFluids { get; set; } = new();
+        public List<Oxytocin> Oxytocins { get; set; } = new();
+        public List<IVFluidEntry> IVFluids { get; set; } = new();
+        public List<MedicationEntry> Medications { get; set; } = new();
+
         //// Cervical Progress
         //public int CervicalDilation { get; set; } // 0-10 cm
         //public string DescentOfHead { get; set; } = string.Empty; // Station -3 to +3

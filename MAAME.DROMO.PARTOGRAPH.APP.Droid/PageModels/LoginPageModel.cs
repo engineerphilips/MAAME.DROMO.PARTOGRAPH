@@ -14,6 +14,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     public class LoginPageModel : INotifyPropertyChanged
     {
         private readonly IAuthenticationService _authService;
+        private readonly ISyncApiClient _syncApiClient;
         private string _email = string.Empty;
         private string _password = string.Empty;
         private bool _isBusy = false;
@@ -21,10 +22,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private bool _isPasswordVisible = false;
         private bool _hasError = false;
 
-        //
-        public LoginPageModel(IAuthenticationService authService)
+        public LoginPageModel(IAuthenticationService authService, ISyncApiClient syncApiClient)
         {
             _authService = authService;
+            _syncApiClient = syncApiClient;
 
             // Initialize commands
             LoginCommand = new Command(async () => await LoginAsync(), () => CanLogin());
@@ -125,6 +126,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private async Task LoginAsync()
         {
             if (IsBusy) return;
+
+            //var x = await _syncApiClient.TestConnectionAsync();
 
             try
             {

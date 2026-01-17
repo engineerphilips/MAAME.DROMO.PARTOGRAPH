@@ -355,7 +355,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 return StatusCode(500, new { error = $"Failed to pull {tableName}", message = ex.Message });
             }
         }
-
         #endregion
 
         #region Push Endpoints - Core Entities
@@ -371,6 +370,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 {
                     try
                     {
+                        //var x = await _context.Patients.ToListAsync();
+                        
                         var existing = await _context.Patients
                             .FirstOrDefaultAsync(p => p.ID == patient.ID);
 

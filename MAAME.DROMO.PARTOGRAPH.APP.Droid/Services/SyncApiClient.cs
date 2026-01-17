@@ -1,9 +1,10 @@
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services.Helper;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
+using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using MAAME.DROMO.PARTOGRAPH.MODEL;
-using Microsoft.Extensions.Logging;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 
@@ -13,18 +14,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 public class SyncApiClient : ISyncApiClient
 {
     private readonly HttpClient _httpClient;
-    private readonly IAuthenticationService _authService;
+    private readonly IAuthenticationService _authService; 
     private readonly ILogger<SyncApiClient> _logger;
+    private readonly IServiceRequestProvider _serviceRequestProvider;
     private readonly JsonSerializerOptions _jsonOptions;
     private const int MaxRetries = 3;
 
     public SyncApiClient(
         HttpClient httpClient,
         IAuthenticationService authService,
+        IServiceRequestProvider serviceRequestProvider,
         ILogger<SyncApiClient> logger)
     {
         _httpClient = httpClient;
         _authService = authService;
+        _serviceRequestProvider = serviceRequestProvider;
         _logger = logger;
 
         // Configure JSON options
@@ -65,7 +69,7 @@ public class SyncApiClient : ISyncApiClient
     /// </summary>
     private async Task<HttpResponseMessage> ExecuteWithRetryAsync(
         Func<Task<HttpResponseMessage>> action,
-        bool requiresAuth = true)
+        bool requiresAuth = false)
     {
         Exception? lastException = null;
 
@@ -130,12 +134,17 @@ public class SyncApiClient : ISyncApiClient
         try
         {
             var response = await ExecuteWithRetryAsync(async () =>
-                await _httpClient.PostAsJsonAsync($"api/sync/pull/{request.TableName}", request, _jsonOptions)
+                await _httpClient.PostAsJsonAsync($"api/sync/pull/{request.TableName}", request)
             );
 
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<T>>(_jsonOptions);
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<T>>();
             return result ?? new SyncPullResponse<T> { Records = new List<T>(), ServerTimestamp = 0, HasMore = false };
         }
         catch (Exception ex)
@@ -152,12 +161,17 @@ public class SyncApiClient : ISyncApiClient
         {
             var tableName = typeof(T).Name;
             var response = await ExecuteWithRetryAsync(async () =>
-                await _httpClient.PostAsJsonAsync($"api/sync/push/{tableName}", request, _jsonOptions)
+                await _httpClient.PostAsJsonAsync($"api/sync/push/{tableName}", request)
             );
 
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<T>>(_jsonOptions);
+            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<T>>();
             return result ?? new SyncPushResponse<T>
             {
                 SuccessIds = new List<string>(),
@@ -178,12 +192,17 @@ public class SyncApiClient : ISyncApiClient
         try
         {
             var response = await ExecuteWithRetryAsync(async () =>
-                await _httpClient.PostAsJsonAsync("api/sync/pull/patients", request, _jsonOptions)
+                await _httpClient.PostAsJsonAsync("api/sync/pull/patients", request)
             );
 
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Patient>>(_jsonOptions);
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Patient>>();
             return result ?? new SyncPullResponse<Patient> { Records = new List<Patient>(), ServerTimestamp = 0, HasMore = false };
         }
         catch (Exception ex)
@@ -198,13 +217,19 @@ public class SyncApiClient : ISyncApiClient
     {
         try
         {
+            //await _serviceRequestProvider.PostAsync<SyncPushRequest<Patient>>("api/sync/push/patients", request)
             var response = await ExecuteWithRetryAsync(async () =>
-                await _httpClient.PostAsJsonAsync("api/sync/push/patients", request, _jsonOptions)
+            await _httpClient.PostAsJsonAsync("api/sync/push/patients", request)
             );
 
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<Patient>>(_jsonOptions);
+            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<Patient>>();
             return result ?? new SyncPushResponse<Patient>
             {
                 SuccessIds = new List<string>(),
@@ -225,12 +250,17 @@ public class SyncApiClient : ISyncApiClient
         try
         {
             var response = await ExecuteWithRetryAsync(async () =>
-                await _httpClient.PostAsJsonAsync("api/sync/pull/partographs", request, _jsonOptions)
+                await _httpClient.PostAsJsonAsync("api/sync/pull/partographs", request)
             );
 
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Partograph>>(_jsonOptions);
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Partograph>>();
             return result ?? new SyncPullResponse<Partograph> { Records = new List<Partograph>(), ServerTimestamp = 0, HasMore = false };
         }
         catch (Exception ex)
@@ -246,12 +276,17 @@ public class SyncApiClient : ISyncApiClient
         try
         {
             var response = await ExecuteWithRetryAsync(async () =>
-                await _httpClient.PostAsJsonAsync("api/sync/push/partographs", request, _jsonOptions)
+                await _httpClient.PostAsJsonAsync("api/sync/push/partographs", request)
             );
 
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<Partograph>>(_jsonOptions);
+            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<Partograph>>();
             return result ?? new SyncPushResponse<Partograph>
             {
                 SuccessIds = new List<string>(),
@@ -272,12 +307,17 @@ public class SyncApiClient : ISyncApiClient
         try
         {
             var response = await ExecuteWithRetryAsync(async () =>
-                await _httpClient.PostAsJsonAsync("api/sync/pull/staff", request, _jsonOptions)
+                await _httpClient.PostAsJsonAsync("api/sync/pull/staff", request)
             );
 
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Staff>>(_jsonOptions);
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Staff>>();
             return result ?? new SyncPullResponse<Staff> { Records = new List<Staff>(), ServerTimestamp = 0, HasMore = false };
         }
         catch (Exception ex)
@@ -292,12 +332,15 @@ public class SyncApiClient : ISyncApiClient
     {
         try
         {
-            // Health check doesn't require authentication
+            //Health check doesn't require authentication
             var response = await ExecuteWithRetryAsync(
                 async () => await _httpClient.GetAsync("api/sync/health"),
                 requiresAuth: false
             );
             return response.IsSuccessStatusCode;
+
+            //var data = await _provider.GetAsync<bool>($"api/sync/health");
+            //return data;
         }
         catch (Exception ex)
         {

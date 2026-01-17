@@ -15,6 +15,8 @@ public class SyncService : ISyncService
     private readonly IConnectivityService _connectivityService;
     private readonly PatientRepository _patientRepository;
     private readonly PartographRepository _partographRepository;
+    private readonly FHRRepository _fHRRepository;
+    private readonly BPRepository _bPRepository;
     private readonly ILogger<SyncService> _logger;
 
     private SyncStatus _currentStatus = SyncStatus.Idle;
@@ -26,12 +28,16 @@ public class SyncService : ISyncService
         IConnectivityService connectivityService,
         PatientRepository patientRepository,
         PartographRepository partographRepository,
+        FHRRepository fHRRepository,
+        BPRepository bPRepository,
         ILogger<SyncService> logger)
     {
         _apiClient = apiClient;
         _connectivityService = connectivityService;
         _patientRepository = patientRepository;
         _partographRepository = partographRepository;
+        _fHRRepository = fHRRepository;
+        _bPRepository = bPRepository;
         _logger = logger;
 
         // Load last sync time from preferences
@@ -178,6 +184,21 @@ public class SyncService : ISyncService
             var pendingPatients = await GetPendingPatientsAsync();
             patientsProgress.TotalRecords = pendingPatients.Count;
 
+            foreach (var item in pendingPatients)
+            {
+                if (string.IsNullOrWhiteSpace(item.DeviceId))
+                    item.DeviceId = deviceId;
+
+                if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                    item.OriginDeviceId = deviceId;
+
+                if (string.IsNullOrWhiteSpace(item.DataHash))
+                    item.DataHash = item.CalculateHash();
+
+                if (string.IsNullOrWhiteSpace(item.ConflictData))
+                    item.ConflictData = "{}";
+            }
+
             if (pendingPatients.Any())
             {
                 var pushRequest = new SyncPushRequest<Patient>
@@ -211,6 +232,43 @@ public class SyncService : ISyncService
 
             var pendingPartographs = await GetPendingPartographsAsync();
             partographsProgress.TotalRecords = pendingPartographs.Count;
+
+            foreach (var item in pendingPartographs)
+            {
+                if (string.IsNullOrWhiteSpace(item.DeviceId))
+                    item.DeviceId = deviceId;
+
+                if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                    item.OriginDeviceId = deviceId;
+
+                if (string.IsNullOrWhiteSpace(item.DataHash))
+                    item.DataHash = item.CalculateHash();
+
+                if (string.IsNullOrWhiteSpace(item.ConflictData))
+                    item.ConflictData = "{}";
+
+                item.BPs = await _bPRepository.ListByPatientAsync(item.ID) ?? new List<BP>();
+                item.Fhrs = await _fHRRepository.ListByPatientAsync(item.ID) ?? new List<FHR>();
+                item.Plans = patient.Plans ?? new List<Plan>();
+                item.Caputs = patient.Caputs ?? new List<Caput>();
+                item.Urines = patient.Urines ?? new List<Urine>();
+                item.IVFluids = patient.IVFluids ?? new List<IVFluidEntry>();
+                item.Postures = patient.Postures ?? new List<PostureEntry>();
+                item.Mouldings = patient.Mouldings ?? new List<Moulding>();
+                item.Oxytocins = patient.Oxytocins ?? new List<Oxytocin>();
+                item.Companions = patient.Companions ?? new List<CompanionEntry>();
+                item.OralFluids = patient.OralFluids ?? new List<OralFluidEntry>();
+                item.Assessments = patient.Assessments ?? new List<Assessment>();
+                item.Dilatations = patient.Dilatations ?? new List<CervixDilatation>();
+                item.Medications = patient.Medications ?? new List<MedicationEntry>();
+                item.PainReliefs = patient.PainReliefs ?? new List<PainReliefEntry>();
+                item.BishopScores = patient.BishopScores ?? new List<BishopScore>();
+                item.Contractions = patient.Contractions ?? new List<Contraction>();
+                item.HeadDescents = patient.HeadDescents ?? new List<HeadDescent>();
+                item.Temperatures = patient.Temperatures ?? new List<MODEL.Temperature>();
+                item.AmnioticFluids = patient.AmnioticFluids ?? new List<AmnioticFluid>();
+                item.FetalPositions = patient.FetalPositions ?? new List<FetalPosition>();
+            }
 
             if (pendingPartographs.Any())
             {
@@ -512,15 +570,36 @@ public class SyncService : ISyncService
         //using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
         await connection.OpenAsync();
 
-        using var command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM Tbl_Patient WHERE SyncStatus = 0";
+        //try
+        //{
+        //    var dropTableCmd = connection.CreateCommand();
+        //    dropTableCmd.CommandText = @"
+        //    UPDATE Tbl_Patient SET SyncStatus = 1;";
+        //    await dropTableCmd.ExecuteNonQueryAsync();
+        //}
+        //catch (Exception e)
+        //{
+        //    _logger.LogError(e, "Error dropping SyncStatus table");
+        //    throw;
+        //}
 
         var patients = new List<Patient>();
-        using var reader = await command.ExecuteReaderAsync();
-
-        while (await reader.ReadAsync())
+        try
         {
-            patients.Add(MapPatientFromReader(reader));
+            using var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Tbl_Patient WHERE SyncStatus = 0";
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                patients.Add(MapPatientFromReader(reader));
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error retrieving Patient table");
+            throw;
         }
 
         return patients;
@@ -532,15 +611,24 @@ public class SyncService : ISyncService
         //using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
         await connection.OpenAsync();
 
-        using var command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM Tbl_Partograph WHERE SyncStatus = 0";
-
         var partographs = new List<Partograph>();
-        using var reader = await command.ExecuteReaderAsync();
 
-        while (await reader.ReadAsync())
+        try
         {
-            partographs.Add(MapPartographFromReader(reader));
+            using var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Tbl_Partograph WHERE SyncStatus = 0";
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                partographs.Add(MapPartographFromReader(reader));
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error retrieving Partograph table");
+            throw;
         }
 
         return partographs;
@@ -553,7 +641,8 @@ public class SyncService : ISyncService
     {
         if (!recordIds.Any()) return;
 
-        using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
+        //using var connection = new SqliteConnection($"Data Source={Constants.DatabasePath}");
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
         await connection.OpenAsync();
 
         // Use transaction for batch operations (DATA INTEGRITY)

@@ -11,8 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // Configure Database - prefer environment variable, then configuration
-var connectionString = Environment.GetEnvironmentVariable("PARTOGRAPH_DB_CONNECTION")
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+//var connectionString = Environment.GetEnvironmentVariable("PARTOGRAPH_DB_CONNECTION")
+//    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
 {
@@ -29,19 +30,19 @@ builder.Services.AddScoped<IPartographPdfService, PartographPdfService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Configure JWT Authentication
-var jwtSecretKey = Environment.GetEnvironmentVariable("PARTOGRAPH_JWT_SECRET")
-    ?? builder.Configuration["JwtSettings:SecretKey"];
+//// Configure JWT Authentication
+//var jwtSecretKey = Environment.GetEnvironmentVariable("PARTOGRAPH_JWT_SECRET")
+//    ?? builder.Configuration["JwtSettings:SecretKey"];
 
-if (string.IsNullOrEmpty(jwtSecretKey) || jwtSecretKey.Length < 32)
-{
-    throw new InvalidOperationException(
-        "JWT Secret Key not configured or too short (minimum 32 characters). " +
-        "Set PARTOGRAPH_JWT_SECRET environment variable or configure JwtSettings:SecretKey in appsettings.");
-}
+//if (string.IsNullOrEmpty(jwtSecretKey) || jwtSecretKey.Length < 32)
+//{
+//    throw new InvalidOperationException(
+//        "JWT Secret Key not configured or too short (minimum 32 characters). " +
+//        "Set PARTOGRAPH_JWT_SECRET environment variable or configure JwtSettings:SecretKey in appsettings.");
+//}
 
-var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "PartographSyncService";
-var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "PartographMobileApp";
+//var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "PartographSyncService";
+//var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "PartographMobileApp";
 
 //builder.Services.AddAuthentication(options =>
 //{
@@ -75,45 +76,48 @@ var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "PartographMo
 
 //builder.Services.AddAuthorization();
 
-// Configure CORS - restrict based on environment
-var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+//// Configure CORS - restrict based on environment
+//var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
 
 builder.Services.AddCors(options =>
 {
-
     options.AddPolicy("AllowMobileApp", policy =>
     {
-        if (builder.Environment.IsDevelopment() ||
-            (allowedOrigins.Length == 1 && allowedOrigins[0] == "*"))
-        {
-            // Development mode - allow any origin for testing
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        }
-        else if (allowedOrigins.Length > 0)
-        {
-            // Production mode - restrict to configured origins
-            policy.WithOrigins(allowedOrigins)
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials();
-        }
-        else
-        {
-            // No origins configured - deny all cross-origin requests
-            policy.SetIsOriginAllowed(_ => false);
-        }
+        policy.AllowAnyMethod()
+        .AllowAnyHeader()
+        .SetIsOriginAllowed(origin => true)
+        .AllowCredentials();
+        //if (builder.Environment.IsDevelopment() ||
+        //    (allowedOrigins.Length == 1 && allowedOrigins[0] == "*"))
+        //{
+        //    // Development mode - allow any origin for testing
+        //    policy.AllowAnyOrigin()
+        //          .AllowAnyMethod()
+        //          .AllowAnyHeader();
+        //}
+        //else if (allowedOrigins.Length > 0)
+        //{
+        //    // Production mode - restrict to configured origins
+        //    policy.WithOrigins(allowedOrigins)
+        //          .AllowAnyMethod()
+        //          .AllowAnyHeader()
+        //          .AllowCredentials();
+        //}
+        //else
+        //{
+        //    // No origins configured - deny all cross-origin requests
+        //    policy.SetIsOriginAllowed(_ => false);
+        //}
     });
 });
 
 // Add JSON serialization options
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-    });
+builder.Services.AddControllers();
+    //.AddJsonOptions(options =>
+    //{
+    //    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    //    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    //});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

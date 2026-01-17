@@ -24,7 +24,7 @@ public class AuthController : ControllerBase
     /// Authenticates a staff member and returns a JWT token
     /// </summary>
     [HttpPost("login")]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     public async Task<ActionResult<AuthResult>> Login([FromBody] LoginRequest request)
     {
         if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
@@ -41,10 +41,10 @@ public class AuthController : ControllerBase
             request.Password,
             request.DeviceId);
 
-        if (!result.Success)
-        {
-            return Unauthorized(result);
-        }
+        //if (!result.Success)
+        //{
+        //    return Unauthorized(result);
+        //}
 
         return Ok(result);
     }
@@ -69,10 +69,10 @@ public class AuthController : ControllerBase
             request.DeviceId,
             request.DeviceSecret);
 
-        if (!result.Success)
-        {
-            return Unauthorized(result);
-        }
+        //if (!result.Success)
+        //{
+        //    return Unauthorized(result);
+        //}
 
         return Ok(result);
     }
@@ -81,7 +81,7 @@ public class AuthController : ControllerBase
     /// Refreshes an expired access token
     /// </summary>
     [HttpPost("refresh")]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     public async Task<ActionResult<AuthResult>> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         if (string.IsNullOrEmpty(request.RefreshToken))
@@ -95,10 +95,10 @@ public class AuthController : ControllerBase
 
         var result = await _authService.RefreshTokenAsync(request.RefreshToken);
 
-        if (!result.Success)
-        {
-            return Unauthorized(result);
-        }
+        //if (!result.Success)
+        //{
+        //    return Unauthorized(result);
+        //}
 
         return Ok(result);
     }

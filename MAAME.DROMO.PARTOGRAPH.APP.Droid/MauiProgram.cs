@@ -3,6 +3,7 @@ using FluentIcons.Maui;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services.Helper;
 using MauiIcons.Fluent;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
@@ -112,7 +113,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
                 // Use same base URL as sync API
                 //client.BaseAddress = new Uri("https://172.20.10.4:5218/");
                 //client.BaseAddress = new Uri("http://emperor-dev:5218/");
-                client.BaseAddress = new Uri("http://192.168.8.4:5218/");
+                client.BaseAddress = new Uri("http://192.168.100.4:5218/");
 
                 client.Timeout = TimeSpan.FromSeconds(30);
             })
@@ -133,7 +134,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
                 // Configure API base URL from preferences or use default
                 // var apiUrl = Preferences.Get("SyncApiUrl", "https://api.partograph.example.com");
                 //client.BaseAddress = new Uri("http://emperor-dev:5218/");
-                client.BaseAddress = new Uri("http://192.168.8.4:5218/");
+                client.BaseAddress = new Uri("http://192.168.100.4:5218/");
 
                 client.Timeout = TimeSpan.FromSeconds(120); // Increased timeout for sync operations
             })
@@ -144,9 +145,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
                 // Increased timeout for large sync operations (patients, partographs, etc.)
                 //client.Timeout = TimeSpan.FromSeconds(120);
             }); 
+            builder.Services.AddSingleton<IServiceRequestProvider, ServiceRequestProvider>();
             builder.Services.AddSingleton<ISyncService, SyncService>();
             builder.Services.AddSingleton<BackgroundSyncService>();
-
+            
             // Register PageModels
             builder.Services.AddSingleton<AppShellModel>();
             builder.Services.AddSingleton<LoginPageModel>();
