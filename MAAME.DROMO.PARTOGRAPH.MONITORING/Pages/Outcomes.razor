@@ -1,0 +1,509 @@
+@page "/outcomes"
+@attribute [Authorize]
+@inject IAnalyticsService AnalyticsService
+@inject IDashboardService DashboardService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Outcomes - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-graph-up me-2 text-success"></i>
+                Outcomes Analytics
+            </h2>
+            <p class="text-muted mb-0">
+                @accessLevelText | @DateTime.Now.ToString("dddd, MMMM dd, yyyy")
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" @onclick="RefreshData">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading outcomes data...</p>
+    </div>
+}
+else
+{
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Total Deliveries (Month)</p>
+                            <h3 class="mb-0">@summary?.TotalDeliveriesThisMonth</h3>
+                        </div>
+                        <div class="stat-icon bg-success-subtle text-success">
+                            <i class="bi bi-clipboard2-pulse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100 border-danger">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Maternal Deaths</p>
+                            <h3 class="mb-0 text-danger">@(mortalityStats?.MaternalDeaths ?? summary?.MaternalDeaths ?? 0)</h3>
+                        </div>
+                        <div class="stat-icon bg-danger-subtle text-danger">
+                            <i class="bi bi-heart-pulse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100 border-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Neonatal Deaths</p>
+                            <h3 class="mb-0 text-warning">@(mortalityStats?.NeonatalDeaths ?? summary?.NeonatalDeaths ?? 0)</h3>
+                        </div>
+                        <div class="stat-icon bg-warning-subtle text-warning">
+                            <i class="bi bi-emoji-frown"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100 border-secondary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Stillbirths</p>
+                            <h3 class="mb-0 text-secondary">@(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0)</h3>
+                        </div>
+                        <div class="stat-icon bg-secondary-subtle text-secondary">
+                            <i class="bi bi-dash-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mortality Summary -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-heart-pulse me-2 text-danger"></i>
+                        Mortality Indicators
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="text-center p-4 rounded bg-danger bg-opacity-10">
+                                <i class="bi bi-heart-pulse-fill fs-1 text-danger mb-2"></i>
+                                <h2 class="mb-1 text-danger">@(mortalityStats?.MaternalDeaths ?? summary?.MaternalDeaths ?? 0)</h2>
+                                <p class="text-muted mb-2">Maternal Deaths</p>
+                                @if (mortalityStats?.MaternalMortalityRatio > 0)
+                                {
+                                    <span class="badge bg-danger">
+                                        MMR: @mortalityStats.MaternalMortalityRatio.ToString("F1") per 100,000
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="text-center p-4 rounded bg-warning bg-opacity-10">
+                                <i class="bi bi-emoji-frown-fill fs-1 text-warning mb-2"></i>
+                                <h2 class="mb-1 text-warning">@(mortalityStats?.NeonatalDeaths ?? summary?.NeonatalDeaths ?? 0)</h2>
+                                <p class="text-muted mb-2">Neonatal Deaths</p>
+                                @if (mortalityStats?.NeonatalMortalityRate > 0)
+                                {
+                                    <span class="badge bg-warning">
+                                        NMR: @mortalityStats.NeonatalMortalityRate.ToString("F1") per 1,000
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="text-center p-4 rounded bg-secondary bg-opacity-10">
+                                <i class="bi bi-dash-circle-fill fs-1 text-secondary mb-2"></i>
+                                <h2 class="mb-1 text-secondary">@(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0)</h2>
+                                <p class="text-muted mb-2">Stillbirths</p>
+                                @if (mortalityStats?.StillbirthRate > 0)
+                                {
+                                    <span class="badge bg-secondary">
+                                        SBR: @mortalityStats.StillbirthRate.ToString("F1") per 1,000
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="alert alert-info mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Note:</strong> Mortality rates are calculated based on deliveries recorded in the system.
+                        MMR = Maternal Mortality Ratio (per 100,000 live births),
+                        NMR = Neonatal Mortality Rate (per 1,000 live births),
+                        SBR = Stillbirth Rate (per 1,000 total births).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pie-chart me-2 text-primary"></i>
+                        Delivery Outcomes Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @{
+                        var totalDeliveries = summary?.TotalDeliveriesThisMonth ?? 0;
+                        var livebirths = totalDeliveries - (mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0);
+                        var liveBirthRate = totalDeliveries > 0 ? (double)livebirths / totalDeliveries * 100 : 0;
+                    }
+
+                    <div class="text-center mb-4">
+                        <div class="display-4 fw-bold text-success">@liveBirthRate.ToString("F1")%</div>
+                        <p class="text-muted">Live Birth Rate</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-success">Live Births</span>
+                            <span class="badge bg-success">@livebirths</span>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-success" style="width: @liveBirthRate%">
+                                @liveBirthRate.ToString("F1")%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        @{
+                            var stillbirthRate = totalDeliveries > 0 ? (double)(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0) / totalDeliveries * 100 : 0;
+                        }
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-secondary">Stillbirths</span>
+                            <span class="badge bg-secondary">@(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0)</span>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-secondary" style="width: @stillbirthRate%">
+                                @stillbirthRate.ToString("F1")%
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="text-center">
+                        <h4 class="mb-1">@totalDeliveries</h4>
+                        <small class="text-muted">Total Deliveries This Month</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Mode Outcomes -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clipboard2-data me-2 text-primary"></i>
+                        Delivery Mode Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (deliveryModes != null)
+                    {
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <div class="card border-0 bg-success bg-opacity-10 h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-check-circle fs-1 text-success mb-2"></i>
+                                        <h3 class="mb-1">@deliveryModes.NormalVaginal</h3>
+                                        <p class="text-muted mb-0">Normal Vaginal</p>
+                                        <small class="badge bg-success mt-2">@deliveryModes.NormalVaginalPercent.ToString("F1")%</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card border-0 bg-info bg-opacity-10 h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-hand-index fs-1 text-info mb-2"></i>
+                                        <h3 class="mb-1">@deliveryModes.AssistedVaginal</h3>
+                                        <p class="text-muted mb-0">Assisted Vaginal</p>
+                                        @{
+                                            var assistedPercent = deliveryModes.Total > 0 ? (double)deliveryModes.AssistedVaginal / deliveryModes.Total * 100 : 0;
+                                        }
+                                        <small class="badge bg-info mt-2">@assistedPercent.ToString("F1")%</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card border-0 bg-warning bg-opacity-10 h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-calendar-check fs-1 text-warning mb-2"></i>
+                                        <h3 class="mb-1">@deliveryModes.ElectiveCaesarean</h3>
+                                        <p class="text-muted mb-0">Elective C-Section</p>
+                                        @{
+                                            var electivePercent = deliveryModes.Total > 0 ? (double)deliveryModes.ElectiveCaesarean / deliveryModes.Total * 100 : 0;
+                                        }
+                                        <small class="badge bg-warning mt-2">@electivePercent.ToString("F1")%</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card border-0 bg-danger bg-opacity-10 h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-exclamation-triangle fs-1 text-danger mb-2"></i>
+                                        <h3 class="mb-1">@deliveryModes.EmergencyCaesarean</h3>
+                                        <p class="text-muted mb-0">Emergency C-Section</p>
+                                        @{
+                                            var emergencyPercent = deliveryModes.Total > 0 ? (double)deliveryModes.EmergencyCaesarean / deliveryModes.Total * 100 : 0;
+                                        }
+                                        <small class="badge bg-danger mt-2">@emergencyPercent.ToString("F1")%</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Overall C-Section Rate</h6>
+                                <div class="progress" style="height: 30px;">
+                                    <div class="progress-bar @(deliveryModes.CaesareanPercent > 15 ? "bg-warning" : "bg-success")"
+                                         style="width: @deliveryModes.CaesareanPercent%">
+                                        @deliveryModes.CaesareanPercent.ToString("F1")%
+                                    </div>
+                                </div>
+                                @if (deliveryModes.CaesareanPercent > 15)
+                                {
+                                    <small class="text-warning">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        Above WHO recommended rate (10-15%)
+                                    </small>
+                                }
+                                else
+                                {
+                                    <small class="text-success">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Within WHO recommended range
+                                    </small>
+                                }
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Vaginal Delivery Rate</h6>
+                                @{
+                                    var vaginalRate = 100 - deliveryModes.CaesareanPercent;
+                                }
+                                <div class="progress" style="height: 30px;">
+                                    <div class="progress-bar bg-success" style="width: @vaginalRate%">
+                                        @vaginalRate.ToString("F1")%
+                                    </div>
+                                </div>
+                                <small class="text-muted">
+                                    Includes normal and assisted vaginal deliveries
+                                </small>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">No delivery mode data available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Facility Performance -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-building me-2 text-primary"></i>
+                        Facility Performance Rankings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (facilityPerformance?.Any() == true)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Facility</th>
+                                        <th>District</th>
+                                        <th>Deliveries</th>
+                                        <th>C-Section Rate</th>
+                                        <th>Complication Rate</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var facility in facilityPerformance.Take(10))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <i class="bi bi-hospital me-2 text-primary"></i>
+                                                @facility.FacilityName
+                                            </td>
+                                            <td>@facility.DistrictName</td>
+                                            <td><span class="badge bg-primary">@facility.TotalDeliveries</span></td>
+                                            <td>
+                                                <span class="@(facility.CaesareanRate > 15 ? "text-warning" : "text-success")">
+                                                    @facility.CaesareanRate.ToString("F1")%
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="@(facility.ComplicationRate > 10 ? "text-danger" : "text-success")">
+                                                    @facility.ComplicationRate.ToString("F1")%
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @GetGradeBadgeClass(facility.PerformanceGrade)">
+                                                    @facility.PerformanceGrade
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-building fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">No facility performance data available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private DashboardSummary? summary;
+    private DeliveryModeDistribution? deliveryModes;
+    private MortalityStats? mortalityStats;
+    private List<FacilityPerformanceData>? facilityPerformance;
+    private bool isLoading = true;
+    private string accessLevel = "District";
+    private string accessLevelText = "District View";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DetermineAccessLevel();
+        await LoadData();
+    }
+
+    private async Task DetermineAccessLevel()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        accessLevel = user.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District";
+        accessLevelText = accessLevel switch
+        {
+            "National" => "National Overview",
+            "Regional" => "Regional View",
+            "District" => "District View",
+            _ => "Dashboard"
+        };
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            var filter = await GetDashboardFilter();
+
+            summary = await DashboardService.GetDashboardSummaryAsync(filter);
+            deliveryModes = await DashboardService.GetDeliveryModeDistributionAsync(filter);
+            mortalityStats = await AnalyticsService.GetMortalityStatsAsync(filter);
+            facilityPerformance = await AnalyticsService.GetFacilityPerformanceAsync(filter);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading outcomes data: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task<DashboardFilter> GetDashboardFilter()
+    {
+        var filter = new DashboardFilter();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (accessLevel == "Regional")
+        {
+            var regionIdClaim = user.Claims.FirstOrDefault(c => c.Type == "RegionID")?.Value;
+            if (Guid.TryParse(regionIdClaim, out var regionId))
+                filter.RegionID = regionId;
+        }
+        else if (accessLevel == "District")
+        {
+            var districtIdClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictID")?.Value;
+            if (Guid.TryParse(districtIdClaim, out var districtId))
+                filter.DistrictID = districtId;
+        }
+
+        return filter;
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+
+    private string GetGradeBadgeClass(string grade)
+    {
+        return grade switch
+        {
+            "A" => "bg-success",
+            "B" => "bg-info",
+            "C" => "bg-warning",
+            "D" => "bg-orange text-dark",
+            "F" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}

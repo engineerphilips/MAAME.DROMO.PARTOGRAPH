@@ -2,6 +2,18 @@
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                    <LayoutView Layout="@typeof(LoginLayout)">
+                        <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+                            <div class="text-center">
+                                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="text-white">Checking authentication...</p>
+                            </div>
+                        </div>
+                    </LayoutView>
+                </Authorizing>
                 <NotAuthorized>
                     @if (context.User.Identity?.IsAuthenticated != true)
                     {
@@ -9,7 +21,15 @@
                     }
                     else
                     {
-                        <p class="text-danger">You are not authorized to access this resource.</p>
+                        <LayoutView Layout="@typeof(MainLayout)">
+                            <div class="container text-center mt-5">
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-shield-exclamation me-2"></i>
+                                    You are not authorized to access this resource.
+                                </div>
+                                <a href="/" class="btn btn-primary">Go to Dashboard</a>
+                            </div>
+                        </LayoutView>
                     }
                 </NotAuthorized>
             </AuthorizeRouteView>
