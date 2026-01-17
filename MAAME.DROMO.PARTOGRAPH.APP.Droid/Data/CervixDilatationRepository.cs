@@ -62,6 +62,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
+            CREATE INDEX IF NOT EXISTS idx_cervix_dilatation_partographid ON Tbl_CervixDilatation(partographid);
             CREATE INDEX IF NOT EXISTS idx_cervix_dilatation_sync ON Tbl_CervixDilatation(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_cervix_dilatation_server_version ON Tbl_CervixDilatation(serverversion);
            

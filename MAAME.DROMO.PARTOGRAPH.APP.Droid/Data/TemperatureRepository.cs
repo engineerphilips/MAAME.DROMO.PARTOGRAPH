@@ -71,6 +71,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 datahash TEXT
             );
 
+            CREATE INDEX IF NOT EXISTS idx_temperature_partographid ON Tbl_Temperature(partographid);
             CREATE INDEX IF NOT EXISTS idx_temperature_sync ON Tbl_Temperature(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_temperature_server_version ON Tbl_Temperature(serverversion);
 

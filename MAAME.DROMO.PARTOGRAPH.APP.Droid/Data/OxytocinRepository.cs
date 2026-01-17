@@ -45,6 +45,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
+            CREATE INDEX IF NOT EXISTS idx_oxytocin_partographid ON Tbl_Oxytocin(partographid);
             CREATE INDEX IF NOT EXISTS idx_oxytocin_sync ON Tbl_Oxytocin(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_oxytocin_server_version ON Tbl_Oxytocin(serverversion);
 

@@ -17,6 +17,25 @@ public class SyncService : ISyncService
     private readonly PartographRepository _partographRepository;
     private readonly FHRRepository _fHRRepository;
     private readonly BPRepository _bPRepository;
+    private readonly PlanRepository _planRepository;
+    private readonly CaputRepository _caputRepository;
+    private readonly UrineRepository _urineRepository;
+    private readonly IVFluidEntryRepository _ivFluidEntryRepository;
+    private readonly PostureRepository _postureRepository;
+    private readonly MouldingRepository _mouldingRepository;
+    private readonly OxytocinRepository _oxytocinRepository;
+    private readonly CompanionRepository _companionRepository;
+    private readonly OralFluidRepository _oralFluidRepository;
+    private readonly AssessmentRepository _assessmentRepository;
+    private readonly CervixDilatationRepository _cervixDilatationRepository;
+    private readonly MedicationEntryRepository _medicationEntryRepository;
+    private readonly PainReliefEntryRepository _painReliefEntryRepository;
+    private readonly BishopScoreRepository _bishopScoreRepository;
+    private readonly ContractionRepository _contractionRepository;
+    private readonly HeadDescentRepository _headDescentRepository;
+    private readonly TemperatureRepository _temperatureRepository;
+    private readonly AmnioticFluidRepository _amnioticFluidRepository;
+    private readonly FetalPositionRepository _fetalPositionRepository;
     private readonly ILogger<SyncService> _logger;
 
     private SyncStatus _currentStatus = SyncStatus.Idle;
@@ -30,6 +49,25 @@ public class SyncService : ISyncService
         PartographRepository partographRepository,
         FHRRepository fHRRepository,
         BPRepository bPRepository,
+        PlanRepository planRepository,
+        CaputRepository caputRepository,
+        UrineRepository urineRepository,
+        IVFluidEntryRepository ivFluidEntryRepository,
+        PostureRepository postureRepository,
+        MouldingRepository mouldingRepository,
+        OxytocinRepository oxytocinRepository,
+        CompanionRepository companionRepository,
+        OralFluidRepository oralFluidRepository,
+        AssessmentRepository assessmentRepository,
+        CervixDilatationRepository cervixDilatationRepository,
+        MedicationEntryRepository medicationEntryRepository,
+        PainReliefEntryRepository painReliefEntryRepository,
+        BishopScoreRepository bishopScoreRepository,
+        ContractionRepository contractionRepository,
+        HeadDescentRepository headDescentRepository,
+        TemperatureRepository temperatureRepository,
+        AmnioticFluidRepository amnioticFluidRepository,
+        FetalPositionRepository fetalPositionRepository,
         ILogger<SyncService> logger)
     {
         _apiClient = apiClient;
@@ -38,6 +76,25 @@ public class SyncService : ISyncService
         _partographRepository = partographRepository;
         _fHRRepository = fHRRepository;
         _bPRepository = bPRepository;
+        _planRepository = planRepository;
+        _caputRepository = caputRepository;
+        _urineRepository = urineRepository;
+        _ivFluidEntryRepository = ivFluidEntryRepository;
+        _postureRepository = postureRepository;
+        _mouldingRepository = mouldingRepository;
+        _oxytocinRepository = oxytocinRepository;
+        _companionRepository = companionRepository;
+        _oralFluidRepository = oralFluidRepository;
+        _assessmentRepository = assessmentRepository;
+        _cervixDilatationRepository = cervixDilatationRepository;
+        _medicationEntryRepository = medicationEntryRepository;
+        _painReliefEntryRepository = painReliefEntryRepository;
+        _bishopScoreRepository = bishopScoreRepository;
+        _contractionRepository = contractionRepository;
+        _headDescentRepository = headDescentRepository;
+        _temperatureRepository = temperatureRepository;
+        _amnioticFluidRepository = amnioticFluidRepository;
+        _fetalPositionRepository = fetalPositionRepository;
         _logger = logger;
 
         // Load last sync time from preferences
@@ -233,6 +290,7 @@ public class SyncService : ISyncService
             var pendingPartographs = await GetPendingPartographsAsync();
             partographsProgress.TotalRecords = pendingPartographs.Count;
 
+            // Validate partograph fields
             foreach (var item in pendingPartographs)
             {
                 if (string.IsNullOrWhiteSpace(item.DeviceId))
@@ -246,28 +304,94 @@ public class SyncService : ISyncService
 
                 if (string.IsNullOrWhiteSpace(item.ConflictData))
                     item.ConflictData = "{}";
+            }
 
-                item.BPs = await _bPRepository.ListByPatientAsync(item.ID) ?? new List<BP>();
-                item.Fhrs = await _fHRRepository.ListByPatientAsync(item.ID) ?? new List<FHR>();
-                item.Plans = patient.Plans ?? new List<Plan>();
-                item.Caputs = patient.Caputs ?? new List<Caput>();
-                item.Urines = patient.Urines ?? new List<Urine>();
-                item.IVFluids = patient.IVFluids ?? new List<IVFluidEntry>();
-                item.Postures = patient.Postures ?? new List<PostureEntry>();
-                item.Mouldings = patient.Mouldings ?? new List<Moulding>();
-                item.Oxytocins = patient.Oxytocins ?? new List<Oxytocin>();
-                item.Companions = patient.Companions ?? new List<CompanionEntry>();
-                item.OralFluids = patient.OralFluids ?? new List<OralFluidEntry>();
-                item.Assessments = patient.Assessments ?? new List<Assessment>();
-                item.Dilatations = patient.Dilatations ?? new List<CervixDilatation>();
-                item.Medications = patient.Medications ?? new List<MedicationEntry>();
-                item.PainReliefs = patient.PainReliefs ?? new List<PainReliefEntry>();
-                item.BishopScores = patient.BishopScores ?? new List<BishopScore>();
-                item.Contractions = patient.Contractions ?? new List<Contraction>();
-                item.HeadDescents = patient.HeadDescents ?? new List<HeadDescent>();
-                item.Temperatures = patient.Temperatures ?? new List<MODEL.Temperature>();
-                item.AmnioticFluids = patient.AmnioticFluids ?? new List<AmnioticFluid>();
-                item.FetalPositions = patient.FetalPositions ?? new List<FetalPosition>();
+            // Batch fetch all measurables in parallel (21 queries instead of 21 * N)
+            if (pendingPartographs.Any())
+            {
+                var partographIds = pendingPartographs.Where(p => p.ID.HasValue).Select(p => p.ID!.Value).ToList();
+
+                // Execute all batch queries in parallel
+                var bpsTask = _bPRepository.ListByPartographIdsAsync(partographIds);
+                var fhrsTask = _fHRRepository.ListByPartographIdsAsync(partographIds);
+                var plansTask = _planRepository.ListByPartographIdsAsync(partographIds);
+                var caputsTask = _caputRepository.ListByPartographIdsAsync(partographIds);
+                var urinesTask = _urineRepository.ListByPartographIdsAsync(partographIds);
+                var ivFluidsTask = _ivFluidEntryRepository.ListByPartographIdsAsync(partographIds);
+                var posturesTask = _postureRepository.ListByPartographIdsAsync(partographIds);
+                var mouldingsTask = _mouldingRepository.ListByPartographIdsAsync(partographIds);
+                var oxytocinsTask = _oxytocinRepository.ListByPartographIdsAsync(partographIds);
+                var companionsTask = _companionRepository.ListByPartographIdsAsync(partographIds);
+                var oralFluidsTask = _oralFluidRepository.ListByPartographIdsAsync(partographIds);
+                var assessmentsTask = _assessmentRepository.ListByPartographIdsAsync(partographIds);
+                var dilatationsTask = _cervixDilatationRepository.ListByPartographIdsAsync(partographIds);
+                var medicationsTask = _medicationEntryRepository.ListByPartographIdsAsync(partographIds);
+                var painReliefsTask = _painReliefEntryRepository.ListByPartographIdsAsync(partographIds);
+                var bishopScoresTask = _bishopScoreRepository.ListByPartographIdsAsync(partographIds);
+                var contractionsTask = _contractionRepository.ListByPartographIdsAsync(partographIds);
+                var headDescentsTask = _headDescentRepository.ListByPartographIdsAsync(partographIds);
+                var temperaturesTask = _temperatureRepository.ListByPartographIdsAsync(partographIds);
+                var amnioticFluidsTask = _amnioticFluidRepository.ListByPartographIdsAsync(partographIds);
+                var fetalPositionsTask = _fetalPositionRepository.ListByPartographIdsAsync(partographIds);
+
+                await Task.WhenAll(
+                    bpsTask, fhrsTask, plansTask, caputsTask, urinesTask, ivFluidsTask,
+                    posturesTask, mouldingsTask, oxytocinsTask, companionsTask, oralFluidsTask,
+                    assessmentsTask, dilatationsTask, medicationsTask, painReliefsTask, bishopScoresTask,
+                    contractionsTask, headDescentsTask, temperaturesTask, amnioticFluidsTask, fetalPositionsTask
+                );
+
+                // Get results
+                var allBPs = await bpsTask;
+                var allFhrs = await fhrsTask;
+                var allPlans = await plansTask;
+                var allCaputs = await caputsTask;
+                var allUrines = await urinesTask;
+                var allIVFluids = await ivFluidsTask;
+                var allPostures = await posturesTask;
+                var allMouldings = await mouldingsTask;
+                var allOxytocins = await oxytocinsTask;
+                var allCompanions = await companionsTask;
+                var allOralFluids = await oralFluidsTask;
+                var allAssessments = await assessmentsTask;
+                var allDilatations = await dilatationsTask;
+                var allMedications = await medicationsTask;
+                var allPainReliefs = await painReliefsTask;
+                var allBishopScores = await bishopScoresTask;
+                var allContractions = await contractionsTask;
+                var allHeadDescents = await headDescentsTask;
+                var allTemperatures = await temperaturesTask;
+                var allAmnioticFluids = await amnioticFluidsTask;
+                var allFetalPositions = await fetalPositionsTask;
+
+                // Assign to each partograph
+                foreach (var item in pendingPartographs)
+                {
+                    if (!item.ID.HasValue) continue;
+                    var id = item.ID.Value;
+
+                    item.BPs = allBPs.TryGetValue(id, out var bps) ? bps : new List<BP>();
+                    item.Fhrs = allFhrs.TryGetValue(id, out var fhrs) ? fhrs : new List<FHR>();
+                    item.Plans = allPlans.TryGetValue(id, out var plans) ? plans : new List<Plan>();
+                    item.Caputs = allCaputs.TryGetValue(id, out var caputs) ? caputs : new List<Caput>();
+                    item.Urines = allUrines.TryGetValue(id, out var urines) ? urines : new List<Urine>();
+                    item.IVFluids = allIVFluids.TryGetValue(id, out var ivFluids) ? ivFluids : new List<IVFluidEntry>();
+                    item.Postures = allPostures.TryGetValue(id, out var postures) ? postures : new List<PostureEntry>();
+                    item.Mouldings = allMouldings.TryGetValue(id, out var mouldings) ? mouldings : new List<Moulding>();
+                    item.Oxytocins = allOxytocins.TryGetValue(id, out var oxytocins) ? oxytocins : new List<Oxytocin>();
+                    item.Companions = allCompanions.TryGetValue(id, out var companions) ? companions : new List<CompanionEntry>();
+                    item.OralFluids = allOralFluids.TryGetValue(id, out var oralFluids) ? oralFluids : new List<OralFluidEntry>();
+                    item.Assessments = allAssessments.TryGetValue(id, out var assessments) ? assessments : new List<Assessment>();
+                    item.Dilatations = allDilatations.TryGetValue(id, out var dilatations) ? dilatations : new List<CervixDilatation>();
+                    item.Medications = allMedications.TryGetValue(id, out var medications) ? medications : new List<MedicationEntry>();
+                    item.PainReliefs = allPainReliefs.TryGetValue(id, out var painReliefs) ? painReliefs : new List<PainReliefEntry>();
+                    item.BishopScores = allBishopScores.TryGetValue(id, out var bishopScores) ? bishopScores : new List<BishopScore>();
+                    item.Contractions = allContractions.TryGetValue(id, out var contractions) ? contractions : new List<Contraction>();
+                    item.HeadDescents = allHeadDescents.TryGetValue(id, out var headDescents) ? headDescents : new List<HeadDescent>();
+                    item.Temperatures = allTemperatures.TryGetValue(id, out var temperatures) ? temperatures : new List<MODEL.Temperature>();
+                    item.AmnioticFluids = allAmnioticFluids.TryGetValue(id, out var amnioticFluids) ? amnioticFluids : new List<AmnioticFluid>();
+                    item.FetalPositions = allFetalPositions.TryGetValue(id, out var fetalPositions) ? fetalPositions : new List<FetalPosition>();
+                }
             }
 
             if (pendingPartographs.Any())

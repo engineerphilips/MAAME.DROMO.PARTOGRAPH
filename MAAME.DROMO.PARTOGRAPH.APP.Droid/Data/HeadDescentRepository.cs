@@ -42,6 +42,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
+            CREATE INDEX IF NOT EXISTS idx_headdescent_partographid ON Tbl_HeadDescent(partographid);
             CREATE INDEX IF NOT EXISTS idx_headdescent_sync ON Tbl_HeadDescent(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_headdescent_server_version ON Tbl_HeadDescent(serverversion);
 

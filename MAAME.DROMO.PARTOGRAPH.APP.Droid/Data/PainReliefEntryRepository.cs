@@ -82,6 +82,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             ALTER TABLE Tbl_PainReliefEntry ADD COLUMN patientpreference TEXT DEFAULT '';
             ALTER TABLE Tbl_PainReliefEntry ADD COLUMN clinicalalert TEXT DEFAULT '';
 
+            CREATE INDEX IF NOT EXISTS idx_painrelief_partographid ON Tbl_PainReliefEntry(partographid);
             CREATE INDEX IF NOT EXISTS idx_painrelief_sync ON Tbl_PainReliefEntry(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_painrelief_server_version ON Tbl_PainReliefEntry(serverversion);
 

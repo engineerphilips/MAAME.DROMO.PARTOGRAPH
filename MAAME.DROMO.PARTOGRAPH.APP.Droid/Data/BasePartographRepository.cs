@@ -114,6 +114,76 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return null;
         }
 
+        /// <summary>
+        /// Batch fetch all records for multiple partograph IDs.
+        /// Processes in chunks to handle large datasets and avoid SQLite parameter limits.
+        /// </summary>
+        /// <param name="partographIds">List of partograph IDs to fetch</param>
+        /// <param name="chunkSize">Max IDs per query (default 100, max 500 due to SQLite limits)</param>
+        public virtual async Task<Dictionary<Guid, List<T>>> ListByPartographIdsAsync(List<Guid> partographIds, int chunkSize = 100)
+        {
+            await Init();
+            var result = partographIds.ToDictionary(id => id, _ => new List<T>());
+
+            if (!partographIds.Any())
+                return result;
+
+            // Ensure chunk size doesn't exceed SQLite parameter limit (999)
+            chunkSize = Math.Min(chunkSize, 500);
+
+            try
+            {
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
+
+                // Process in chunks to avoid parameter limits and reduce memory pressure
+                var chunks = partographIds
+                    .Select((id, index) => new { id, index })
+                    .GroupBy(x => x.index / chunkSize)
+                    .Select(g => g.Select(x => x.id).ToList())
+                    .ToList();
+
+                foreach (var chunk in chunks)
+                {
+                    var parameters = chunk.Select((id, i) => $"@id{i}").ToList();
+                    var selectCmd = connection.CreateCommand();
+                    selectCmd.CommandText = $@"SELECT m.*, s.name as staffname
+                        FROM {TableName} m
+                        LEFT JOIN Tbl_Staff s ON m.handler = s.ID
+                        WHERE m.partographid IN ({string.Join(",", parameters)})
+                        ORDER BY m.partographid, m.time DESC";
+
+                    for (int i = 0; i < chunk.Count; i++)
+                    {
+                        selectCmd.Parameters.AddWithValue($"@id{i}", chunk[i].ToString());
+                    }
+
+                    await using var reader = await selectCmd.ExecuteReaderAsync();
+
+                    while (await reader.ReadAsync())
+                    {
+                        var item = MapFromReader(reader);
+                        if (item.PartographID.HasValue && result.ContainsKey(item.PartographID.Value))
+                        {
+                            result[item.PartographID.Value].Add(item);
+                        }
+                    }
+                }
+            }
+            catch (SqliteException e)
+            {
+                _logger.LogError(e, $"Error batch fetching from {TableName}");
+                throw new Exception(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Error batch fetching from {TableName}");
+                throw new Exception(e.Message);
+            }
+
+            return result;
+        }
+
         public virtual async Task<Guid?> SaveItemAsync(T item)
         {
             await Init();

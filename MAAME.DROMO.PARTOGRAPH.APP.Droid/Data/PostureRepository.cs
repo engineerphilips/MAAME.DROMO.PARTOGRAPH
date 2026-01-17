@@ -47,6 +47,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 clinicalalert TEXT DEFAULT ''
             );
 
+            CREATE INDEX IF NOT EXISTS idx_posture_partographid ON Tbl_Posture(partographid);
             CREATE INDEX IF NOT EXISTS idx_posture_sync ON Tbl_Posture(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_posture_server_version ON Tbl_Posture(serverversion);
 
