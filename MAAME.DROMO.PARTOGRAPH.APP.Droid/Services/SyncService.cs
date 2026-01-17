@@ -304,6 +304,18 @@ public class SyncService : ISyncService
 
                 if (string.IsNullOrWhiteSpace(item.ConflictData))
                     item.ConflictData = "{}";
+
+                if (string.IsNullOrWhiteSpace(item.Patient?.DeviceId))
+                    item.Patient.DeviceId = deviceId;
+
+                if (string.IsNullOrWhiteSpace(item.Patient?.OriginDeviceId))
+                    item.Patient.OriginDeviceId = deviceId;
+
+                if (string.IsNullOrWhiteSpace(item.Patient?.DataHash))
+                    item.Patient.DataHash = item.Patient.CalculateHash();
+
+                if (string.IsNullOrWhiteSpace(item.Patient?.ConflictData))
+                    item.Patient.ConflictData = "{}";
             }
 
             // Batch fetch all measurables in parallel (21 queries instead of 21 * N)
@@ -993,7 +1005,7 @@ public class SyncService : ISyncService
         try
         {
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM Tbl_Partograph WHERE SyncStatus = 0";
+            command.CommandText = "SELECT P.*, PA.firstName, PA.lastName, PA.hospitalNumber FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID WHERE P.SyncStatus = 0";
 
             using var reader = await command.ExecuteReaderAsync();
 
@@ -1145,6 +1157,12 @@ public class SyncService : ISyncService
             ID = Guid.Parse(reader["ID"].ToString()!),
             PatientID = Guid.Parse(reader["PatientID"].ToString()!),
             AdmissionDate = DateTime.Parse(reader["AdmissionDate"]?.ToString() ?? DateTime.Now.ToString()),
+            Patient = new Patient()
+            {
+                FirstName = reader["FirstName"]?.ToString() ?? string.Empty,
+                LastName = reader["LastName"]?.ToString() ?? string.Empty,
+                HospitalNumber = reader["hospitalNumber"]?.ToString() ?? string.Empty
+            }
             // Add other properties as needed
         };
     }

@@ -439,6 +439,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         emergencyContactPhone = @emergencyContactPhone,
                         handler = @handler,
                         updatedtime = @updatedtime,
+                        version = @version,
                         serverversion = @serverversion,
                         syncstatus = 1,
                         datahash = @datahash
@@ -449,6 +450,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     // Insert new record
                     cmd.CommandText = @"
                     INSERT INTO Tbl_Patient (ID, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash) VALUES (@ID, @firstName, @lastName, @hospitalNumber, @dateofbirth, @age, @bloodGroup, @phoneNumber, @emergencyContactName, @emergencyContactRelationship, @emergencyContactPhone, @createdtime, @updatedtime, @deviceid, @origindeviceid, 1, @version, @serverversion, @deleted, @datahash)";
+                    
+                    cmd.Parameters.AddWithValue("@handler", patient.Handler?.ToString() ?? "");
+                    cmd.Parameters.AddWithValue("@deviceid", patient.DeviceId ?? "");
+                    cmd.Parameters.AddWithValue("@origindeviceid", patient.OriginDeviceId ?? "");
+                    cmd.Parameters.AddWithValue("@deleted", patient.Deleted);
                 }
 
                 cmd.Parameters.AddWithValue("@ID", patient.ID.ToString());
@@ -462,14 +468,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 cmd.Parameters.AddWithValue("@emergencyContactName", patient.EmergencyContactName ?? "");
                 cmd.Parameters.AddWithValue("@emergencyContactRelationship", patient.EmergencyContactRelationship ?? "");
                 cmd.Parameters.AddWithValue("@emergencyContactPhone", patient.EmergencyContactPhone ?? "");
-                cmd.Parameters.AddWithValue("@handler", patient.Handler?.ToString() ?? "");
                 cmd.Parameters.AddWithValue("@createdtime", patient.CreatedTime);
                 cmd.Parameters.AddWithValue("@updatedtime", patient.UpdatedTime);
-                cmd.Parameters.AddWithValue("@deviceid", patient.DeviceId ?? "");
-                cmd.Parameters.AddWithValue("@origindeviceid", patient.OriginDeviceId ?? "");
                 cmd.Parameters.AddWithValue("@version", patient.Version);
                 cmd.Parameters.AddWithValue("@serverversion", patient.ServerVersion);
-                cmd.Parameters.AddWithValue("@deleted", patient.Deleted);
                 cmd.Parameters.AddWithValue("@datahash", patient.DataHash ?? "");
 
                 await cmd.ExecuteNonQueryAsync();
