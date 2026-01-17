@@ -361,8 +361,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public long UpdatedTime { get; set; }
         public long? DeletedTime { get; set; }
 
-        public string DeviceId { get; set; }
-        public string OriginDeviceId { get; set; }
+        public string DeviceId { get; set; } = string.Empty;
+        public string OriginDeviceId { get; set; } = string.Empty;
         public int SyncStatus { get; set; }  // 0=pending, 1=synced, 2=conflict
 
         public int Version { get; set; }
