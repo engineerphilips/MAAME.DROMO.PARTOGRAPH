@@ -208,12 +208,12 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     // Active labors - join with Staff to get facility reference
                     activeLabors = await _context.Partographs
                         .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
-                        .CountAsync(ps => facilityIds.Contains(ps.s.FacilityID ?? ps.s.Facility ?? Guid.Empty) &&
+                        .CountAsync(ps => facilityIds.Contains(ps.s.Facility ?? Guid.Empty) &&
                                         (ps.p.Status == LaborStatus.FirstStage || ps.p.Status == LaborStatus.SecondStage || ps.p.Status == LaborStatus.ThirdStage || ps.p.Status == LaborStatus.FourthStage) &&
                                         ps.p.Deleted == 0),
                     highRiskLabors = await _context.Partographs
                         .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
-                        .CountAsync(ps => facilityIds.Contains(ps.s.FacilityID ?? ps.s.Facility ?? Guid.Empty) &&
+                        .CountAsync(ps => facilityIds.Contains(ps.s.Facility ?? Guid.Empty) &&
                                         (ps.p.Status == LaborStatus.FirstStage || ps.p.Status == LaborStatus.SecondStage || ps.p.Status == LaborStatus.ThirdStage || ps.p.Status == LaborStatus.FourthStage) &&
                                         ps.p.RiskScore > 0 &&
                                         ps.p.Deleted == 0),
@@ -411,7 +411,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                     var activeLabors = await _context.Partographs
                         .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
-                        .CountAsync(ps => facilityIds.Contains(ps.s.FacilityID ?? ps.s.Facility ?? Guid.Empty) &&
+                        .CountAsync(ps => facilityIds.Contains(ps.s.Facility ?? Guid.Empty) &&
                                         (ps.p.Status == LaborStatus.FirstStage || ps.p.Status == LaborStatus.SecondStage || ps.p.Status == LaborStatus.ThirdStage || ps.p.Status == LaborStatus.FourthStage) &&
                                         ps.p.Deleted == 0);
 
@@ -537,7 +537,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                     var activeLabors = await _context.Partographs
                         .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
-                        .CountAsync(ps => facilityIds.Contains(ps.s.FacilityID ?? ps.s.Facility ?? Guid.Empty) &&
+                        .CountAsync(ps => facilityIds.Contains(ps.s.Facility ?? Guid.Empty) &&
                                         (ps.p.Status == LaborStatus.FirstStage || ps.p.Status == LaborStatus.SecondStage || ps.p.Status == LaborStatus.ThirdStage || ps.p.Status == LaborStatus.FourthStage) &&
                                         ps.p.Deleted == 0);
 
@@ -654,16 +654,16 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                     var activeLabors = await _context.Partographs
                         .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
-                        .CountAsync(ps => (ps.s.FacilityID == facility.ID.Value || ps.s.Facility == facility.ID.Value) &&
+                        .CountAsync(ps => ps.s.Facility == facility.ID.Value &&
                                         (ps.p.Status == LaborStatus.FirstStage || ps.p.Status == LaborStatus.SecondStage || ps.p.Status == LaborStatus.ThirdStage || ps.p.Status == LaborStatus.FourthStage) &&
                                         ps.p.Deleted == 0);
 
                     var staffCount = await _context.Staff
-                        .CountAsync(s => (s.Facility == facility.ID.Value || s.FacilityID == facility.ID.Value) && s.Deleted == 0);
+                        .CountAsync(s => s.Facility == facility.ID.Value && s.Deleted == 0);
 
                     var lastActivity = await _context.Partographs
                         .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
-                        .Where(ps => (ps.s.FacilityID == facility.ID.Value || ps.s.Facility == facility.ID.Value) && ps.p.Deleted == 0)
+                        .Where(ps => ps.s.Facility == facility.ID.Value && ps.p.Deleted == 0)
                         .OrderByDescending(ps => ps.p.UpdatedTime)
                         .Select(ps => ps.p.UpdatedTime)
                         .FirstOrDefaultAsync();
