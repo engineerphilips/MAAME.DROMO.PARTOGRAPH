@@ -10,9 +10,16 @@
 </div>
 
 @code {
-    protected override void OnInitialized()
+    // protected override void OnInitialized()
+    // {
+    //     var returnUrl = Uri.EscapeDataString(Navigation.Uri);
+    //     Navigation.NavigateTo($"/login?returnUrl={returnUrl}", true);
+    //     // Navigation.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}", true);
+    // }
+
+    protected override void OnAfterRender(bool firstRender)
     {
-        var returnUrl = Uri.EscapeDataString(Navigation.Uri);
-        Navigation.NavigateTo($"/login?returnUrl={returnUrl}", forceLoad: true);
+        if (firstRender)
+            Navigation.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}", true);
     }
 }
