@@ -328,6 +328,37 @@ public class SyncApiClient : ISyncApiClient
     }
 
     /// <inheritdoc/>
+    public async Task<SyncPushResponse<Staff>> PushStaffAsync(SyncPushRequest<Staff> request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/push/staff", request)
+            );
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Sync failed: {response.StatusCode} - {errorBody}");
+            }
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPushResponse<Staff>>();
+            return result ?? new SyncPushResponse<Staff>
+            {
+                SuccessIds = new List<string>(),
+                Conflicts = new List<ConflictRecord<Staff>>(),
+                Errors = new List<SyncError>()
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pushing staff data");
+            throw new SyncException("Failed to push staff data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
     public async Task<bool> TestConnectionAsync()
     {
         try

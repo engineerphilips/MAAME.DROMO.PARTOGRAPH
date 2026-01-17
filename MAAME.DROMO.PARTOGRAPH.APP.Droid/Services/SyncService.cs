@@ -36,6 +36,11 @@ public class SyncService : ISyncService
     private readonly TemperatureRepository _temperatureRepository;
     private readonly AmnioticFluidRepository _amnioticFluidRepository;
     private readonly FetalPositionRepository _fetalPositionRepository;
+    private readonly FourthStageVitalsRepository _fourthStageVitalsRepository;
+    private readonly MedicalNoteRepository _medicalNoteRepository;
+    private readonly PartographDiagnosisRepository _partographDiagnosisRepository;
+    private readonly PartographRiskFactorRepository _partographRiskFactorRepository;
+    private readonly StaffRepository _staffRepository;
     private readonly ILogger<SyncService> _logger;
 
     private SyncStatus _currentStatus = SyncStatus.Idle;
@@ -68,6 +73,11 @@ public class SyncService : ISyncService
         TemperatureRepository temperatureRepository,
         AmnioticFluidRepository amnioticFluidRepository,
         FetalPositionRepository fetalPositionRepository,
+        FourthStageVitalsRepository fourthStageVitalsRepository,
+        MedicalNoteRepository medicalNoteRepository,
+        PartographDiagnosisRepository partographDiagnosisRepository,
+        PartographRiskFactorRepository partographRiskFactorRepository,
+        StaffRepository staffRepository,
         ILogger<SyncService> logger)
     {
         _apiClient = apiClient;
@@ -95,6 +105,11 @@ public class SyncService : ISyncService
         _temperatureRepository = temperatureRepository;
         _amnioticFluidRepository = amnioticFluidRepository;
         _fetalPositionRepository = fetalPositionRepository;
+        _fourthStageVitalsRepository = fourthStageVitalsRepository;
+        _medicalNoteRepository = medicalNoteRepository;
+        _partographDiagnosisRepository = partographDiagnosisRepository;
+        _partographRiskFactorRepository = partographRiskFactorRepository;
+        _staffRepository = staffRepository;
         _logger = logger;
 
         // Load last sync time from preferences
@@ -345,12 +360,17 @@ public class SyncService : ISyncService
                 var temperaturesTask = _temperatureRepository.ListByPartographIdsAsync(partographIds);
                 var amnioticFluidsTask = _amnioticFluidRepository.ListByPartographIdsAsync(partographIds);
                 var fetalPositionsTask = _fetalPositionRepository.ListByPartographIdsAsync(partographIds);
+                var fourthStageVitalsTask = _fourthStageVitalsRepository.ListByPartographIdsAsync(partographIds);
+                var medicalNotesTask = _medicalNoteRepository.ListByPartographIdsAsync(partographIds);
+                var diagnosesTask = _partographDiagnosisRepository.ListByPartographIdsAsync(partographIds);
+                var riskFactorsTask = _partographRiskFactorRepository.ListByPartographIdsAsync(partographIds);
 
                 await Task.WhenAll(
                     bpsTask, fhrsTask, plansTask, caputsTask, urinesTask, ivFluidsTask,
                     posturesTask, mouldingsTask, oxytocinsTask, companionsTask, oralFluidsTask,
                     assessmentsTask, dilatationsTask, medicationsTask, painReliefsTask, bishopScoresTask,
-                    contractionsTask, headDescentsTask, temperaturesTask, amnioticFluidsTask, fetalPositionsTask
+                    contractionsTask, headDescentsTask, temperaturesTask, amnioticFluidsTask, fetalPositionsTask,
+                    fourthStageVitalsTask, medicalNotesTask, diagnosesTask, riskFactorsTask
                 );
 
                 // Get results
@@ -375,6 +395,10 @@ public class SyncService : ISyncService
                 var allTemperatures = await temperaturesTask;
                 var allAmnioticFluids = await amnioticFluidsTask;
                 var allFetalPositions = await fetalPositionsTask;
+                var allFourthStageVitals = await fourthStageVitalsTask;
+                var allMedicalNotes = await medicalNotesTask;
+                var allDiagnoses = await diagnosesTask;
+                var allRiskFactors = await riskFactorsTask;
 
                 // Validate measurable fields for all fetched records
                 foreach (var item in allBPs.Values.SelectMany(x => x))
@@ -629,6 +653,54 @@ public class SyncService : ISyncService
                         item.ConflictData = "{}";
                 }
 
+                foreach (var item in allFourthStageVitals.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allMedicalNotes.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allDiagnoses.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allRiskFactors.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
                 // Assign to each partograph
                 foreach (var item in pendingPartographs)
                 {
@@ -656,6 +728,10 @@ public class SyncService : ISyncService
                     item.Temperatures = allTemperatures.TryGetValue(id, out var temperatures) ? temperatures : new List<MODEL.Temperature>();
                     item.AmnioticFluids = allAmnioticFluids.TryGetValue(id, out var amnioticFluids) ? amnioticFluids : new List<AmnioticFluid>();
                     item.FetalPositions = allFetalPositions.TryGetValue(id, out var fetalPositions) ? fetalPositions : new List<FetalPosition>();
+                    item.FourthStageVitals = allFourthStageVitals.TryGetValue(id, out var fourthStageVitals) ? fourthStageVitals : new List<FourthStageVitals>();
+                    item.MedicalNotes = allMedicalNotes.TryGetValue(id, out var medicalNotes) ? medicalNotes : new List<MedicalNote>();
+                    item.Diagnoses = allDiagnoses.TryGetValue(id, out var diagnoses) ? diagnoses : new List<PartographDiagnosis>();
+                    item.RiskFactors = allRiskFactors.TryGetValue(id, out var riskFactors) ? riskFactors : new List<PartographRiskFactor>();
                 }
             }
 
@@ -681,6 +757,52 @@ public class SyncService : ISyncService
                 partographsProgress.ErrorCount = pushResponse.Errors.Count;
                 partographsProgress.ProcessedRecords = pendingPartographs.Count;
                 ProgressChanged?.Invoke(this, partographsProgress);
+            }
+
+            // Push staff
+            var staffProgress = new SyncProgress { TableName = "Tbl_Staff", CurrentOperation = "Pushing staff" };
+            ProgressChanged?.Invoke(this, staffProgress);
+
+            var pendingStaff = await GetPendingStaffAsync();
+            staffProgress.TotalRecords = pendingStaff.Count;
+
+            foreach (var item in pendingStaff)
+            {
+                if (string.IsNullOrWhiteSpace(item.DeviceId))
+                    item.DeviceId = deviceId;
+
+                if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                    item.OriginDeviceId = deviceId;
+
+                if (string.IsNullOrWhiteSpace(item.DataHash))
+                    item.DataHash = item.CalculateHash();
+
+                if (string.IsNullOrWhiteSpace(item.ConflictData))
+                    item.ConflictData = "{}";
+            }
+
+            if (pendingStaff.Any())
+            {
+                var pushRequest = new SyncPushRequest<Staff>
+                {
+                    DeviceId = deviceId,
+                    Changes = pendingStaff
+                };
+
+                var pushResponse = await _apiClient.PushStaffAsync(pushRequest);
+
+                result.TotalPushed += pushResponse.SuccessIds.Count;
+                result.TotalConflicts += pushResponse.Conflicts.Count;
+                result.TotalErrors += pushResponse.Errors.Count;
+
+                await MarkRecordsAsSyncedAsync("Tbl_Staff", pushResponse.SuccessIds);
+                await StoreStaffConflictsAsync(pushResponse.Conflicts);
+
+                staffProgress.SuccessCount = pushResponse.SuccessIds.Count;
+                staffProgress.ConflictCount = pushResponse.Conflicts.Count;
+                staffProgress.ErrorCount = pushResponse.Errors.Count;
+                staffProgress.ProcessedRecords = pendingStaff.Count;
+                ProgressChanged?.Invoke(this, staffProgress);
             }
 
             result.Success = result.TotalErrors == 0;
@@ -748,6 +870,23 @@ public class SyncService : ISyncService
             if (partographsPulled.serverTimestamp > latestServerTimestamp)
             {
                 latestServerTimestamp = partographsPulled.serverTimestamp;
+            }
+
+            // Pull staff with pagination
+            var staffProgress = new SyncProgress { TableName = "Tbl_Staff", CurrentOperation = "Pulling staff" };
+            ProgressChanged?.Invoke(this, staffProgress);
+
+            var staffPulled = await PullStaffWithPaginationAsync(
+                deviceId,
+                lastPullTimestamp,
+                "Tbl_Staff",
+                staffProgress,
+                cancellationToken);
+
+            result.TotalPulled += staffPulled.recordCount;
+            if (staffPulled.serverTimestamp > latestServerTimestamp)
+            {
+                latestServerTimestamp = staffPulled.serverTimestamp;
             }
 
             // Update last pull timestamp using SERVER timestamp (not device time)
@@ -830,6 +969,58 @@ public class SyncService : ISyncService
         return (totalPulled, latestServerTimestamp);
     }
 
+    /// <summary>
+    /// Pulls staff data from server with pagination support
+    /// </summary>
+    private async Task<(int recordCount, long serverTimestamp)> PullStaffWithPaginationAsync(
+        string deviceId,
+        long lastSyncTimestamp,
+        string tableName,
+        SyncProgress progress,
+        CancellationToken cancellationToken)
+    {
+        int totalPulled = 0;
+        long latestServerTimestamp = lastSyncTimestamp;
+        bool hasMore = true;
+        var currentTimestamp = lastSyncTimestamp;
+
+        while (hasMore && !cancellationToken.IsCancellationRequested)
+        {
+            var pullRequest = new SyncPullRequest
+            {
+                DeviceId = deviceId,
+                LastSyncTimestamp = currentTimestamp,
+                TableName = tableName
+            };
+
+            var pullResponse = await _apiClient.PullStaffAsync(pullRequest);
+
+            if (pullResponse.Records.Any())
+            {
+                await MergeStaff(pullResponse.Records);
+                totalPulled += pullResponse.Records.Count;
+
+                progress.TotalRecords += pullResponse.Records.Count;
+                progress.ProcessedRecords = totalPulled;
+                progress.SuccessCount = totalPulled;
+                ProgressChanged?.Invoke(this, progress);
+            }
+
+            if (pullResponse.ServerTimestamp > latestServerTimestamp)
+            {
+                latestServerTimestamp = pullResponse.ServerTimestamp;
+            }
+
+            currentTimestamp = pullResponse.ServerTimestamp;
+            hasMore = pullResponse.HasMore;
+
+            _logger.LogDebug("Pulled {Count} {Table} records, hasMore={HasMore}",
+                pullResponse.Records.Count, tableName, hasMore);
+        }
+
+        return (totalPulled, latestServerTimestamp);
+    }
+
     /// <inheritdoc/>
     public async Task<int> GetPendingChangesCountAsync()
     {
@@ -853,6 +1044,14 @@ public class SyncService : ISyncService
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = "SELECT COUNT(*) FROM Tbl_Partograph WHERE SyncStatus = 0";
+                var result = await command.ExecuteScalarAsync();
+                count += Convert.ToInt32(result);
+            }
+
+            // Count pending staff
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT COUNT(*) FROM Tbl_Staff WHERE SyncStatus = 0";
                 var result = await command.ExecuteScalarAsync();
                 count += Convert.ToInt32(result);
             }
@@ -893,6 +1092,14 @@ public class SyncService : ISyncService
                 count += Convert.ToInt32(result);
             }
 
+            // Count conflicted staff
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT COUNT(*) FROM Tbl_Staff WHERE SyncStatus = 2";
+                var result = await command.ExecuteScalarAsync();
+                count += Convert.ToInt32(result);
+            }
+
             return count;
         }
         catch (Exception ex)
@@ -919,11 +1126,13 @@ public class SyncService : ISyncService
             command.CommandText = @"
                 UPDATE Tbl_Patient
                 SET SyncStatus = 0, ConflictData = NULL
-                WHERE ID = @id
-                UNION ALL
+                WHERE ID = @id;
                 UPDATE Tbl_Partograph
                 SET SyncStatus = 0, ConflictData = NULL
-                WHERE ID = @id";
+                WHERE ID = @id;
+                UPDATE Tbl_Staff
+                SET SyncStatus = 0, ConflictData = NULL
+                WHERE ID = @id;";
         }
         else
         {
@@ -931,11 +1140,13 @@ public class SyncService : ISyncService
             command.CommandText = @"
                 UPDATE Tbl_Patient
                 SET SyncStatus = 1, ConflictData = NULL
-                WHERE ID = @id
-                UNION ALL
+                WHERE ID = @id;
                 UPDATE Tbl_Partograph
                 SET SyncStatus = 1, ConflictData = NULL
-                WHERE ID = @id";
+                WHERE ID = @id;
+                UPDATE Tbl_Staff
+                SET SyncStatus = 1, ConflictData = NULL
+                WHERE ID = @id;";
         }
 
         command.Parameters.AddWithValue("@id", recordId);
@@ -1122,6 +1333,45 @@ public class SyncService : ISyncService
         }
     }
 
+    private async Task StoreStaffConflictsAsync(List<ConflictRecord<Staff>> conflicts)
+    {
+        if (!conflicts.Any()) return;
+
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
+        await connection.OpenAsync();
+
+        using var transaction = connection.BeginTransaction();
+
+        try
+        {
+            foreach (var conflict in conflicts)
+            {
+                using var command = connection.CreateCommand();
+                command.Transaction = transaction;
+
+                command.CommandText = @"
+                    UPDATE Tbl_Staff
+                    SET SyncStatus = 2,
+                        ConflictData = @conflictData
+                    WHERE ID = @id";
+
+                command.Parameters.AddWithValue("@id", conflict.Id);
+                command.Parameters.AddWithValue("@conflictData", System.Text.Json.JsonSerializer.Serialize(conflict.ServerRecord));
+
+                await command.ExecuteNonQueryAsync();
+            }
+
+            transaction.Commit();
+            _logger.LogDebug("Stored {Count} staff conflicts", conflicts.Count);
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            _logger.LogError(ex, "Failed to store staff conflicts, rolling back");
+            throw;
+        }
+    }
+
     private async Task MergePatients(List<Patient> patients)
     {
         foreach (var patient in patients)
@@ -1136,6 +1386,126 @@ public class SyncService : ISyncService
         {
             await _partographRepository.UpsertPartographAsync(partograph);
         }
+    }
+
+    private async Task<List<Staff>> GetPendingStaffAsync()
+    {
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
+        await connection.OpenAsync();
+
+        var staff = new List<Staff>();
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Tbl_Staff WHERE SyncStatus = 0";
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                staff.Add(MapStaffFromReader(reader));
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error retrieving Staff table");
+            throw;
+        }
+
+        return staff;
+    }
+
+    private async Task MergeStaff(List<Staff> staffList)
+    {
+        await using var connection = new SqliteConnection(Constants.DatabasePath);
+        await connection.OpenAsync();
+
+        foreach (var staff in staffList)
+        {
+            try
+            {
+                using var checkCmd = connection.CreateCommand();
+                checkCmd.CommandText = "SELECT COUNT(*) FROM Tbl_Staff WHERE ID = @id";
+                checkCmd.Parameters.AddWithValue("@id", staff.ID.ToString());
+                var count = Convert.ToInt32(await checkCmd.ExecuteScalarAsync());
+
+                if (count > 0)
+                {
+                    using var updateCmd = connection.CreateCommand();
+                    updateCmd.CommandText = @"
+                        UPDATE Tbl_Staff
+                        SET name = @name, staffid = @staffid, email = @email, role = @role,
+                            department = @department, active = @active, facility = @facility,
+                            updatedtime = @updatedtime, syncstatus = 1, serverversion = @serverversion
+                        WHERE ID = @id";
+                    updateCmd.Parameters.AddWithValue("@id", staff.ID.ToString());
+                    updateCmd.Parameters.AddWithValue("@name", staff.Name ?? string.Empty);
+                    updateCmd.Parameters.AddWithValue("@staffid", staff.StaffID ?? string.Empty);
+                    updateCmd.Parameters.AddWithValue("@email", staff.Email ?? string.Empty);
+                    updateCmd.Parameters.AddWithValue("@role", staff.Role ?? string.Empty);
+                    updateCmd.Parameters.AddWithValue("@department", staff.Department ?? string.Empty);
+                    updateCmd.Parameters.AddWithValue("@active", staff.IsActive ? 1 : 0);
+                    updateCmd.Parameters.AddWithValue("@facility", staff.Facility?.ToString() ?? string.Empty);
+                    updateCmd.Parameters.AddWithValue("@updatedtime", staff.UpdatedTime);
+                    updateCmd.Parameters.AddWithValue("@serverversion", staff.ServerVersion);
+                    await updateCmd.ExecuteNonQueryAsync();
+                }
+                else
+                {
+                    using var insertCmd = connection.CreateCommand();
+                    insertCmd.CommandText = @"
+                        INSERT INTO Tbl_Staff (ID, name, staffid, email, role, department, password, active, facility,
+                            createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
+                        VALUES (@id, @name, @staffid, @email, @role, @department, @password, @active, @facility,
+                            @createdtime, @updatedtime, @deviceid, @origindeviceid, 1, @version, @serverversion, @deleted)";
+                    insertCmd.Parameters.AddWithValue("@id", staff.ID.ToString());
+                    insertCmd.Parameters.AddWithValue("@name", staff.Name ?? string.Empty);
+                    insertCmd.Parameters.AddWithValue("@staffid", staff.StaffID ?? string.Empty);
+                    insertCmd.Parameters.AddWithValue("@email", staff.Email ?? string.Empty);
+                    insertCmd.Parameters.AddWithValue("@role", staff.Role ?? string.Empty);
+                    insertCmd.Parameters.AddWithValue("@department", staff.Department ?? string.Empty);
+                    insertCmd.Parameters.AddWithValue("@password", staff.Password ?? string.Empty);
+                    insertCmd.Parameters.AddWithValue("@active", staff.IsActive ? 1 : 0);
+                    insertCmd.Parameters.AddWithValue("@facility", staff.Facility?.ToString() ?? string.Empty);
+                    insertCmd.Parameters.AddWithValue("@createdtime", staff.CreatedTime);
+                    insertCmd.Parameters.AddWithValue("@updatedtime", staff.UpdatedTime);
+                    insertCmd.Parameters.AddWithValue("@deviceid", staff.DeviceId ?? string.Empty);
+                    insertCmd.Parameters.AddWithValue("@origindeviceid", staff.OriginDeviceId ?? string.Empty);
+                    insertCmd.Parameters.AddWithValue("@version", staff.Version);
+                    insertCmd.Parameters.AddWithValue("@serverversion", staff.ServerVersion);
+                    insertCmd.Parameters.AddWithValue("@deleted", staff.Deleted);
+                    await insertCmd.ExecuteNonQueryAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error merging staff {StaffId}", staff.ID);
+            }
+        }
+    }
+
+    private Staff MapStaffFromReader(SqliteDataReader reader)
+    {
+        return new Staff
+        {
+            ID = Guid.Parse(reader["ID"].ToString()!),
+            Name = reader["name"]?.ToString() ?? string.Empty,
+            StaffID = reader["staffid"]?.ToString() ?? string.Empty,
+            Email = reader["email"]?.ToString() ?? string.Empty,
+            Role = reader["role"]?.ToString() ?? string.Empty,
+            Department = reader["department"]?.ToString() ?? string.Empty,
+            Password = reader["password"]?.ToString() ?? string.Empty,
+            IsActive = Convert.ToInt32(reader["active"]) == 1,
+            Facility = reader["facility"] is DBNull ? null : Guid.Parse(reader["facility"].ToString()!),
+            CreatedTime = Convert.ToInt64(reader["createdtime"]),
+            UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+            DeviceId = reader["deviceid"]?.ToString() ?? string.Empty,
+            OriginDeviceId = reader["origindeviceid"]?.ToString() ?? string.Empty,
+            SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+            Version = Convert.ToInt32(reader["version"]),
+            ServerVersion = reader["serverversion"] is DBNull ? 0 : Convert.ToInt32(reader["serverversion"]),
+            Deleted = reader["deleted"] is DBNull ? 0 : Convert.ToInt32(reader["deleted"]),
+        };
     }
 
     private Patient MapPatientFromReader(SqliteDataReader reader)

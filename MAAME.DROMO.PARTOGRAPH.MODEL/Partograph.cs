@@ -261,6 +261,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public List<Oxytocin> Oxytocins { get; set; } = new();
         public List<IVFluidEntry> IVFluids { get; set; } = new();
         public List<MedicationEntry> Medications { get; set; } = new();
+        public List<FourthStageVitals> FourthStageVitals { get; set; } = new();
+        public List<MedicalNote> MedicalNotes { get; set; } = new();
 
         //// Cervical Progress
         //public int CervicalDilation { get; set; } // 0-10 cm

@@ -43,6 +43,11 @@ public interface ISyncApiClient
     Task<SyncPullResponse<Staff>> PullStaffAsync(SyncPullRequest request);
 
     /// <summary>
+    /// Pushes staff changes to server
+    /// </summary>
+    Task<SyncPushResponse<Staff>> PushStaffAsync(SyncPushRequest<Staff> request);
+
+    /// <summary>
     /// Gets the configured API base URL
     /// </summary>
     string BaseUrl { get; }
