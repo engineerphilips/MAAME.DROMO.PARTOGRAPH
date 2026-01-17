@@ -1,0 +1,411 @@
+@page "/"
+@attribute [Authorize]
+@inject IDashboardService DashboardService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<PageTitle>Dashboard - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-speedometer2 me-2 text-primary"></i>
+                Dashboard Overview
+            </h2>
+            <p class="text-muted mb-0">
+                @accessLevelText | @DateTime.Now.ToString("dddd, MMMM dd, yyyy")
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" @onclick="RefreshData">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+            <a href="reports" class="btn btn-primary">
+                <i class="bi bi-file-earmark-bar-graph me-1"></i> Generate Report
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading dashboard data...</p>
+    </div>
+}
+else if (summary != null)
+{
+    <!-- Key Metrics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Today's Deliveries</p>
+                            <h3 class="mb-0">@summary.TotalDeliveriesToday</h3>
+                        </div>
+                        <div class="stat-icon bg-primary-subtle text-primary">
+                            <i class="bi bi-clipboard2-pulse"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-success">
+                            <i class="bi bi-arrow-up"></i> This Month: @summary.TotalDeliveriesThisMonth
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Active Labors</p>
+                            <h3 class="mb-0">@summary.ActiveLabors</h3>
+                        </div>
+                        <div class="stat-icon bg-warning-subtle text-warning">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-danger">
+                            <i class="bi bi-exclamation-triangle"></i> High Risk: @summary.HighRiskLabors
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Complications Today</p>
+                            <h3 class="mb-0">@summary.ComplicationsToday</h3>
+                        </div>
+                        <div class="stat-icon bg-danger-subtle text-danger">
+                            <i class="bi bi-exclamation-diamond"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-arrow-left-right"></i> Referrals: @summary.ReferralsToday
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Active Facilities</p>
+                            <h3 class="mb-0">@summary.ActiveFacilities</h3>
+                        </div>
+                        <div class="stat-icon bg-success-subtle text-success">
+                            <i class="bi bi-hospital"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-building"></i> Total: @summary.TotalFacilities
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Mode and Alerts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pie-chart me-2 text-primary"></i>
+                        Delivery Modes (This Month)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (deliveryModes != null)
+                    {
+                        <div class="row">
+                            <div class="col-md-6">
+                                <canvas id="deliveryModeChart" width="300" height="300"></canvas>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="delivery-mode-legend mt-3">
+                                    <div class="legend-item mb-3">
+                                        <span class="legend-color bg-success"></span>
+                                        <span class="legend-label">Normal Vaginal</span>
+                                        <span class="legend-value">@deliveryModes.NormalVaginal (@deliveryModes.NormalVaginalPercent.ToString("F1")%)</span>
+                                    </div>
+                                    <div class="legend-item mb-3">
+                                        <span class="legend-color bg-info"></span>
+                                        <span class="legend-label">Assisted Vaginal</span>
+                                        <span class="legend-value">@deliveryModes.AssistedVaginal</span>
+                                    </div>
+                                    <div class="legend-item mb-3">
+                                        <span class="legend-color bg-warning"></span>
+                                        <span class="legend-label">Elective C-Section</span>
+                                        <span class="legend-value">@deliveryModes.ElectiveCaesarean</span>
+                                    </div>
+                                    <div class="legend-item mb-3">
+                                        <span class="legend-color bg-danger"></span>
+                                        <span class="legend-label">Emergency C-Section</span>
+                                        <span class="legend-value">@deliveryModes.EmergencyCaesarean</span>
+                                    </div>
+                                    <hr />
+                                    <div class="legend-item">
+                                        <span class="legend-label fw-bold">C-Section Rate</span>
+                                        <span class="legend-value fw-bold @(deliveryModes.CaesareanPercent > 15 ? "text-warning" : "text-success")">
+                                            @deliveryModes.CaesareanPercent.ToString("F1")%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-bell me-2 text-warning"></i>
+                        Active Alerts
+                    </h5>
+                    <a href="alerts" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="alerts-list">
+                        @if (alerts?.Any() == true)
+                        {
+                            @foreach (var alert in alerts.Take(5))
+                            {
+                                <div class="alert-item p-3 border-bottom @GetAlertClass(alert.Severity)">
+                                    <div class="d-flex align-items-start">
+                                        <div class="alert-icon me-3">
+                                            <i class="bi @GetAlertIcon(alert.Severity)"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <p class="mb-1 fw-semibold">@alert.Title</p>
+                                            <small class="text-muted">@alert.FacilityName</small>
+                                            <small class="d-block text-muted">@alert.CreatedAt.ToString("MMM dd, HH:mm")</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="p-4 text-center text-muted">
+                                <i class="bi bi-check-circle fs-1 text-success"></i>
+                                <p class="mb-0 mt-2">No active alerts</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mortality Summary (This Month) -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-heart-pulse me-2 text-danger"></i>
+                        Mortality Summary (This Month)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="mortality-stat">
+                                <h2 class="text-danger mb-1">@summary.MaternalDeaths</h2>
+                                <p class="text-muted mb-0">Maternal Deaths</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mortality-stat">
+                                <h2 class="text-warning mb-1">@summary.NeonatalDeaths</h2>
+                                <p class="text-muted mb-0">Neonatal Deaths</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mortality-stat">
+                                <h2 class="text-secondary mb-1">@summary.Stillbirths</h2>
+                                <p class="text-muted mb-0">Stillbirths</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mortality-stat">
+                                <h2 class="text-success mb-1">@summary.TotalDeliveriesThisMonth</h2>
+                                <p class="text-muted mb-0">Total Deliveries</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links Based on Access Level -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-grid me-2 text-primary"></i>
+                        Quick Access
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        @if (accessLevel == "National")
+                        {
+                            <div class="col-md-3">
+                                <a href="regions" class="quick-link-card">
+                                    <i class="bi bi-map text-primary"></i>
+                                    <span>View All Regions</span>
+                                    <small>@summary.TotalRegions regions</small>
+                                </a>
+                            </div>
+                        }
+                        @if (accessLevel == "National" || accessLevel == "Regional")
+                        {
+                            <div class="col-md-3">
+                                <a href="districts" class="quick-link-card">
+                                    <i class="bi bi-building text-info"></i>
+                                    <span>View Districts</span>
+                                    <small>@summary.TotalDistricts districts</small>
+                                </a>
+                            </div>
+                        }
+                        <div class="col-md-3">
+                            <a href="facilities" class="quick-link-card">
+                                <i class="bi bi-hospital text-success"></i>
+                                <span>View Facilities</span>
+                                <small>@summary.TotalFacilities facilities</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="deliveries" class="quick-link-card">
+                                <i class="bi bi-clipboard2-pulse text-warning"></i>
+                                <span>Delivery Analytics</span>
+                                <small>@summary.TotalDeliveriesThisYear this year</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private DashboardSummary? summary;
+    private DeliveryModeDistribution? deliveryModes;
+    private List<DashboardAlert>? alerts;
+    private bool isLoading = true;
+    private string accessLevel = "District";
+    private string accessLevelText = "District View";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DetermineAccessLevel();
+        await LoadDashboardData();
+    }
+
+    private async Task DetermineAccessLevel()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        accessLevel = user.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District";
+        accessLevelText = accessLevel switch
+        {
+            "National" => "National Overview",
+            "Regional" => "Regional View",
+            "District" => "District View",
+            _ => "Dashboard"
+        };
+    }
+
+    private async Task LoadDashboardData()
+    {
+        isLoading = true;
+        try
+        {
+            var filter = new DashboardFilter();
+            // Apply filter based on access level
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (accessLevel == "Regional")
+            {
+                var regionIdClaim = user.Claims.FirstOrDefault(c => c.Type == "RegionID")?.Value;
+                if (Guid.TryParse(regionIdClaim, out var regionId))
+                    filter.RegionID = regionId;
+            }
+            else if (accessLevel == "District")
+            {
+                var districtIdClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictID")?.Value;
+                if (Guid.TryParse(districtIdClaim, out var districtId))
+                    filter.DistrictID = districtId;
+            }
+
+            summary = await DashboardService.GetDashboardSummaryAsync(filter);
+            deliveryModes = await DashboardService.GetDeliveryModeDistributionAsync(filter);
+            alerts = await DashboardService.GetActiveAlertsAsync(filter);
+        }
+        catch (Exception ex)
+        {
+            // Handle error
+            Console.WriteLine($"Error loading dashboard: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadDashboardData();
+    }
+
+    private string GetAlertClass(string severity)
+    {
+        return severity switch
+        {
+            "Critical" => "alert-critical",
+            "Warning" => "alert-warning-custom",
+            _ => "alert-info-custom"
+        };
+    }
+
+    private string GetAlertIcon(string severity)
+    {
+        return severity switch
+        {
+            "Critical" => "bi-exclamation-octagon text-danger",
+            "Warning" => "bi-exclamation-triangle text-warning",
+            _ => "bi-info-circle text-info"
+        };
+    }
+}

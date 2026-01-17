@@ -1,0 +1,166 @@
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IAuthService AuthService
+
+<div class="d-flex flex-column h-100">
+    <!-- Brand -->
+    <div class="px-3 py-4 border-bottom border-secondary">
+        <a href="/" class="d-flex align-items-center text-white text-decoration-none">
+            <i class="bi bi-heart-pulse-fill fs-3 me-2 text-danger"></i>
+            <div>
+                <span class="fs-5 fw-bold">MAAME DROMO</span>
+                <small class="d-block text-muted">Partograph Monitoring</small>
+            </div>
+        </a>
+    </div>
+
+    <!-- User Info -->
+    <AuthorizeView>
+        <Authorized>
+            <div class="px-3 py-3 border-bottom border-secondary">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-person text-white"></i>
+                    </div>
+                    <div class="ms-3">
+                        <span class="d-block text-white">@context.User.Identity?.Name</span>
+                        <small class="text-muted">
+                            @GetAccessLevelBadge(context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District")
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </Authorized>
+    </AuthorizeView>
+
+    <!-- Navigation -->
+    <nav class="flex-grow-1 py-3">
+        <ul class="nav nav-pills flex-column px-2">
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="" Match="NavLinkMatch.All">
+                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                </NavLink>
+            </li>
+
+            <AuthorizeView Policy="NationalAccess">
+                <Authorized>
+                    <li class="nav-item mb-1">
+                        <NavLink class="nav-link text-white" href="national">
+                            <i class="bi bi-globe me-2"></i> National Overview
+                        </NavLink>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <NavLink class="nav-link text-white" href="regions">
+                            <i class="bi bi-map me-2"></i> All Regions
+                        </NavLink>
+                    </li>
+                </Authorized>
+            </AuthorizeView>
+
+            <AuthorizeView Policy="RegionalAccess">
+                <Authorized>
+                    <li class="nav-item mb-1">
+                        <NavLink class="nav-link text-white" href="regional">
+                            <i class="bi bi-geo-alt me-2"></i> Regional Overview
+                        </NavLink>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <NavLink class="nav-link text-white" href="districts">
+                            <i class="bi bi-building me-2"></i> Districts
+                        </NavLink>
+                    </li>
+                </Authorized>
+            </AuthorizeView>
+
+            <AuthorizeView Policy="DistrictAccess">
+                <Authorized>
+                    <li class="nav-item mb-1">
+                        <NavLink class="nav-link text-white" href="district">
+                            <i class="bi bi-buildings me-2"></i> District Overview
+                        </NavLink>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <NavLink class="nav-link text-white" href="facilities">
+                            <i class="bi bi-hospital me-2"></i> Facilities
+                        </NavLink>
+                    </li>
+                </Authorized>
+            </AuthorizeView>
+
+            <li class="nav-item mt-3 mb-1">
+                <span class="text-muted small px-3 text-uppercase">Analytics</span>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="deliveries">
+                    <i class="bi bi-clipboard2-pulse me-2"></i> Deliveries
+                </NavLink>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="complications">
+                    <i class="bi bi-exclamation-triangle me-2"></i> Complications
+                </NavLink>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="referrals">
+                    <i class="bi bi-arrow-left-right me-2"></i> Referrals
+                </NavLink>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="outcomes">
+                    <i class="bi bi-graph-up me-2"></i> Outcomes
+                </NavLink>
+            </li>
+
+            <li class="nav-item mt-3 mb-1">
+                <span class="text-muted small px-3 text-uppercase">Reports</span>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="reports">
+                    <i class="bi bi-file-earmark-bar-graph me-2"></i> Generate Reports
+                </NavLink>
+            </li>
+            <li class="nav-item mb-1">
+                <NavLink class="nav-link text-white" href="alerts">
+                    <i class="bi bi-bell me-2"></i> Alerts
+                </NavLink>
+            </li>
+
+            <AuthorizeView Roles="Admin">
+                <Authorized>
+                    <li class="nav-item mt-3 mb-1">
+                        <span class="text-muted small px-3 text-uppercase">Administration</span>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <NavLink class="nav-link text-white" href="users">
+                            <i class="bi bi-people me-2"></i> Users
+                        </NavLink>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <NavLink class="nav-link text-white" href="admin/regions">
+                            <i class="bi bi-gear me-2"></i> Manage Regions
+                        </NavLink>
+                    </li>
+                </Authorized>
+            </AuthorizeView>
+        </ul>
+    </nav>
+
+    <!-- Footer -->
+    <div class="px-3 py-3 border-top border-secondary">
+        <small class="text-muted d-block">
+            <i class="bi bi-info-circle me-1"></i> Version 1.0.0
+        </small>
+    </div>
+</div>
+
+@code {
+    private string GetAccessLevelBadge(string accessLevel)
+    {
+        return accessLevel switch
+        {
+            "National" => "National Admin",
+            "Regional" => "Regional Manager",
+            "District" => "District Officer",
+            _ => "User"
+        };
+    }
+}
