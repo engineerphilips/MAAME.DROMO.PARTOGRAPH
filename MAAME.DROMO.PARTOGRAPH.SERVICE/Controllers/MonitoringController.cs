@@ -208,12 +208,12 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     // Active labors
                     activeLabors = await _context.Partographs
                         .CountAsync(p => facilityIds.Contains(p.FacilityID) &&
-                                        (p.LaborStatus == "Active" || p.LaborStatus == "InProgress") &&
+                                        (p.Status == LaborStatus.FirstStage || p.Status == LaborStatus.SecondStage || p.Status == LaborStatus.ThirdStage || p.Status == LaborStatus.FourthStage) &&
                                         p.Deleted == 0),
                     highRiskLabors = await _context.Partographs
                         .CountAsync(p => facilityIds.Contains(p.FacilityID) &&
-                                        (p.LaborStatus == "Active" || p.LaborStatus == "InProgress") &&
-                                        p.IsHighRisk == true &&
+                                        (p.Status == LaborStatus.FirstStage || p.Status == LaborStatus.SecondStage || p.Status == LaborStatus.ThirdStage || p.Status == LaborStatus.FourthStage) &&
+                                        p.RiskScore > 0 &&
                                         p.Deleted == 0),
 
                     // Complications and referrals today
@@ -268,10 +268,10 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                 return Ok(new
                 {
-                    normalVaginal = stats.Sum(s => s.NormalDeliveries),
-                    assistedVaginal = stats.Sum(s => s.AssistedDeliveries),
-                    electiveCaesarean = stats.Sum(s => s.ElectiveCaesareans),
-                    emergencyCaesarean = stats.Sum(s => s.EmergencyCaesareans)
+                    normalVaginal = stats.Sum(s => s.SVDCount),
+                    assistedVaginal = stats.Sum(s => s.AssistedDeliveryCount),
+                    electiveCaesarean = stats.Sum(s => s.CaesareanCount),
+                    emergencyCaesarean = stats.Sum(s => s.CaesareanCount)
                 });
             }
             catch (Exception ex)
@@ -409,11 +409,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                     var activeLabors = await _context.Partographs
                         .CountAsync(p => facilityIds.Contains(p.FacilityID) &&
-                                        (p.LaborStatus == "Active" || p.LaborStatus == "InProgress") &&
+                                        (p.Status == LaborStatus.FirstStage || p.Status == LaborStatus.SecondStage || p.Status == LaborStatus.ThirdStage || p.Status == LaborStatus.FourthStage) &&
                                         p.Deleted == 0);
 
                     var totalDeliveries = monthlyStats.Sum(s => s.TotalDeliveries);
-                    var caesareans = monthlyStats.Sum(s => s.CaesareanSections);
+                    var caesareans = monthlyStats.Sum(s => s.CaesareanCount);
 
                     summaries.Add(new
                     {
@@ -534,11 +534,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                     var activeLabors = await _context.Partographs
                         .CountAsync(p => facilityIds.Contains(p.FacilityID) &&
-                                        (p.LaborStatus == "Active" || p.LaborStatus == "InProgress") &&
+                                        (p.Status == LaborStatus.FirstStage || p.Status == LaborStatus.SecondStage || p.Status == LaborStatus.ThirdStage || p.Status == LaborStatus.FourthStage) &&
                                         p.Deleted == 0);
 
                     var totalDeliveries = monthlyStats.Sum(s => s.TotalDeliveries);
-                    var caesareans = monthlyStats.Sum(s => s.CaesareanSections);
+                    var caesareans = monthlyStats.Sum(s => s.CaesareanCount);
 
                     summaries.Add(new
                     {
@@ -592,7 +592,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     .ToListAsync();
 
                 var totalDeliveries = monthlyStats.Sum(s => s.TotalDeliveries);
-                var caesareans = monthlyStats.Sum(s => s.CaesareanSections);
+                var caesareans = monthlyStats.Sum(s => s.CaesareanCount);
 
                 return Ok(new
                 {
@@ -650,7 +650,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                     var activeLabors = await _context.Partographs
                         .CountAsync(p => p.FacilityID == facility.ID.Value &&
-                                        (p.LaborStatus == "Active" || p.LaborStatus == "InProgress") &&
+                                        (p.Status == LaborStatus.FirstStage || p.Status == LaborStatus.SecondStage || p.Status == LaborStatus.ThirdStage || p.Status == LaborStatus.FourthStage) &&
                                         p.Deleted == 0);
 
                     var staffCount = await _context.Staff

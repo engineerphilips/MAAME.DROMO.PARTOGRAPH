@@ -231,7 +231,7 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.NameIdentifier, staff.ID?.ToString() ?? Guid.Empty.ToString()),
             new Claim(ClaimTypes.Email, staff.Email ?? string.Empty),
             new Claim(ClaimTypes.Name, $"{staff.FirstName} {staff.LastName}"),
-            new Claim("facility_id", staff.FacilityID?.ToString() ?? string.Empty),
+            new Claim("facility_id", staff.Facility?.ToString() ?? string.Empty),
             new Claim("facility_name", staff.FacilityName ?? string.Empty),
             new Claim("device_id", deviceId),
             new Claim("role", staff.Role ?? "User"),
