@@ -1,0 +1,501 @@
+@page "/alerts"
+@page "/alert-management"
+@attribute [Authorize]
+@inject IEnhancedAlertService AlertService
+@inject INotificationService NotificationService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Alert Management - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-bell me-2 text-warning"></i>
+                Alert Management
+            </h2>
+            <p class="text-muted mb-0">
+                Monitor, acknowledge and resolve clinical alerts
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" @onclick="LoadData">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+            <a href="/alert-settings" class="btn btn-outline-primary">
+                <i class="bi bi-gear me-1"></i> Settings
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Response Metrics Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <h3 class="text-primary mb-0">@metrics.TotalAlerts</h3>
+                <small class="text-muted">Total Alerts</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <h3 class="text-warning mb-0">@metrics.PendingAlerts</h3>
+                <small class="text-muted">Pending</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <h3 class="text-success mb-0">@metrics.AcknowledgedAlerts</h3>
+                <small class="text-muted">Acknowledged</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <h3 class="text-info mb-0">@metrics.AverageResponseTimeMinutes.ToString("F1")m</h3>
+                <small class="text-muted">Avg Response</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <h3 class="@(metrics.OverallResponseCompliance >= 80 ? "text-success" : "text-warning") mb-0">
+                    @metrics.OverallResponseCompliance.ToString("F0")%
+                </h3>
+                <small class="text-muted">Compliance</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <h3 class="text-danger mb-0">@metrics.EscalatedAlerts</h3>
+                <small class="text-muted">Escalated</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "unacknowledged" ? "active" : "")"
+                @onclick="() => SetTab(\"unacknowledged\")">
+            <i class="bi bi-exclamation-circle me-1 text-danger"></i>
+            Unacknowledged
+            @if (unacknowledgedAlerts.Count > 0)
+            {
+                <span class="badge bg-danger ms-1">@unacknowledgedAlerts.Count</span>
+            }
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "active" ? "active" : "")"
+                @onclick="() => SetTab(\"active\")">
+            <i class="bi bi-clock-history me-1 text-warning"></i>
+            Active
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "resolved" ? "active" : "")"
+                @onclick="() => SetTab(\"resolved\")">
+            <i class="bi bi-check-circle me-1 text-success"></i>
+            Resolved
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "metrics" ? "active" : "")"
+                @onclick="() => SetTab(\"metrics\")">
+            <i class="bi bi-graph-up me-1 text-info"></i>
+            Response Metrics
+        </button>
+    </li>
+</ul>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else
+{
+    @if (activeTab == "metrics")
+    {
+        <!-- Response Metrics View -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h6 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Response Time Distribution</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="response-time-chart">
+                            @{
+                                var bins = new[] { ("< 5 min", 40), ("5-10 min", 25), ("10-15 min", 15), ("15-30 min", 12), ("> 30 min", 8) };
+                                var maxVal = bins.Max(b => b.Item2);
+                            }
+                            @foreach (var (label, value) in bins)
+                            {
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="response-label">@label</span>
+                                    <div class="progress flex-grow-1 mx-2" style="height: 20px;">
+                                        <div class="progress-bar @GetResponseTimeBarClass(label)"
+                                             style="width: @(value * 100 / maxVal)%">
+                                            @value%
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Response by Severity</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Critical Alerts</span>
+                                <span class="fw-bold">@metrics.CriticalAvgResponseTimeMinutes.ToString("F1") min avg</span>
+                            </div>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-danger" style="width: @metrics.CriticalResponseCompliance%">
+                                    @metrics.CriticalResponseCompliance.ToString("F0")% within target
+                                </div>
+                            </div>
+                            <small class="text-muted">Target: < 5 minutes</small>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Warning Alerts</span>
+                                <span class="fw-bold">@metrics.WarningAvgResponseTimeMinutes.ToString("F1") min avg</span>
+                            </div>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-warning" style="width: @metrics.WarningResponseCompliance%">
+                                    @metrics.WarningResponseCompliance.ToString("F0")% within target
+                                </div>
+                            </div>
+                            <small class="text-muted">Target: < 15 minutes</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Alerts Table -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Severity</th>
+                                <th>Alert</th>
+                                <th>Patient / Facility</th>
+                                <th>Created</th>
+                                <th>Response Time</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var alert in currentAlerts)
+                            {
+                                <tr class="@(alert.Severity == "Critical" && !alert.IsAcknowledged ? "table-danger" : "")">
+                                    <td>
+                                        <span class="badge @GetSeverityBadgeClass(alert.Severity)">
+                                            @alert.Severity
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold">@alert.Title</div>
+                                        <small class="text-muted">@alert.Message</small>
+                                    </td>
+                                    <td>
+                                        <div>@alert.PatientName</div>
+                                        <small class="text-muted">@alert.FacilityName</small>
+                                    </td>
+                                    <td>
+                                        <div>@alert.CreatedAt.ToString("HH:mm")</div>
+                                        <small class="text-muted">@GetTimeAgo(alert.CreatedAt)</small>
+                                    </td>
+                                    <td>
+                                        @if (alert.ResponseTimeMinutes.HasValue)
+                                        {
+                                            <span class="@(alert.ResponseTimeMinutes < 5 ? "text-success" : alert.ResponseTimeMinutes < 15 ? "text-warning" : "text-danger")">
+                                                @alert.ResponseTimeMinutes.Value.ToString("F1") min
+                                            </span>
+                                        }
+                                        else if (!alert.IsAcknowledged)
+                                        {
+                                            <span class="text-danger">
+                                                <i class="bi bi-clock me-1"></i>Waiting...
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (alert.IsResolved)
+                                        {
+                                            <span class="badge bg-success">Resolved</span>
+                                        }
+                                        else if (alert.IsAcknowledged)
+                                        {
+                                            <span class="badge bg-info">Acknowledged</span>
+                                        }
+                                        else if (alert.IsEscalated)
+                                        {
+                                            <span class="badge bg-danger">Escalated</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        @if (!alert.IsAcknowledged)
+                                        {
+                                            <button class="btn btn-sm btn-success me-1" @onclick="() => AcknowledgeAlert(alert)">
+                                                <i class="bi bi-check me-1"></i>Ack
+                                            </button>
+                                        }
+                                        @if (alert.IsAcknowledged && !alert.IsResolved)
+                                        {
+                                            <button class="btn btn-sm btn-primary me-1" @onclick="() => ShowResolveModal(alert)">
+                                                <i class="bi bi-check-all me-1"></i>Resolve
+                                            </button>
+                                        }
+                                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => ViewAlert(alert)">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @if (!currentAlerts.Any())
+            {
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                    <p class="mt-3 text-muted">No alerts in this category</p>
+                </div>
+            }
+        </div>
+    }
+}
+
+<!-- Resolve Modal -->
+@if (showResolveModal && selectedAlert != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Resolve Alert</h5>
+                    <button type="button" class="btn-close" @onclick="CloseResolveModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info mb-3">
+                        <strong>@selectedAlert.Title</strong><br />
+                        <small>@selectedAlert.PatientName - @selectedAlert.FacilityName</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Action Taken</label>
+                        <select class="form-select" @bind="resolutionAction">
+                            <option value="">Select action...</option>
+                            <option value="Monitored and stabilized">Monitored and stabilized</option>
+                            <option value="Administered medication">Administered medication</option>
+                            <option value="Performed intervention">Performed intervention</option>
+                            <option value="Referred to specialist">Referred to specialist</option>
+                            <option value="Emergency delivery">Emergency delivery</option>
+                            <option value="False alarm - values normal">False alarm - values normal</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" rows="3" @bind="resolutionNotes"
+                                  placeholder="Additional notes about the resolution..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseResolveModal">Cancel</button>
+                    <button type="button" class="btn btn-success" @onclick="ResolveAlert" disabled="@string.IsNullOrEmpty(resolutionAction)">
+                        <i class="bi bi-check-all me-1"></i>Resolve Alert
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .response-label {
+        width: 80px;
+        font-size: 0.85rem;
+    }
+</style>
+
+@code {
+    private bool isLoading = true;
+    private string activeTab = "unacknowledged";
+    private string currentUserName = "User";
+
+    private List<EnhancedAlert> allAlerts = new();
+    private List<EnhancedAlert> unacknowledgedAlerts = new();
+    private AlertResponseMetrics metrics = new();
+
+    private bool showResolveModal = false;
+    private EnhancedAlert? selectedAlert;
+    private string resolutionAction = "";
+    private string resolutionNotes = "";
+
+    private List<EnhancedAlert> currentAlerts => activeTab switch
+    {
+        "unacknowledged" => unacknowledgedAlerts,
+        "active" => allAlerts.Where(a => !a.IsResolved).ToList(),
+        "resolved" => allAlerts.Where(a => a.IsResolved).ToList(),
+        _ => allAlerts
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        currentUserName = authState.User.Identity?.Name ?? "User";
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            var alertsTask = AlertService.GetActiveAlertsAsync();
+            var unackTask = AlertService.GetUnacknowledgedAlertsAsync();
+            var metricsTask = AlertService.GetAlertResponseMetricsAsync(period: "Today");
+
+            await Task.WhenAll(alertsTask, unackTask, metricsTask);
+
+            allAlerts = await alertsTask;
+            unacknowledgedAlerts = await unackTask;
+            metrics = await metricsTask;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void SetTab(string tab)
+    {
+        activeTab = tab;
+    }
+
+    private async Task AcknowledgeAlert(EnhancedAlert alert)
+    {
+        var request = new AlertAcknowledgmentRequest
+        {
+            AlertId = alert.Id,
+            AcknowledgedBy = currentUserName,
+            Notes = "Acknowledged via monitoring dashboard"
+        };
+
+        var success = await AlertService.AcknowledgeAlertAsync(request);
+        if (success)
+        {
+            alert.IsAcknowledged = true;
+            alert.AcknowledgedAt = DateTime.UtcNow;
+            alert.AcknowledgedBy = currentUserName;
+            unacknowledgedAlerts.Remove(alert);
+            StateHasChanged();
+        }
+    }
+
+    private void ShowResolveModal(EnhancedAlert alert)
+    {
+        selectedAlert = alert;
+        resolutionAction = "";
+        resolutionNotes = "";
+        showResolveModal = true;
+    }
+
+    private void CloseResolveModal()
+    {
+        showResolveModal = false;
+        selectedAlert = null;
+    }
+
+    private async Task ResolveAlert()
+    {
+        if (selectedAlert == null || string.IsNullOrEmpty(resolutionAction)) return;
+
+        var request = new AlertResolutionRequest
+        {
+            AlertId = selectedAlert.Id,
+            ResolvedBy = currentUserName,
+            ActionTaken = resolutionAction,
+            Notes = resolutionNotes
+        };
+
+        var success = await AlertService.ResolveAlertAsync(request);
+        if (success)
+        {
+            selectedAlert.IsResolved = true;
+            selectedAlert.ResolvedAt = DateTime.UtcNow;
+            selectedAlert.ResolvedBy = currentUserName;
+            selectedAlert.ActionTaken = resolutionAction;
+            CloseResolveModal();
+            StateHasChanged();
+        }
+    }
+
+    private void ViewAlert(EnhancedAlert alert)
+    {
+        // Navigate to alert details or show modal
+    }
+
+    private string GetSeverityBadgeClass(string severity) => severity switch
+    {
+        "Critical" => "bg-danger",
+        "Warning" => "bg-warning text-dark",
+        _ => "bg-info"
+    };
+
+    private string GetResponseTimeBarClass(string label) => label switch
+    {
+        "< 5 min" => "bg-success",
+        "5-10 min" => "bg-info",
+        "10-15 min" => "bg-warning",
+        "15-30 min" => "bg-orange",
+        _ => "bg-danger"
+    };
+
+    private string GetTimeAgo(DateTime time)
+    {
+        var diff = DateTime.UtcNow - time;
+        if (diff.TotalMinutes < 1) return "just now";
+        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes}m ago";
+        if (diff.TotalHours < 24) return $"{(int)diff.TotalHours}h ago";
+        return $"{(int)diff.TotalDays}d ago";
+    }
+}

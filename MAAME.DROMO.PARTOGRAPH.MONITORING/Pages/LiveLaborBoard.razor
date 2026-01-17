@@ -1,0 +1,550 @@
+@page "/live-labor"
+@attribute [Authorize]
+@inject ILiveLaborService LiveLaborService
+@inject IEnhancedAlertService AlertService
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
+@using Microsoft.AspNetCore.SignalR.Client
+
+<PageTitle>Live Labor Board - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-activity me-2 text-danger"></i>
+                Live Labor Board
+            </h2>
+            <p class="text-muted mb-0">
+                Real-time active labor monitoring |
+                <span class="@(isConnected ? "text-success" : "text-danger")">
+                    <i class="bi @(isConnected ? "bi-wifi" : "bi-wifi-off") me-1"></i>
+                    @(isConnected ? "Connected" : "Disconnected")
+                </span>
+                | Last updated: @lastUpdated.ToString("HH:mm:ss")
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" @onclick="RefreshData" disabled="@isLoading">
+                <i class="bi bi-arrow-clockwise me-1 @(isLoading ? "spin" : "")"></i> Refresh
+            </button>
+            <div class="btn-group">
+                <button class="btn @(autoRefresh ? "btn-success" : "btn-outline-secondary")" @onclick="ToggleAutoRefresh">
+                    <i class="bi bi-play-circle me-1"></i> Auto @(autoRefresh ? "On" : "Off")
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100 bg-primary text-white">
+            <div class="card-body text-center py-3">
+                <h3 class="mb-0">@summary.TotalActiveCases</h3>
+                <small>Active Cases</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100 bg-danger text-white">
+            <div class="card-body text-center py-3">
+                <h3 class="mb-0">@summary.CriticalCases</h3>
+                <small>Critical</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100 bg-warning text-dark">
+            <div class="card-body text-center py-3">
+                <h3 class="mb-0">@summary.HighRiskCases</h3>
+                <small>High Risk</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100 bg-info text-white">
+            <div class="card-body text-center py-3">
+                <h3 class="mb-0">@summary.ModerateRiskCases</h3>
+                <small>Moderate</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100 bg-success text-white">
+            <div class="card-body text-center py-3">
+                <h3 class="mb-0">@summary.NormalCases</h3>
+                <small>Normal</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow-sm h-100 bg-secondary text-white">
+            <div class="card-body text-center py-3">
+                <h3 class="mb-0">@summary.MeasurementsDue</h3>
+                <small>Measurements Due</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <span class="text-muted">Filter by:</span>
+            </div>
+            <div class="col-auto">
+                <div class="btn-group btn-group-sm">
+                    <button class="btn @(riskFilter == "All" ? "btn-primary" : "btn-outline-primary")" @onclick="() => SetRiskFilter(\"All\")">All</button>
+                    <button class="btn @(riskFilter == "Critical" ? "btn-danger" : "btn-outline-danger")" @onclick="() => SetRiskFilter(\"Critical\")">Critical</button>
+                    <button class="btn @(riskFilter == "High" ? "btn-warning" : "btn-outline-warning")" @onclick="() => SetRiskFilter(\"High\")">High Risk</button>
+                    <button class="btn @(riskFilter == "MeasurementsDue" ? "btn-secondary" : "btn-outline-secondary")" @onclick="() => SetRiskFilter(\"MeasurementsDue\")">
+                        <i class="bi bi-clock me-1"></i>Due
+                    </button>
+                </div>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control form-control-sm" placeholder="Search patient or facility..."
+                       @bind="searchTerm" @bind:event="oninput" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Labor Cases Grid -->
+@if (isLoading && laborCases.Count == 0)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading active labor cases...</p>
+    </div>
+}
+else if (!filteredCases.Any())
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        No active labor cases match your filter criteria.
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var laborCase in filteredCases)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 labor-card @GetCardClass(laborCase.RiskLevel)">
+                    <!-- Header with risk indicator -->
+                    <div class="card-header bg-transparent border-0 pb-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex align-items-center">
+                                <div class="risk-indicator @GetRiskClass(laborCase.RiskLevel)"></div>
+                                <div class="ms-2">
+                                    <h6 class="mb-0 fw-bold">@laborCase.PatientName</h6>
+                                    <small class="text-muted">@laborCase.HospitalNumber</small>
+                                </div>
+                            </div>
+                            <span class="badge @GetRiskBadgeClass(laborCase.RiskLevel)">
+                                @laborCase.RiskLevel
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body pt-2">
+                        <!-- Patient Info -->
+                        <div class="row mb-2 small">
+                            <div class="col-6">
+                                <span class="text-muted">Age:</span> @laborCase.Age yrs
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">@laborCase.Gravida @laborCase.Parity</span>
+                            </div>
+                        </div>
+
+                        <!-- Labor Progress -->
+                        <div class="progress-section mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="text-muted">@laborCase.LaborStage</small>
+                                <small class="fw-bold">@laborCase.CurrentDilatation cm</small>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar @GetProgressBarClass(laborCase.RiskLevel)"
+                                     style="width: @(laborCase.CurrentDilatation * 10)%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted">Duration: @FormatDuration(laborCase.LaborDuration)</small>
+                                <small class="text-muted">Station: @laborCase.CurrentStation</small>
+                            </div>
+                        </div>
+
+                        <!-- Vitals Grid -->
+                        <div class="vitals-grid mb-2">
+                            <div class="vital-item @(IsVitalCritical(laborCase.LatestFHR, "FHR") ? "vital-critical" : "")">
+                                <i class="bi bi-heart-pulse"></i>
+                                <span class="vital-value">@(laborCase.LatestFHR?.ToString() ?? "--")</span>
+                                <span class="vital-label">FHR</span>
+                                @if (laborCase.IsFHRDue)
+                                {
+                                    <span class="due-badge">DUE</span>
+                                }
+                            </div>
+                            <div class="vital-item @(IsVitalCritical(laborCase.LatestSystolicBP, "BP") ? "vital-critical" : "")">
+                                <i class="bi bi-droplet"></i>
+                                <span class="vital-value">@(laborCase.LatestSystolicBP?.ToString() ?? "--")/@(laborCase.LatestDiastolicBP?.ToString() ?? "--")</span>
+                                <span class="vital-label">BP</span>
+                                @if (laborCase.IsBPDue)
+                                {
+                                    <span class="due-badge">DUE</span>
+                                }
+                            </div>
+                            <div class="vital-item">
+                                <i class="bi bi-thermometer-half"></i>
+                                <span class="vital-value">@(laborCase.LatestTemperature?.ToString("F1") ?? "--")°</span>
+                                <span class="vital-label">Temp</span>
+                            </div>
+                            <div class="vital-item">
+                                <i class="bi bi-graph-up"></i>
+                                <span class="vital-value">@(laborCase.ContractionsPerTenMinutes?.ToString() ?? "--")</span>
+                                <span class="vital-label">Ctx/10m</span>
+                            </div>
+                        </div>
+
+                        <!-- Alerts -->
+                        @if (laborCase.ActiveAlerts.Any())
+                        {
+                            <div class="alerts-section mb-2">
+                                @foreach (var alert in laborCase.ActiveAlerts.Take(2))
+                                {
+                                    <div class="alert alert-danger py-1 px-2 mb-1 small">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>@alert
+                                    </div>
+                                }
+                                @if (laborCase.ActiveAlerts.Count > 2)
+                                {
+                                    <small class="text-muted">+@(laborCase.ActiveAlerts.Count - 2) more alerts</small>
+                                }
+                            </div>
+                        }
+
+                        <!-- Facility -->
+                        <div class="facility-info small text-muted">
+                            <i class="bi bi-hospital me-1"></i>@laborCase.FacilityName
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="bi bi-person me-1"></i>@laborCase.AssignedMidwife
+                            </small>
+                            <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewDetails(laborCase.PartographId)">
+                                <i class="bi bi-eye me-1"></i>View
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .spin {
+        animation: spin 1s linear infinite;
+    }
+    @@keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .labor-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 4px solid transparent !important;
+    }
+    .labor-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+    }
+    .labor-card.risk-critical {
+        border-left-color: #dc3545 !important;
+        background: linear-gradient(to right, rgba(220,53,69,0.05), transparent);
+    }
+    .labor-card.risk-high {
+        border-left-color: #fd7e14 !important;
+        background: linear-gradient(to right, rgba(253,126,20,0.05), transparent);
+    }
+    .labor-card.risk-moderate {
+        border-left-color: #ffc107 !important;
+    }
+
+    .risk-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    .risk-indicator.critical {
+        background: #dc3545;
+    }
+    .risk-indicator.high {
+        background: #fd7e14;
+    }
+    .risk-indicator.moderate {
+        background: #ffc107;
+    }
+    .risk-indicator.normal {
+        background: #28a745;
+    }
+
+    @@keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.1); }
+    }
+
+    .vitals-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+    .vital-item {
+        text-align: center;
+        padding: 8px 4px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        position: relative;
+    }
+    .vital-item i {
+        display: block;
+        font-size: 1rem;
+        color: #6c757d;
+        margin-bottom: 2px;
+    }
+    .vital-value {
+        display: block;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+    .vital-label {
+        display: block;
+        font-size: 0.65rem;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+    .vital-item.vital-critical {
+        background: #fff5f5;
+        border: 1px solid #dc3545;
+    }
+    .vital-item.vital-critical i,
+    .vital-item.vital-critical .vital-value {
+        color: #dc3545;
+    }
+    .due-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #fd7e14;
+        color: white;
+        font-size: 0.5rem;
+        padding: 1px 4px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+</style>
+
+@code {
+    private HubConnection? hubConnection;
+    private bool isConnected = false;
+    private bool isLoading = true;
+    private bool autoRefresh = true;
+    private DateTime lastUpdated = DateTime.Now;
+    private string searchTerm = "";
+    private string riskFilter = "All";
+    private System.Timers.Timer? refreshTimer;
+
+    private LiveLaborSummary summary = new();
+    private List<LiveLaborCase> laborCases = new();
+
+    private IEnumerable<LiveLaborCase> filteredCases => laborCases
+        .Where(c => riskFilter == "All" ||
+                    (riskFilter == "Critical" && c.RiskLevel == "Critical") ||
+                    (riskFilter == "High" && (c.RiskLevel == "High" || c.RiskLevel == "Critical")) ||
+                    (riskFilter == "MeasurementsDue" && (c.IsFHRDue || c.IsBPDue || c.IsDilatationDue)))
+        .Where(c => string.IsNullOrEmpty(searchTerm) ||
+                    c.PatientName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    c.FacilityName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    c.HospitalNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        await SetupSignalR();
+        SetupAutoRefresh();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            var summaryTask = LiveLaborService.GetLiveLaborSummaryAsync();
+            var casesTask = LiveLaborService.GetActiveLaborCasesAsync();
+
+            await Task.WhenAll(summaryTask, casesTask);
+
+            summary = await summaryTask;
+            laborCases = await casesTask;
+            lastUpdated = DateTime.Now;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task SetupSignalR()
+    {
+        try
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri("/monitoringhub"))
+                .WithAutomaticReconnect()
+                .Build();
+
+            hubConnection.On<LiveLaborCase>("LaborUpdate", async (laborCase) =>
+            {
+                var existingIndex = laborCases.FindIndex(c => c.PartographId == laborCase.PartographId);
+                if (existingIndex >= 0)
+                    laborCases[existingIndex] = laborCase;
+                else
+                    laborCases.Add(laborCase);
+
+                lastUpdated = DateTime.Now;
+                await InvokeAsync(StateHasChanged);
+            });
+
+            hubConnection.On<LiveLaborSummary>("SummaryUpdate", async (newSummary) =>
+            {
+                summary = newSummary;
+                lastUpdated = DateTime.Now;
+                await InvokeAsync(StateHasChanged);
+            });
+
+            hubConnection.Reconnecting += (ex) =>
+            {
+                isConnected = false;
+                InvokeAsync(StateHasChanged);
+                return Task.CompletedTask;
+            };
+
+            hubConnection.Reconnected += (connectionId) =>
+            {
+                isConnected = true;
+                InvokeAsync(StateHasChanged);
+                return Task.CompletedTask;
+            };
+
+            await hubConnection.StartAsync();
+            isConnected = true;
+            await hubConnection.SendAsync("JoinNationalGroup");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error setting up SignalR: {ex.Message}");
+            isConnected = false;
+        }
+    }
+
+    private void SetupAutoRefresh()
+    {
+        refreshTimer = new System.Timers.Timer(30000); // 30 seconds
+        refreshTimer.Elapsed += async (sender, e) =>
+        {
+            if (autoRefresh)
+            {
+                await LoadData();
+            }
+        };
+        refreshTimer.Start();
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+
+    private void ToggleAutoRefresh()
+    {
+        autoRefresh = !autoRefresh;
+    }
+
+    private void SetRiskFilter(string filter)
+    {
+        riskFilter = filter;
+    }
+
+    private void ViewDetails(Guid partographId)
+    {
+        Navigation.NavigateTo($"/partograph/{partographId}");
+    }
+
+    private string GetCardClass(string riskLevel) => riskLevel switch
+    {
+        "Critical" => "risk-critical",
+        "High" => "risk-high",
+        "Moderate" => "risk-moderate",
+        _ => ""
+    };
+
+    private string GetRiskClass(string riskLevel) => riskLevel.ToLower();
+
+    private string GetRiskBadgeClass(string riskLevel) => riskLevel switch
+    {
+        "Critical" => "bg-danger",
+        "High" => "bg-warning text-dark",
+        "Moderate" => "bg-info",
+        _ => "bg-success"
+    };
+
+    private string GetProgressBarClass(string riskLevel) => riskLevel switch
+    {
+        "Critical" => "bg-danger",
+        "High" => "bg-warning",
+        _ => "bg-primary"
+    };
+
+    private bool IsVitalCritical(int? value, string type)
+    {
+        if (!value.HasValue) return false;
+        return type switch
+        {
+            "FHR" => value < 110 || value > 160,
+            "BP" => value > 140,
+            _ => false
+        };
+    }
+
+    private string FormatDuration(TimeSpan duration)
+    {
+        if (duration.TotalHours >= 1)
+            return $"{(int)duration.TotalHours}h {duration.Minutes}m";
+        return $"{duration.Minutes}m";
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        refreshTimer?.Dispose();
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

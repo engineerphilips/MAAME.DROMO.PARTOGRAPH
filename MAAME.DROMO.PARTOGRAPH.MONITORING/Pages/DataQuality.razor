@@ -1,0 +1,359 @@
+@page "/data-quality"
+@attribute [Authorize]
+@inject IDataQualityService DataQualityService
+
+<PageTitle>Data Quality - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-clipboard-check me-2 text-success"></i>
+                Data Quality Monitor
+            </h2>
+            <p class="text-muted mb-0">
+                Track data completeness, timeliness, and accuracy
+            </p>
+        </div>
+        <button class="btn btn-outline-secondary" @onclick="LoadData">
+            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+        </button>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else
+{
+    <!-- National Summary -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="quality-score-circle @GetGradeClass(nationalQuality.Grade)">
+                        @nationalQuality.Grade
+                    </div>
+                    <h3 class="mt-2 mb-0">@nationalQuality.OverallScore.ToString("F1")%</h3>
+                    <small class="text-muted">Overall Quality Score</small>
+                    <div class="mt-2">
+                        @if (nationalQuality.ScoreChange > 0)
+                        {
+                            <span class="text-success"><i class="bi bi-arrow-up"></i> +@nationalQuality.ScoreChange.ToString("F1")%</span>
+                        }
+                        else if (nationalQuality.ScoreChange < 0)
+                        {
+                            <span class="text-danger"><i class="bi bi-arrow-down"></i> @nationalQuality.ScoreChange.ToString("F1")%</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted"><i class="bi bi-dash"></i> No change</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="mb-3">Quality Components</h6>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="progress mx-auto" style="width: 80px; height: 80px; border-radius: 50%; background: #e9ecef;">
+                                    <div class="progress-bar @GetScoreBarClass(nationalQuality.CompletenessScore)"
+                                         style="width: @nationalQuality.CompletenessScore%; border-radius: 50%;">
+                                    </div>
+                                </div>
+                                <h4 class="mt-2 mb-0">@nationalQuality.CompletenessScore.ToString("F0")%</h4>
+                                <small class="text-muted">Completeness</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="mb-0 @GetScoreColorClass(nationalQuality.TimelinessScore)">@nationalQuality.TimelinessScore.ToString("F0")%</h4>
+                                <small class="text-muted">Timeliness</small>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div class="progress-bar @GetScoreBarClass(nationalQuality.TimelinessScore)"
+                                         style="width: @nationalQuality.TimelinessScore%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="mb-0 @GetScoreColorClass(nationalQuality.AccuracyScore)">@nationalQuality.AccuracyScore.ToString("F0")%</h4>
+                                <small class="text-muted">Accuracy</small>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div class="progress-bar @GetScoreBarClass(nationalQuality.AccuracyScore)"
+                                         style="width: @nationalQuality.AccuracyScore%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="mb-0 @GetScoreColorClass(nationalQuality.ConsistencyScore)">@nationalQuality.ConsistencyScore.ToString("F0")%</h4>
+                                <small class="text-muted">Consistency</small>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div class="progress-bar @GetScoreBarClass(nationalQuality.ConsistencyScore)"
+                                         style="width: @nationalQuality.ConsistencyScore%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Facility Rankings -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-trophy me-2 text-warning"></i>Facility Data Quality Ranking</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Facility</th>
+                                    <th>Score</th>
+                                    <th>Grade</th>
+                                    <th>Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var rank = 1;
+                                }
+                                @foreach (var facility in facilityRankings.Take(10))
+                                {
+                                    <tr>
+                                        <td>
+                                            @if (rank <= 3)
+                                            {
+                                                <span class="badge @(rank == 1 ? "bg-warning" : rank == 2 ? "bg-secondary" : "bg-danger") bg-opacity-75">
+                                                    @rank
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">@rank</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div>@facility.FacilityName</div>
+                                            <small class="text-muted">@facility.DistrictName</small>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="height: 8px; width: 60px;">
+                                                    <div class="progress-bar @GetScoreBarClass(facility.OverallScore)"
+                                                         style="width: @facility.OverallScore%"></div>
+                                                </div>
+                                                <span class="fw-bold">@facility.OverallScore.ToString("F0")%</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge @GetGradeBadgeClass(facility.Grade)">@facility.Grade</span>
+                                        </td>
+                                        <td>
+                                            @if (facility.Trend == "Improving")
+                                            {
+                                                <i class="bi bi-arrow-up-circle-fill text-success"></i>
+                                            }
+                                            else if (facility.Trend == "Declining")
+                                            {
+                                                <i class="bi bi-arrow-down-circle-fill text-danger"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-dash-circle text-muted"></i>
+                                            }
+                                        </td>
+                                    </tr>
+                                    rank++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Field Completeness -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-list-check me-2 text-info"></i>Field Completeness</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var field in fieldCompleteness.Take(10))
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="small">
+                                    @field.FieldName
+                                    @if (field.IsRequired)
+                                    {
+                                        <span class="badge bg-danger bg-opacity-10 text-danger ms-1">Required</span>
+                                    }
+                                </span>
+                                <span class="small fw-bold @GetScoreColorClass(field.CompletenessPercent)">
+                                    @field.CompletenessPercent.ToString("F0")%
+                                </span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar @GetScoreBarClass(field.CompletenessPercent)"
+                                     style="width: @field.CompletenessPercent%"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Identified Data Gaps -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-diamond me-2 text-danger"></i>Identified Data Gaps</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Gap Type</th>
+                                    <th>Description</th>
+                                    <th>Affected Records</th>
+                                    <th>Severity</th>
+                                    <th>Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var gap in dataGaps)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="badge @GetSeverityBadgeClass(gap.Severity)">@gap.GapType</span>
+                                        </td>
+                                        <td>@gap.Description</td>
+                                        <td>
+                                            <span class="fw-bold text-danger">@gap.AffectedRecords</span> records
+                                        </td>
+                                        <td>
+                                            <span class="badge @GetSeverityBadgeClass(gap.Severity)">@gap.Severity</span>
+                                        </td>
+                                        <td>
+                                            <small>@gap.Recommendation</small>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .quality-score-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        margin: 0 auto;
+    }
+    .quality-score-circle.grade-a { background: #28a745; }
+    .quality-score-circle.grade-b { background: #17a2b8; }
+    .quality-score-circle.grade-c { background: #ffc107; color: #333; }
+    .quality-score-circle.grade-d { background: #fd7e14; }
+    .quality-score-circle.grade-f { background: #dc3545; }
+</style>
+
+@code {
+    private bool isLoading = true;
+    private DataQualityScore nationalQuality = new();
+    private List<DataQualityScore> facilityRankings = new();
+    private List<FieldCompletenessReport> fieldCompleteness = new();
+    private List<DataGap> dataGaps = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            var nationalTask = DataQualityService.GetNationalDataQualityAsync();
+            var rankingTask = DataQualityService.GetDataQualityRankingAsync();
+            var completenessTask = DataQualityService.GetFieldCompletenessAsync();
+            var gapsTask = DataQualityService.GetIdentifiedGapsAsync();
+
+            await Task.WhenAll(nationalTask, rankingTask, completenessTask, gapsTask);
+
+            nationalQuality = await nationalTask;
+            facilityRankings = await rankingTask;
+            fieldCompleteness = await completenessTask;
+            dataGaps = await gapsTask;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private string GetGradeClass(string grade) => $"grade-{grade.ToLower()}";
+
+    private string GetGradeBadgeClass(string grade) => grade switch
+    {
+        "A" => "bg-success",
+        "B" => "bg-info",
+        "C" => "bg-warning text-dark",
+        "D" => "bg-orange",
+        _ => "bg-danger"
+    };
+
+    private string GetScoreBarClass(double score) => score switch
+    {
+        >= 90 => "bg-success",
+        >= 80 => "bg-info",
+        >= 70 => "bg-warning",
+        >= 60 => "bg-orange",
+        _ => "bg-danger"
+    };
+
+    private string GetScoreColorClass(double score) => score switch
+    {
+        >= 80 => "text-success",
+        >= 60 => "text-warning",
+        _ => "text-danger"
+    };
+
+    private string GetSeverityBadgeClass(string severity) => severity switch
+    {
+        "High" => "bg-danger",
+        "Medium" => "bg-warning text-dark",
+        _ => "bg-secondary"
+    };
+}
