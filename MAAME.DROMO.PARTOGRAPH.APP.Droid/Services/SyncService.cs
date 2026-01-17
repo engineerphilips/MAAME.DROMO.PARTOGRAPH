@@ -364,6 +364,259 @@ public class SyncService : ISyncService
                 var allAmnioticFluids = await amnioticFluidsTask;
                 var allFetalPositions = await fetalPositionsTask;
 
+                // Validate measurable fields for all fetched records
+                foreach (var item in allBPs.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allFhrs.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allPlans.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allCaputs.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allUrines.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allIVFluids.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allPostures.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allMouldings.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allOxytocins.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allCompanions.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allOralFluids.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allAssessments.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allDilatations.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allMedications.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allPainReliefs.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allBishopScores.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allContractions.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allHeadDescents.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allTemperatures.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allAmnioticFluids.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
+                foreach (var item in allFetalPositions.Values.SelectMany(x => x))
+                {
+                    if (string.IsNullOrWhiteSpace(item.DeviceId))
+                        item.DeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.OriginDeviceId))
+                        item.OriginDeviceId = deviceId;
+                    if (string.IsNullOrWhiteSpace(item.DataHash))
+                        item.DataHash = item.CalculateHash();
+                    if (string.IsNullOrWhiteSpace(item.ConflictData))
+                        item.ConflictData = "{}";
+                }
+
                 // Assign to each partograph
                 foreach (var item in pendingPartographs)
                 {
