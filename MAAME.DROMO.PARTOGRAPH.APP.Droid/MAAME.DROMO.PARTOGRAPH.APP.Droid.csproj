@@ -160,6 +160,7 @@
 	  <Compile Remove="Data\CategoryRepository.cs" />
 	  <Compile Remove="Data\JsonContext.cs" />
 	  <Compile Remove="Data\MedicalNoteRepository.cs" />
+	  <Compile Remove="Data\PainReliefEntryRepository.cs" />
 	  <Compile Remove="Data\ProjectRepository.cs" />
 	  <Compile Remove="Data\SeedDataService - Copy.cs" />
 	  <Compile Remove="Data\TagRepository.cs" />

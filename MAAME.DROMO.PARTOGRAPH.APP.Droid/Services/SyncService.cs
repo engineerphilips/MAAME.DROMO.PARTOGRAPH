@@ -29,7 +29,7 @@ public class SyncService : ISyncService
     private readonly AssessmentRepository _assessmentRepository;
     private readonly CervixDilatationRepository _cervixDilatationRepository;
     private readonly MedicationEntryRepository _medicationEntryRepository;
-    private readonly PainReliefEntryRepository _painReliefEntryRepository;
+    private readonly PainReliefRepository _painReliefEntryRepository;
     private readonly BishopScoreRepository _bishopScoreRepository;
     private readonly ContractionRepository _contractionRepository;
     private readonly HeadDescentRepository _headDescentRepository;
@@ -61,7 +61,7 @@ public class SyncService : ISyncService
         AssessmentRepository assessmentRepository,
         CervixDilatationRepository cervixDilatationRepository,
         MedicationEntryRepository medicationEntryRepository,
-        PainReliefEntryRepository painReliefEntryRepository,
+        PainReliefRepository painReliefEntryRepository,
         BishopScoreRepository bishopScoreRepository,
         ContractionRepository contractionRepository,
         HeadDescentRepository headDescentRepository,
