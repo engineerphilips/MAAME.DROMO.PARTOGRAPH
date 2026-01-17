@@ -78,7 +78,7 @@ public class AuthService : IAuthService
                 ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes),
                 StaffId = staff.ID,
                 StaffName = $"{staff.FirstName} {staff.LastName}",
-                FacilityId = staff.FacilityID?.ToString(),
+                FacilityId = staff.Facility?.ToString(),
                 FacilityName = staff.FacilityName
             };
         }

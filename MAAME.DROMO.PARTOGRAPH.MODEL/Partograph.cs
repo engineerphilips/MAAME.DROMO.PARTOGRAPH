@@ -347,9 +347,9 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [JsonIgnore]
         public string DisplayInfo => $"G{Gravida}P{Parity} • {GestationalAge} • {Patient?.Age}yrs";
         [JsonIgnore]
-        public string Name => Patient?.Name;
+        public string Name => Patient?.Name ?? string.Empty;
         [JsonIgnore]
-        public string HospitalNumber => Patient?.HospitalNumber;
+        public string HospitalNumber => Patient?.HospitalNumber ?? string.Empty;
 
         // Current/Latest measurements
         [JsonIgnore]

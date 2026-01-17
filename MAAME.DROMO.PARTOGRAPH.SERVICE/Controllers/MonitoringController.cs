@@ -222,7 +222,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     complicationsToday = await _context.ComplicationAnalytics
                         .CountAsync(c => c.OccurrenceDateTime >= today && facilityIds.Contains(c.FacilityID)),
                     referralsToday = await _context.Referrals
-                        .CountAsync(r => r.ReferralTime >= todayUnix && r.Deleted == 0),
+                        .CountAsync(r => new DateTimeOffset(r.ReferralTime).ToUnixTimeSeconds() >= todayUnix && r.Deleted == 0),
 
                     // Mortality this month
                     maternalDeaths = await _context.MaternalMortalityRecords
@@ -311,7 +311,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     {
                         id = a.ID,
                         title = a.AlertType,
-                        message = a.Description,
+                        message = a.ActionDescription,
                         severity = a.AlertSeverity,
                         category = a.AlertCategory,
                         facilityName = a.FacilityName,
@@ -474,7 +474,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     .ToListAsync();
 
                 var totalDeliveries = monthlyStats.Sum(s => s.TotalDeliveries);
-                var caesareans = monthlyStats.Sum(s => s.CaesareanSections);
+                var caesareans = monthlyStats.Sum(s => s.CaesareanCount);
 
                 return Ok(new
                 {
