@@ -74,8 +74,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "gar@ghs.gov.gh",
                     Latitude = 5.6037,
                     Longitude = -0.1870,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -92,8 +92,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "ash@ghs.gov.gh",
                     Latitude = 6.6885,
                     Longitude = -1.6244,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -110,8 +110,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "wr@ghs.gov.gh",
                     Latitude = 5.0107,
                     Longitude = -1.9535,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -128,8 +128,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "cr@ghs.gov.gh",
                     Latitude = 5.1315,
                     Longitude = -1.2795,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -146,8 +146,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "er@ghs.gov.gh",
                     Latitude = 6.0940,
                     Longitude = -0.2577,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -164,8 +164,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "vr@ghs.gov.gh",
                     Latitude = 6.6000,
                     Longitude = 0.4700,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -182,8 +182,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "oti@ghs.gov.gh",
                     Latitude = 7.8500,
                     Longitude = 0.1800,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -200,8 +200,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "nr@ghs.gov.gh",
                     Latitude = 9.4008,
                     Longitude = -0.8393,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -218,8 +218,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "svr@ghs.gov.gh",
                     Latitude = 9.0833,
                     Longitude = -1.8167,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -236,8 +236,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "ner@ghs.gov.gh",
                     Latitude = 10.5167,
                     Longitude = -0.3667,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -254,8 +254,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "uer@ghs.gov.gh",
                     Latitude = 10.7856,
                     Longitude = -0.8519,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -272,8 +272,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "uwr@ghs.gov.gh",
                     Latitude = 10.0601,
                     Longitude = -2.5099,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -290,8 +290,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "br@ghs.gov.gh",
                     Latitude = 7.3349,
                     Longitude = -2.3123,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -308,8 +308,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "ber@ghs.gov.gh",
                     Latitude = 7.5833,
                     Longitude = -1.9333,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -326,8 +326,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "ahr@ghs.gov.gh",
                     Latitude = 6.8000,
                     Longitude = -2.5167,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 },
                 new Region
@@ -344,8 +344,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     Email = "wnr@ghs.gov.gh",
                     Latitude = 6.2000,
                     Longitude = -2.4833,
-                    CreatedTime = now,
-                    UpdatedTime = now,
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                     Deleted = 0
                 }
             };
@@ -744,8 +744,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 Email = $"{code.ToLower()}@ghs.gov.gh",
                 Latitude = 0,
                 Longitude = 0,
-                CreatedTime = now,
-                UpdatedTime = now,
+                CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
                 Deleted = 0
             };
         }
@@ -773,7 +773,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 korleBu.DistrictName = "Accra Metropolitan";
                 korleBu.Region = "Greater Accra";
                 korleBu.Level = "Tertiary";
-                korleBu.UpdatedTime = DateTime.UtcNow;
+                korleBu.UpdatedTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                 _logger.LogInformation("Updated Korle Bu Teaching Hospital with region and district.");
             }
 
@@ -786,7 +786,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 ridgeHospital.DistrictName = "Korle Klottey Municipal";
                 ridgeHospital.Region = "Greater Accra";
                 ridgeHospital.Level = "Tertiary";
-                ridgeHospital.UpdatedTime = DateTime.UtcNow;
+                ridgeHospital.UpdatedTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                 _logger.LogInformation("Updated Ridge Hospital with region and district.");
             }
 
@@ -799,7 +799,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 militaryHospital.DistrictName = "Accra Metropolitan";
                 militaryHospital.Region = "Greater Accra";
                 militaryHospital.Level = "Tertiary";
-                militaryHospital.UpdatedTime = DateTime.UtcNow;
+                militaryHospital.UpdatedTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                 _logger.LogInformation("Updated 37 Military Hospital with region and district.");
             }
 
@@ -840,66 +840,66 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 new MonitoringUser
                 {
                     ID = Guid.Parse("33333333-3333-3333-3333-333333330001"),
-                    Email = "admin@partograph.gov.gh",
+                    Email = "admin@emperorsoftware.co",
                     FirstName = "System",
                     LastName = "Administrator",
-                    PasswordHash = HashPassword("Admin@123"),
+                    PasswordHash = HashPassword("system.password"),
                     Role = "Admin",
                     AccessLevel = "National",
                     IsActive = true,
                     EmailConfirmed = true,
                     RequirePasswordChange = false,
-                    CreatedTime = now,
-                    UpdatedTime = now,
-                    CreatedBy = "System",
-                    UpdatedBy = "System",
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    CreatedBy = Guid.Parse("33333333-3333-3333-3333-333333330001"),
+                    UpdatedBy = Guid.Parse("33333333-3333-3333-3333-333333330001"),
                     Deleted = 0
                 },
                 // National Manager
                 new MonitoringUser
                 {
                     ID = Guid.Parse("33333333-3333-3333-3333-333333330002"),
-                    Email = "manager@partograph.gov.gh",
+                    Email = "manager@emperorsoftware.co",
                     FirstName = "National",
                     LastName = "Manager",
-                    PasswordHash = HashPassword("Manager@123"),
+                    PasswordHash = HashPassword("system.password"),
                     Role = "Manager",
                     AccessLevel = "National",
                     IsActive = true,
                     EmailConfirmed = true,
                     RequirePasswordChange = false,
-                    CreatedTime = now,
-                    UpdatedTime = now,
-                    CreatedBy = "System",
-                    UpdatedBy = "System",
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    CreatedBy = Guid.Parse("33333333-3333-3333-3333-333333330002"),
+                    UpdatedBy = Guid.Parse("33333333-3333-3333-3333-333333330002"),
                     Deleted = 0
                 },
                 // Regional Admin - Greater Accra
                 new MonitoringUser
                 {
                     ID = Guid.Parse("33333333-3333-3333-3333-333333330003"),
-                    Email = "gar.admin@partograph.gov.gh",
-                    FirstName = "Greater Accra",
+                    Email = "regional@emperorsoftware.co",
+                    FirstName = "Regional",
                     LastName = "Admin",
-                    PasswordHash = HashPassword("Regional@123"),
+                    PasswordHash = HashPassword("system.password"),
                     Role = "Admin",
                     AccessLevel = "Regional",
                     RegionID = greaterAccraRegionId,
                     IsActive = true,
                     EmailConfirmed = true,
                     RequirePasswordChange = false,
-                    CreatedTime = now,
-                    UpdatedTime = now,
-                    CreatedBy = "System",
-                    UpdatedBy = "System",
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    CreatedBy = Guid.Parse("33333333-3333-3333-3333-333333330003"),
+                    UpdatedBy = Guid.Parse("33333333-3333-3333-3333-333333330003"),
                     Deleted = 0
                 },
                 // District Admin - Accra Metropolitan
                 new MonitoringUser
                 {
                     ID = Guid.Parse("33333333-3333-3333-3333-333333330004"),
-                    Email = "accra.admin@partograph.gov.gh",
-                    FirstName = "Accra Metro",
+                    Email = "district@emperorsoftware.co",
+                    FirstName = "District",
                     LastName = "Admin",
                     PasswordHash = HashPassword("District@123"),
                     Role = "Admin",
@@ -909,17 +909,17 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     IsActive = true,
                     EmailConfirmed = true,
                     RequirePasswordChange = false,
-                    CreatedTime = now,
-                    UpdatedTime = now,
-                    CreatedBy = "System",
-                    UpdatedBy = "System",
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    CreatedBy = Guid.Parse("33333333-3333-3333-3333-333333330004"),
+                    UpdatedBy = Guid.Parse("33333333-3333-3333-3333-333333330004"),
                     Deleted = 0
                 },
                 // Analyst User
                 new MonitoringUser
                 {
                     ID = Guid.Parse("33333333-3333-3333-3333-333333330005"),
-                    Email = "analyst@partograph.gov.gh",
+                    Email = "analyst@emperorsoftware.co",
                     FirstName = "Data",
                     LastName = "Analyst",
                     PasswordHash = HashPassword("Analyst@123"),
@@ -928,17 +928,17 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     IsActive = true,
                     EmailConfirmed = true,
                     RequirePasswordChange = false,
-                    CreatedTime = now,
-                    UpdatedTime = now,
-                    CreatedBy = "System",
-                    UpdatedBy = "System",
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    CreatedBy = Guid.Parse("33333333-3333-3333-3333-333333330005"),
+                    UpdatedBy = Guid.Parse("33333333-3333-3333-3333-333333330005"),
                     Deleted = 0
                 },
                 // Viewer User
                 new MonitoringUser
                 {
                     ID = Guid.Parse("33333333-3333-3333-3333-333333330006"),
-                    Email = "viewer@partograph.gov.gh",
+                    Email = "viewer@emperorsoftware.co",
                     FirstName = "Report",
                     LastName = "Viewer",
                     PasswordHash = HashPassword("Viewer@123"),
@@ -947,10 +947,10 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     IsActive = true,
                     EmailConfirmed = true,
                     RequirePasswordChange = false,
-                    CreatedTime = now,
-                    UpdatedTime = now,
-                    CreatedBy = "System",
-                    UpdatedBy = "System",
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    CreatedBy = Guid.Parse("33333333-3333-3333-3333-333333330006"),
+                    UpdatedBy = Guid.Parse("33333333-3333-3333-3333-333333330006"),
                     Deleted = 0
                 },
                 // Test Admin for development
@@ -966,10 +966,10 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     IsActive = true,
                     EmailConfirmed = true,
                     RequirePasswordChange = false,
-                    CreatedTime = now,
-                    UpdatedTime = now,
-                    CreatedBy = "System",
-                    UpdatedBy = "System",
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    CreatedBy = Guid.Parse("33333333-3333-3333-3333-333333330007"),
+                    UpdatedBy = Guid.Parse("33333333-3333-3333-3333-333333330007"),
                     Deleted = 0
                 }
             };
