@@ -49,17 +49,17 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Models
         public string? Location { get; set; }
     }
 
-    public class UserSession
-    {
-        public Guid ID { get; set; }
-        public Guid UserID { get; set; }
-        public string UserFullName { get; set; } = string.Empty;
-        public DateTime LoginTime { get; set; }
-        public DateTime? LastActivityTime { get; set; }
-        public string? IPAddress { get; set; }
-        public string? UserAgent { get; set; }
-        public bool IsActive { get; set; }
-    }
+    //public class UserSession
+    //{
+    //    public Guid ID { get; set; }
+    //    public Guid UserID { get; set; }
+    //    public string UserFullName { get; set; } = string.Empty;
+    //    public DateTime LoginTime { get; set; }
+    //    public DateTime? LastActivityTime { get; set; }
+    //    public string? IPAddress { get; set; }
+    //    public string? UserAgent { get; set; }
+    //    public bool IsActive { get; set; }
+    //}
 
     // =============================================
     // Notification Models

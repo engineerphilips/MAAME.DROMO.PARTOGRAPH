@@ -599,7 +599,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
                         Description = "Push notifications for mobile app users",
                         Category = "Notifications",
                         IsGloballyEnabled = false,
-                        CreatedAt = DateTime.UtcNow.AddWeeks(-2)
+                        CreatedAt = DateTime.UtcNow.AddDays(-14)
                     },
                     EnabledRegionsCount = 2,
                     EnabledDistrictsCount = 0,

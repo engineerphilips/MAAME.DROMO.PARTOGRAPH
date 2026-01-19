@@ -167,9 +167,9 @@ else
                         <div class="accordion" id="districtAccordion">
                             @foreach (var regionGroup in districts.GroupBy(d => d.RegionName).Where(g =>
                                 adminAccessLevel == "National" ||
-                                (adminAccessLevel == "Regional" && g.Any(d => d.RegionID == adminRegionId)) ||
                                 (adminAccessLevel == "District" && g.Any(d => d.ID == adminDistrictId))))
                             {
+                                @* (adminAccessLevel == "Regional" && g.Any(d => d.RegionID == adminRegionId)) || *@
                                 var regionDistricts = regionGroup.ToList();
                                 var enabledCount = regionDistricts.Count(d => selectedFlag.Scopes.Any(s => s.DistrictID == d.ID && s.IsEnabled));
                                 <div class="accordion-item">
@@ -186,8 +186,9 @@ else
                                                 {
                                                     var isDistrictEnabled = selectedFlag.Scopes.Any(s => s.DistrictID == district.ID && s.IsEnabled);
                                                     var canEdit = adminAccessLevel == "National" ||
-                                                                 (adminAccessLevel == "Regional" && district.RegionID == adminRegionId) ||
+                                                                 (adminAccessLevel == "Regional") ||
                                                                  (adminAccessLevel == "District" && district.ID == adminDistrictId);
+                                                                        @* && district.RegionID == adminRegionId *@
                                                     <div class="col-md-6">
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox" id="district-@district.ID"
