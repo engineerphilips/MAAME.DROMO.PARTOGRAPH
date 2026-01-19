@@ -1,5 +1,63 @@
 // Dashboard JavaScript functions
 
+// Sparkline chart for KPI cards
+window.initializeSparkline = (elementId, data, color) => {
+    const ctx = document.getElementById(elementId);
+    if (!ctx) return;
+
+    // Destroy existing chart if any
+    const existingChart = Chart.getChart(ctx);
+    if (existingChart) {
+        existingChart.destroy();
+    }
+
+    // Ensure data is an array
+    const chartData = Array.isArray(data) ? data : [];
+    if (chartData.length === 0) return;
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.map((_, i) => i.toString()),
+            datasets: [{
+                data: chartData,
+                borderColor: color,
+                backgroundColor: color + '20',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+                pointHoverRadius: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        title: () => '',
+                        label: (context) => context.raw.toString()
+                    }
+                }
+            },
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+};
+
 // Chart.js configuration
 window.initializeDeliveryModeChart = (data) => {
     const ctx = document.getElementById('deliveryModeChart');

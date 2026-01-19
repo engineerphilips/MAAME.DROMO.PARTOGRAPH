@@ -9,6 +9,15 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
         Task<DeliveryModeDistribution> GetDeliveryModeDistributionAsync(DashboardFilter? filter = null);
         Task<List<DashboardAlert>> GetActiveAlertsAsync(DashboardFilter? filter = null);
         Task<List<TrendData>> GetComplicationTrendAsync(DashboardFilter? filter = null);
+
+        // Enhanced Dashboard Methods
+        Task<MaternalHealthIndicators> GetMaternalHealthIndicatorsAsync(DashboardFilter? filter = null);
+        Task<AlertSummary> GetAlertSummaryAsync(DashboardFilter? filter = null);
+        Task<List<FacilityPerformanceSummary>> GetTopFacilitiesAsync(DashboardFilter? filter = null, int count = 5);
+        Task<List<FacilityPerformanceSummary>> GetBottomFacilitiesAsync(DashboardFilter? filter = null, int count = 5);
+        Task<List<GeographicPerformance>> GetGeographicPerformanceAsync(DashboardFilter? filter = null);
+        Task<DashboardLiveLaborSummary> GetLiveLaborSummaryAsync(DashboardFilter? filter = null);
+        Task<PeriodComparison> GetPeriodComparisonAsync(DashboardFilter? filter = null, string period = "Month");
     }
 
     public interface IRegionService
