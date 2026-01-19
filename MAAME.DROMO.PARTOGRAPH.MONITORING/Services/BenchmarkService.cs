@@ -269,7 +269,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
                     RegionName = f.Item3,
                     FacilityType = f.Item4,
                     OverallRank = i + 1,
-                    OverallScore = Math.Round(Math.Max(50, score), 1),
+                    OverallScore = Math.Round((double) Math.Max(50, score), 1),
                     PerformanceGrade = score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : score >= 60 ? "D" : "F",
                     CaesareanRate = Math.Round(8 + random.NextDouble() * 12, 1),
                     ComplicationRate = Math.Round(4 + random.NextDouble() * 8, 1),
@@ -303,7 +303,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
                     RegionName = "Greater Accra",
                     FacilityType = "District",
                     OverallRank = i + 1,
-                    OverallScore = Math.Round(Math.Max(50, score), 1),
+                    OverallScore = Math.Round((double) Math.Max(50, score), 1),
                     PerformanceGrade = score >= 85 ? "A" : score >= 75 ? "B" : score >= 65 ? "C" : "D",
                     TotalDeliveries = random.Next(200, 800),
                     RankChange = random.Next(-3, 4)
@@ -330,7 +330,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
                     RegionName = r,
                     FacilityType = "Region",
                     OverallRank = i + 1,
-                    OverallScore = Math.Round(Math.Max(50, score), 1),
+                    OverallScore = Math.Round((double) Math.Max(50, score), 1),
                     PerformanceGrade = score >= 85 ? "A" : score >= 75 ? "B" : score >= 65 ? "C" : "D",
                     TotalDeliveries = random.Next(1000, 5000),
                     RankChange = random.Next(-2, 3)

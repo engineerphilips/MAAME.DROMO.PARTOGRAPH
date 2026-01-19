@@ -23,13 +23,13 @@
 <ul class="nav nav-tabs mb-4">
     <li class="nav-item">
         <button class="nav-link @(activeTab == "thresholds" ? "active" : "")"
-                @onclick="() => activeTab = \"thresholds\"">
+                @onclick="() => activeTab = TabState.Thresholds.ToString().ToLower()">
             <i class="bi bi-sliders me-1"></i> Alert Thresholds
-        </button>
-    </li>
+        </button> 
+    </li>   
     <li class="nav-item">
         <button class="nav-link @(activeTab == "notifications" ? "active" : "")"
-                @onclick="() => activeTab = \"notifications\"">
+                @onclick="() => activeTab = TabState.Notifications.ToString().ToLower()">
             <i class="bi bi-bell me-1"></i> Notification Preferences
         </button>
     </li>
@@ -310,11 +310,11 @@ else
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Start Time</label>
-                                    <input type="time" class="form-control" @bind="quietHoursStartString" />
+                                    <input type="time" class="form-control" @bind="QuietHoursStartString" />
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">End Time</label>
-                                    <input type="time" class="form-control" @bind="quietHoursEndString" />
+                                    <input type="time" class="form-control" @bind="QuietHoursEndString" />
                                 </div>
                             </div>
                         }
@@ -348,20 +348,33 @@ else
     private string activeTab = "thresholds";
     private string? saveMessage;
     private string currentUserId = "";
+    enum TabState { Active, Thresholds, Notifications }
 
     private AlertThresholdConfiguration thresholds = new();
     private NotificationSubscription subscription = new();
 
-    private string quietHoursStartString
+    // private string QuietHoursStartString
+    // {
+    //     get => subscription.QuietHoursStart.ToString("HH:mm");
+    //     set => subscription.QuietHoursStart = TimeOnly.Parse(value);
+    // }
+
+    // private string QuietHoursEndString
+    // {
+    //     get => subscription.QuietHoursEnd.ToString("HH:mm");
+    //     set => subscription.QuietHoursEnd = TimeOnly.Parse(value);
+    // }
+    
+    private TimeOnly? QuietHoursStartString
     {
-        get => subscription.QuietHoursStart.ToString("HH:mm");
-        set => subscription.QuietHoursStart = TimeOnly.Parse(value);
+        get => subscription.QuietHoursStart;
+        set => subscription.QuietHoursStart = value ?? TimeOnly.FromDateTime(DateTime.Now);
     }
 
-    private string quietHoursEndString
+    private TimeOnly? QuietHoursEndString
     {
-        get => subscription.QuietHoursEnd.ToString("HH:mm");
-        set => subscription.QuietHoursEnd = TimeOnly.Parse(value);
+        get => subscription.QuietHoursEnd;
+        set => subscription.QuietHoursEnd = value ?? TimeOnly.FromDateTime(DateTime.Now);
     }
 
     protected override async Task OnInitializedAsync()

@@ -87,7 +87,7 @@
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
         <button class="nav-link @(activeTab == "unacknowledged" ? "active" : "")"
-                @onclick="() => SetTab(\"unacknowledged\")">
+                @onclick="() => SetTab(TabState.Unacknowledged.ToString().ToLower())">
             <i class="bi bi-exclamation-circle me-1 text-danger"></i>
             Unacknowledged
             @if (unacknowledgedAlerts.Count > 0)
@@ -98,21 +98,21 @@
     </li>
     <li class="nav-item">
         <button class="nav-link @(activeTab == "active" ? "active" : "")"
-                @onclick="() => SetTab(\"active\")">
+            @onclick="() => SetTab(TabState.Active.ToString().ToLower())">
             <i class="bi bi-clock-history me-1 text-warning"></i>
             Active
-        </button>
+        </button> 
     </li>
     <li class="nav-item">
         <button class="nav-link @(activeTab == "resolved" ? "active" : "")"
-                @onclick="() => SetTab(\"resolved\")">
+                @onclick="() => SetTab(TabState.Resolved.ToString().ToLower())">
             <i class="bi bi-check-circle me-1 text-success"></i>
             Resolved
         </button>
     </li>
     <li class="nav-item">
         <button class="nav-link @(activeTab == "metrics" ? "active" : "")"
-                @onclick="() => SetTab(\"metrics\")">
+                @onclick="() => SetTab(TabState.Metrics.ToString().ToLower())">
             <i class="bi bi-graph-up me-1 text-info"></i>
             Response Metrics
         </button>
@@ -176,7 +176,7 @@ else
                                     @metrics.CriticalResponseCompliance.ToString("F0")% within target
                                 </div>
                             </div>
-                            <small class="text-muted">Target: < 5 minutes</small>
+                            <small class="text-muted">Target: &lsaquo; 5 minutes</small>
                         </div>
                         <div>
                             <div class="d-flex justify-content-between mb-1">
@@ -188,7 +188,7 @@ else
                                     @metrics.WarningResponseCompliance.ToString("F0")% within target
                                 </div>
                             </div>
-                            <small class="text-muted">Target: < 15 minutes</small>
+                            <small class="text-muted">Target: &lsaquo; 15 minutes</small>
                         </div>
                     </div>
                 </div>
@@ -360,6 +360,7 @@ else
     private bool isLoading = true;
     private string activeTab = "unacknowledged";
     private string currentUserName = "User";
+    enum TabState { Active, Unacknowledged, Resolved, Metrics }
 
     private List<EnhancedAlert> allAlerts = new();
     private List<EnhancedAlert> unacknowledgedAlerts = new();
