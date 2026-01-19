@@ -219,6 +219,9 @@
 
             <AuthorizeView Roles="Admin">
                 <Authorized>
+                    @{
+                        var adminUserAccessLevel = context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District";
+                    }
                     <li class="nav-item mt-3 mb-1">
                         <span class="text-grey small px-3 text-uppercase">Administration</span>
                     </li>
@@ -242,11 +245,14 @@
                             <i class="bi bi-map me-2"></i> Manage Regions
                         </NavLink>
                     </li>
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-white" href="admin/feature-flags">
-                            <i class="bi bi-toggles me-2"></i> Feature Flags
-                        </NavLink>
-                    </li>
+                    @if (adminUserAccessLevel == "National" || adminUserAccessLevel == "Regional")
+                    {
+                        <li class="nav-item mb-1">
+                            <NavLink class="nav-link text-white" href="admin/feature-flags">
+                                <i class="bi bi-toggles me-2"></i> Feature Flags
+                            </NavLink>
+                        </li>
+                    }
                 </Authorized>
             </AuthorizeView>
 

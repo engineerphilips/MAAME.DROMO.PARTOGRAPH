@@ -99,32 +99,74 @@
                     <label class="form-label fw-semibold">
                         <i class="bi bi-geo-alt me-1"></i> Geographic Scope
                     </label>
-                    <select class="form-select mb-2" @bind="selectedScope">
-                        <option value="national">National (All Regions)</option>
-                        <option value="regional">Regional</option>
-                        <option value="district">District</option>
-                    </select>
-
-                    @if (selectedScope == "regional" || selectedScope == "district")
+                    @if (userAccessLevel == "District")
                     {
-                        <select class="form-select mb-2" @bind="selectedRegionId">
-                            <option value="">Select Region...</option>
-                            @foreach (var region in regions)
-                            {
-                                <option value="@region.ID">@region.Name</option>
-                            }
+                        <!-- District users can only see their district -->
+                        <div class="alert alert-info py-2 mb-2">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <small>Reports restricted to: <strong>@userDistrictName</strong></small>
+                        </div>
+                        <select class="form-select mb-2" disabled>
+                            <option value="district">District</option>
                         </select>
+                        <input type="text" class="form-control mb-2" value="@userRegionName" disabled />
+                        <input type="text" class="form-control" value="@userDistrictName" disabled />
                     }
-
-                    @if (selectedScope == "district" && selectedRegionId != Guid.Empty)
+                    else if (userAccessLevel == "Regional")
                     {
-                        <select class="form-select" @bind="selectedDistrictId">
-                            <option value="">Select District...</option>
-                            @foreach (var district in filteredDistricts)
-                            {
-                                <option value="@district.ID">@district.Name</option>
-                            }
+                        <!-- Regional users can see their region and districts within it -->
+                        <div class="alert alert-info py-2 mb-2">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <small>Reports restricted to: <strong>@userRegionName</strong> region</small>
+                        </div>
+                        <select class="form-select mb-2" @bind="selectedScope">
+                            <option value="regional">Regional (All Districts in @userRegionName)</option>
+                            <option value="district">District</option>
                         </select>
+
+                        <input type="text" class="form-control mb-2" value="@userRegionName" disabled />
+
+                        @if (selectedScope == "district")
+                        {
+                            <select class="form-select" @bind="selectedDistrictId">
+                                <option value="">Select District...</option>
+                                @foreach (var district in districts)
+                                {
+                                    <option value="@district.ID">@district.Name</option>
+                                }
+                            </select>
+                        }
+                    }
+                    else
+                    {
+                        <!-- National users can see all options -->
+                        <select class="form-select mb-2" @bind="selectedScope">
+                            <option value="national">National (All Regions)</option>
+                            <option value="regional">Regional</option>
+                            <option value="district">District</option>
+                        </select>
+
+                        @if (selectedScope == "regional" || selectedScope == "district")
+                        {
+                            <select class="form-select mb-2" @bind="selectedRegionId">
+                                <option value="">Select Region...</option>
+                                @foreach (var region in regions)
+                                {
+                                    <option value="@region.ID">@region.Name</option>
+                                }
+                            </select>
+                        }
+
+                        @if (selectedScope == "district" && selectedRegionId != Guid.Empty)
+                        {
+                            <select class="form-select" @bind="selectedDistrictId">
+                                <option value="">Select District...</option>
+                                @foreach (var district in filteredDistricts)
+                                {
+                                    <option value="@district.ID">@district.Name</option>
+                                }
+                            </select>
+                        }
                     }
                 </div>
 
@@ -440,25 +482,101 @@
     private bool includeComparison = false;
 
     private List<RegionSummary> regions = new();
+    private List<RegionSummary> allRegions = new();
     private List<DistrictSummary> districts = new();
+    private List<DistrictSummary> allDistricts = new();
     private List<DistrictSummary> filteredDistricts => selectedRegionId != Guid.Empty
-        ? districts.Where(d => d.ID == selectedRegionId).ToList()
+        ? districts.Where(d => regions.Any(r => r.ID == selectedRegionId && r.Name == d.RegionName)).ToList()
         : districts;
 
     private bool isGenerating = false;
     private ReportData? currentReport = null;
 
+    // User access level tracking
+    private string userAccessLevel = "National";
+    private Guid? userRegionId;
+    private Guid? userDistrictId;
+    private string? userRegionName;
+    private string? userDistrictName;
+
     protected override async Task OnInitializedAsync()
     {
+        await DetermineUserAccessLevel();
         await LoadFilters();
+    }
+
+    private async Task DetermineUserAccessLevel()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        userAccessLevel = user.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "National";
+        userRegionName = user.Claims.FirstOrDefault(c => c.Type == "RegionName")?.Value;
+        userDistrictName = user.Claims.FirstOrDefault(c => c.Type == "DistrictName")?.Value;
+
+        var regionIdClaim = user.Claims.FirstOrDefault(c => c.Type == "RegionID")?.Value;
+        if (Guid.TryParse(regionIdClaim, out var regionId))
+        {
+            userRegionId = regionId;
+        }
+
+        var districtIdClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictID")?.Value;
+        if (Guid.TryParse(districtIdClaim, out var districtId))
+        {
+            userDistrictId = districtId;
+        }
+
+        // Set default scope based on access level
+        if (userAccessLevel == "District")
+        {
+            selectedScope = "district";
+        }
+        else if (userAccessLevel == "Regional")
+        {
+            selectedScope = "regional";
+        }
     }
 
     private async Task LoadFilters()
     {
         try
         {
-            regions = await RegionService.GetAllRegionSummariesAsync();
-            districts = await DistrictService.GetAllDistrictSummariesAsync();
+            allRegions = await RegionService.GetAllRegionSummariesAsync();
+            allDistricts = await DistrictService.GetAllDistrictSummariesAsync();
+
+            // Filter regions and districts based on user's access level
+            if (userAccessLevel == "District" && userDistrictId.HasValue)
+            {
+                // District users can only see their own district
+                regions = allRegions.Where(r => r.ID == userRegionId).ToList();
+                districts = allDistricts.Where(d => d.ID == userDistrictId).ToList();
+
+                // Auto-select their region and district
+                if (userRegionId.HasValue)
+                {
+                    selectedRegionId = userRegionId.Value;
+                }
+                if (userDistrictId.HasValue)
+                {
+                    selectedDistrictId = userDistrictId.Value;
+                }
+            }
+            else if (userAccessLevel == "Regional" && userRegionId.HasValue)
+            {
+                // Regional users can see their region and districts within it
+                regions = allRegions.Where(r => r.ID == userRegionId).ToList();
+                districts = allDistricts.Where(d =>
+                    allRegions.Any(r => r.ID == userRegionId && r.Name == d.RegionName)).ToList();
+
+                // Auto-select their region
+                selectedRegionId = userRegionId.Value;
+            }
+            else
+            {
+                // National users can see all regions and districts
+                regions = allRegions;
+                districts = allDistricts;
+            }
         }
         catch (Exception ex)
         {
@@ -529,13 +647,34 @@
     private ReportData GenerateDemoReport()
     {
         var reportName = reportTypes[selectedReportType].Name;
-        var scopeText = selectedScope switch
+        string scopeText;
+
+        // Handle scope text based on user's access level restrictions
+        if (userAccessLevel == "District")
         {
-            "national" => "National",
-            "regional" => regions.FirstOrDefault(r => r.ID == selectedRegionId)?.Name ?? "Regional",
-            "district" => districts.FirstOrDefault(d => d.ID == selectedDistrictId)?.Name ?? "District",
-            _ => "National"
-        };
+            scopeText = userDistrictName ?? "District";
+        }
+        else if (userAccessLevel == "Regional")
+        {
+            if (selectedScope == "district" && selectedDistrictId != Guid.Empty)
+            {
+                scopeText = districts.FirstOrDefault(d => d.ID == selectedDistrictId)?.Name ?? userDistrictName ?? "District";
+            }
+            else
+            {
+                scopeText = userRegionName ?? "Regional";
+            }
+        }
+        else
+        {
+            scopeText = selectedScope switch
+            {
+                "national" => "National",
+                "regional" => regions.FirstOrDefault(r => r.ID == selectedRegionId)?.Name ?? "Regional",
+                "district" => districts.FirstOrDefault(d => d.ID == selectedDistrictId)?.Name ?? "District",
+                _ => "National"
+            };
+        }
 
         return new ReportData
         {
