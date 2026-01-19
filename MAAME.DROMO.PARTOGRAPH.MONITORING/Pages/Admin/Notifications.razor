@@ -1,0 +1,501 @@
+@page "/admin/notifications"
+@attribute [Authorize(Roles = "Admin")]
+@inject INotificationAdminService NotificationService
+
+<PageTitle>Notifications - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-bell me-2 text-primary"></i>
+                Notification Center
+            </h2>
+            <p class="text-muted mb-0">
+                Manage notifications and configure alert preferences
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            @if (summary.TotalUnread > 0)
+            {
+                <button class="btn btn-outline-primary" @onclick="MarkAllAsRead">
+                    <i class="bi bi-check-all me-1"></i> Mark All as Read
+                </button>
+            }
+            <button class="btn btn-outline-secondary" @onclick="RefreshData">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="stat-icon bg-primary-subtle text-primary mx-auto mb-2">
+                    <i class="bi bi-bell"></i>
+                </div>
+                <h3 class="mb-0">@summary.TotalUnread</h3>
+                <small class="text-muted">Unread</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="stat-icon bg-danger-subtle text-danger mx-auto mb-2">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h3 class="mb-0">@summary.CriticalCount</h3>
+                <small class="text-muted">Critical</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="stat-icon bg-warning-subtle text-warning mx-auto mb-2">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+                <h3 class="mb-0">@summary.WarningCount</h3>
+                <small class="text-muted">Warnings</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="stat-icon bg-info-subtle text-info mx-auto mb-2">
+                    <i class="bi bi-info-circle"></i>
+                </div>
+                <h3 class="mb-0">@summary.InfoCount</h3>
+                <small class="text-muted">Info</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "all" ? "active" : "")" @onclick="() => SetTab(TabState.All)">
+            <i class="bi bi-list me-1"></i> All Notifications
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "unread" ? "active" : "")" @onclick="() => SetTab(TabState.Unread)">
+            <i class="bi bi-envelope me-1"></i> Unread
+            @if (summary.TotalUnread > 0)
+            {
+                <span class="badge bg-primary ms-1">@summary.TotalUnread</span>
+            }
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "preferences" ? "active" : "")" @onclick="() => SetTab(TabState.Preferences)">
+            <i class="bi bi-gear me-1"></i> Preferences
+        </button>
+    </li>
+</ul>
+
+@if (activeTab == "all" || activeTab == "unread")
+{
+    <!-- Notifications List -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            @if (filteredNotifications.Any())
+            {
+                <div class="list-group list-group-flush">
+                    @foreach (var notification in filteredNotifications)
+                    {
+                        <div class="list-group-item list-group-item-action @(!notification.IsRead ? "bg-light" : "")">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <div class="notification-icon @GetNotificationIconClass(notification.Severity)">
+                                        <i class="bi @GetNotificationIcon(notification.Type)"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1 @(!notification.IsRead ? "fw-bold" : "")">
+                                                @notification.Title
+                                            </h6>
+                                            <p class="mb-1 text-muted small">@notification.Message</p>
+                                            <small class="text-muted">
+                                                <i class="bi bi-clock me-1"></i>
+                                                @GetTimeAgo(notification.CreatedAt)
+                                            </small>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge @GetSeverityBadgeClass(notification.Severity)">
+                                                @notification.Severity
+                                            </span>
+                                            @if (!notification.IsRead)
+                                            {
+                                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => MarkAsRead(notification.ID)" title="Mark as read">
+                                                    <i class="bi bi-check"></i>
+                                                </button>
+                                            }
+                                            @if (!string.IsNullOrEmpty(notification.ActionUrl))
+                                            {
+                                                <a href="@notification.ActionUrl" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-arrow-right"></i>
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-bell-slash text-muted" style="font-size: 3rem;"></i>
+                    <p class="mt-3 text-muted">No notifications to display</p>
+                </div>
+            }
+        </div>
+    </div>
+}
+else if (activeTab == "preferences")
+{
+    <!-- Notification Preferences -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-sliders me-2"></i>Notification Preferences</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">Email Notifications</h6>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="emailNewFacility"
+                                   checked="@preferences.EmailOnNewFacility"
+                                   @onchange="e => UpdatePreference(nameof(preferences.EmailOnNewFacility), e)" />
+                            <label class="form-check-label" for="emailNewFacility">
+                                <strong>New Facility Added</strong>
+                                <div class="small text-muted">Receive email when a new facility is registered in your jurisdiction</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="emailUserIssue"
+                                   checked="@preferences.EmailOnUserIssue"
+                                   @onchange="e => UpdatePreference(nameof(preferences.EmailOnUserIssue), e)" />
+                            <label class="form-check-label" for="emailUserIssue">
+                                <strong>User Account Issues</strong>
+                                <div class="small text-muted">Get notified about locked accounts, failed logins, and suspicious activity</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="emailPasswordReset"
+                                   checked="@preferences.EmailOnPasswordReset"
+                                   @onchange="e => UpdatePreference(nameof(preferences.EmailOnPasswordReset), e)" />
+                            <label class="form-check-label" for="emailPasswordReset">
+                                <strong>Password Resets</strong>
+                                <div class="small text-muted">Receive confirmation when passwords are reset for users in your jurisdiction</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="emailCriticalAlert"
+                                   checked="@preferences.EmailOnCriticalAlert"
+                                   @onchange="e => UpdatePreference(nameof(preferences.EmailOnCriticalAlert), e)" />
+                            <label class="form-check-label" for="emailCriticalAlert">
+                                <strong>Critical System Alerts</strong>
+                                <div class="small text-muted">Important alerts that require immediate attention</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <h6 class="text-muted mb-3">In-App Notifications</h6>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="inAppNotifications"
+                                   checked="@preferences.InAppNotifications"
+                                   @onchange="e => UpdatePreference(nameof(preferences.InAppNotifications), e)" />
+                            <label class="form-check-label" for="inAppNotifications">
+                                <strong>Enable In-App Notifications</strong>
+                                <div class="small text-muted">Show notification bell and alerts within the application</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <h6 class="text-muted mb-3">Daily Digest</h6>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="dailyDigest"
+                                   checked="@preferences.DailyDigest"
+                                   @onchange="e => UpdatePreference(nameof(preferences.DailyDigest), e)" />
+                            <label class="form-check-label" for="dailyDigest">
+                                <strong>Receive Daily Summary</strong>
+                                <div class="small text-muted">Get a daily email with a summary of all activity</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    @if (preferences.DailyDigest)
+                    {
+                        <div class="mb-3 ms-4">
+                            <label class="form-label">Preferred Time</label>
+                            <input type="time" class="form-control" style="max-width: 200px;"
+                                   value="@preferences.DigestTime"
+                                   @onchange="e => UpdateDigestTime(e.Value?.ToString())" />
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <button class="btn btn-primary" @onclick="SavePreferences" disabled="@isSaving">
+                            @if (isSaving)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1"></span>
+                            }
+                            <i class="bi bi-check me-1"></i> Save Preferences
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>About Notifications</h6>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">
+                        Configure how and when you receive notifications about important events in the system.
+                    </p>
+                    <h6 class="small">Notification Types:</h6>
+                    <ul class="small text-muted">
+                        <li><strong>Facility Added</strong> - New health facilities registered</li>
+                        <li><strong>User Issues</strong> - Account locks, failed logins</li>
+                        <li><strong>Password Reset</strong> - Password changes for users</li>
+                        <li><strong>Critical Alerts</strong> - System-wide important alerts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (showSuccessToast)
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast show" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" @onclick="() => showSuccessToast = false"></button>
+            </div>
+            <div class="toast-body">@successMessage</div>
+        </div>
+    </div>
+}
+
+<style>
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .notification-icon.icon-info {
+        background-color: rgba(13, 202, 240, 0.1);
+        color: #0dcaf0;
+    }
+
+    .notification-icon.icon-warning {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+
+    .notification-icon.icon-critical {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+</style>
+
+@code {
+    private NotificationSummary summary = new();
+    private List<AdminNotification> notifications = new();
+    private NotificationPreferences preferences = new();
+
+    private string activeTab = "all";
+    private bool isSaving = false;
+    private bool showSuccessToast = false;
+    private string successMessage = "";
+
+    private enum TabState { All, Unread, Preferences }
+
+    private List<AdminNotification> filteredNotifications => activeTab == "unread"
+        ? notifications.Where(n => !n.IsRead).ToList()
+        : notifications;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var summaryTask = NotificationService.GetNotificationSummaryAsync();
+        var notificationsTask = NotificationService.GetNotificationsAsync();
+        var preferencesTask = NotificationService.GetPreferencesAsync();
+
+        await Task.WhenAll(summaryTask, notificationsTask, preferencesTask);
+
+        summary = await summaryTask;
+        notifications = await notificationsTask;
+        preferences = await preferencesTask;
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+
+    private void SetTab(TabState tab)
+    {
+        activeTab = tab.ToString().ToLower();
+    }
+
+    private async Task MarkAsRead(Guid notificationId)
+    {
+        var result = await NotificationService.MarkAsReadAsync(notificationId);
+        if (result)
+        {
+            var notification = notifications.FirstOrDefault(n => n.ID == notificationId);
+            if (notification != null)
+            {
+                notification.IsRead = true;
+                notification.ReadAt = DateTime.UtcNow;
+                summary.TotalUnread = Math.Max(0, summary.TotalUnread - 1);
+            }
+        }
+    }
+
+    private async Task MarkAllAsRead()
+    {
+        var result = await NotificationService.MarkAllAsReadAsync();
+        if (result)
+        {
+            foreach (var notification in notifications)
+            {
+                notification.IsRead = true;
+                notification.ReadAt = DateTime.UtcNow;
+            }
+            summary.TotalUnread = 0;
+            ShowSuccess("All notifications marked as read");
+        }
+    }
+
+    private void UpdatePreference(string property, ChangeEventArgs e)
+    {
+        var value = (bool)(e.Value ?? false);
+        var prop = typeof(NotificationPreferences).GetProperty(property);
+        prop?.SetValue(preferences, value);
+    }
+
+    private void UpdateDigestTime(string? time)
+    {
+        preferences.DigestTime = time ?? "08:00";
+    }
+
+    private async Task SavePreferences()
+    {
+        isSaving = true;
+        try
+        {
+            var result = await NotificationService.UpdatePreferencesAsync(preferences);
+            if (result)
+            {
+                ShowSuccess("Preferences saved successfully");
+            }
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void ShowSuccess(string message)
+    {
+        successMessage = message;
+        showSuccessToast = true;
+        _ = Task.Delay(3000).ContinueWith(_ =>
+        {
+            showSuccessToast = false;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    private string GetNotificationIcon(string type) => type switch
+    {
+        "FacilityAdded" => "bi-hospital",
+        "UserIssue" => "bi-person-exclamation",
+        "PasswordReset" => "bi-key",
+        "Alert" => "bi-exclamation-triangle",
+        "System" => "bi-gear",
+        _ => "bi-bell"
+    };
+
+    private string GetNotificationIconClass(string severity) => severity switch
+    {
+        "Critical" => "icon-critical",
+        "Warning" => "icon-warning",
+        _ => "icon-info"
+    };
+
+    private string GetSeverityBadgeClass(string severity) => severity switch
+    {
+        "Critical" => "bg-danger",
+        "Warning" => "bg-warning text-dark",
+        _ => "bg-info"
+    };
+
+    private string GetTimeAgo(DateTime time)
+    {
+        var diff = DateTime.UtcNow - time;
+        if (diff.TotalMinutes < 1) return "just now";
+        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes}m ago";
+        if (diff.TotalHours < 24) return $"{(int)diff.TotalHours}h ago";
+        if (diff.TotalDays < 30) return $"{(int)diff.TotalDays}d ago";
+        return time.ToString("MMM dd");
+    }
+}

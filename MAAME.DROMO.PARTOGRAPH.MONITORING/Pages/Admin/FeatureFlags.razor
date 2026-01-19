@@ -1,0 +1,544 @@
+@page "/admin/feature-flags"
+@attribute [Authorize(Roles = "Admin")]
+@inject IFeatureFlagService FeatureFlagService
+@inject IRegionService RegionService
+@inject IDistrictService DistrictService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Feature Flags - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-toggles me-2 text-primary"></i>
+                Feature Flags
+            </h2>
+            <p class="text-muted mb-0">
+                Manage feature rollouts and enable features per region, district, or user
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            @if (adminAccessLevel == "National")
+            {
+                <button class="btn btn-primary" @onclick="ShowCreateModal">
+                    <i class="bi bi-plus-lg me-1"></i> New Feature Flag
+                </button>
+            }
+            <button class="btn btn-outline-secondary" @onclick="RefreshData">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading feature flags...</p>
+    </div>
+}
+else
+{
+    <!-- Feature Flags Grid -->
+    <div class="row g-4">
+        @foreach (var flagWithScopes in featureFlags)
+        {
+            var flag = flagWithScopes.Flag;
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">
+                                @flag.Name
+                                @if (flag.IsGloballyEnabled)
+                                {
+                                    <span class="badge bg-success ms-2">Global</span>
+                                }
+                            </h5>
+                            <small class="text-muted">@flag.Key</small>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="global-@flag.ID"
+                                   checked="@flag.IsGloballyEnabled"
+                                   disabled="@(adminAccessLevel != "National")"
+                                   @onchange="e => ToggleGlobalFlag(flag.ID, (bool)(e.Value ?? false))" />
+                            <label class="form-check-label small" for="global-@flag.ID">Global</label>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">@flag.Description</p>
+
+                        <div class="d-flex gap-2 mb-3">
+                            <span class="badge bg-light text-dark">
+                                <i class="bi bi-tag me-1"></i> @flag.Category
+                            </span>
+                            <span class="badge bg-primary-subtle text-primary">
+                                <i class="bi bi-geo-alt me-1"></i> @flagWithScopes.EnabledRegionsCount regions
+                            </span>
+                            <span class="badge bg-success-subtle text-success">
+                                <i class="bi bi-building me-1"></i> @flagWithScopes.EnabledDistrictsCount districts
+                            </span>
+                            @if (flagWithScopes.EnabledUsersCount > 0)
+                            {
+                                <span class="badge bg-info-subtle text-info">
+                                    <i class="bi bi-person me-1"></i> @flagWithScopes.EnabledUsersCount users
+                                </span>
+                            }
+                        </div>
+
+                        <button class="btn btn-sm btn-outline-primary" @onclick="() => ShowScopeModal(flagWithScopes)">
+                            <i class="bi bi-sliders me-1"></i> Manage Scopes
+                        </button>
+                    </div>
+                    <div class="card-footer bg-white small text-muted">
+                        Created @flag.CreatedAt.ToString("MMM dd, yyyy")
+                        @if (!string.IsNullOrEmpty(flag.CreatedBy))
+                        {
+                            <span> by @flag.CreatedBy</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!featureFlags.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-toggles text-muted" style="font-size: 3rem;"></i>
+            <p class="mt-3 text-muted">No feature flags configured</p>
+            @if (adminAccessLevel == "National")
+            {
+                <button class="btn btn-primary" @onclick="ShowCreateModal">
+                    <i class="bi bi-plus-lg me-1"></i> Create First Feature Flag
+                </button>
+            }
+        </div>
+    }
+}
+
+<!-- Scope Management Modal -->
+@if (showScopeModal && selectedFlag != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-sliders me-2"></i>
+                        Manage Scopes: @selectedFlag.Flag.Name
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseScopeModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info small mb-4">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Enable this feature for specific regions or districts. When enabled for a region, all districts in that region will have access.
+                    </div>
+
+                    <!-- Region Selection -->
+                    <h6 class="mb-3">Enable for Regions</h6>
+                    <div class="row g-2 mb-4">
+                        @foreach (var region in regions)
+                        {
+                            var isEnabled = selectedFlag.Scopes.Any(s => s.RegionID == region.ID && s.IsEnabled);
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="region-@region.ID"
+                                           checked="@isEnabled"
+                                           disabled="@(adminAccessLevel == "District" || (adminAccessLevel == "Regional" && region.ID != adminRegionId))"
+                                           @onchange="e => ToggleRegionScope(region.ID, (bool)(e.Value ?? false))" />
+                                    <label class="form-check-label" for="region-@region.ID">
+                                        @region.Name
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- District Selection -->
+                    @if (adminAccessLevel != "National" || selectedFlag.Scopes.Any(s => s.RegionID.HasValue && s.IsEnabled))
+                    {
+                        <h6 class="mb-3">Enable for Individual Districts</h6>
+                        <div class="accordion" id="districtAccordion">
+                            @foreach (var regionGroup in districts.GroupBy(d => d.RegionName).Where(g =>
+                                adminAccessLevel == "National" ||
+                                (adminAccessLevel == "Regional" && g.Any(d => d.RegionID == adminRegionId)) ||
+                                (adminAccessLevel == "District" && g.Any(d => d.ID == adminDistrictId))))
+                            {
+                                var regionDistricts = regionGroup.ToList();
+                                var enabledCount = regionDistricts.Count(d => selectedFlag.Scopes.Any(s => s.DistrictID == d.ID && s.IsEnabled));
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#region-districts-@regionGroup.Key?.Replace(" ", "")">
+                                            @regionGroup.Key
+                                            <span class="badge bg-primary ms-2">@enabledCount/@regionDistricts.Count</span>
+                                        </button>
+                                    </h2>
+                                    <div id="region-districts-@regionGroup.Key?.Replace(" ", "")" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="row g-2">
+                                                @foreach (var district in regionDistricts)
+                                                {
+                                                    var isDistrictEnabled = selectedFlag.Scopes.Any(s => s.DistrictID == district.ID && s.IsEnabled);
+                                                    var canEdit = adminAccessLevel == "National" ||
+                                                                 (adminAccessLevel == "Regional" && district.RegionID == adminRegionId) ||
+                                                                 (adminAccessLevel == "District" && district.ID == adminDistrictId);
+                                                    <div class="col-md-6">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="district-@district.ID"
+                                                                   checked="@isDistrictEnabled"
+                                                                   disabled="@(!canEdit)"
+                                                                   @onchange="e => ToggleDistrictScope(district.ID, (bool)(e.Value ?? false))" />
+                                                            <label class="form-check-label" for="district-@district.ID">
+                                                                @district.Name
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseScopeModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Create Feature Flag Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-plus-lg me-2"></i>
+                        Create Feature Flag
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Key <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" @bind="newFlag.Key" placeholder="e.g., new_dashboard" />
+                        <small class="text-muted">Unique identifier (lowercase, underscores)</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" @bind="newFlag.Name" placeholder="e.g., New Dashboard" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="2" @bind="newFlag.Description" placeholder="Brief description of the feature"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" @bind="newFlag.Category">
+                            <option value="Analytics">Analytics</option>
+                            <option value="Reporting">Reporting</option>
+                            <option value="Monitoring">Monitoring</option>
+                            <option value="Notifications">Notifications</option>
+                            <option value="UI">User Interface</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="globallyEnabled" @bind="newFlag.IsGloballyEnabled" />
+                        <label class="form-check-label" for="globallyEnabled">
+                            Enable globally for all users
+                        </label>
+                    </div>
+                    @if (!string.IsNullOrEmpty(createError))
+                    {
+                        <div class="alert alert-danger py-2">@createError</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="CreateFeatureFlag" disabled="@isCreating">
+                        @if (isCreating)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                        }
+                        Create
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (showSuccessToast)
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast show" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" @onclick="() => showSuccessToast = false"></button>
+            </div>
+            <div class="toast-body">@successMessage</div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<FeatureFlagWithScopes> featureFlags = new();
+    private List<RegionSummary> regions = new();
+    private List<DistrictSummary> districts = new();
+
+    private bool isLoading = true;
+    private bool showScopeModal = false;
+    private bool showCreateModal = false;
+    private bool isCreating = false;
+    private bool showSuccessToast = false;
+    private string successMessage = "";
+    private string createError = "";
+
+    private FeatureFlagWithScopes? selectedFlag;
+    private FeatureFlag newFlag = new() { Category = "Analytics" };
+
+    // Admin access level
+    private string adminAccessLevel = "National";
+    private Guid? adminRegionId;
+    private Guid? adminDistrictId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DetermineAccessLevel();
+        await LoadData();
+    }
+
+    private async Task DetermineAccessLevel()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        adminAccessLevel = user.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "National";
+
+        var regionIdClaim = user.Claims.FirstOrDefault(c => c.Type == "RegionID")?.Value;
+        if (Guid.TryParse(regionIdClaim, out var regionId))
+        {
+            adminRegionId = regionId;
+        }
+
+        var districtIdClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictID")?.Value;
+        if (Guid.TryParse(districtIdClaim, out var districtId))
+        {
+            adminDistrictId = districtId;
+        }
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            var flagsTask = FeatureFlagService.GetAllFeatureFlagsAsync();
+            var regionsTask = RegionService.GetAllRegionSummariesAsync();
+            var districtsTask = DistrictService.GetAllDistrictSummariesAsync();
+
+            await Task.WhenAll(flagsTask, regionsTask, districtsTask);
+
+            featureFlags = await flagsTask;
+            regions = await regionsTask;
+            districts = await districtsTask;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+
+    private void ShowScopeModal(FeatureFlagWithScopes flag)
+    {
+        selectedFlag = flag;
+        showScopeModal = true;
+    }
+
+    private void CloseScopeModal()
+    {
+        showScopeModal = false;
+        selectedFlag = null;
+    }
+
+    private void ShowCreateModal()
+    {
+        newFlag = new FeatureFlag { Category = "Analytics" };
+        createError = "";
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private async Task ToggleGlobalFlag(Guid flagId, bool isEnabled)
+    {
+        var result = await FeatureFlagService.UpdateFeatureFlagScopeAsync(new FeatureFlagUpdateRequest
+        {
+            FeatureFlagID = flagId,
+            ScopeType = "Global",
+            IsEnabled = isEnabled
+        });
+
+        if (result)
+        {
+            var flag = featureFlags.FirstOrDefault(f => f.Flag.ID == flagId);
+            if (flag != null)
+            {
+                flag.Flag.IsGloballyEnabled = isEnabled;
+            }
+            ShowSuccess(isEnabled ? "Feature enabled globally" : "Feature disabled globally");
+        }
+    }
+
+    private async Task ToggleRegionScope(Guid regionId, bool isEnabled)
+    {
+        if (selectedFlag == null) return;
+
+        var result = await FeatureFlagService.UpdateFeatureFlagScopeAsync(new FeatureFlagUpdateRequest
+        {
+            FeatureFlagID = selectedFlag.Flag.ID,
+            ScopeType = "Region",
+            RegionID = regionId,
+            IsEnabled = isEnabled
+        });
+
+        if (result)
+        {
+            if (isEnabled)
+            {
+                if (!selectedFlag.Scopes.Any(s => s.RegionID == regionId))
+                {
+                    selectedFlag.Scopes.Add(new FeatureFlagScope
+                    {
+                        RegionID = regionId,
+                        IsEnabled = true,
+                        EnabledAt = DateTime.UtcNow
+                    });
+                    selectedFlag.EnabledRegionsCount++;
+                }
+            }
+            else
+            {
+                var scope = selectedFlag.Scopes.FirstOrDefault(s => s.RegionID == regionId);
+                if (scope != null)
+                {
+                    selectedFlag.Scopes.Remove(scope);
+                    selectedFlag.EnabledRegionsCount = Math.Max(0, selectedFlag.EnabledRegionsCount - 1);
+                }
+            }
+            ShowSuccess(isEnabled ? "Feature enabled for region" : "Feature disabled for region");
+        }
+    }
+
+    private async Task ToggleDistrictScope(Guid districtId, bool isEnabled)
+    {
+        if (selectedFlag == null) return;
+
+        var result = await FeatureFlagService.UpdateFeatureFlagScopeAsync(new FeatureFlagUpdateRequest
+        {
+            FeatureFlagID = selectedFlag.Flag.ID,
+            ScopeType = "District",
+            DistrictID = districtId,
+            IsEnabled = isEnabled
+        });
+
+        if (result)
+        {
+            if (isEnabled)
+            {
+                if (!selectedFlag.Scopes.Any(s => s.DistrictID == districtId))
+                {
+                    selectedFlag.Scopes.Add(new FeatureFlagScope
+                    {
+                        DistrictID = districtId,
+                        IsEnabled = true,
+                        EnabledAt = DateTime.UtcNow
+                    });
+                    selectedFlag.EnabledDistrictsCount++;
+                }
+            }
+            else
+            {
+                var scope = selectedFlag.Scopes.FirstOrDefault(s => s.DistrictID == districtId);
+                if (scope != null)
+                {
+                    selectedFlag.Scopes.Remove(scope);
+                    selectedFlag.EnabledDistrictsCount = Math.Max(0, selectedFlag.EnabledDistrictsCount - 1);
+                }
+            }
+            ShowSuccess(isEnabled ? "Feature enabled for district" : "Feature disabled for district");
+        }
+    }
+
+    private async Task CreateFeatureFlag()
+    {
+        createError = "";
+
+        if (string.IsNullOrWhiteSpace(newFlag.Key))
+        {
+            createError = "Key is required";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(newFlag.Name))
+        {
+            createError = "Name is required";
+            return;
+        }
+
+        // Normalize key
+        newFlag.Key = newFlag.Key.ToLower().Replace(" ", "_");
+
+        isCreating = true;
+        try
+        {
+            var result = await FeatureFlagService.CreateFeatureFlagAsync(newFlag);
+            if (result)
+            {
+                ShowSuccess("Feature flag created successfully");
+                CloseCreateModal();
+                await LoadData();
+            }
+            else
+            {
+                createError = "Failed to create feature flag";
+            }
+        }
+        finally
+        {
+            isCreating = false;
+        }
+    }
+
+    private void ShowSuccess(string message)
+    {
+        successMessage = message;
+        showSuccessToast = true;
+        _ = Task.Delay(3000).ContinueWith(_ =>
+        {
+            showSuccessToast = false;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}
