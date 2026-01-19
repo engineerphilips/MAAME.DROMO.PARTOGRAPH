@@ -72,6 +72,7 @@ builder.Services.AddScoped<IRegionService, RegionService>();
 builder.Services.AddScoped<IDistrictService, DistrictService>();
 builder.Services.AddScoped<IFacilityService, FacilityService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Enhanced Monitoring Services
 builder.Services.AddScoped<ILiveLaborService, LiveLaborService>();

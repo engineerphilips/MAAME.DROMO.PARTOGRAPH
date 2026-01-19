@@ -13,24 +13,32 @@
         </a>
     </div>
 
-    <!-- User Info -->
-    @* <AuthorizeView Policy="DistrictAccess">
+    <!-- User Profile Section -->
+    <AuthorizeView>
         <Authorized>
-            <div class="px-3 py-3 border-bottom border-secondary">
+            <div class="px-3 py-3 border-bottom border-secondary user-profile-section">
                 <div class="d-flex align-items-center">
-                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                        <i class="bi bi-person text-white"></i>
+                    <div class="user-avatar @GetAvatarClass(context.User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value ?? "Viewer")">
+                        @GetInitials(context.User.Identity?.Name ?? "User")
                     </div>
-                    <div class="ms-3">
-                        <span class="d-block text-white">@context.User.Identity?.Name</span>
-                        <small class="text-muted">
-                            @GetAccessLevelBadge(context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District")
-                        </small>
+                    <div class="ms-3 flex-grow-1 overflow-hidden">
+                        <span class="d-block text-white text-truncate fw-semibold">@context.User.Identity?.Name</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge @GetAccessLevelBadgeClass(context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District") badge-sm">
+                                @(context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District")
+                            </span>
+                            <span class="badge bg-secondary badge-sm">
+                                @(context.User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value ?? "Viewer")
+                            </span>
+                        </div>
                     </div>
+                    <a href="logout" class="btn btn-sm btn-outline-light ms-2" title="Logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         </Authorized>
-    </AuthorizeView> *@
+    </AuthorizeView>
 
     <!-- Navigation -->
     <nav class="flex-grow-1 py-3 overflow-auto">
@@ -195,14 +203,53 @@
 
     <!-- Footer -->
     <div class="px-3 py-3 border-top border-secondary">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i> Version 2.1.0
+            </small>
+            <span class="badge bg-success badge-sm">
+                <i class="bi bi-check-circle me-1"></i> Online
+            </span>
+        </div>
         <small class="text-muted d-block">
-            <i class="bi bi-info-circle me-1"></i> Version 2.0.0
+            <i class="bi bi-calendar me-1"></i> @DateTime.Now.ToString("MMM dd, yyyy")
         </small>
-        <small class="text-muted d-block">
-            <i class="bi bi-check-circle me-1 text-success"></i> Enhanced Monitoring
-        </small>
+        <div class="mt-2 pt-2 border-top border-secondary">
+            <a href="https://github.com/engineerphilips/MAAME.DROMO.PARTOGRAPH" target="_blank" class="text-muted text-decoration-none small">
+                <i class="bi bi-github me-1"></i> Documentation
+            </a>
+        </div>
     </div>
 </div>
+
+<style>
+    .user-profile-section {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .avatar-admin { background: linear-gradient(135deg, #dc3545, #c82333); }
+    .avatar-manager { background: linear-gradient(135deg, #0d6efd, #0a58ca); }
+    .avatar-analyst { background: linear-gradient(135deg, #198754, #157347); }
+    .avatar-viewer { background: linear-gradient(135deg, #6c757d, #5a6268); }
+
+    .badge-sm {
+        font-size: 0.65rem;
+        padding: 0.2em 0.5em;
+    }
+</style>
 
 @code {
     private string GetAccessLevelBadge(string accessLevel)
@@ -214,5 +261,36 @@
             "District" => "District Officer",
             _ => "User"
         };
+    }
+
+    private string GetAccessLevelBadgeClass(string accessLevel)
+    {
+        return accessLevel switch
+        {
+            "National" => "bg-info",
+            "Regional" => "bg-primary",
+            "District" => "bg-warning text-dark",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string GetAvatarClass(string role)
+    {
+        return role switch
+        {
+            "Admin" => "avatar-admin",
+            "Manager" => "avatar-manager",
+            "Analyst" => "avatar-analyst",
+            _ => "avatar-viewer"
+        };
+    }
+
+    private string GetInitials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "??";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        return parts.Length > 0 ? parts[0][..Math.Min(2, parts[0].Length)].ToUpper() : "??";
     }
 }
