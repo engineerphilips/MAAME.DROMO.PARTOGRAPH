@@ -1,0 +1,693 @@
+@page "/reports"
+@attribute [Authorize]
+@inject IReportVisualizationService ReportService
+@inject IDashboardService DashboardService
+@inject IRegionService RegionService
+@inject IDistrictService DistrictService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Reports - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-file-earmark-bar-graph me-2 text-primary"></i>
+                Generate Reports
+            </h2>
+            <p class="text-muted mb-0">
+                Create customized reports for analysis and decision-making
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            @if (currentReport != null)
+            {
+                <button class="btn btn-outline-success" @onclick="ExportToPDF">
+                    <i class="bi bi-file-pdf me-1"></i> Export PDF
+                </button>
+                <button class="btn btn-outline-primary" @onclick="ExportToExcel">
+                    <i class="bi bi-file-excel me-1"></i> Export Excel
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Report Configuration Panel -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm sticky-top" style="top: 1rem;">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-sliders me-2"></i>
+                    Report Configuration
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Report Type Selection -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-file-text me-1"></i> Report Type
+                    </label>
+                    <div class="row g-2">
+                        @foreach (var type in reportTypes)
+                        {
+                            <div class="col-6">
+                                <div class="form-check report-type-option @(selectedReportType == type.Key ? "selected" : "")">
+                                    <input class="form-check-input" type="radio" name="reportType" id="@type.Key"
+                                           checked="@(selectedReportType == type.Key)"
+                                           @onchange="() => SelectReportType(type.Key)" />
+                                    <label class="form-check-label w-100" for="@type.Key">
+                                        <i class="bi @type.Value.Icon me-1 @type.Value.Color"></i>
+                                        <span class="d-block small">@type.Value.Name</span>
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Date Range -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-calendar-range me-1"></i> Date Range
+                    </label>
+                    <div class="btn-group w-100 mb-2">
+                        @foreach (var period in periods)
+                        {
+                            <button class="btn @(selectedPeriod == period ? "btn-primary" : "btn-outline-primary") btn-sm"
+                                    @onclick="() => SelectPeriod(period)">
+                                @period
+                            </button>
+                        }
+                    </div>
+                    @if (selectedPeriod == "Custom")
+                    {
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="date" class="form-control form-control-sm" @bind="startDate" />
+                            </div>
+                            <div class="col-6">
+                                <input type="date" class="form-control form-control-sm" @bind="endDate" />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Geographic Filter -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-geo-alt me-1"></i> Geographic Scope
+                    </label>
+                    <select class="form-select mb-2" @bind="selectedScope">
+                        <option value="national">National (All Regions)</option>
+                        <option value="regional">Regional</option>
+                        <option value="district">District</option>
+                    </select>
+
+                    @if (selectedScope == "regional" || selectedScope == "district")
+                    {
+                        <select class="form-select mb-2" @bind="selectedRegionId">
+                            <option value="">Select Region...</option>
+                            @foreach (var region in regions)
+                            {
+                                <option value="@region.ID">@region.Name</option>
+                            }
+                        </select>
+                    }
+
+                    @if (selectedScope == "district" && selectedRegionId != Guid.Empty)
+                    {
+                        <select class="form-select" @bind="selectedDistrictId">
+                            <option value="">Select District...</option>
+                            @foreach (var district in filteredDistricts)
+                            {
+                                <option value="@district.ID">@district.Name</option>
+                            }
+                        </select>
+                    }
+                </div>
+
+                <!-- Additional Options -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-gear me-1"></i> Options
+                    </label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeCharts" @bind="includeCharts" />
+                        <label class="form-check-label" for="includeCharts">Include Charts</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeTrends" @bind="includeTrends" />
+                        <label class="form-check-label" for="includeTrends">Include Trend Analysis</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeComparison" @bind="includeComparison" />
+                        <label class="form-check-label" for="includeComparison">Include Comparisons</label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100" @onclick="GenerateReport" disabled="@isGenerating">
+                    @if (isGenerating)
+                    {
+                        <span class="spinner-border spinner-border-sm me-1"></span>
+                    }
+                    else
+                    {
+                        <i class="bi bi-play-circle me-1"></i>
+                    }
+                    Generate Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Preview Panel -->
+    <div class="col-lg-8">
+        @if (currentReport == null && !isGenerating)
+        {
+            <!-- Empty State -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-file-earmark-bar-graph text-muted" style="font-size: 5rem;"></i>
+                    <h4 class="mt-4 mb-2">No Report Generated</h4>
+                    <p class="text-muted mb-4">
+                        Configure your report parameters and click "Generate Report" to create a report.
+                    </p>
+                    <div class="row g-3 justify-content-center">
+                        @foreach (var template in quickTemplates.Take(3))
+                        {
+                            <div class="col-auto">
+                                <button class="btn btn-outline-primary" @onclick="() => ApplyTemplate(template)">
+                                    <i class="bi @template.Icon me-1"></i> @template.Name
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else if (isGenerating)
+        {
+            <!-- Loading State -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h4>Generating Report...</h4>
+                    <p class="text-muted">Please wait while we compile your report data.</p>
+                    <div class="progress mx-auto" style="width: 200px; height: 6px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (currentReport != null)
+        {
+            <!-- Report Display -->
+            <div class="card border-0 shadow-sm mb-4" id="reportContent">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0">@currentReport.Title</h5>
+                        <small class="text-muted">
+                            @currentReport.DateRange | Generated: @DateTime.Now.ToString("MMM dd, yyyy HH:mm")
+                        </small>
+                    </div>
+                    <span class="badge bg-primary">@reportTypes[selectedReportType].Name</span>
+                </div>
+                <div class="card-body">
+                    <!-- Key Metrics Summary -->
+                    <div class="row g-3 mb-4">
+                        @foreach (var metric in currentReport.KeyMetrics)
+                        {
+                            <div class="col-md-3">
+                                <div class="report-metric p-3 rounded @metric.ColorClass">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h4 class="mb-0">@metric.Value</h4>
+                                            <small>@metric.Label</small>
+                                        </div>
+                                        <i class="bi @metric.Icon fs-4 opacity-50"></i>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(metric.Change))
+                                    {
+                                        <div class="mt-2">
+                                            <small class="@(metric.Change.StartsWith("+") ? "text-success" : "text-danger")">
+                                                <i class="bi @(metric.Change.StartsWith("+") ? "bi-arrow-up" : "bi-arrow-down")"></i>
+                                                @metric.Change vs previous period
+                                            </small>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Charts Section -->
+                    @if (includeCharts && currentReport.Charts.Any())
+                    {
+                        <h6 class="text-muted mb-3">
+                            <i class="bi bi-bar-chart me-1"></i> Data Visualization
+                        </h6>
+                        <div class="row g-4 mb-4">
+                            @foreach (var chart in currentReport.Charts)
+                            {
+                                <div class="col-md-6">
+                                    <div class="card border">
+                                        <div class="card-header bg-light">
+                                            <h6 class="mb-0">@chart.Title</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            @if (chart.Type == "bar")
+                                            {
+                                                <!-- Simple Bar Chart Visualization -->
+                                                @foreach (var item in chart.Data)
+                                                {
+                                                    <div class="mb-2">
+                                                        <div class="d-flex justify-content-between small mb-1">
+                                                            <span>@item.Label</span>
+                                                            <span class="fw-bold">@item.Value</span>
+                                                        </div>
+                                                        <div class="progress" style="height: 20px;">
+                                                            <div class="progress-bar @item.Color" style="width: @item.Percentage%">
+                                                                @item.Percentage.ToString("F0")%
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                            else if (chart.Type == "pie")
+                                            {
+                                                <!-- Simple Pie Chart Legend -->
+                                                <div class="row">
+                                                    @foreach (var item in chart.Data)
+                                                    {
+                                                        <div class="col-6 mb-2">
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="legend-dot @item.Color me-2"></span>
+                                                                <span class="small">@item.Label</span>
+                                                                <span class="ms-auto fw-bold">@item.Value</span>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- Data Table -->
+                    @if (currentReport.DataTable != null)
+                    {
+                        <h6 class="text-muted mb-3">
+                            <i class="bi bi-table me-1"></i> Detailed Data
+                        </h6>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-sm">
+                                <thead class="table-dark">
+                                    <tr>
+                                        @foreach (var header in currentReport.DataTable.Headers)
+                                        {
+                                            <th>@header</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in currentReport.DataTable.Rows)
+                                    {
+                                        <tr>
+                                            @foreach (var cell in row)
+                                            {
+                                                <td>@cell</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                    <!-- Insights Section -->
+                    @if (currentReport.Insights.Any())
+                    {
+                        <h6 class="text-muted mb-3 mt-4">
+                            <i class="bi bi-lightbulb me-1"></i> Key Insights
+                        </h6>
+                        <div class="row g-3">
+                            @foreach (var insight in currentReport.Insights)
+                            {
+                                <div class="col-md-6">
+                                    <div class="alert @insight.AlertClass mb-0">
+                                        <i class="bi @insight.Icon me-2"></i>
+                                        <strong>@insight.Title:</strong> @insight.Description
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="card-footer bg-white text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>
+                    This report was generated based on data from @currentReport.DataSource.
+                    Data last updated: @DateTime.Now.AddMinutes(-5).ToString("HH:mm")
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .report-type-option {
+        padding: 0.75rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .report-type-option:hover {
+        border-color: #0d6efd;
+        background: #f8f9fa;
+    }
+
+    .report-type-option.selected {
+        border-color: #0d6efd;
+        background: #e7f1ff;
+    }
+
+    .report-type-option .form-check-input {
+        display: none;
+    }
+
+    .report-metric {
+        background: #f8f9fa;
+        border-left: 4px solid #dee2e6;
+    }
+
+    .report-metric.metric-primary { border-color: #0d6efd; background: #e7f1ff; }
+    .report-metric.metric-success { border-color: #198754; background: #d1e7dd; }
+    .report-metric.metric-warning { border-color: #ffc107; background: #fff3cd; }
+    .report-metric.metric-danger { border-color: #dc3545; background: #f8d7da; }
+    .report-metric.metric-info { border-color: #0dcaf0; background: #cff4fc; }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .legend-dot.bg-success { background-color: #198754; }
+    .legend-dot.bg-info { background-color: #0dcaf0; }
+    .legend-dot.bg-warning { background-color: #ffc107; }
+    .legend-dot.bg-danger { background-color: #dc3545; }
+    .legend-dot.bg-primary { background-color: #0d6efd; }
+</style>
+
+@code {
+    private Dictionary<string, (string Name, string Icon, string Color)> reportTypes = new()
+    {
+        { "delivery", ("Deliveries", "bi-clipboard2-pulse", "text-primary") },
+        { "complication", ("Complications", "bi-exclamation-triangle", "text-danger") },
+        { "outcome", ("Outcomes", "bi-graph-up", "text-success") },
+        { "alert", ("Alert Response", "bi-bell", "text-warning") },
+        { "who", ("WHO Compliance", "bi-check-circle", "text-info") },
+        { "staff", ("Staff Performance", "bi-people", "text-secondary") }
+    };
+
+    private string[] periods = { "Today", "Week", "Month", "Quarter", "Year", "Custom" };
+
+    private List<(string Name, string Icon, string ReportType, string Period)> quickTemplates = new()
+    {
+        ("Monthly Delivery Summary", "bi-calendar-month", "delivery", "Month"),
+        ("Weekly Alert Analysis", "bi-bell", "alert", "Week"),
+        ("Quarterly Outcomes Report", "bi-graph-up", "outcome", "Quarter")
+    };
+
+    private string selectedReportType = "delivery";
+    private string selectedPeriod = "Month";
+    private string selectedScope = "national";
+    private Guid selectedRegionId = Guid.Empty;
+    private Guid selectedDistrictId = Guid.Empty;
+    private DateTime startDate = DateTime.Now.AddMonths(-1);
+    private DateTime endDate = DateTime.Now;
+    private bool includeCharts = true;
+    private bool includeTrends = true;
+    private bool includeComparison = false;
+
+    private List<RegionSummary> regions = new();
+    private List<DistrictSummary> districts = new();
+    private List<DistrictSummary> filteredDistricts => selectedRegionId != Guid.Empty
+        ? districts.Where(d => d.ID == selectedRegionId).ToList()
+        : districts;
+
+    private bool isGenerating = false;
+    private ReportData? currentReport = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFilters();
+    }
+
+    private async Task LoadFilters()
+    {
+        try
+        {
+            regions = await RegionService.GetAllRegionSummariesAsync();
+            districts = await DistrictService.GetAllDistrictSummariesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading filters: {ex.Message}");
+        }
+    }
+
+    private void SelectReportType(string type)
+    {
+        selectedReportType = type;
+    }
+
+    private void SelectPeriod(string period)
+    {
+        selectedPeriod = period;
+        if (period != "Custom")
+        {
+            var now = DateTime.Now;
+            endDate = now;
+            startDate = period switch
+            {
+                "Today" => now.Date,
+                "Week" => now.AddDays(-7),
+                "Month" => now.AddMonths(-1),
+                "Quarter" => now.AddMonths(-3),
+                "Year" => now.AddYears(-1),
+                _ => now.AddMonths(-1)
+            };
+        }
+    }
+
+    private void ApplyTemplate((string Name, string Icon, string ReportType, string Period) template)
+    {
+        selectedReportType = template.ReportType;
+        SelectPeriod(template.Period);
+        GenerateReport();
+    }
+
+    private async Task GenerateReport()
+    {
+        isGenerating = true;
+        StateHasChanged();
+
+        try
+        {
+            await Task.Delay(1500); // Simulate report generation
+
+            currentReport = GenerateDemoReport();
+        }
+        finally
+        {
+            isGenerating = false;
+            StateHasChanged();
+        }
+    }
+
+    private void ExportToPDF()
+    {
+        // PDF export functionality placeholder
+    }
+
+    private void ExportToExcel()
+    {
+        // Excel export functionality placeholder
+    }
+
+    private ReportData GenerateDemoReport()
+    {
+        var reportName = reportTypes[selectedReportType].Name;
+        var scopeText = selectedScope switch
+        {
+            "national" => "National",
+            "regional" => regions.FirstOrDefault(r => r.ID == selectedRegionId)?.Name ?? "Regional",
+            "district" => districts.FirstOrDefault(d => d.ID == selectedDistrictId)?.Name ?? "District",
+            _ => "National"
+        };
+
+        return new ReportData
+        {
+            Title = $"{reportName} Report - {scopeText}",
+            DateRange = $"{startDate:MMM dd, yyyy} - {endDate:MMM dd, yyyy}",
+            DataSource = $"MAAME.DROMO Partograph System ({scopeText} Level)",
+            KeyMetrics = GetMetricsForType(selectedReportType),
+            Charts = GetChartsForType(selectedReportType),
+            DataTable = GetDataTableForType(selectedReportType),
+            Insights = GetInsightsForType(selectedReportType)
+        };
+    }
+
+    private List<ReportMetric> GetMetricsForType(string type)
+    {
+        return type switch
+        {
+            "delivery" => new List<ReportMetric>
+            {
+                new() { Label = "Total Deliveries", Value = "1,247", Icon = "bi-clipboard2-pulse", ColorClass = "metric-primary", Change = "+12%" },
+                new() { Label = "Normal Vaginal", Value = "892", Icon = "bi-check-circle", ColorClass = "metric-success", Change = "+8%" },
+                new() { Label = "C-Section Rate", Value = "18.5%", Icon = "bi-exclamation-triangle", ColorClass = "metric-warning", Change = "+2.3%" },
+                new() { Label = "Active Labors", Value = "45", Icon = "bi-hourglass-split", ColorClass = "metric-info", Change = "-5" }
+            },
+            "complication" => new List<ReportMetric>
+            {
+                new() { Label = "Total Complications", Value = "89", Icon = "bi-exclamation-diamond", ColorClass = "metric-danger", Change = "-8%" },
+                new() { Label = "PPH Cases", Value = "23", Icon = "bi-droplet", ColorClass = "metric-danger", Change = "-12%" },
+                new() { Label = "Eclampsia", Value = "5", Icon = "bi-lightning", ColorClass = "metric-warning", Change = "-40%" },
+                new() { Label = "Response Rate", Value = "94%", Icon = "bi-check2-all", ColorClass = "metric-success", Change = "+3%" }
+            },
+            "outcome" => new List<ReportMetric>
+            {
+                new() { Label = "Live Births", Value = "1,238", Icon = "bi-heart-pulse", ColorClass = "metric-success", Change = "+15%" },
+                new() { Label = "Stillbirths", Value = "9", Icon = "bi-heart", ColorClass = "metric-warning", Change = "-25%" },
+                new() { Label = "Maternal Deaths", Value = "1", Icon = "bi-exclamation-octagon", ColorClass = "metric-danger", Change = "-50%" },
+                new() { Label = "APGAR >7", Value = "96.2%", Icon = "bi-award", ColorClass = "metric-success", Change = "+1.5%" }
+            },
+            _ => new List<ReportMetric>
+            {
+                new() { Label = "Total Alerts", Value = "256", Icon = "bi-bell", ColorClass = "metric-warning", Change = "+5%" },
+                new() { Label = "Resolved", Value = "241", Icon = "bi-check-circle", ColorClass = "metric-success", Change = "+12%" },
+                new() { Label = "Avg Response", Value = "8.5 min", Icon = "bi-clock", ColorClass = "metric-info", Change = "-2.1 min" },
+                new() { Label = "Compliance", Value = "89%", Icon = "bi-award", ColorClass = "metric-primary", Change = "+4%" }
+            }
+        };
+    }
+
+    private List<ReportChart> GetChartsForType(string type)
+    {
+        return new List<ReportChart>
+        {
+            new ReportChart
+            {
+                Title = "Distribution by Category",
+                Type = "bar",
+                Data = new List<ChartDataItem>
+                {
+                    new() { Label = "Category A", Value = "450", Percentage = 36, Color = "bg-primary" },
+                    new() { Label = "Category B", Value = "380", Percentage = 30, Color = "bg-success" },
+                    new() { Label = "Category C", Value = "267", Percentage = 21, Color = "bg-warning" },
+                    new() { Label = "Category D", Value = "150", Percentage = 12, Color = "bg-info" }
+                }
+            },
+            new ReportChart
+            {
+                Title = "Breakdown by Type",
+                Type = "pie",
+                Data = new List<ChartDataItem>
+                {
+                    new() { Label = "Type 1", Value = "520", Percentage = 42, Color = "bg-success" },
+                    new() { Label = "Type 2", Value = "380", Percentage = 30, Color = "bg-info" },
+                    new() { Label = "Type 3", Value = "220", Percentage = 18, Color = "bg-warning" },
+                    new() { Label = "Type 4", Value = "127", Percentage = 10, Color = "bg-danger" }
+                }
+            }
+        };
+    }
+
+    private ReportDataTable GetDataTableForType(string type)
+    {
+        return new ReportDataTable
+        {
+            Headers = new[] { "Facility", "Total", "Normal", "C-Section", "Complications", "Rate" },
+            Rows = new List<string[]>
+            {
+                new[] { "Korle-Bu Teaching Hospital", "320", "245", "75", "12", "23.4%" },
+                new[] { "Ridge Hospital", "180", "142", "38", "8", "21.1%" },
+                new[] { "Tema General Hospital", "140", "115", "25", "5", "17.9%" },
+                new[] { "La General Hospital", "95", "78", "17", "3", "17.9%" },
+                new[] { "Madina Polyclinic", "52", "45", "7", "2", "13.5%" }
+            }
+        };
+    }
+
+    private List<ReportInsight> GetInsightsForType(string type)
+    {
+        return new List<ReportInsight>
+        {
+            new() { Title = "Positive Trend", Description = "Overall delivery outcomes improved by 12% compared to last period.", Icon = "bi-graph-up-arrow", AlertClass = "alert-success" },
+            new() { Title = "Area of Concern", Description = "C-section rate at 18.5% is slightly above WHO recommended range.", Icon = "bi-exclamation-triangle", AlertClass = "alert-warning" },
+            new() { Title = "Best Performer", Description = "Tema General Hospital achieved lowest complication rate this month.", Icon = "bi-trophy", AlertClass = "alert-info" },
+            new() { Title = "Action Required", Description = "3 facilities require additional training on partograph completion.", Icon = "bi-person-check", AlertClass = "alert-primary" }
+        };
+    }
+
+    // Report Data Classes
+    public class ReportData
+    {
+        public string Title { get; set; } = "";
+        public string DateRange { get; set; } = "";
+        public string DataSource { get; set; } = "";
+        public List<ReportMetric> KeyMetrics { get; set; } = new();
+        public List<ReportChart> Charts { get; set; } = new();
+        public ReportDataTable? DataTable { get; set; }
+        public List<ReportInsight> Insights { get; set; } = new();
+    }
+
+    public class ReportMetric
+    {
+        public string Label { get; set; } = "";
+        public string Value { get; set; } = "";
+        public string Icon { get; set; } = "";
+        public string ColorClass { get; set; } = "";
+        public string Change { get; set; } = "";
+    }
+
+    public class ReportChart
+    {
+        public string Title { get; set; } = "";
+        public string Type { get; set; } = "";
+        public List<ChartDataItem> Data { get; set; } = new();
+    }
+
+    public class ChartDataItem
+    {
+        public string Label { get; set; } = "";
+        public string Value { get; set; } = "";
+        public double Percentage { get; set; }
+        public string Color { get; set; } = "";
+    }
+
+    public class ReportDataTable
+    {
+        public string[] Headers { get; set; } = Array.Empty<string>();
+        public List<string[]> Rows { get; set; } = new();
+    }
+
+    public class ReportInsight
+    {
+        public string Title { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Icon { get; set; } = "";
+        public string AlertClass { get; set; } = "";
+    }
+}

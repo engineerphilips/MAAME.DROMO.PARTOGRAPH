@@ -1,0 +1,676 @@
+@page "/facilities"
+@attribute [Authorize(Policy = "DistrictAccess")]
+@inject IFacilityService FacilityService
+@inject IDistrictService DistrictService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Facilities - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-hospital me-2 text-success"></i>
+                Health Facilities
+            </h2>
+            <p class="text-muted mb-0">
+                @accessLevelText | @filteredFacilities.Count facilities
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" @onclick="LoadData">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+            <button class="btn btn-outline-primary" @onclick="ExportData">
+                <i class="bi bi-download me-1"></i> Export
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1">Total Facilities</p>
+                        <h3 class="mb-0">@facilities.Count</h3>
+                    </div>
+                    <div class="stat-icon bg-primary-subtle text-primary">
+                        <i class="bi bi-hospital"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1">Active Facilities</p>
+                        <h3 class="mb-0 text-success">@facilities.Count(f => f.IsActive)</h3>
+                    </div>
+                    <div class="stat-icon bg-success-subtle text-success">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1">Active Labors</p>
+                        <h3 class="mb-0 text-warning">@facilities.Sum(f => f.ActiveLabors)</h3>
+                    </div>
+                    <div class="stat-icon bg-warning-subtle text-warning">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1">Today's Deliveries</p>
+                        <h3 class="mb-0 text-info">@facilities.Sum(f => f.DeliveriesToday)</h3>
+                    </div>
+                    <div class="stat-icon bg-info-subtle text-info">
+                        <i class="bi bi-clipboard2-pulse"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body py-3">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0"
+                           placeholder="Search facilities..."
+                           @bind="searchTerm" @bind:event="oninput" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" @bind="typeFilter">
+                    <option value="">All Types</option>
+                    <option value="Hospital">Hospital</option>
+                    <option value="Health Center">Health Center</option>
+                    <option value="Clinic">Clinic</option>
+                    <option value="CHPS">CHPS Compound</option>
+                    <option value="Maternity Home">Maternity Home</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" @bind="levelFilter">
+                    <option value="">All Levels</option>
+                    <option value="Primary">Primary</option>
+                    <option value="Secondary">Secondary</option>
+                    <option value="Tertiary">Tertiary</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" @bind="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="withLabors">With Active Labors</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <div class="btn-group w-100">
+                    <button class="btn @(viewMode == "grid" ? "btn-primary" : "btn-outline-primary")" @onclick="() => viewMode = \"grid\"">
+                        <i class="bi bi-grid"></i>
+                    </button>
+                    <button class="btn @(viewMode == "table" ? "btn-primary" : "btn-outline-primary")" @onclick="() => viewMode = \"table\"">
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading facilities...</p>
+    </div>
+}
+else if (viewMode == "grid")
+{
+    <!-- Grid View -->
+    <div class="row g-4">
+        @foreach (var facility in filteredFacilities)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card facility-card border-0 shadow-sm h-100 @(!facility.IsActive ? "opacity-75" : "")">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="facility-icon @GetFacilityIconClass(facility.Type)">
+                                <i class="bi @GetFacilityIcon(facility.Type)"></i>
+                            </div>
+                            <div class="d-flex gap-2">
+                                @if (facility.ActiveLabors > 0)
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-hourglass-split me-1"></i>@facility.ActiveLabors active
+                                    </span>
+                                }
+                                <span class="badge @(facility.IsActive ? "bg-success" : "bg-secondary")">
+                                    @(facility.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </div>
+                        </div>
+
+                        <h5 class="card-title mb-1">@facility.Name</h5>
+                        <p class="text-muted small mb-3">
+                            <i class="bi bi-geo-alt me-1"></i>@facility.DistrictName
+                            <span class="mx-2">|</span>
+                            <span class="badge bg-light text-dark">@facility.Type</span>
+                            <span class="badge bg-light text-dark">@facility.Level</span>
+                        </p>
+
+                        <div class="facility-stats">
+                            <div class="row text-center g-2">
+                                <div class="col-4">
+                                    <div class="stat-mini">
+                                        <span class="stat-value text-primary">@facility.DeliveriesToday</span>
+                                        <span class="stat-label">Today</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-mini">
+                                        <span class="stat-value text-success">@facility.DeliveriesThisMonth</span>
+                                        <span class="stat-label">Month</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-mini">
+                                        <span class="stat-value text-info">@facility.StaffCount</span>
+                                        <span class="stat-label">Staff</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                @if (facility.LastActivityTime.HasValue)
+                                {
+                                    @GetTimeAgo(facility.LastActivityTime.Value)
+                                }
+                                else
+                                {
+                                    <span>No recent activity</span>
+                                }
+                            </small>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewFacilityDetails(facility)" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <a href="live-labor?facility=@facility.ID" class="btn btn-sm btn-outline-warning" title="View Active Labors">
+                                    <i class="bi bi-activity"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Indicator -->
+                    <div class="card-footer bg-transparent border-0 py-2">
+                        <div class="d-flex align-items-center">
+                            <span class="me-2 small">Performance:</span>
+                            <div class="progress flex-grow-1" style="height: 6px;">
+                                <div class="progress-bar @GetPerformanceBarClass(facility.PerformanceStatus)"
+                                     style="width: @GetPerformanceWidth(facility.PerformanceStatus)%"></div>
+                            </div>
+                            <span class="ms-2 small @GetPerformanceTextClass(facility.PerformanceStatus)">
+                                @facility.PerformanceStatus
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <!-- Table View -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Facility</th>
+                            <th>Type</th>
+                            <th>Level</th>
+                            <th>District</th>
+                            <th class="text-center">Active Labors</th>
+                            <th class="text-center">Today</th>
+                            <th class="text-center">Month</th>
+                            <th class="text-center">Staff</th>
+                            <th>Last Activity</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var facility in filteredFacilities)
+                        {
+                            <tr class="@(!facility.IsActive ? "table-secondary" : "")">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="facility-icon-small @GetFacilityIconClass(facility.Type) me-2">
+                                            <i class="bi @GetFacilityIcon(facility.Type)"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">@facility.Name</div>
+                                            <small class="text-muted">@facility.Code</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-light text-dark">@facility.Type</span></td>
+                                <td><span class="badge bg-light text-dark">@facility.Level</span></td>
+                                <td>@facility.DistrictName</td>
+                                <td class="text-center">
+                                    @if (facility.ActiveLabors > 0)
+                                    {
+                                        <span class="badge bg-warning text-dark">@facility.ActiveLabors</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td class="text-center fw-semibold text-primary">@facility.DeliveriesToday</td>
+                                <td class="text-center">@facility.DeliveriesThisMonth</td>
+                                <td class="text-center">@facility.StaffCount</td>
+                                <td>
+                                    @if (facility.LastActivityTime.HasValue)
+                                    {
+                                        <small>@GetTimeAgo(facility.LastActivityTime.Value)</small>
+                                    }
+                                    else
+                                    {
+                                        <small class="text-muted">-</small>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge @(facility.IsActive ? "bg-success" : "bg-secondary")">
+                                        @(facility.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" @onclick="() => ViewFacilityDetails(facility)" title="Details">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <a href="live-labor?facility=@facility.ID" class="btn btn-outline-warning" title="Labors">
+                                            <i class="bi bi-activity"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @if (!filteredFacilities.Any())
+        {
+            <div class="card-body text-center py-5">
+                <i class="bi bi-hospital text-muted" style="font-size: 3rem;"></i>
+                <p class="mt-3 text-muted">No facilities found matching your criteria</p>
+            </div>
+        }
+    </div>
+}
+
+<!-- Facility Details Modal -->
+@if (showDetailsModal && selectedFacility != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-hospital me-2"></i>
+                        @selectedFacility.Name
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseDetailsModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Facility Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="text-muted">Code</td>
+                                    <td class="fw-semibold">@selectedFacility.Code</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Type</td>
+                                    <td><span class="badge bg-primary">@selectedFacility.Type</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Level</td>
+                                    <td><span class="badge bg-info">@selectedFacility.Level</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">District</td>
+                                    <td>@selectedFacility.DistrictName</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Status</td>
+                                    <td>
+                                        <span class="badge @(selectedFacility.IsActive ? "bg-success" : "bg-secondary")">
+                                            @(selectedFacility.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Statistics</h6>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="p-3 bg-primary-subtle rounded text-center">
+                                        <h3 class="mb-0 text-primary">@selectedFacility.DeliveriesToday</h3>
+                                        <small class="text-muted">Today's Deliveries</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-success-subtle rounded text-center">
+                                        <h3 class="mb-0 text-success">@selectedFacility.DeliveriesThisMonth</h3>
+                                        <small class="text-muted">This Month</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-warning-subtle rounded text-center">
+                                        <h3 class="mb-0 text-warning">@selectedFacility.ActiveLabors</h3>
+                                        <small class="text-muted">Active Labors</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-info-subtle rounded text-center">
+                                        <h3 class="mb-0 text-info">@selectedFacility.StaffCount</h3>
+                                        <small class="text-muted">Staff Members</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (selectedFacility.LastActivityTime.HasValue)
+                    {
+                        <div class="alert alert-info mt-4 mb-0">
+                            <i class="bi bi-clock me-1"></i>
+                            Last activity: @selectedFacility.LastActivityTime.Value.ToString("MMMM dd, yyyy HH:mm")
+                            (@GetTimeAgo(selectedFacility.LastActivityTime.Value))
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <a href="live-labor?facility=@selectedFacility.ID" class="btn btn-warning">
+                        <i class="bi bi-activity me-1"></i> View Active Labors
+                    </a>
+                    <a href="deliveries?facility=@selectedFacility.ID" class="btn btn-primary">
+                        <i class="bi bi-clipboard2-pulse me-1"></i> View Deliveries
+                    </a>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseDetailsModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .facility-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .facility-icon-small {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .facility-hospital { background: linear-gradient(135deg, #e8f4fd, #cce5ff); color: #0d6efd; }
+    .facility-center { background: linear-gradient(135deg, #e8f8f0, #d1e7dd); color: #198754; }
+    .facility-clinic { background: linear-gradient(135deg, #fef3e2, #fff3cd); color: #fd7e14; }
+    .facility-chps { background: linear-gradient(135deg, #f0e8fd, #e2d9f3); color: #6f42c1; }
+    .facility-maternity { background: linear-gradient(135deg, #fde8ee, #f8d7da); color: #dc3545; }
+
+    .facility-card {
+        transition: all 0.2s ease;
+    }
+
+    .facility-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .stat-mini {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-mini .stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .stat-mini .stat-label {
+        font-size: 0.7rem;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+</style>
+
+@code {
+    private List<FacilitySummary> facilities = new();
+    private bool isLoading = true;
+    private string accessLevel = "District";
+    private string accessLevelText = "District View";
+    private string viewMode = "grid";
+
+    // Filters
+    private string searchTerm = "";
+    private string typeFilter = "";
+    private string levelFilter = "";
+    private string statusFilter = "";
+
+    // Modal
+    private bool showDetailsModal = false;
+    private FacilitySummary? selectedFacility;
+
+    private List<FacilitySummary> filteredFacilities => facilities
+        .Where(f => string.IsNullOrEmpty(searchTerm) ||
+                   f.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                   f.Code.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                   f.DistrictName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+        .Where(f => string.IsNullOrEmpty(typeFilter) || f.Type == typeFilter)
+        .Where(f => string.IsNullOrEmpty(levelFilter) || f.Level == levelFilter)
+        .Where(f => string.IsNullOrEmpty(statusFilter) ||
+                   (statusFilter == "active" && f.IsActive) ||
+                   (statusFilter == "inactive" && !f.IsActive) ||
+                   (statusFilter == "withLabors" && f.ActiveLabors > 0))
+        .OrderBy(f => f.Name)
+        .ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DetermineAccessLevel();
+        await LoadData();
+    }
+
+    private async Task DetermineAccessLevel()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        accessLevel = user.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District";
+        var regionName = user.Claims.FirstOrDefault(c => c.Type == "RegionName")?.Value;
+        var districtName = user.Claims.FirstOrDefault(c => c.Type == "DistrictName")?.Value;
+
+        accessLevelText = accessLevel switch
+        {
+            "National" => "All Facilities",
+            "Regional" => $"Regional View - {regionName ?? "All Regions"}",
+            "District" => $"District View - {districtName ?? "All Districts"}",
+            _ => "Facilities"
+        };
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (accessLevel == "District")
+            {
+                var districtIdClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictID")?.Value;
+                if (Guid.TryParse(districtIdClaim, out var districtId))
+                {
+                    facilities = await FacilityService.GetFacilitiesByDistrictAsync(districtId);
+                    return;
+                }
+            }
+
+            facilities = await FacilityService.GetAllFacilitySummariesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading facilities: {ex.Message}");
+            // Generate demo data
+            facilities = GetDemoFacilities();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ViewFacilityDetails(FacilitySummary facility)
+    {
+        selectedFacility = facility;
+        showDetailsModal = true;
+    }
+
+    private void CloseDetailsModal()
+    {
+        showDetailsModal = false;
+        selectedFacility = null;
+    }
+
+    private void ExportData()
+    {
+        // Export functionality placeholder
+    }
+
+    private string GetFacilityIcon(string type) => type switch
+    {
+        "Hospital" => "bi-hospital",
+        "Health Center" => "bi-plus-circle",
+        "Clinic" => "bi-bandaid",
+        "CHPS" => "bi-house-heart",
+        "Maternity Home" => "bi-heart-pulse",
+        _ => "bi-hospital"
+    };
+
+    private string GetFacilityIconClass(string type) => type switch
+    {
+        "Hospital" => "facility-hospital",
+        "Health Center" => "facility-center",
+        "Clinic" => "facility-clinic",
+        "CHPS" => "facility-chps",
+        "Maternity Home" => "facility-maternity",
+        _ => "facility-hospital"
+    };
+
+    private string GetPerformanceBarClass(string status) => status switch
+    {
+        "Normal" => "bg-success",
+        "Warning" => "bg-warning",
+        "Critical" => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    private string GetPerformanceTextClass(string status) => status switch
+    {
+        "Normal" => "text-success",
+        "Warning" => "text-warning",
+        "Critical" => "text-danger",
+        _ => "text-secondary"
+    };
+
+    private int GetPerformanceWidth(string status) => status switch
+    {
+        "Normal" => 90,
+        "Warning" => 60,
+        "Critical" => 30,
+        _ => 50
+    };
+
+    private string GetTimeAgo(DateTime time)
+    {
+        var diff = DateTime.UtcNow - time;
+        if (diff.TotalMinutes < 1) return "just now";
+        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes}m ago";
+        if (diff.TotalHours < 24) return $"{(int)diff.TotalHours}h ago";
+        if (diff.TotalDays < 30) return $"{(int)diff.TotalDays}d ago";
+        return time.ToString("MMM dd");
+    }
+
+    private List<FacilitySummary> GetDemoFacilities()
+    {
+        return new List<FacilitySummary>
+        {
+            new() { ID = Guid.NewGuid(), Name = "Korle-Bu Teaching Hospital", Code = "KBTH", Type = "Hospital", Level = "Tertiary", DistrictName = "Accra Metropolitan", IsActive = true, DeliveriesToday = 15, DeliveriesThisMonth = 320, ActiveLabors = 8, StaffCount = 45, LastActivityTime = DateTime.UtcNow.AddMinutes(-15), PerformanceStatus = "Normal" },
+            new() { ID = Guid.NewGuid(), Name = "Ridge Hospital", Code = "RH001", Type = "Hospital", Level = "Secondary", DistrictName = "Accra Metropolitan", IsActive = true, DeliveriesToday = 8, DeliveriesThisMonth = 180, ActiveLabors = 4, StaffCount = 28, LastActivityTime = DateTime.UtcNow.AddMinutes(-30), PerformanceStatus = "Normal" },
+            new() { ID = Guid.NewGuid(), Name = "La General Hospital", Code = "LGH01", Type = "Hospital", Level = "Secondary", DistrictName = "La Dade Kotopon", IsActive = true, DeliveriesToday = 5, DeliveriesThisMonth = 95, ActiveLabors = 2, StaffCount = 18, LastActivityTime = DateTime.UtcNow.AddHours(-1), PerformanceStatus = "Normal" },
+            new() { ID = Guid.NewGuid(), Name = "Achimota Health Centre", Code = "AHC01", Type = "Health Center", Level = "Primary", DistrictName = "Okaikoi North", IsActive = true, DeliveriesToday = 2, DeliveriesThisMonth = 45, ActiveLabors = 1, StaffCount = 8, LastActivityTime = DateTime.UtcNow.AddHours(-2), PerformanceStatus = "Normal" },
+            new() { ID = Guid.NewGuid(), Name = "Madina Polyclinic", Code = "MPC01", Type = "Clinic", Level = "Primary", DistrictName = "La Nkwantanang Madina", IsActive = true, DeliveriesToday = 3, DeliveriesThisMonth = 52, ActiveLabors = 1, StaffCount = 12, LastActivityTime = DateTime.UtcNow.AddMinutes(-45), PerformanceStatus = "Warning" },
+            new() { ID = Guid.NewGuid(), Name = "Tema General Hospital", Code = "TGH01", Type = "Hospital", Level = "Secondary", DistrictName = "Tema Metropolitan", IsActive = true, DeliveriesToday = 6, DeliveriesThisMonth = 140, ActiveLabors = 3, StaffCount = 22, LastActivityTime = DateTime.UtcNow.AddMinutes(-10), PerformanceStatus = "Normal" },
+            new() { ID = Guid.NewGuid(), Name = "Ashaiman Health Centre", Code = "AHC02", Type = "Health Center", Level = "Primary", DistrictName = "Ashaiman", IsActive = true, DeliveriesToday = 1, DeliveriesThisMonth = 28, ActiveLabors = 0, StaffCount = 6, LastActivityTime = DateTime.UtcNow.AddHours(-4), PerformanceStatus = "Normal" },
+            new() { ID = Guid.NewGuid(), Name = "Kasoa CHPS Compound", Code = "KCC01", Type = "CHPS", Level = "Primary", DistrictName = "Awutu Senya East", IsActive = false, DeliveriesToday = 0, DeliveriesThisMonth = 12, ActiveLabors = 0, StaffCount = 3, LastActivityTime = DateTime.UtcNow.AddDays(-5), PerformanceStatus = "Critical" },
+            new() { ID = Guid.NewGuid(), Name = "Blessed Maternity Home", Code = "BMH01", Type = "Maternity Home", Level = "Primary", DistrictName = "Ga West", IsActive = true, DeliveriesToday = 2, DeliveriesThisMonth = 35, ActiveLabors = 1, StaffCount = 5, LastActivityTime = DateTime.UtcNow.AddHours(-1), PerformanceStatus = "Normal" }
+        };
+    }
+}
