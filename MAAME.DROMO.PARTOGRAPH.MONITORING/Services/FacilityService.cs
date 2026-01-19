@@ -104,6 +104,30 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
             return new DashboardSummary();
         }
 
+        public async Task<(bool Success, string Message, Guid? FacilityId)> CreateFacilityAsync(FacilityOnboardingRequest request)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/monitoring/facilities", request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<ApiFacilityCreateResponse>();
+                    return (true, "Facility created successfully", result?.Id);
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return (false, $"Failed to create facility: {errorContent}", null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating facility: {ex.Message}");
+                return (false, $"Error creating facility: {ex.Message}", null);
+            }
+        }
+
         private List<FacilitySummary> MapToFacilitySummaries(List<ApiFacilitySummary>? response)
         {
             if (response == null) return new List<FacilitySummary>();
@@ -125,6 +149,12 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
                 PerformanceStatus = f.PerformanceStatus ?? "Normal"
             }).ToList();
         }
+    }
+
+    internal class ApiFacilityCreateResponse
+    {
+        public Guid Id { get; set; }
+        public string Message { get; set; } = string.Empty;
     }
 
     // API Response models for Facility

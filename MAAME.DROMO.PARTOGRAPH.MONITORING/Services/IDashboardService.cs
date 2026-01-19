@@ -34,6 +34,27 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
         Task<List<FacilitySummary>> GetAllFacilitySummariesAsync();
         Task<FacilitySummary?> GetFacilitySummaryAsync(Guid facilityId);
         Task<DashboardSummary> GetFacilityDashboardAsync(Guid facilityId);
+        Task<(bool Success, string Message, Guid? FacilityId)> CreateFacilityAsync(FacilityOnboardingRequest request);
+    }
+
+    /// <summary>
+    /// Request model for facility onboarding
+    /// </summary>
+    public class FacilityOnboardingRequest
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public string Type { get; set; } = "Hospital"; // Hospital, Clinic, Health Center
+        public string Level { get; set; } = "Primary"; // Primary, Secondary, Tertiary
+        public string Address { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public Guid RegionId { get; set; }
+        public Guid DistrictId { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string? GHPostGPS { get; set; }
     }
 
     public interface IAnalyticsService

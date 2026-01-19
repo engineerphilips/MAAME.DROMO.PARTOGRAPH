@@ -98,10 +98,10 @@
             </div>
             <div class="col-auto">
                 <div class="btn-group btn-group-sm">
-                    <button class="btn @(riskFilter == "All" ? "btn-primary" : "btn-outline-primary")" @onclick="() => SetRiskFilter(riskFilter)">All</button>
-                    <button class="btn @(riskFilter == "Critical" ? "btn-danger" : "btn-outline-danger")" @onclick="() => SetRiskFilter(riskFilter)">Critical</button>
-                    <button class="btn @(riskFilter == "High" ? "btn-warning" : "btn-outline-warning")" @onclick="() => SetRiskFilter(riskFilter)">High Risk</button>
-                    <button class="btn @(riskFilter == "MeasurementsDue" ? "btn-secondary" : "btn-outline-secondary")" @onclick="() => SetRiskFilter(riskFilter)">
+                    <button class="btn @(riskFilter == "All" ? "btn-primary" : "btn-outline-primary")" @onclick='() => SetRiskFilter("All")'>All</button>
+                    <button class="btn @(riskFilter == "Critical" ? "btn-danger" : "btn-outline-danger")" @onclick='() => SetRiskFilter("Critical")'>Critical</button>
+                    <button class="btn @(riskFilter == "High" ? "btn-warning" : "btn-outline-warning")" @onclick='() => SetRiskFilter("High")'>High Risk</button>
+                    <button class="btn @(riskFilter == "MeasurementsDue" ? "btn-secondary" : "btn-outline-secondary")" @onclick='() => SetRiskFilter("MeasurementsDue")'>
                         <i class="bi bi-clock me-1"></i>Due
                     </button>
                 </div>
