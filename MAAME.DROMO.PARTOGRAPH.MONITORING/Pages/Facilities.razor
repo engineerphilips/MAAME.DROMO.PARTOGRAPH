@@ -4,7 +4,7 @@
 @inject IDistrictService DistrictService
 @inject AuthenticationStateProvider AuthStateProvider
 
-<PageTitle>Facilities - MAAME DROMO Monitoring</PageTitle>
+<PageTitle>Facilities - MAAME.DROMO Insight</PageTitle>
 
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
@@ -134,10 +134,10 @@
             </div>
             <div class="col-md-2">
                 <div class="btn-group w-100">
-                    <button class="btn @(viewMode == "grid" ? "btn-primary" : "btn-outline-primary")" @onclick="() => viewMode = \"grid\"">
+                    <button class="btn @(viewMode == "grid" ? "btn-primary" : "btn-outline-primary")" @onclick="() => SetTab(TabState.Grid.ToString().ToLower())">
                         <i class="bi bi-grid"></i>
                     </button>
-                    <button class="btn @(viewMode == "table" ? "btn-primary" : "btn-outline-primary")" @onclick="() => viewMode = \"table\"">
+                    <button class="btn @(viewMode == "table" ? "btn-primary" : "btn-outline-primary")" @onclick="() => SetTab(TabState.Table.ToString().ToLower())">
                         <i class="bi bi-list"></i>
                     </button>
                 </div>
@@ -506,7 +506,9 @@ else
     private string accessLevel = "District";
     private string accessLevelText = "District View";
     private string viewMode = "grid";
-
+    
+    enum TabState { Grid, Table}
+    private void SetTab(string tab) => viewMode = tab;
     // Filters
     private string searchTerm = "";
     private string typeFilter = "";

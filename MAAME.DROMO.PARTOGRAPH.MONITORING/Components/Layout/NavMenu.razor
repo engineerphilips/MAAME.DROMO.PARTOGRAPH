@@ -5,7 +5,7 @@
     <!-- Brand -->
     <div class="px-3 py-4 border-bottom border-secondary">
         <a href="/" class="d-flex align-items-center text-white text-decoration-none">
-            <i class="bi bi-heart-pulse-fill fs-3 me-2 text-danger"></i>
+            @* <i class="bi bi-heart-pulse-fill fs-3 me-2 text-danger"></i> *@
             <div>
                 <span class="fs-5 fw-bold">MAAME.DROMO</span>
                 <small class="d-block text-muted">Insight</small>
@@ -51,7 +51,7 @@
 
             <!-- Live Monitoring Section -->
             <li class="nav-item mt-3 mb-1">
-                <span class="text-muted small px-3 text-uppercase">Live Monitoring</span>
+                <span class="text-grey small px-3 text-uppercase">Live Monitoring</span>
             </li>
             <li class="nav-item mb-1">
                 <NavLink class="nav-link text-white" href="live-labor">
@@ -67,7 +67,7 @@
             <AuthorizeView Policy="NationalAccess">
                 <Authorized>
                     <li class="nav-item mt-3 mb-1">
-                        <span class="text-muted small px-3 text-uppercase">National</span>
+                        <span class="text-grey small px-3 text-uppercase">National</span>
                     </li>
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-white" href="national">
@@ -85,7 +85,7 @@
             <AuthorizeView Policy="RegionalAccess">
                 <Authorized>
                     <li class="nav-item mt-3 mb-1">
-                        <span class="text-muted small px-3 text-uppercase">Regional</span>
+                        <span class="text-grey small px-3 text-uppercase">Regional</span>
                     </li>
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-white" href="regional">
@@ -103,7 +103,7 @@
             <AuthorizeView Policy="DistrictAccess">
                 <Authorized>
                     <li class="nav-item mt-3 mb-1">
-                        <span class="text-muted small px-3 text-uppercase">District</span>
+                        <span class="text-grey small px-3 text-uppercase">District</span>
                     </li>
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-white" href="district">
@@ -119,7 +119,7 @@
             </AuthorizeView>
 
             <li class="nav-item mt-3 mb-1">
-                <span class="text-muted small px-3 text-uppercase">Analytics</span>
+                <span class="text-grey small px-3 text-uppercase">Analytics</span>
             </li>
             <li class="nav-item mb-1">
                 <NavLink class="nav-link text-white" href="deliveries">
@@ -144,7 +144,7 @@
 
             <!-- Advanced Analytics Section -->
             <li class="nav-item mt-3 mb-1">
-                <span class="text-muted small px-3 text-uppercase">Advanced Analytics</span>
+                <span class="text-grey small px-3 text-uppercase">Advanced Analytics</span>
             </li>
             <li class="nav-item mb-1">
                 <NavLink class="nav-link text-white" href="predictive-analytics">
@@ -163,7 +163,7 @@
             </li>
 
             <li class="nav-item mt-3 mb-1">
-                <span class="text-muted small px-3 text-uppercase">Reports</span>
+                <span class="text-grey small px-3 text-uppercase">Reports</span>
             </li>
             <li class="nav-item mb-1">
                 <NavLink class="nav-link text-white" href="reports">
@@ -173,7 +173,7 @@
 
             <!-- Settings Section -->
             <li class="nav-item mt-3 mb-1">
-                <span class="text-muted small px-3 text-uppercase">Settings</span>
+                <span class="text-grey small px-3 text-uppercase">Settings</span>
             </li>
             <li class="nav-item mb-1">
                 <NavLink class="nav-link text-white" href="alert-settings">
@@ -184,7 +184,7 @@
             <AuthorizeView Roles="Admin">
                 <Authorized>
                     <li class="nav-item mt-3 mb-1">
-                        <span class="text-muted small px-3 text-uppercase">Administration</span>
+                        <span class="text-grey small px-3 text-uppercase">Administration</span>
                     </li>
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-white" href="users">
@@ -204,21 +204,21 @@
     <!-- Footer -->
     <div class="px-3 py-3 border-top border-secondary">
         <div class="d-flex align-items-center justify-content-between mb-2">
-            <small class="text-muted">
+            <small class="text-white">
                 <i class="bi bi-info-circle me-1"></i> Version 2.1.0
             </small>
             <span class="badge bg-success badge-sm">
                 <i class="bi bi-check-circle me-1"></i> Online
             </span>
         </div>
-        <small class="text-muted d-block">
+        <small class="text-white d-block">
             <i class="bi bi-calendar me-1"></i> @DateTime.Now.ToString("MMM dd, yyyy")
         </small>
-        <div class="mt-2 pt-2 border-top border-secondary">
+        @* <div class="mt-2 pt-2 border-top border-secondary">
             <a href="https://github.com/engineerphilips/MAAME.DROMO.PARTOGRAPH" target="_blank" class="text-muted text-decoration-none small">
                 <i class="bi bi-github me-1"></i> Documentation
             </a>
-        </div>
+        </div> *@
     </div>
 </div>
 

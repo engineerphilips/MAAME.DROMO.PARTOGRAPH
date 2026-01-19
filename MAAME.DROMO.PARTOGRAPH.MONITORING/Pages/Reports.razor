@@ -494,7 +494,8 @@
     {
         selectedReportType = template.ReportType;
         SelectPeriod(template.Period);
-        GenerateReport();
+        var x = GenerateReport();
+        Task.WhenAny(x);
     }
 
     private async Task GenerateReport()
@@ -540,7 +541,7 @@
         {
             Title = $"{reportName} Report - {scopeText}",
             DateRange = $"{startDate:MMM dd, yyyy} - {endDate:MMM dd, yyyy}",
-            DataSource = $"MAAME.DROMO Partograph System ({scopeText} Level)",
+            DataSource = $"MAAME.DROMO Insight ({scopeText} Level)",
             KeyMetrics = GetMetricsForType(selectedReportType),
             Charts = GetChartsForType(selectedReportType),
             DataTable = GetDataTableForType(selectedReportType),

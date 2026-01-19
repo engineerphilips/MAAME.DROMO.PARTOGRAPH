@@ -101,38 +101,38 @@
 <!-- Filter Tabs -->
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
-        <button class="nav-link @(activeTab == "all" ? "active" : "")" @onclick="() => SetTab(\"all\")">
+        <button class="nav-link @(activeTab == "all" ? "active" : "")" @onclick="() => SetTab(TabState.All.ToString().ToLower())">
             <i class="bi bi-list me-1"></i> All Users
             <span class="badge bg-primary ms-1">@users.Count</span>
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link @(activeTab == "active" ? "active" : "")" @onclick="() => SetTab(\"active\")">
+        <button class="nav-link @(activeTab == "active" ? "active" : "")" @onclick="() => SetTab(TabState.Active.ToString().ToLower())">
             <i class="bi bi-check-circle me-1 text-success"></i> Active
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link @(activeTab == "inactive" ? "active" : "")" @onclick="() => SetTab(\"inactive\")">
+        <button class="nav-link @(activeTab == "inactive" ? "active" : "")" @onclick="() => SetTab(TabState.Inactive.ToString().ToLower())">
             <i class="bi bi-x-circle me-1 text-secondary"></i> Inactive
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link @(activeTab == "locked" ? "active" : "")" @onclick="() => SetTab(\"locked\")">
+        <button class="nav-link @(activeTab == "locked" ? "active" : "")" @onclick="() => SetTab(TabState.Locked.ToString().ToLower())">
             <i class="bi bi-lock me-1 text-danger"></i> Locked
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link @(activeTab == "national" ? "active" : "")" @onclick="() => SetTab(\"national\")">
+        <button class="nav-link @(activeTab == "national" ? "active" : "")" @onclick="() => SetTab(TabState.National.ToString().ToLower())">
             <i class="bi bi-globe me-1 text-info"></i> National
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link @(activeTab == "regional" ? "active" : "")" @onclick="() => SetTab(\"regional\")">
+        <button class="nav-link @(activeTab == "regional" ? "active" : "")" @onclick="() => SetTab(TabState.Regional.ToString().ToLower())">
             <i class="bi bi-map me-1 text-primary"></i> Regional
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link @(activeTab == "district" ? "active" : "")" @onclick="() => SetTab(\"district\")">
+        <button class="nav-link @(activeTab == "district" ? "active" : "")" @onclick="() => SetTab(TabState.District.ToString().ToLower())">
             <i class="bi bi-building me-1 text-warning"></i> District
         </button>
     </li>
@@ -613,6 +613,8 @@ else
     private string searchTerm = "";
     private string roleFilter = "";
     private string accessFilter = "";
+    
+    enum TabState { All, Active, Inactive, Locked, National, Regional, District}
 
     // Modal states
     private bool showUserModal = false;

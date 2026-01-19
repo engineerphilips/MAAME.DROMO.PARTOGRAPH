@@ -1,12 +1,12 @@
 @page "/district"
 @page "/district/{DistrictId:guid}"
-@page "/facilities"
+@* @page "/facilities" *@
 @attribute [Authorize(Policy = "DistrictAccess")]
 @inject IFacilityService FacilityService
 @inject IDistrictService DistrictService
 @inject AuthenticationStateProvider AuthStateProvider
 
-<PageTitle>District Overview - MAAME DROMO Monitoring</PageTitle>
+<PageTitle>District Overview - MAAME.DROMO Insight</PageTitle>
 
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">

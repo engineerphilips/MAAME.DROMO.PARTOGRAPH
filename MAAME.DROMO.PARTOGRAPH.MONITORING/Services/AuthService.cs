@@ -183,8 +183,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
         public string? RefreshToken { get; set; }
     }
 
-    internal class ApiErrorResponse
-    {
-        public string? Error { get; set; }
-    }
+    //internal class ApiErrorResponse
+    //{
+    //    public string? Error { get; set; }
+    //}
 }
