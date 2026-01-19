@@ -384,13 +384,30 @@ else
                                 <label class="form-label">Access Level <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-shield"></i></span>
-                                    <InputSelect class="form-select" @bind-Value="userForm.AccessLevel" @onchange="OnAccessLevelChanged">
+                                    <InputSelect class="form-select" @bind-Value="userForm.AccessLevel" @onchange="OnAccessLevelChanged" disabled="@(adminAccessLevel == "District")">
                                         <option value="District">District</option>
-                                        <option value="Regional">Regional</option>
-                                        <option value="National">National</option>
+                                        @if (adminAccessLevel != "District")
+                                        {
+                                            <option value="Regional">Regional</option>
+                                        }
+                                        @if (adminAccessLevel == "National")
+                                        {
+                                            <option value="National">National</option>
+                                        }
                                     </InputSelect>
                                 </div>
-                                <small class="text-muted">Determines data visibility scope</small>
+                                @if (adminAccessLevel == "District")
+                                {
+                                    <small class="text-muted">Limited to District level based on your access</small>
+                                }
+                                else if (adminAccessLevel == "Regional")
+                                {
+                                    <small class="text-muted">Can create Regional or District level users</small>
+                                }
+                                else
+                                {
+                                    <small class="text-muted">Determines data visibility scope</small>
+                                }
                             </div>
 
                             <div class="col-md-6">
@@ -413,7 +430,7 @@ else
                                     <label class="form-label">Region @(userForm.AccessLevel != "National" ? "*" : "")</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-map"></i></span>
-                                        <InputSelect class="form-select" @bind-Value="selectedRegionId" TValue="Guid?">
+                                        <InputSelect class="form-select" @bind-Value="selectedRegionId" TValue="Guid?" disabled="@isRegionLocked">
                                             <option value="">Select Region...</option>
                                             @foreach (var region in regions)
                                             {
@@ -421,6 +438,10 @@ else
                                             }
                                         </InputSelect>
                                     </div>
+                                    @if (isRegionLocked)
+                                    {
+                                        <small class="text-muted">Region is set based on your admin access level</small>
+                                    }
                                 </div>
                             }
 
@@ -430,7 +451,7 @@ else
                                     <label class="form-label">District <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-building"></i></span>
-                                        <InputSelect class="form-select" @bind-Value="selectedDistrictId" TValue="Guid?">
+                                        <InputSelect class="form-select" @bind-Value="selectedDistrictId" TValue="Guid?" disabled="@isDistrictLocked">
                                             <option value="">Select District...</option>
                                             @foreach (var district in filteredDistricts)
                                             {
@@ -438,6 +459,10 @@ else
                                             }
                                         </InputSelect>
                                     </div>
+                                    @if (isDistrictLocked)
+                                    {
+                                        <small class="text-muted">District is set based on your admin access level</small>
+                                    }
                                 </div>
                             }
                         </div>
@@ -604,16 +629,19 @@ else
 
 @code {
     private List<MonitoringUserSummary> users = new();
+    private List<MonitoringUserSummary> allUsers = new();
     private UserStatistics statistics = new();
     private List<RegionDropdownItem> regions = new();
+    private List<RegionDropdownItem> allRegions = new();
     private List<DistrictDropdownItem> districts = new();
+    private List<DistrictDropdownItem> allDistricts = new();
 
     private bool isLoading = true;
     private string activeTab = "all";
     private string searchTerm = "";
     private string roleFilter = "";
     private string accessFilter = "";
-    
+
     enum TabState { All, Active, Inactive, Locked, National, Regional, District}
 
     // Modal states
@@ -643,6 +671,15 @@ else
     private string confirmNewPassword = "";
     private string resetPasswordError = "";
 
+    // Admin access level filtering
+    private string adminAccessLevel = "National";
+    private Guid? adminRegionId;
+    private Guid? adminDistrictId;
+    private string? adminRegionName;
+    private string? adminDistrictName;
+    private bool isRegionLocked = false;
+    private bool isDistrictLocked = false;
+
     private List<MonitoringUserSummary> filteredUsers => users
         .Where(u => activeTab == "all" ||
                    (activeTab == "active" && u.IsActive && !u.IsLocked) ||
@@ -665,7 +702,30 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await DetermineAccessLevel();
         await LoadData();
+    }
+
+    private async Task DetermineAccessLevel()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        adminAccessLevel = user.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "National";
+        adminRegionName = user.Claims.FirstOrDefault(c => c.Type == "RegionName")?.Value;
+        adminDistrictName = user.Claims.FirstOrDefault(c => c.Type == "DistrictName")?.Value;
+
+        var regionIdClaim = user.Claims.FirstOrDefault(c => c.Type == "RegionID")?.Value;
+        if (Guid.TryParse(regionIdClaim, out var regionId))
+        {
+            adminRegionId = regionId;
+        }
+
+        var districtIdClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictID")?.Value;
+        if (Guid.TryParse(districtIdClaim, out var districtId))
+        {
+            adminDistrictId = districtId;
+        }
     }
 
     private async Task LoadData()
@@ -680,10 +740,45 @@ else
 
             await Task.WhenAll(usersTask, statsTask, regionsTask, districtsTask);
 
-            users = await usersTask;
+            allUsers = await usersTask;
             statistics = await statsTask;
-            regions = await regionsTask;
-            districts = await districtsTask;
+            allRegions = await regionsTask;
+            allDistricts = await districtsTask;
+
+            // Filter users based on admin's access level
+            if (adminAccessLevel == "District" && adminDistrictId.HasValue)
+            {
+                // District admin can only see users in their district
+                users = allUsers.Where(u => u.DistrictID == adminDistrictId.Value ||
+                    (u.AccessLevel == "District" && u.DistrictName == adminDistrictName)).ToList();
+
+                // Lock regions and districts for dropdown
+                regions = allRegions.Where(r => r.ID == adminRegionId).ToList();
+                districts = allDistricts.Where(d => d.ID == adminDistrictId).ToList();
+                isRegionLocked = true;
+                isDistrictLocked = true;
+            }
+            else if (adminAccessLevel == "Regional" && adminRegionId.HasValue)
+            {
+                // Regional admin can see users in their region
+                users = allUsers.Where(u => u.RegionID == adminRegionId.Value ||
+                    u.RegionName == adminRegionName).ToList();
+
+                // Lock region but allow district selection within region
+                regions = allRegions.Where(r => r.ID == adminRegionId).ToList();
+                districts = allDistricts.Where(d => d.RegionID == adminRegionId).ToList();
+                isRegionLocked = true;
+                isDistrictLocked = false;
+            }
+            else
+            {
+                // National admin can see all users
+                users = allUsers;
+                regions = allRegions;
+                districts = allDistricts;
+                isRegionLocked = false;
+                isDistrictLocked = false;
+            }
         }
         finally
         {
@@ -719,11 +814,32 @@ else
     {
         isEditing = false;
         userForm = new UserFormModel { AccessLevel = "District", Role = "Viewer" };
-        selectedRegionId = null;
-        selectedDistrictId = null;
         confirmPassword = "";
         formError = "";
         passwordError = "";
+
+        // Pre-select region and district based on admin's access level
+        if (adminAccessLevel == "District" && adminRegionId.HasValue && adminDistrictId.HasValue)
+        {
+            // District admin: lock to their district only
+            selectedRegionId = adminRegionId;
+            selectedDistrictId = adminDistrictId;
+            userForm.AccessLevel = "District"; // Can only create district-level users
+        }
+        else if (adminAccessLevel == "Regional" && adminRegionId.HasValue)
+        {
+            // Regional admin: lock to their region
+            selectedRegionId = adminRegionId;
+            selectedDistrictId = null;
+            // Can create Regional or District level users
+        }
+        else
+        {
+            // National admin: no restrictions
+            selectedRegionId = null;
+            selectedDistrictId = null;
+        }
+
         showUserModal = true;
     }
 

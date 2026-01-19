@@ -1,5 +1,5 @@
 @page "/facilities"
-@attribute [Authorize(Policy = "DistrictAccess")]
+@attribute [Authorize(Roles = "Admin")]
 @inject IFacilityService FacilityService
 @inject IDistrictService DistrictService
 @inject AuthenticationStateProvider AuthStateProvider
@@ -572,8 +572,10 @@ else
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
 
+            // Filter facilities based on admin's access level
             if (accessLevel == "District")
             {
+                // District admin can only see facilities in their district
                 var districtIdClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictID")?.Value;
                 if (Guid.TryParse(districtIdClaim, out var districtId))
                 {
@@ -581,7 +583,18 @@ else
                     return;
                 }
             }
+            else if (accessLevel == "Regional")
+            {
+                // Regional admin can only see facilities in their region
+                var regionIdClaim = user.Claims.FirstOrDefault(c => c.Type == "RegionID")?.Value;
+                if (Guid.TryParse(regionIdClaim, out var regionId))
+                {
+                    facilities = await FacilityService.GetFacilitiesByRegionAsync(regionId);
+                    return;
+                }
+            }
 
+            // National admin can see all facilities
             facilities = await FacilityService.GetAllFacilitySummariesAsync();
         }
         catch (Exception ex)

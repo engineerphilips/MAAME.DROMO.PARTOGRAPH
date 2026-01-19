@@ -88,6 +88,12 @@ builder.Services.AddScoped<IReportVisualizationService, ReportVisualizationServi
 // SignalR notification service
 builder.Services.AddSingleton<IMonitoringNotificationService, MonitoringNotificationService>();
 
+// Admin Services
+builder.Services.AddScoped<IUserActivityService, UserActivityService>();
+builder.Services.AddScoped<INotificationAdminService, NotificationAdminService>();
+builder.Services.AddScoped<IFeatureFlagService, FeatureFlagService>();
+builder.Services.AddScoped<IRateLimitService, RateLimitService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
