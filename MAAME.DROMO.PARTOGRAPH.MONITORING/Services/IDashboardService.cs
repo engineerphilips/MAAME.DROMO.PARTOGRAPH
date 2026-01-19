@@ -31,6 +31,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
     public interface IFacilityService
     {
         Task<List<FacilitySummary>> GetFacilitiesByDistrictAsync(Guid districtId);
+        Task<List<FacilitySummary>> GetFacilitiesByRegionAsync(Guid regionId);
         Task<List<FacilitySummary>> GetAllFacilitySummariesAsync();
         Task<FacilitySummary?> GetFacilitySummaryAsync(Guid facilityId);
         Task<DashboardSummary> GetFacilityDashboardAsync(Guid facilityId);

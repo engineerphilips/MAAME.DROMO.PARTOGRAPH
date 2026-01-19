@@ -27,6 +27,21 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
             return new List<FacilitySummary>();
         }
 
+        public async Task<List<FacilitySummary>> GetFacilitiesByRegionAsync(Guid regionId)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<ApiFacilitySummary>>($"api/monitoring/facilities?regionId={regionId}");
+                return MapToFacilitySummaries(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting facilities by region: {ex.Message}");
+            }
+
+            return new List<FacilitySummary>();
+        }
+
         public async Task<List<FacilitySummary>> GetAllFacilitySummariesAsync()
         {
             try

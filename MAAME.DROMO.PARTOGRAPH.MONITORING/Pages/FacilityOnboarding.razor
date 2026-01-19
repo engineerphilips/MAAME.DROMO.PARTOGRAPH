@@ -5,6 +5,7 @@
 @inject IRegionService RegionService
 @inject IDistrictService DistrictService
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Facility Onboarding - MAAME DROMO Monitoring</PageTitle>
 
@@ -99,7 +100,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Region <span class="text-danger">*</span></label>
-                                <InputSelect class="form-select" @bind-Value="selectedRegionId" @oninput="OnRegionChanged">
+                                <InputSelect class="form-select" @bind-Value="selectedRegionId" @oninput="OnRegionChanged" disabled="@isRegionLocked">
                                     <option value="">-- Select Region --</option>
                                     @foreach (var region in regions)
                                     {
@@ -107,10 +108,14 @@
                                     }
                                 </InputSelect>
                                 <ValidationMessage For="@(() => model.RegionId)" class="text-danger small" />
+                                @if (isRegionLocked)
+                                {
+                                    <small class="text-muted">Region is set based on your admin access level</small>
+                                }
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">District <span class="text-danger">*</span></label>
-                                <InputSelect class="form-select" @bind-Value="selectedDistrictId" disabled="@(!selectedRegionId.HasValue)">
+                                <InputSelect class="form-select" @bind-Value="selectedDistrictId" disabled="@(isDistrictLocked || !selectedRegionId.HasValue)">
                                     <option value="">-- Select District --</option>
                                     @foreach (var district in filteredDistricts)
                                     {
@@ -118,7 +123,11 @@
                                     }
                                 </InputSelect>
                                 <ValidationMessage For="@(() => model.DistrictId)" class="text-danger small" />
-                                @if (!selectedRegionId.HasValue)
+                                @if (isDistrictLocked)
+                                {
+                                    <small class="text-muted">District is set based on your admin access level</small>
+                                }
+                                else if (!selectedRegionId.HasValue)
                                 {
                                     <small class="text-muted">Select a region first</small>
                                 }
@@ -284,22 +293,83 @@
     private bool showSuccess = false;
     private string errorMessage = string.Empty;
 
+    // Admin access level filtering
+    private string accessLevel = "National";
+    private Guid? adminRegionId;
+    private Guid? adminDistrictId;
+    private bool isRegionLocked = false;
+    private bool isDistrictLocked = false;
+
     protected override async Task OnInitializedAsync()
     {
+        await DetermineAccessLevel();
         await LoadReferenceData();
+    }
+
+    private async Task DetermineAccessLevel()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        accessLevel = user.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "National";
+
+        var regionIdClaim = user.Claims.FirstOrDefault(c => c.Type == "RegionID")?.Value;
+        if (Guid.TryParse(regionIdClaim, out var regionId))
+        {
+            adminRegionId = regionId;
+        }
+
+        var districtIdClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictID")?.Value;
+        if (Guid.TryParse(districtIdClaim, out var districtId))
+        {
+            adminDistrictId = districtId;
+        }
     }
 
     private async Task LoadReferenceData()
     {
         try
         {
-            var regionsTask = RegionService.GetAllRegionSummariesAsync();
+            var allRegions = await RegionService.GetAllRegionSummariesAsync();
             var districtsTask = DistrictService.GetAllDistrictSummariesAsync();
-
-            await Task.WhenAll(regionsTask, districtsTask);
-
-            regions = await regionsTask;
             allDistricts = await districtsTask;
+
+            // Filter based on admin's access level
+            if (accessLevel == "District" && adminRegionId.HasValue && adminDistrictId.HasValue)
+            {
+                // District admin: lock to their region and district
+                regions = allRegions.Where(r => r.ID == adminRegionId.Value).ToList();
+                selectedRegionId = adminRegionId;
+                model.RegionId = adminRegionId.Value;
+
+                filteredDistricts = allDistricts.Where(d => d.ID == adminDistrictId.Value).ToList();
+                selectedDistrictId = adminDistrictId;
+                model.DistrictId = adminDistrictId.Value;
+
+                isRegionLocked = true;
+                isDistrictLocked = true;
+            }
+            else if (accessLevel == "Regional" && adminRegionId.HasValue)
+            {
+                // Regional admin: lock to their region, can choose any district in region
+                regions = allRegions.Where(r => r.ID == adminRegionId.Value).ToList();
+                selectedRegionId = adminRegionId;
+                model.RegionId = adminRegionId.Value;
+
+                // Filter districts to only those in admin's region
+                var regionName = regions.FirstOrDefault()?.Name;
+                filteredDistricts = allDistricts.Where(d => d.RegionName == regionName).ToList();
+
+                isRegionLocked = true;
+                isDistrictLocked = false;
+            }
+            else
+            {
+                // National admin: can choose any region and district
+                regions = allRegions;
+                isRegionLocked = false;
+                isDistrictLocked = false;
+            }
         }
         catch (Exception ex)
         {
