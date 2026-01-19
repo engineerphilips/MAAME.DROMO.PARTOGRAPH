@@ -18,15 +18,15 @@
         </div>
         <div class="btn-group">
             <button class="btn @(viewMode == "facilities" ? "btn-primary" : "btn-outline-primary")"
-                    @onclick="() => SetViewMode(viewMode)">
+                    @onclick='() => SetViewMode("facilities")'>
                 Facilities
             </button>
             <button class="btn @(viewMode == "districts" ? "btn-primary" : "btn-outline-primary")"
-                    @onclick="() => SetViewMode(viewMode)">
+                    @onclick='() => SetViewMode("districts")'>
                 Districts
             </button>
             <button class="btn @(viewMode == "regions" ? "btn-primary" : "btn-outline-primary")"
-                    @onclick="() => SetViewMode(viewMode)">
+                    @onclick='() => SetViewMode("regions")'>
                 Regions
             </button>
         </div>
