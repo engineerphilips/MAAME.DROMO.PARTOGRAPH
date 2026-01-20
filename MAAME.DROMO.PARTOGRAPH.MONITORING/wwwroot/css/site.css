@@ -264,7 +264,7 @@
 .nav-tabs .nav-link.active {
     color: var(--primary-color);
     border-color: transparent transparent var(--primary-color);
-    background: transparent;
+    background: transparent !important;
 }
 
 /* Progress Bar Enhancements */
