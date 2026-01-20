@@ -262,9 +262,9 @@
 }
 
 .nav-tabs .nav-link.active {
-    color: var(--primary-color);
+    color: white;
     border-color: transparent transparent var(--primary-color);
-    background: transparent !important;
+    background: var(--primary-color) !important;
 }
 
 /* Progress Bar Enhancements */
