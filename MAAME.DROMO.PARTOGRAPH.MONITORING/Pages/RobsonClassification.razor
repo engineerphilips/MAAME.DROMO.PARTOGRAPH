@@ -21,7 +21,7 @@
         <div class="d-flex gap-2">
             <div class="input-group" style="max-width: 250px;">
                 <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                <input type="month" class="form-control" @bind="selectedMonth" @bind:event="onchange" @onchange="OnMonthChanged" />
+                <input type="month" class="form-control" @bind="selectedMonth" @bind:after="OnMonthChanged" />
             </div>
             <button class="btn btn-outline-secondary" @onclick="RefreshData">
                 <i class="bi bi-arrow-clockwise me-1"></i> Refresh
@@ -634,7 +634,7 @@ else
     private void ShowGroupDescription(RobsonGroup group)
     {
         selectedGroupName = $"Group {(int)group}";
-        selectedGroupDescription = RobsonClassification.GetGroupDescription(group);
+        selectedGroupDescription = MAAME.DROMO.PARTOGRAPH.MODEL.RobsonClassification.GetGroupDescription(group);
         showGroupModal = true;
     }
 

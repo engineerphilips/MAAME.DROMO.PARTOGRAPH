@@ -577,11 +577,54 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
                 .Include(r => r.Partograph)
                 .Where(r => r.ClassifiedAt >= startDate && r.ClassifiedAt <= endDate);
 
+            // Filter by facility - join through Partograph.Handler to Staff.Facility
             if (facilityId.HasValue)
-                query = query.Where(r => r.Partograph != null);
-             //&& r.Partograph.FacilityID == facilityId
-            // For region/district filtering, would need to join with facilities
-            // This is a simplified version
+            {
+                query = query
+                    .Where(r => r.Partograph != null && r.Partograph.Handler != null)
+                    .Join(_context.Staff,
+                        r => r.Partograph!.Handler,
+                        s => s.ID,
+                        (r, s) => new { Classification = r, Staff = s })
+                    .Where(x => x.Staff.Facility == facilityId)
+                    .Select(x => x.Classification);
+            }
+
+            // Filter by region - join through Staff to Facility to get RegionID
+            if (regionId.HasValue)
+            {
+                query = query
+                    .Where(r => r.Partograph != null && r.Partograph.Handler != null)
+                    .Join(_context.Staff,
+                        r => r.Partograph!.Handler,
+                        s => s.ID,
+                        (r, s) => new { Classification = r, Staff = s })
+                    .Where(x => x.Staff.Facility != null)
+                    .Join(_context.Facilities,
+                        x => x.Staff.Facility,
+                        f => f.ID,
+                        (x, f) => new { x.Classification, Facility = f })
+                    .Where(x => x.Facility.RegionID == regionId)
+                    .Select(x => x.Classification);
+            }
+
+            // Filter by district - join through Staff to Facility to get DistrictID
+            if (districtId.HasValue)
+            {
+                query = query
+                    .Where(r => r.Partograph != null && r.Partograph.Handler != null)
+                    .Join(_context.Staff,
+                        r => r.Partograph!.Handler,
+                        s => s.ID,
+                        (r, s) => new { Classification = r, Staff = s })
+                    .Where(x => x.Staff.Facility != null)
+                    .Join(_context.Facilities,
+                        x => x.Staff.Facility,
+                        f => f.ID,
+                        (x, f) => new { x.Classification, Facility = f })
+                    .Where(x => x.Facility.DistrictID == districtId)
+                    .Select(x => x.Classification);
+            }
 
             return query;
         }
