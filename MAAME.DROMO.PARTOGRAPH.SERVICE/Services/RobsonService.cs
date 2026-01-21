@@ -519,14 +519,16 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             var response = new BatchClassifyResponse();
 
             // Get completed partographs without classification
-            var query = _context.Partographs
-                .Include(p => p.Patient)
+            var query = _context.Partographs 
+                .Include(p => p.Patient) 
                 .Include(p => p.FetalPositions)
                 .Where(p => p.Status == LaborStatus.Completed)
                 .Where(p => p.DeliveryTime >= startDate && p.DeliveryTime <= endDate);
 
             if (facilityId.HasValue)
-                query = query.Where(p => p.FacilityID == facilityId);
+                query = query
+                    .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
+                    .Where(p => p.s.Facility == facilityId).Select(p => p.p);
 
             var partographs = await query.ToListAsync();
 
@@ -576,8 +578,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
                 .Where(r => r.ClassifiedAt >= startDate && r.ClassifiedAt <= endDate);
 
             if (facilityId.HasValue)
-                query = query.Where(r => r.Partograph != null && r.Partograph.FacilityID == facilityId);
-
+                query = query.Where(r => r.Partograph != null);
+             //&& r.Partograph.FacilityID == facilityId
             // For region/district filtering, would need to join with facilities
             // This is a simplified version
 
@@ -720,7 +722,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
         {
             if (outcome == null) return DeliveryMode.SpontaneousVaginal;
 
-            return outcome.DeliveryMode?.ToLower() switch
+            return outcome?.DeliveryMode.ToString().ToLower() switch
             {
                 "caesareansection" or "cesarean" or "cs" => DeliveryMode.CaesareanSection,
                 "assistedvaginal" or "vacuum" or "forceps" => DeliveryMode.AssistedVaginal,

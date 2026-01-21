@@ -229,7 +229,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
         {
             if (outcome == null) return DeliveryMode.SpontaneousVaginal;
 
-            return (outcome.DeliveryMode?.ToLower()) switch
+            return (outcome?.DeliveryMode.ToString().ToLower()) switch
             {
                 "caesareansection" => DeliveryMode.CaesareanSection,
                 "cesarean" => DeliveryMode.CaesareanSection,
