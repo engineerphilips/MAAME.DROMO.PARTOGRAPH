@@ -1,0 +1,694 @@
+@page "/robson"
+@page "/robson-classification"
+@attribute [Authorize]
+@inject IRobsonClassificationService RobsonService
+@inject IDashboardService DashboardService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Robson Classification - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-diagram-3 me-2 text-primary"></i>
+                Robson Classification Analysis
+            </h2>
+            <p class="text-muted mb-0">
+                WHO 2017 Implementation | @accessLevelText | @DateTime.Now.ToString("dddd, MMMM dd, yyyy")
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <div class="input-group" style="max-width: 250px;">
+                <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                <input type="month" class="form-control" @bind="selectedMonth" @bind:event="onchange" @onchange="OnMonthChanged" />
+            </div>
+            <button class="btn btn-outline-secondary" @onclick="RefreshData">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+            <button class="btn btn-primary" @onclick="ExportReport">
+                <i class="bi bi-download me-1"></i> Export
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading Robson Classification data...</p>
+    </div>
+}
+else
+{
+    <!-- Key Metrics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100 @(dashboard?.IsOverallCSRateAboveWHO == true ? "border-warning" : "border-success")">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Overall CS Rate</p>
+                            <h3 class="mb-0 @(dashboard?.IsOverallCSRateAboveWHO == true ? "text-warning" : "text-success")">
+                                @(dashboard?.OverallCSRate.ToString("F1") ?? "0")%
+                            </h3>
+                            <small class="@(dashboard?.OverallCSRateTrend > 0 ? "text-danger" : "text-success")">
+                                @(dashboard?.OverallCSRateTrend > 0 ? "+" : "")@(dashboard?.OverallCSRateTrend.ToString("F1") ?? "0")% vs last month
+                            </small>
+                        </div>
+                        <div class="stat-icon @(dashboard?.IsOverallCSRateAboveWHO == true ? "bg-warning-subtle text-warning" : "bg-success-subtle text-success")">
+                            <i class="bi bi-percent"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">WHO Recommended: 10-15%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Total Deliveries</p>
+                            <h3 class="mb-0">@(dashboard?.TotalDeliveries ?? 0)</h3>
+                            <small class="text-muted">@(dashboard?.TotalCesareans ?? 0) cesareans</small>
+                        </div>
+                        <div class="stat-icon bg-primary-subtle text-primary">
+                            <i class="bi bi-clipboard2-pulse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100 @(dashboard?.IsGroup5ProportionHigh == true ? "border-danger" : "")">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Group 5 Proportion</p>
+                            <h3 class="mb-0 @(dashboard?.IsGroup5ProportionHigh == true ? "text-danger" : "")">
+                                @(dashboard?.Group5Proportion.ToString("F1") ?? "0")%
+                            </h3>
+                            <small class="text-muted">Target: &lt;10%</small>
+                        </div>
+                        <div class="stat-icon @(dashboard?.IsGroup5ProportionHigh == true ? "bg-danger-subtle text-danger" : "bg-info-subtle text-info")">
+                            <i class="bi bi-5-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">VBAC Rate</p>
+                            <h3 class="mb-0 text-info">@(dashboard?.VBACRate.ToString("F1") ?? "0")%</h3>
+                            <small class="text-muted">Group 5 vaginal deliveries</small>
+                        </div>
+                        <div class="stat-icon bg-info-subtle text-info">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Indicators -->
+    @if (dashboard?.IsGroup1CSRateHigh == true || dashboard?.IsGroup3CSRateHigh == true || dashboard?.IsOverallCSRateAboveWHO == true)
+    {
+        <div class="alert alert-warning mb-4">
+            <h5><i class="bi bi-exclamation-triangle me-2"></i>Quality Indicators Requiring Attention</h5>
+            <ul class="mb-0">
+                @if (dashboard?.IsOverallCSRateAboveWHO == true)
+                {
+                    <li>Overall CS rate (@(dashboard?.OverallCSRate.ToString("F1"))%) exceeds WHO recommended range of 10-15%</li>
+                }
+                @if (dashboard?.IsGroup1CSRateHigh == true)
+                {
+                    <li>Group 1 CS rate (@(dashboard?.Group1CSRate.ToString("F1"))%) exceeds benchmark of 10% - review first-time cesareans</li>
+                }
+                @if (dashboard?.IsGroup3CSRateHigh == true)
+                {
+                    <li>Group 3 CS rate (@(dashboard?.Group3CSRate.ToString("F1"))%) exceeds benchmark of 3% - review multiparous CS indications</li>
+                }
+                @if (dashboard?.IsGroup5ProportionHigh == true)
+                {
+                    <li>Group 5 proportion (@(dashboard?.Group5Proportion.ToString("F1"))%) exceeds 10% - high burden of previous cesareans</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <div class="row g-4 mb-4">
+        <!-- WHO Standard Robson Table -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-table me-2 text-primary"></i>
+                        WHO Robson Classification Table
+                    </h5>
+                    <span class="badge bg-primary">@selectedMonth.ToString("MMMM yyyy")</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Group</th>
+                                    <th class="text-center">Total in Group</th>
+                                    <th class="text-center">CS in Group</th>
+                                    <th class="text-center">Group Size %</th>
+                                    <th class="text-center">CS Rate %</th>
+                                    <th class="text-center">Contribution %</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (groupStatistics != null && groupStatistics.Any())
+                                {
+                                    @foreach (var group in groupStatistics.OrderBy(g => (int)g.Group))
+                                    {
+                                        <tr class="@GetRowClass(group)">
+                                            <td>
+                                                <strong>@group.GroupName</strong>
+                                                <button class="btn btn-sm btn-link p-0 ms-1"
+                                                        @onclick="() => ShowGroupDescription(group.Group)"
+                                                        title="@group.GroupDescription">
+                                                    <i class="bi bi-info-circle text-muted"></i>
+                                                </button>
+                                            </td>
+                                            <td class="text-center">@group.TotalInGroup</td>
+                                            <td class="text-center">@group.CesareansInGroup</td>
+                                            <td class="text-center">@group.RelativeGroupSize.ToString("F1")%</td>
+                                            <td class="text-center">
+                                                <span class="badge @GetCSRateBadgeClass(group)">
+                                                    @group.CSRateWithinGroup.ToString("F1")%
+                                                </span>
+                                            </td>
+                                            <td class="text-center">@group.AbsoluteContribution.ToString("F1")%</td>
+                                            <td class="text-center">
+                                                @if (group.PerformanceVsBenchmark == "Above Benchmark")
+                                                {
+                                                    <span class="badge bg-danger">Above</span>
+                                                }
+                                                else if (group.PerformanceVsBenchmark == "Below Benchmark")
+                                                {
+                                                    <span class="badge bg-info">Below</span>
+                                                }
+                                                else if (group.PerformanceVsBenchmark == "Within Range")
+                                                {
+                                                    <span class="badge bg-success">OK</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">-</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    <tr class="table-info fw-bold">
+                                        <td>Total</td>
+                                        <td class="text-center">@(dashboard?.TotalDeliveries ?? 0)</td>
+                                        <td class="text-center">@(dashboard?.TotalCesareans ?? 0)</td>
+                                        <td class="text-center">100%</td>
+                                        <td class="text-center">@(dashboard?.OverallCSRate.ToString("F1") ?? "0")%</td>
+                                        <td class="text-center">100%</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            <i class="bi bi-inbox fs-1"></i>
+                                            <p class="mt-2">No classification data available for this period</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group Distribution Chart -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pie-chart me-2 text-primary"></i>
+                        Group Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (dashboard?.GroupDistribution != null && dashboard.GroupDistribution.Any(g => g.Count > 0))
+                    {
+                        @foreach (var group in dashboard.GroupDistribution.Where(g => g.Count > 0).OrderByDescending(g => g.Count))
+                        {
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Group @((int)group.Group)</span>
+                                    <span class="text-muted">@group.Count (@group.Percentage.ToString("F1")%)</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar"
+                                         style="width: @(group.Percentage)%; background-color: @group.Color;">
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-pie-chart fs-1"></i>
+                            <p class="mt-2">No distribution data available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Analysis Section -->
+    <div class="row g-4 mb-4">
+        <!-- Key Groups Analysis -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-graph-up me-2 text-success"></i>
+                        Key Group Analysis
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Group 1 -->
+                    <div class="p-3 rounded bg-light mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">Group 1: Nulliparous, Term, Spontaneous</h6>
+                            <span class="badge @(dashboard?.IsGroup1CSRateHigh == true ? "bg-warning" : "bg-success")">
+                                @(dashboard?.Group1CSRate.ToString("F1") ?? "0")%
+                            </span>
+                        </div>
+                        <p class="small text-muted mb-0">
+                            Target: 5-10% | First-time mothers with normal presentations who go into spontaneous labour
+                        </p>
+                    </div>
+
+                    <!-- Group 3 -->
+                    <div class="p-3 rounded bg-light mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">Group 3: Multiparous, Term, Spontaneous</h6>
+                            <span class="badge @(dashboard?.IsGroup3CSRateHigh == true ? "bg-warning" : "bg-success")">
+                                @(dashboard?.Group3CSRate.ToString("F1") ?? "0")%
+                            </span>
+                        </div>
+                        <p class="small text-muted mb-0">
+                            Target: &le;3% | Mothers who have delivered before and go into spontaneous labour
+                        </p>
+                    </div>
+
+                    <!-- Group 5 -->
+                    <div class="p-3 rounded bg-light mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">Group 5: Previous CS, Term</h6>
+                            <span class="badge bg-info">@(dashboard?.Group5CSRate.ToString("F1") ?? "0")%</span>
+                        </div>
+                        <p class="small text-muted mb-0">
+                            VBAC Rate: @(dashboard?.VBACRate.ToString("F1") ?? "0")% | Women with previous cesarean section
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quality Indicators -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clipboard-check me-2 text-info"></i>
+                        Quality Indicators (WHO Standards)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (qualityIndicators != null)
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Overall CS Rate Assessment</span>
+                                <span class="badge @GetAssessmentBadgeClass(qualityIndicators.OverallCSRateAssessment)">
+                                    @qualityIndicators.OverallCSRateAssessment
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Group 1 Within Benchmark</span>
+                                @if (qualityIndicators.Group1WithinBenchmark)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Group 3 Within Benchmark</span>
+                                @if (qualityIndicators.Group3WithinBenchmark)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Group 5 Proportion Acceptable</span>
+                                @if (qualityIndicators.Group5ProportionAcceptable)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Data Completeness</span>
+                                <span class="badge bg-info">@qualityIndicators.DataCompletenessRate.ToString("F1")%</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h6>Robson Index</h6>
+                            <p class="small text-muted mb-2">
+                                Groups 1, 2 & 5 contribution to overall CS rate (should be 60-70%)
+                            </p>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-primary" style="width: @qualityIndicators.RobsonIndex%">
+                                    @qualityIndicators.RobsonIndex.ToString("F1")%
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <p>Quality indicators not available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Items -->
+    @if (actionItems != null && actionItems.Any())
+    {
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-list-check me-2 text-warning"></i>
+                    Recommended Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var action in actionItems.Take(6))
+                    {
+                        <div class="col-md-6 mb-3">
+                            <div class="p-3 rounded border @GetActionBorderClass(action.Priority)">
+                                <div class="d-flex align-items-start">
+                                    <span class="badge @GetActionBadgeClass(action.Priority) me-2">@action.Priority</span>
+                                    <div>
+                                        <strong>@action.Description</strong>
+                                        <p class="small text-muted mb-0 mt-1">@action.Recommendation</p>
+                                        @if (action.RelatedGroup.HasValue)
+                                        {
+                                            <span class="badge bg-secondary mt-1">Group @((int)action.RelatedGroup.Value)</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Monthly Trends -->
+    @if (monthlyTrends != null && monthlyTrends.Any())
+    {
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-graph-up-arrow me-2 text-primary"></i>
+                    Monthly Trends (@DateTime.Now.Year)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Month</th>
+                                <th class="text-center">Deliveries</th>
+                                <th class="text-center">CS Count</th>
+                                <th class="text-center">Overall CS %</th>
+                                <th class="text-center">Group 1 CS %</th>
+                                <th class="text-center">Group 3 CS %</th>
+                                <th class="text-center">Group 5 %</th>
+                                <th class="text-center">VBAC %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var trend in monthlyTrends.OrderBy(t => t.Month))
+                            {
+                                <tr>
+                                    <td>@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(trend.Month)</td>
+                                    <td class="text-center">@trend.TotalDeliveries</td>
+                                    <td class="text-center">@trend.TotalCS</td>
+                                    <td class="text-center">
+                                        <span class="badge @(trend.OverallCSRate > 15 ? "bg-warning" : "bg-success")">
+                                            @trend.OverallCSRate.ToString("F1")%
+                                        </span>
+                                    </td>
+                                    <td class="text-center">@trend.Group1CSRate.ToString("F1")%</td>
+                                    <td class="text-center">@trend.Group3CSRate.ToString("F1")%</td>
+                                    <td class="text-center">@trend.Group5Proportion.ToString("F1")%</td>
+                                    <td class="text-center">@trend.VBACRate.ToString("F1")%</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<!-- Group Description Modal -->
+@if (showGroupModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@selectedGroupName</h5>
+                    <button type="button" class="btn-close" @onclick="CloseGroupModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>@selectedGroupDescription</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseGroupModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool isLoading = true;
+    private string accessLevelText = "Loading...";
+    private DateTime selectedMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+    private RobsonDashboardSummary? dashboard;
+    private List<RobsonGroupStatistics>? groupStatistics;
+    private RobsonQualityIndicators? qualityIndicators;
+    private List<RobsonActionItem>? actionItems;
+    private List<RobsonMonthlyTrend>? monthlyTrends;
+
+    private bool showGroupModal = false;
+    private string selectedGroupName = "";
+    private string selectedGroupDescription = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SetAccessLevel();
+        await LoadData();
+    }
+
+    private async Task SetAccessLevel()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var accessLevel = user.FindFirst("AccessLevel")?.Value ?? "Unknown";
+            var facilityName = user.FindFirst("FacilityName")?.Value;
+            var regionName = user.FindFirst("RegionName")?.Value;
+            var districtName = user.FindFirst("DistrictName")?.Value;
+
+            accessLevelText = accessLevel switch
+            {
+                "National" => "National Level",
+                "Regional" => $"Regional: {regionName}",
+                "District" => $"District: {districtName}",
+                "Facility" => $"Facility: {facilityName}",
+                _ => accessLevel
+            };
+        }
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            var startDate = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
+            var endDate = startDate.AddMonths(1).AddDays(-1);
+
+            // Load all data in parallel
+            var dashboardTask = RobsonService.GetDashboardSummaryAsync();
+            var groupsTask = RobsonService.GetGroupStatisticsAsync(startDate, endDate);
+            var qualityTask = RobsonService.GetQualityIndicatorsAsync(startDate, endDate);
+            var actionsTask = RobsonService.GetActionItemsAsync(startDate, endDate);
+            var trendsTask = RobsonService.GetMonthlyTrendsAsync(selectedMonth.Year);
+
+            await Task.WhenAll(dashboardTask, groupsTask, qualityTask, actionsTask, trendsTask);
+
+            dashboard = await dashboardTask;
+            groupStatistics = await groupsTask;
+            qualityIndicators = await qualityTask;
+            actionItems = await actionsTask;
+            monthlyTrends = await trendsTask;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading Robson data: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+
+    private async Task OnMonthChanged()
+    {
+        await LoadData();
+    }
+
+    private async Task ExportReport()
+    {
+        // Export functionality can be implemented here
+        await Task.CompletedTask;
+    }
+
+    private void ShowGroupDescription(RobsonGroup group)
+    {
+        selectedGroupName = $"Group {(int)group}";
+        selectedGroupDescription = RobsonClassification.GetGroupDescription(group);
+        showGroupModal = true;
+    }
+
+    private void CloseGroupModal()
+    {
+        showGroupModal = false;
+    }
+
+    private string GetRowClass(RobsonGroupStatistics group)
+    {
+        if (group.PerformanceVsBenchmark == "Above Benchmark")
+            return "table-warning";
+        return "";
+    }
+
+    private string GetCSRateBadgeClass(RobsonGroupStatistics group)
+    {
+        if (group.PerformanceVsBenchmark == "Above Benchmark")
+            return "bg-warning";
+        if (group.PerformanceVsBenchmark == "Within Range")
+            return "bg-success";
+        return "bg-secondary";
+    }
+
+    private string GetAssessmentBadgeClass(string assessment)
+    {
+        if (assessment.Contains("optimal"))
+            return "bg-success";
+        if (assessment.Contains("Slightly"))
+            return "bg-warning";
+        if (assessment.Contains("Below"))
+            return "bg-info";
+        return "bg-danger";
+    }
+
+    private string GetActionBorderClass(string priority)
+    {
+        return priority switch
+        {
+            "High" => "border-danger",
+            "Medium" => "border-warning",
+            "Low" => "border-info",
+            _ => ""
+        };
+    }
+
+    private string GetActionBadgeClass(string priority)
+    {
+        return priority switch
+        {
+            "High" => "bg-danger",
+            "Medium" => "bg-warning",
+            "Low" => "bg-info",
+            _ => "bg-secondary"
+        };
+    }
+}

@@ -85,6 +85,9 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IOfflineQueueService, OfflineQueueService>();
 builder.Services.AddScoped<IReportVisualizationService, ReportVisualizationService>();
 
+// Robson Classification Service (WHO 2017)
+builder.Services.AddScoped<IRobsonClassificationService, RobsonClassificationService>();
+
 // SignalR notification service
 builder.Services.AddSingleton<IMonitoringNotificationService, MonitoringNotificationService>();
 

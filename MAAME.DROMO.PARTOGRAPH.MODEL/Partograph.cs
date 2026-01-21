@@ -138,6 +138,24 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public LaborStatus Status { get; set; } = LaborStatus.Pending;
 
         /// <summary>
+        /// Labor onset type for Robson Classification
+        /// WHO Robson Classification: Implementation Manual (2017)
+        /// </summary>
+        public LaborOnsetType LaborOnset { get; set; } = LaborOnsetType.Spontaneous;
+
+        /// <summary>
+        /// Display text for labor onset type
+        /// </summary>
+        [JsonIgnore]
+        public string LaborOnsetDisplay => LaborOnset switch
+        {
+            LaborOnsetType.Spontaneous => "Spontaneous",
+            LaborOnsetType.Induced => "Induced",
+            LaborOnsetType.CesareanBeforeLabor => "CS Before Labor",
+            _ => "Unknown"
+        };
+
+        /// <summary>
         /// Current phase within the first stage of labor (Latent, Active Early, Active Advanced, Transition)
         /// Automatically calculated based on cervical dilation
         /// </summary>
