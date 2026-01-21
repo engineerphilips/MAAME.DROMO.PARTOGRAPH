@@ -29,6 +29,7 @@ builder.Services.AddDbContext<PartographDbContext>(options =>
 builder.Services.AddScoped<IPartographPdfService, PartographPdfService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IRobsonService, RobsonService>();
 
 //// Configure JWT Authentication
 //var jwtSecretKey = Environment.GetEnvironmentVariable("PARTOGRAPH_JWT_SECRET")
@@ -175,6 +176,17 @@ using (var scope = app.Services.CreateScope())
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<DataSeeder>>();
     var dataSeeder = new DataSeeder(dbContext, logger);
     dataSeeder.SeedAllDataAsync().GetAwaiter().GetResult();
+
+    // Classify existing deliveries using WHO Robson Classification
+    var robsonLogger = scope.ServiceProvider.GetRequiredService<ILogger<RobsonDataSeeder>>();
+    var robsonSeeder = new RobsonDataSeeder(dbContext, robsonLogger);
+    robsonSeeder.ClassifyExistingDeliveriesAsync().GetAwaiter().GetResult();
+
+    // Generate sample data if no classifications exist (for demo purposes)
+    if (!dbContext.RobsonClassifications.Any())
+    {
+        robsonSeeder.GenerateSampleDataAsync(500).GetAwaiter().GetResult();
+    }
 }
 
 // Configure the HTTP request pipeline.

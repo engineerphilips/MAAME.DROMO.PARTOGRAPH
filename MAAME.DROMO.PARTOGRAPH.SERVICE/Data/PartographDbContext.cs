@@ -56,6 +56,9 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
         public DbSet<BabyDetails> BabyDetails { get; set; }
         public DbSet<Referral> Referrals { get; set; }
 
+        // Robson Classification (WHO 2017)
+        public DbSet<RobsonClassification> RobsonClassifications { get; set; }
+
         // Analytics Tables (for external web application interface)
         public DbSet<DailyFacilityStats> DailyFacilityStats { get; set; }
         public DbSet<MonthlyFacilityStats> MonthlyFacilityStats { get; set; }
@@ -380,6 +383,35 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // Configure RobsonClassification (WHO 2017)
+            modelBuilder.Entity<RobsonClassification>(entity =>
+            {
+                entity.ToTable("Tbl_RobsonClassification");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.DeviceId).HasMaxLength(100);
+                entity.Property(e => e.OriginDeviceId).HasMaxLength(100);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
+
+                // Configure indexes
+                entity.HasIndex(e => e.PartographID);
+                entity.HasIndex(e => e.Group);
+                entity.HasIndex(e => e.ClassifiedAt);
+                entity.HasIndex(e => e.UpdatedTime);
+                entity.HasIndex(e => e.SyncStatus);
+                entity.HasIndex(e => e.ServerVersion);
+
+                // Composite index for Robson reporting
+                entity.HasIndex(e => new { e.Group, e.DeliveryMode });
+                entity.HasIndex(e => new { e.Group, e.ClassifiedAt });
+
+                // Foreign key to Partograph
+                entity.HasOne(e => e.Partograph)
+                    .WithMany()
+                    .HasForeignKey(e => e.PartographID)
+                    .HasPrincipalKey(p => p.ID)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             // Configure Analytics Tables
             ConfigureAnalyticsTables(modelBuilder);
 
@@ -439,6 +471,9 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             modelBuilder.Entity<BirthOutcome>().HasQueryFilter(e => e.Deleted == 0);
             modelBuilder.Entity<BabyDetails>().HasQueryFilter(e => e.Deleted == 0);
             modelBuilder.Entity<Referral>().HasQueryFilter(e => e.Deleted == 0);
+
+            // Robson Classification
+            modelBuilder.Entity<RobsonClassification>().HasQueryFilter(e => e.Deleted == 0);
         }
 
         private void ConfigureMeasurement<T>(ModelBuilder modelBuilder, string tableName) where T : BasePartographMeasurement
