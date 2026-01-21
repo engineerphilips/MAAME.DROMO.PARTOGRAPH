@@ -72,7 +72,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <p class="text-muted mb-1">Active Labors</p>
+                        <p class="text-muted mb-1">Active Labours</p>
                         <h3 class="mb-0 text-warning">@facilities.Sum(f => f.ActiveLabors)</h3>
                     </div>
                     <div class="stat-icon bg-warning-subtle text-warning">
@@ -136,7 +136,7 @@
                     <option value="">All Status</option>
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
-                    <option value="withLabors">With Active Labors</option>
+                    <option value="withLabors">With Active Labours</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -235,7 +235,7 @@ else if (viewMode == "grid")
                                 <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewFacilityDetails(facility)" title="View Details">
                                     <i class="bi bi-eye"></i>
                                 </button>
-                                <a href="live-labor?facility=@facility.ID" class="btn btn-sm btn-outline-warning" title="View Active Labors">
+                                <a href="live-labor?facility=@facility.ID" class="btn btn-sm btn-outline-warning" title="View Active Labours">
                                     <i class="bi bi-activity"></i>
                                 </a>
                             </div>
@@ -273,7 +273,7 @@ else
                             <th>Type</th>
                             <th>Level</th>
                             <th>District</th>
-                            <th class="text-center">Active Labors</th>
+                            <th class="text-center">Active Labours</th>
                             <th class="text-center">Today</th>
                             <th class="text-center">Month</th>
                             <th class="text-center">Staff</th>
@@ -417,7 +417,7 @@ else
                                 <div class="col-6">
                                     <div class="p-3 bg-warning-subtle rounded text-center">
                                         <h3 class="mb-0 text-warning">@selectedFacility.ActiveLabors</h3>
-                                        <small class="text-muted">Active Labors</small>
+                                        <small class="text-muted">Active Labours</small>
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -441,7 +441,7 @@ else
                 </div>
                 <div class="modal-footer">
                     <a href="live-labor?facility=@selectedFacility.ID" class="btn btn-warning">
-                        <i class="bi bi-activity me-1"></i> View Active Labors
+                        <i class="bi bi-activity me-1"></i> View Active Labours
                     </a>
                     <a href="deliveries?facility=@selectedFacility.ID" class="btn btn-primary">
                         <i class="bi bi-clipboard2-pulse me-1"></i> View Deliveries
