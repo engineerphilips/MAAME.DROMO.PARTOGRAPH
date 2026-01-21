@@ -30,6 +30,7 @@ builder.Services.AddScoped<IPartographPdfService, PartographPdfService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRobsonService, RobsonService>();
+builder.Services.AddScoped<IPOCMetricsService, POCMetricsService>();
 
 //// Configure JWT Authentication
 //var jwtSecretKey = Environment.GetEnvironmentVariable("PARTOGRAPH_JWT_SECRET")

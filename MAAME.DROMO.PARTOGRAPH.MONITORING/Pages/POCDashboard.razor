@@ -1,0 +1,595 @@
+@page "/poc-dashboard"
+@page "/poc-progress"
+@attribute [Authorize]
+@inject IPOCDashboardService POCService
+
+<PageTitle>POC Progress Dashboard - MAAME DROMO Monitoring</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-bullseye me-2 text-primary"></i>
+                Proof of Concept Progress
+            </h2>
+            <p class="text-muted mb-0">
+                Track progress against the 5 key POC objectives over the 9-month implementation period
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" @onclick="RefreshData">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+            <button class="btn btn-outline-primary" @onclick="ToggleBaselineSettings">
+                <i class="bi bi-gear me-1"></i> Baseline Settings
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading POC metrics...</p>
+    </div>
+}
+else
+{
+    <!-- Overall Progress Summary -->
+    <div class="card border-0 shadow-sm mb-4 bg-gradient-primary text-white">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <h3 class="mb-2">Overall POC Progress</h3>
+                    <div class="d-flex align-items-center">
+                        <div class="display-3 fw-bold me-3">@data.Summary.TargetsMet/@data.Summary.TotalTargets</div>
+                        <div>
+                            <div class="fs-5">Targets Met</div>
+                            <div class="opacity-75">@data.Summary.OverallPOCProgress.ToString("F0")% Complete</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="progress bg-white bg-opacity-25" style="height: 24px;">
+                        <div class="progress-bar bg-success" style="width: @(data.Summary.OverallPOCProgress)%">
+                            @data.Summary.OverallPOCProgress.ToString("F0")%
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2 small opacity-75">
+                        <span>Project Start</span>
+                        <span>9 Months Target</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POC Metrics Cards -->
+    <div class="row g-4 mb-4">
+        <!-- POC 1: Digital Partograph Adoption -->
+        <div class="col-md-6 col-lg">
+            <div class="card border-0 shadow-sm h-100 @(data.Summary.AdoptionTargetMet ? "border-start border-success border-4" : "border-start border-warning border-4")">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h6 class="text-muted mb-1">POC 1: Adoption Rate</h6>
+                            <div class="d-flex align-items-baseline">
+                                <span class="h2 mb-0 @(data.Summary.AdoptionTargetMet ? "text-success" : "text-warning")">
+                                    @data.Summary.AdoptionRate.ToString("F1")%
+                                </span>
+                                <small class="text-muted ms-2">/ @data.Summary.AdoptionTarget%</small>
+                            </div>
+                        </div>
+                        @if (data.Summary.AdoptionTargetMet)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Met</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>In Progress</span>
+                        }
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar @(data.Summary.AdoptionTargetMet ? "bg-success" : "bg-warning")"
+                             style="width: @(Math.Min(100, (double)data.Summary.AdoptionRate / (double)data.Summary.AdoptionTarget * 100))%"></div>
+                    </div>
+                    <div class="small text-muted">
+                        <i class="bi bi-people me-1"></i>
+                        @data.Summary.ActivePartographUsers / @data.Summary.TotalHealthcareWorkers healthcare workers
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POC 2: User Satisfaction -->
+        <div class="col-md-6 col-lg">
+            <div class="card border-0 shadow-sm h-100 @(data.Summary.SatisfactionTargetMet ? "border-start border-success border-4" : "border-start border-warning border-4")">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h6 class="text-muted mb-1">POC 2: User Satisfaction</h6>
+                            <div class="d-flex align-items-baseline">
+                                <span class="h2 mb-0 @(data.Summary.SatisfactionTargetMet ? "text-success" : "text-warning")">
+                                    @data.Summary.AverageSatisfactionScore.ToString("F1")
+                                </span>
+                                <small class="text-muted ms-2">/ @data.Summary.SatisfactionTarget.ToString("F1")</small>
+                            </div>
+                        </div>
+                        @if (data.Summary.SatisfactionTargetMet)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Met</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>In Progress</span>
+                        }
+                    </div>
+                    <div class="d-flex gap-1 mb-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="bi @(i <= Math.Round(data.Summary.AverageSatisfactionScore) ? "bi-star-fill text-warning" : "bi-star text-muted")"></i>
+                        }
+                    </div>
+                    <div class="small text-muted">
+                        <i class="bi bi-chat-square-text me-1"></i>
+                        @data.Summary.TotalSurveyResponses survey responses
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POC 3: Real-Time Reporting -->
+        <div class="col-md-6 col-lg">
+            <div class="card border-0 shadow-sm h-100 @(data.Summary.ReportingTargetMet ? "border-start border-success border-4" : "border-start border-warning border-4")">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h6 class="text-muted mb-1">POC 3: Real-Time Reporting</h6>
+                            <div class="d-flex align-items-baseline">
+                                <span class="h2 mb-0 @(data.Summary.ReportingTargetMet ? "text-success" : "text-warning")">
+                                    @data.Summary.RealTimeReportingRate.ToString("F1")%
+                                </span>
+                                <small class="text-muted ms-2">/ @data.Summary.ReportingTarget%</small>
+                            </div>
+                        </div>
+                        @if (data.Summary.ReportingTargetMet)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Met</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>In Progress</span>
+                        }
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar @(data.Summary.ReportingTargetMet ? "bg-success" : "bg-warning")"
+                             style="width: @(Math.Min(100, (double)data.Summary.RealTimeReportingRate / (double)data.Summary.ReportingTarget * 100))%"></div>
+                    </div>
+                    <div class="small text-muted">
+                        <i class="bi bi-stopwatch me-1"></i>
+                        Avg @data.Summary.AverageReportingTimeMinutes.ToString("F0") min (target: &lt;30 min)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POC 4: Complication Reduction -->
+        <div class="col-md-6 col-lg">
+            <div class="card border-0 shadow-sm h-100 @(data.Summary.ComplicationTargetMet ? "border-start border-success border-4" : "border-start border-warning border-4")">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h6 class="text-muted mb-1">POC 4: Complication Reduction</h6>
+                            <div class="d-flex align-items-baseline">
+                                <span class="h2 mb-0 @(data.Summary.ComplicationTargetMet ? "text-success" : "text-warning")">
+                                    @data.Summary.ComplicationReductionPercent.ToString("F1")%
+                                </span>
+                                <small class="text-muted ms-2">/ @data.Summary.ComplicationReductionTarget% target</small>
+                            </div>
+                        </div>
+                        @if (data.Summary.ComplicationTargetMet)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Met</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>In Progress</span>
+                        }
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar @(data.Summary.ComplicationTargetMet ? "bg-success" : "bg-warning")"
+                             style="width: @(Math.Min(100, (double)data.Summary.ComplicationReductionPercent / (double)data.Summary.ComplicationReductionTarget * 100))%"></div>
+                    </div>
+                    <div class="small text-muted">
+                        <i class="bi bi-graph-down-arrow me-1"></i>
+                        @data.Summary.ComplicationRate.ToString("F1")% vs @data.Summary.BaselineComplicationRate.ToString("F1")% baseline
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POC 5: Emergency Response Time -->
+        <div class="col-md-6 col-lg">
+            <div class="card border-0 shadow-sm h-100 @(data.Summary.ResponseTimeTargetMet ? "border-start border-success border-4" : "border-start border-warning border-4")">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h6 class="text-muted mb-1">POC 5: Response Time Reduction</h6>
+                            <div class="d-flex align-items-baseline">
+                                <span class="h2 mb-0 @(data.Summary.ResponseTimeTargetMet ? "text-success" : "text-warning")">
+                                    @data.Summary.ResponseTimeReductionPercent.ToString("F1")%
+                                </span>
+                                <small class="text-muted ms-2">/ @data.Summary.ResponseTimeReductionTarget% target</small>
+                            </div>
+                        </div>
+                        @if (data.Summary.ResponseTimeTargetMet)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Met</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>In Progress</span>
+                        }
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar @(data.Summary.ResponseTimeTargetMet ? "bg-success" : "bg-warning")"
+                             style="width: @(Math.Min(100, (double)data.Summary.ResponseTimeReductionPercent / (double)data.Summary.ResponseTimeReductionTarget * 100))%"></div>
+                    </div>
+                    <div class="small text-muted">
+                        <i class="bi bi-clock-history me-1"></i>
+                        @data.Summary.AverageTimeToReferralMinutes.ToString("F0") min vs @data.Summary.BaselineTimeToReferralMinutes.ToString("F0") min baseline
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Metrics Section -->
+    <div class="row g-4 mb-4">
+        <!-- Complications Breakdown -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-heart-pulse me-2 text-danger"></i>Complication Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="small text-muted">Postpartum Hemorrhage</div>
+                                <div class="h4 mb-0 text-danger">@data.Summary.PPHCases</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="small text-muted">Obstructed Labor</div>
+                                <div class="h4 mb-0 text-warning">@data.Summary.ObstructedLaborCases</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="small text-muted">Birth Asphyxia</div>
+                                <div class="h4 mb-0 text-info">@data.Summary.BirthAsphyxiaCases</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="small text-muted">Eclampsia</div>
+                                <div class="h4 mb-0 text-purple">@data.Summary.EclampsiaCases</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small text-muted">Total Deliveries</div>
+                            <div class="h5 mb-0">@data.Summary.TotalDeliveries</div>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Total Complications</div>
+                            <div class="h5 mb-0">@data.Summary.TotalComplications</div>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Current Rate</div>
+                            <div class="h5 mb-0">@data.Summary.ComplicationRate.ToString("F2")%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Satisfaction Breakdown -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-emoji-smile me-2 text-success"></i>Satisfaction Categories</h5>
+                </div>
+                <div class="card-body">
+                    @if (data.Satisfaction != null)
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Ease of Use</span>
+                                <span class="fw-bold">@(data.Satisfaction.EaseOfUseScore?.ToString("F1") ?? "N/A")/5</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-success" style="width: @((data.Satisfaction.EaseOfUseScore ?? 0) / 5 * 100)%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Workflow Impact</span>
+                                <span class="fw-bold">@(data.Satisfaction.WorkflowImpactScore?.ToString("F1") ?? "N/A")/5</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-info" style="width: @((data.Satisfaction.WorkflowImpactScore ?? 0) / 5 * 100)%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Perceived Benefits</span>
+                                <span class="fw-bold">@(data.Satisfaction.PerceivedBenefitsScore?.ToString("F1") ?? "N/A")/5</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" style="width: @((data.Satisfaction.PerceivedBenefitsScore ?? 0) / 5 * 100)%"></div>
+                            </div>
+                        </div>
+                    }
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small text-muted">Survey Responses</div>
+                            <div class="h5 mb-0">@data.Summary.TotalSurveyResponses</div>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Target Score</div>
+                            <div class="h5 mb-0">@data.Summary.SatisfactionTarget.ToString("F1")/5</div>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Gap to Target</div>
+                            <div class="h5 mb-0 @(data.Summary.SatisfactionTargetMet ? "text-success" : "text-warning")">
+                                @((data.Summary.SatisfactionTarget - data.Summary.AverageSatisfactionScore).ToString("F1"))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POC Objectives Reference -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="bi bi-list-check me-2 text-primary"></i>POC Objectives Reference</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 50px;">POC</th>
+                            <th>Objective</th>
+                            <th>Definition</th>
+                            <th class="text-center">Target</th>
+                            <th class="text-center">Current</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge bg-primary">1</span></td>
+                            <td class="fw-semibold">Digital Partograph Adoption</td>
+                            <td class="small text-muted">Healthcare workers using Maame-Dromo as primary labor monitoring tool</td>
+                            <td class="text-center">70%</td>
+                            <td class="text-center fw-bold">@data.Summary.AdoptionRate.ToString("F1")%</td>
+                            <td class="text-center">
+                                @if (data.Summary.AdoptionTargetMet)
+                                {
+                                    <span class="badge bg-success">Achieved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@((data.Summary.AdoptionTarget - data.Summary.AdoptionRate).ToString("F1"))% to go</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-primary">2</span></td>
+                            <td class="fw-semibold">User Satisfaction</td>
+                            <td class="small text-muted">Average satisfaction score from periodic in-app surveys</td>
+                            <td class="text-center">4.0/5.0</td>
+                            <td class="text-center fw-bold">@data.Summary.AverageSatisfactionScore.ToString("F1")/5.0</td>
+                            <td class="text-center">
+                                @if (data.Summary.SatisfactionTargetMet)
+                                {
+                                    <span class="badge bg-success">Achieved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@((data.Summary.SatisfactionTarget - data.Summary.AverageSatisfactionScore).ToString("F1")) to go</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-primary">3</span></td>
+                            <td class="fw-semibold">Real-Time Reporting</td>
+                            <td class="small text-muted">Emergency cases reported and escalated within 30 minutes</td>
+                            <td class="text-center">70%</td>
+                            <td class="text-center fw-bold">@data.Summary.RealTimeReportingRate.ToString("F1")%</td>
+                            <td class="text-center">
+                                @if (data.Summary.ReportingTargetMet)
+                                {
+                                    <span class="badge bg-success">Achieved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@((data.Summary.ReportingTarget - data.Summary.RealTimeReportingRate).ToString("F1"))% to go</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-primary">4</span></td>
+                            <td class="fw-semibold">Reduce Major Complications</td>
+                            <td class="small text-muted">Reduction in PPH, obstructed labor, birth asphyxia vs baseline</td>
+                            <td class="text-center">15% reduction</td>
+                            <td class="text-center fw-bold">@data.Summary.ComplicationReductionPercent.ToString("F1")% reduction</td>
+                            <td class="text-center">
+                                @if (data.Summary.ComplicationTargetMet)
+                                {
+                                    <span class="badge bg-success">Achieved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@((data.Summary.ComplicationReductionTarget - data.Summary.ComplicationReductionPercent).ToString("F1"))% to go</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-primary">5</span></td>
+                            <td class="fw-semibold">Accelerate Emergency Response</td>
+                            <td class="small text-muted">Reduction in time from emergency identification to arrival at referral facility</td>
+                            <td class="text-center">30% reduction</td>
+                            <td class="text-center fw-bold">@data.Summary.ResponseTimeReductionPercent.ToString("F1")% reduction</td>
+                            <td class="text-center">
+                                @if (data.Summary.ResponseTimeTargetMet)
+                                {
+                                    <span class="badge bg-success">Achieved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@((data.Summary.ResponseTimeReductionTarget - data.Summary.ResponseTimeReductionPercent).ToString("F1"))% to go</span>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Baseline Settings Modal -->
+    @if (showBaselineSettings)
+    {
+        <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Baseline Settings</h5>
+                        <button type="button" class="btn-close" @onclick="ToggleBaselineSettings"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted">
+                            Baseline values are used to calculate the reduction percentages for POC 4 and POC 5.
+                            These should be established from historical records for the previous year.
+                        </p>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Baseline Period Start</label>
+                                <input type="date" class="form-control" @bind="data.Baseline.BaselinePeriodStart" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Baseline Period End</label>
+                                <input type="date" class="form-control" @bind="data.Baseline.BaselinePeriodEnd" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Baseline Complication Rate (%)</label>
+                                <input type="number" step="0.1" class="form-control" @bind="data.Baseline.BaselineComplicationRate" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Baseline Time-to-Referral (minutes)</label>
+                                <input type="number" step="0.1" class="form-control" @bind="data.Baseline.BaselineAverageTimeToReferralMinutes" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Baseline Total Deliveries</label>
+                                <input type="number" class="form-control" @bind="data.Baseline.BaselineTotalDeliveries" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Baseline Total Referrals</label>
+                                <input type="number" class="form-control" @bind="data.Baseline.BaselineTotalReferrals" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Data Source</label>
+                                <input type="text" class="form-control" @bind="data.Baseline.DataSource" placeholder="e.g., Historical facility records 2024" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Notes</label>
+                                <textarea class="form-control" rows="2" @bind="data.Baseline.Notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="ToggleBaselineSettings">Cancel</button>
+                        <button type="button" class="btn btn-primary" @onclick="SaveBaseline">
+                            <i class="bi bi-save me-1"></i>Save Baseline
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    }
+
+    .text-purple {
+        color: #6f42c1;
+    }
+
+    .border-4 {
+        border-width: 4px !important;
+    }
+</style>
+
+@code {
+    private bool isLoading = true;
+    private bool showBaselineSettings = false;
+    private POCDashboardData data = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            data = await POCService.GetDashboardDataAsync();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+
+    private void ToggleBaselineSettings()
+    {
+        showBaselineSettings = !showBaselineSettings;
+    }
+
+    private async Task SaveBaseline()
+    {
+        try
+        {
+            data.Baseline = await POCService.UpdateBaselineAsync(data.Baseline);
+            showBaselineSettings = false;
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving baseline: {ex.Message}");
+        }
+    }
+}
