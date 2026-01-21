@@ -88,6 +88,9 @@ builder.Services.AddScoped<IReportVisualizationService, ReportVisualizationServi
 // Robson Classification Service (WHO 2017)
 builder.Services.AddScoped<IRobsonClassificationService, RobsonClassificationService>();
 
+// POC (Proof of Concept) Dashboard Service
+builder.Services.AddScoped<IPOCDashboardService, POCDashboardService>();
+
 // SignalR notification service
 builder.Services.AddSingleton<IMonitoringNotificationService, MonitoringNotificationService>();
 

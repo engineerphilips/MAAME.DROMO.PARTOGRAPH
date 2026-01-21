@@ -71,6 +71,13 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
         public DbSet<FacilityPerformanceSnapshot> FacilityPerformanceSnapshots { get; set; }
         public DbSet<AlertSummary> AlertSummaries { get; set; }
 
+        // POC Tracking Tables (Proof of Concept Metrics)
+        public DbSet<UserSurvey> UserSurveys { get; set; }
+        public DbSet<SurveyResponse> SurveyResponses { get; set; }
+        public DbSet<UserActionLog> UserActionLogs { get; set; }
+        public DbSet<POCProgress> POCProgressRecords { get; set; }
+        public DbSet<POCBaseline> POCBaselines { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -649,6 +656,117 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.AlertDateTime);
                 entity.HasIndex(e => e.AlertSeverity);
                 entity.HasIndex(e => e.Resolved);
+            });
+
+            // POC Tables Configuration
+            ConfigurePOCTables(modelBuilder);
+        }
+
+        private void ConfigurePOCTables(ModelBuilder modelBuilder)
+        {
+            // UserSurvey
+            modelBuilder.Entity<UserSurvey>(entity =>
+            {
+                entity.ToTable("Tbl_UserSurvey");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.HasIndex(e => e.IsActive);
+                entity.HasIndex(e => e.Type);
+                entity.HasIndex(e => e.StartDate);
+            });
+
+            // SurveyResponse
+            modelBuilder.Entity<SurveyResponse>(entity =>
+            {
+                entity.ToTable("Tbl_SurveyResponse");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.StaffName).HasMaxLength(200);
+                entity.Property(e => e.StaffRole).HasMaxLength(100);
+                entity.Property(e => e.FacilityName).HasMaxLength(200);
+                entity.Property(e => e.Region).HasMaxLength(100);
+                entity.Property(e => e.District).HasMaxLength(100);
+                entity.Property(e => e.OverallSatisfactionScore).HasPrecision(3, 2);
+                entity.Property(e => e.EaseOfUseScore).HasPrecision(3, 2);
+                entity.Property(e => e.WorkflowImpactScore).HasPrecision(3, 2);
+                entity.Property(e => e.PerceivedBenefitsScore).HasPrecision(3, 2);
+                entity.Property(e => e.TrainingAdequacyScore).HasPrecision(3, 2);
+                entity.Property(e => e.RecommendationScore).HasPrecision(3, 2);
+                entity.HasIndex(e => e.SurveyID);
+                entity.HasIndex(e => e.StaffID);
+                entity.HasIndex(e => e.FacilityID);
+                entity.HasIndex(e => e.SubmittedAt);
+                entity.HasIndex(e => e.OverallSatisfactionScore);
+
+                entity.HasOne(e => e.Survey)
+                    .WithMany()
+                    .HasForeignKey(e => e.SurveyID)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // UserActionLog
+            modelBuilder.Entity<UserActionLog>(entity =>
+            {
+                entity.ToTable("Tbl_UserActionLog");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.StaffName).HasMaxLength(200);
+                entity.Property(e => e.StaffRole).HasMaxLength(100);
+                entity.Property(e => e.ActionDetails).HasMaxLength(500);
+                entity.Property(e => e.DeviceId).HasMaxLength(100);
+                entity.Property(e => e.AppVersion).HasMaxLength(50);
+                entity.HasIndex(e => e.StaffID);
+                entity.HasIndex(e => e.FacilityID);
+                entity.HasIndex(e => e.ActionType);
+                entity.HasIndex(e => e.ActionTime);
+                entity.HasIndex(e => new { e.StaffID, e.ActionTime });
+            });
+
+            // POCProgress
+            modelBuilder.Entity<POCProgress>(entity =>
+            {
+                entity.ToTable("Tbl_POCProgress");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.FacilityName).HasMaxLength(200);
+                entity.Property(e => e.DistrictName).HasMaxLength(100);
+                entity.Property(e => e.RegionName).HasMaxLength(100);
+                entity.Property(e => e.PeriodType).HasMaxLength(20);
+                entity.Property(e => e.AdoptionRate).HasPrecision(5, 2);
+                entity.Property(e => e.AverageSatisfactionScore).HasPrecision(3, 2);
+                entity.Property(e => e.RealTimeReportingRate).HasPrecision(5, 2);
+                entity.Property(e => e.ComplicationRate).HasPrecision(5, 2);
+                entity.Property(e => e.BaselineComplicationRate).HasPrecision(5, 2);
+                entity.Property(e => e.ComplicationReductionPercent).HasPrecision(5, 2);
+                entity.Property(e => e.AverageTimeToReferralMinutes).HasPrecision(7, 2);
+                entity.Property(e => e.BaselineTimeToReferralMinutes).HasPrecision(7, 2);
+                entity.Property(e => e.ResponseTimeReductionPercent).HasPrecision(5, 2);
+                entity.Property(e => e.AverageReportingTimeMinutes).HasPrecision(7, 2);
+                entity.Property(e => e.OverallPOCProgress).HasPrecision(5, 2);
+                entity.Property(e => e.EaseOfUseAverage).HasPrecision(3, 2);
+                entity.Property(e => e.WorkflowImpactAverage).HasPrecision(3, 2);
+                entity.Property(e => e.PerceivedBenefitsAverage).HasPrecision(3, 2);
+                entity.HasIndex(e => e.SnapshotDate);
+                entity.HasIndex(e => e.PeriodType);
+                entity.HasIndex(e => e.FacilityID);
+                entity.HasIndex(e => e.DistrictID);
+                entity.HasIndex(e => e.RegionID);
+                entity.HasIndex(e => new { e.SnapshotDate, e.PeriodType }).IsUnique();
+            });
+
+            // POCBaseline
+            modelBuilder.Entity<POCBaseline>(entity =>
+            {
+                entity.ToTable("Tbl_POCBaseline");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.FacilityName).HasMaxLength(200);
+                entity.Property(e => e.DataSource).HasMaxLength(500);
+                entity.Property(e => e.Notes).HasMaxLength(2000);
+                entity.Property(e => e.ApprovedBy).HasMaxLength(200);
+                entity.Property(e => e.BaselineComplicationRate).HasPrecision(5, 2);
+                entity.Property(e => e.BaselineAverageTimeToReferralMinutes).HasPrecision(7, 2);
+                entity.HasIndex(e => e.FacilityID);
+                entity.HasIndex(e => e.DistrictID);
+                entity.HasIndex(e => e.RegionID);
+                entity.HasIndex(e => e.IsApproved);
             });
         }
     }

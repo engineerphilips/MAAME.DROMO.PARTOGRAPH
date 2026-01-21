@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.SurveyPage"
+             Title="User Satisfaction Survey"
+             BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Card Style -->
+            <Style x:Key="SurveyCardStyle" TargetType="Border">
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E293B}" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Margin" Value="0,0,0,16" />
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="12" />
+                </Setter>
+                <Setter Property="Shadow">
+                    <Shadow Brush="{AppThemeBinding Light=#10000000, Dark=#30000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.1" />
+                </Setter>
+            </Style>
+
+            <Style x:Key="QuestionTitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                <Setter Property="Margin" Value="0,0,0,12" />
+            </Style>
+
+            <Style x:Key="StarButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="FontSize" Value="32" />
+                <Setter Property="WidthRequest" Value="50" />
+                <Setter Property="HeightRequest" Value="50" />
+                <Setter Property="Margin" Value="4,0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+
+            <!-- Header -->
+            <Border Style="{StaticResource SurveyCardStyle}" BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#312E81}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Your Feedback Matters!"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#4F46E5, Dark=#A5B4FC}"
+                           HorizontalOptions="Center" />
+                    <Label Text="Help us improve MAAME-DROMO by sharing your experience."
+                           FontSize="14"
+                           TextColor="{AppThemeBinding Light=#6366F1, Dark=#C7D2FE}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Question 1: Ease of Use -->
+            <Border Style="{StaticResource SurveyCardStyle}">
+                <VerticalStackLayout>
+                    <Label Text="1. How easy is it to use MAAME-DROMO for labor monitoring?"
+                           Style="{StaticResource QuestionTitleStyle}" />
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                        <Button x:Name="EaseOfUse1" Text="{Binding EaseOfUse1Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnEaseOfUseRating" CommandParameter="1" />
+                        <Button x:Name="EaseOfUse2" Text="{Binding EaseOfUse2Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnEaseOfUseRating" CommandParameter="2" />
+                        <Button x:Name="EaseOfUse3" Text="{Binding EaseOfUse3Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnEaseOfUseRating" CommandParameter="3" />
+                        <Button x:Name="EaseOfUse4" Text="{Binding EaseOfUse4Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnEaseOfUseRating" CommandParameter="4" />
+                        <Button x:Name="EaseOfUse5" Text="{Binding EaseOfUse5Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnEaseOfUseRating" CommandParameter="5" />
+                    </HorizontalStackLayout>
+                    <Label x:Name="EaseOfUseLabel" Text="Not rated"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                           HorizontalOptions="Center"
+                           Margin="0,8,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Question 2: Workflow Impact -->
+            <Border Style="{StaticResource SurveyCardStyle}">
+                <VerticalStackLayout>
+                    <Label Text="2. How well does MAAME-DROMO integrate into your daily workflow?"
+                           Style="{StaticResource QuestionTitleStyle}" />
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                        <Button x:Name="Workflow1" Text="{Binding Workflow1Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnWorkflowRating" CommandParameter="1" />
+                        <Button x:Name="Workflow2" Text="{Binding Workflow2Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnWorkflowRating" CommandParameter="2" />
+                        <Button x:Name="Workflow3" Text="{Binding Workflow3Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnWorkflowRating" CommandParameter="3" />
+                        <Button x:Name="Workflow4" Text="{Binding Workflow4Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnWorkflowRating" CommandParameter="4" />
+                        <Button x:Name="Workflow5" Text="{Binding Workflow5Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnWorkflowRating" CommandParameter="5" />
+                    </HorizontalStackLayout>
+                    <Label x:Name="WorkflowLabel" Text="Not rated"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                           HorizontalOptions="Center"
+                           Margin="0,8,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Question 3: Alerts and Recommendations -->
+            <Border Style="{StaticResource SurveyCardStyle}">
+                <VerticalStackLayout>
+                    <Label Text="3. How helpful are the automated alerts and recommendations?"
+                           Style="{StaticResource QuestionTitleStyle}" />
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                        <Button x:Name="Alerts1" Text="{Binding Alerts1Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnAlertsRating" CommandParameter="1" />
+                        <Button x:Name="Alerts2" Text="{Binding Alerts2Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnAlertsRating" CommandParameter="2" />
+                        <Button x:Name="Alerts3" Text="{Binding Alerts3Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnAlertsRating" CommandParameter="3" />
+                        <Button x:Name="Alerts4" Text="{Binding Alerts4Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnAlertsRating" CommandParameter="4" />
+                        <Button x:Name="Alerts5" Text="{Binding Alerts5Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnAlertsRating" CommandParameter="5" />
+                    </HorizontalStackLayout>
+                    <Label x:Name="AlertsLabel" Text="Not rated"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                           HorizontalOptions="Center"
+                           Margin="0,8,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Question 4: Training Adequacy -->
+            <Border Style="{StaticResource SurveyCardStyle}">
+                <VerticalStackLayout>
+                    <Label Text="4. How adequate was the training you received?"
+                           Style="{StaticResource QuestionTitleStyle}" />
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                        <Button x:Name="Training1" Text="{Binding Training1Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnTrainingRating" CommandParameter="1" />
+                        <Button x:Name="Training2" Text="{Binding Training2Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnTrainingRating" CommandParameter="2" />
+                        <Button x:Name="Training3" Text="{Binding Training3Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnTrainingRating" CommandParameter="3" />
+                        <Button x:Name="Training4" Text="{Binding Training4Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnTrainingRating" CommandParameter="4" />
+                        <Button x:Name="Training5" Text="{Binding Training5Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnTrainingRating" CommandParameter="5" />
+                    </HorizontalStackLayout>
+                    <Label x:Name="TrainingLabel" Text="Not rated"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                           HorizontalOptions="Center"
+                           Margin="0,8,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Question 5: Recommendation -->
+            <Border Style="{StaticResource SurveyCardStyle}">
+                <VerticalStackLayout>
+                    <Label Text="5. How likely are you to recommend MAAME-DROMO to colleagues?"
+                           Style="{StaticResource QuestionTitleStyle}" />
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                        <Button x:Name="Recommend1" Text="{Binding Recommend1Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnRecommendRating" CommandParameter="1" />
+                        <Button x:Name="Recommend2" Text="{Binding Recommend2Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnRecommendRating" CommandParameter="2" />
+                        <Button x:Name="Recommend3" Text="{Binding Recommend3Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnRecommendRating" CommandParameter="3" />
+                        <Button x:Name="Recommend4" Text="{Binding Recommend4Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnRecommendRating" CommandParameter="4" />
+                        <Button x:Name="Recommend5" Text="{Binding Recommend5Star}" Style="{StaticResource StarButtonStyle}"
+                                Clicked="OnRecommendRating" CommandParameter="5" />
+                    </HorizontalStackLayout>
+                    <Label x:Name="RecommendLabel" Text="Not rated"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                           HorizontalOptions="Center"
+                           Margin="0,8,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Question 6: Patient Care Improvement -->
+            <Border Style="{StaticResource SurveyCardStyle}">
+                <VerticalStackLayout>
+                    <Label Text="6. Has MAAME-DROMO improved patient care at your facility?"
+                           Style="{StaticResource QuestionTitleStyle}" />
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="16">
+                        <Button x:Name="PatientCareYes"
+                                Text="Yes"
+                                BackgroundColor="{AppThemeBinding Light=#DCFCE7, Dark=#166534}"
+                                TextColor="{AppThemeBinding Light=#166534, Dark=#BBF7D0}"
+                                WidthRequest="100"
+                                HeightRequest="44"
+                                CornerRadius="8"
+                                Clicked="OnPatientCareYes" />
+                        <Button x:Name="PatientCareNo"
+                                Text="No"
+                                BackgroundColor="{AppThemeBinding Light=#FEE2E2, Dark=#991B1B}"
+                                TextColor="{AppThemeBinding Light=#991B1B, Dark=#FECACA}"
+                                WidthRequest="100"
+                                HeightRequest="44"
+                                CornerRadius="8"
+                                Clicked="OnPatientCareNo" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Additional Comments -->
+            <Border Style="{StaticResource SurveyCardStyle}">
+                <VerticalStackLayout>
+                    <Label Text="Additional Comments (Optional)"
+                           Style="{StaticResource QuestionTitleStyle}" />
+                    <Editor x:Name="CommentsEditor"
+                            Placeholder="Share any additional feedback or suggestions..."
+                            HeightRequest="120"
+                            BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#0F172A}"
+                            TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}"
+                            PlaceholderColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Submit Button -->
+            <Button x:Name="SubmitButton"
+                    Text="Submit Survey"
+                    BackgroundColor="#4F46E5"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    HeightRequest="56"
+                    CornerRadius="12"
+                    Clicked="OnSubmitSurvey"
+                    Margin="0,8,0,32" />
+
+            <!-- Skip Link -->
+            <Label Text="Skip for now"
+                   TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                   FontSize="14"
+                   TextDecorations="Underline"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,32">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSkipSurvey" />
+                </Label.GestureRecognizers>
+            </Label>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
