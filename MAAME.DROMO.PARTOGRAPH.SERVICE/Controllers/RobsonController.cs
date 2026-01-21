@@ -295,6 +295,89 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         }
 
         /// <summary>
+        /// Generate sample Robson data for testing
+        /// </summary>
+        [HttpPost("generate-sample-data")]
+        public async Task<ActionResult<object>> GenerateSampleData([FromQuery] int count = 100)
+        {
+            try
+            {
+                var loggerFactory = HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                var seederLogger = loggerFactory.CreateLogger<MAAME.DROMO.PARTOGRAPH.SERVICE.Data.RobsonDataSeeder>();
+                var seeder = new MAAME.DROMO.PARTOGRAPH.SERVICE.Data.RobsonDataSeeder(_context, seederLogger);
+
+                await seeder.GenerateSampleDataAsync(count);
+
+                return Ok(new { message = $"Generated {count} sample Robson classifications", success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating sample data");
+                return StatusCode(500, new { error = "Failed to generate sample data", message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Classify all existing unclassified deliveries
+        /// </summary>
+        [HttpPost("classify-all")]
+        public async Task<ActionResult<object>> ClassifyAllDeliveries()
+        {
+            try
+            {
+                var loggerFactory = HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                var seederLogger = loggerFactory.CreateLogger<MAAME.DROMO.PARTOGRAPH.SERVICE.Data.RobsonDataSeeder>();
+                var seeder = new MAAME.DROMO.PARTOGRAPH.SERVICE.Data.RobsonDataSeeder(_context, seederLogger);
+
+                await seeder.ClassifyExistingDeliveriesAsync();
+
+                var totalClassified = await _context.RobsonClassifications.CountAsync();
+                return Ok(new { message = "Classification complete", totalClassifications = totalClassified, success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error classifying all deliveries");
+                return StatusCode(500, new { error = "Failed to classify deliveries", message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Get summary statistics for Robson classifications
+        /// </summary>
+        [HttpGet("summary")]
+        public async Task<ActionResult<object>> GetSummary()
+        {
+            try
+            {
+                var total = await _context.RobsonClassifications.CountAsync();
+                var byGroup = await _context.RobsonClassifications
+                    .GroupBy(r => r.Group)
+                    .Select(g => new { Group = g.Key, Count = g.Count() })
+                    .OrderBy(g => g.Group)
+                    .ToListAsync();
+
+                var totalCS = await _context.RobsonClassifications
+                    .CountAsync(r => r.DeliveryMode == DeliveryMode.CaesareanSection);
+
+                var csRate = total > 0 ? Math.Round((decimal)totalCS / total * 100, 2) : 0;
+
+                return Ok(new
+                {
+                    totalClassifications = total,
+                    totalCesareans = totalCS,
+                    overallCSRate = csRate,
+                    byGroup = byGroup,
+                    lastUpdated = DateTime.Now
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting summary");
+                return StatusCode(500, new { error = "Failed to get summary", message = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Get all Robson classifications (for admin/audit)
         /// </summary>
         [HttpGet]
