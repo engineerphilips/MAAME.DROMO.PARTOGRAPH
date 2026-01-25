@@ -1,9 +1,11 @@
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
 {
@@ -14,10 +16,146 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
     public class PartographNotesService
     {
         private readonly ILogger<PartographNotesService> _logger;
+        private readonly PartographRepository _partographRepository;
+        private readonly PatientRepository _patientRepository;
+        private readonly FHRRepository _fhrRepository;
+        private readonly ContractionRepository _contractionRepository;
+        private readonly CervixDilatationRepository _cervixDilatationRepository;
+        private readonly HeadDescentRepository _headDescentRepository;
+        private readonly BPRepository _bpRepository;
+        private readonly TemperatureRepository _temperatureRepository;
+        private readonly AmnioticFluidRepository _amnioticFluidRepository;
+        private readonly FetalPositionRepository _fetalPositionRepository;
+        private readonly CaputRepository _caputRepository;
+        private readonly MouldingRepository _mouldingRepository;
+        private readonly OxytocinRepository _oxytocinRepository;
+        private readonly MedicationEntryRepository _medicationEntryRepository;
+        private readonly AssessmentRepository _assessmentRepository;
+        private readonly PlanRepository _planRepository;
+        private readonly CompanionRepository _companionRepository;
+        private readonly PostureRepository _postureRepository;
+        private readonly PainReliefRepository _painReliefRepository;
 
-        public PartographNotesService(ILogger<PartographNotesService> logger)
+        public PartographNotesService(
+            ILogger<PartographNotesService> logger,
+            PartographRepository partographRepository,
+            PatientRepository patientRepository,
+            FHRRepository fhrRepository,
+            ContractionRepository contractionRepository,
+            CervixDilatationRepository cervixDilatationRepository,
+            HeadDescentRepository headDescentRepository,
+            BPRepository bpRepository,
+            TemperatureRepository temperatureRepository,
+            AmnioticFluidRepository amnioticFluidRepository,
+            FetalPositionRepository fetalPositionRepository,
+            CaputRepository caputRepository,
+            MouldingRepository mouldingRepository,
+            OxytocinRepository oxytocinRepository,
+            MedicationEntryRepository medicationEntryRepository,
+            AssessmentRepository assessmentRepository,
+            PlanRepository planRepository,
+            CompanionRepository companionRepository,
+            PostureRepository postureRepository,
+            PainReliefRepository painReliefRepository)
         {
             _logger = logger;
+            _partographRepository = partographRepository;
+            _patientRepository = patientRepository;
+            _fhrRepository = fhrRepository;
+            _contractionRepository = contractionRepository;
+            _cervixDilatationRepository = cervixDilatationRepository;
+            _headDescentRepository = headDescentRepository;
+            _bpRepository = bpRepository;
+            _temperatureRepository = temperatureRepository;
+            _amnioticFluidRepository = amnioticFluidRepository;
+            _fetalPositionRepository = fetalPositionRepository;
+            _caputRepository = caputRepository;
+            _mouldingRepository = mouldingRepository;
+            _oxytocinRepository = oxytocinRepository;
+            _medicationEntryRepository = medicationEntryRepository;
+            _assessmentRepository = assessmentRepository;
+            _planRepository = planRepository;
+            _companionRepository = companionRepository;
+            _postureRepository = postureRepository;
+            _painReliefRepository = painReliefRepository;
+        }
+
+        /// <summary>
+        /// Generates comprehensive clinical notes for a partograph by loading all data from repositories
+        /// </summary>
+        /// <param name="partographId">The ID of the partograph</param>
+        /// <returns>Generated clinical notes as a formatted string</returns>
+        public async Task<string> GenerateFullPartographNotes(Guid partographId)
+        {
+            try
+            {
+                // Load the partograph
+                var partograph = await _partographRepository.GetAsync(partographId);
+                if (partograph == null)
+                {
+                    _logger.LogWarning("Partograph not found for ID: {PartographId}", partographId);
+                    return "No partograph data available.";
+                }
+
+                // Load the patient
+                Patient? patient = null;
+                if (partograph.PatientID.HasValue)
+                {
+                    patient = await _patientRepository.GetAsync(partograph.PatientID.Value);
+                }
+
+                // Load all measurements in parallel for efficiency
+                var fhrTask = _fhrRepository.ListByPatientAsync(partographId);
+                var contractionTask = _contractionRepository.ListByPatientAsync(partographId);
+                var dilatationTask = _cervixDilatationRepository.ListByPatientAsync(partographId);
+                var descentTask = _headDescentRepository.ListByPatientAsync(partographId);
+                var bpTask = _bpRepository.ListByPatientAsync(partographId);
+                var tempTask = _temperatureRepository.ListByPatientAsync(partographId);
+                var amnioticTask = _amnioticFluidRepository.ListByPatientAsync(partographId);
+                var positionTask = _fetalPositionRepository.ListByPatientAsync(partographId);
+                var caputTask = _caputRepository.ListByPatientAsync(partographId);
+                var mouldingTask = _mouldingRepository.ListByPatientAsync(partographId);
+                var oxytocinTask = _oxytocinRepository.ListByPatientAsync(partographId);
+                var medicationTask = _medicationEntryRepository.ListByPatientAsync(partographId);
+                var assessmentTask = _assessmentRepository.ListByPatientAsync(partographId);
+                var planTask = _planRepository.ListByPatientAsync(partographId);
+                var companionTask = _companionRepository.ListByPatientAsync(partographId);
+                var postureTask = _postureRepository.ListByPatientAsync(partographId);
+                var painReliefTask = _painReliefRepository.ListByPatientAsync(partographId);
+
+                await Task.WhenAll(
+                    fhrTask, contractionTask, dilatationTask, descentTask,
+                    bpTask, tempTask, amnioticTask, positionTask,
+                    caputTask, mouldingTask, oxytocinTask, medicationTask,
+                    assessmentTask, planTask, companionTask, postureTask, painReliefTask);
+
+                // Populate the partograph with loaded measurements
+                partograph.Fhrs = fhrTask.Result.ToList();
+                partograph.Contractions = contractionTask.Result.ToList();
+                partograph.Dilatations = dilatationTask.Result.ToList();
+                partograph.HeadDescents = descentTask.Result.ToList();
+                partograph.BPs = bpTask.Result.ToList();
+                partograph.Temperatures = tempTask.Result.ToList();
+                partograph.AmnioticFluids = amnioticTask.Result.ToList();
+                partograph.FetalPositions = positionTask.Result.ToList();
+                partograph.Caputs = caputTask.Result.ToList();
+                partograph.Mouldings = mouldingTask.Result.ToList();
+                partograph.Oxytocins = oxytocinTask.Result.ToList();
+                partograph.Medications = medicationTask.Result.ToList();
+                partograph.Assessments = assessmentTask.Result.ToList();
+                partograph.Plans = planTask.Result.ToList();
+                partograph.Companions = companionTask.Result.ToList();
+                partograph.Postures = postureTask.Result.ToList();
+                partograph.PainReliefs = painReliefTask.Result.ToList();
+
+                // Generate the clinical notes using the existing method
+                return GenerateClinicalNotes(partograph, patient);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating full partograph notes for ID: {PartographId}", partographId);
+                return "Error generating clinical notes.";
+            }
         }
 
         /// <summary>
