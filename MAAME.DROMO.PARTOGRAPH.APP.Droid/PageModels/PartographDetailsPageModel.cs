@@ -63,7 +63,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly PatientRepository _patientRepository;
         private readonly BirthOutcomeRepository _birthOutcomeRepository;
         private readonly BabyDetailsRepository _babyDetailsRepository;
-        private readonly MedicalNoteRepository _medicalNoteRepository;
+        //private readonly MedicalNoteRepository _medicalNoteRepository;
         private readonly FHRRepository _fhrRepository;
         private readonly ContractionRepository _contractionRepository;
         private readonly CervixDilatationRepository _cervixDilatationRepository;
@@ -205,8 +205,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             PartographRepository partographRepository,
             PatientRepository patientRepository,
             BirthOutcomeRepository birthOutcomeRepository,
-            BabyDetailsRepository babyDetailsRepository,
-            MedicalNoteRepository medicalNoteRepository,
+            BabyDetailsRepository babyDetailsRepository, 
             FHRRepository fhrRepository,
             ContractionRepository contractionRepository,
             CervixDilatationRepository cervixDilatationRepository,
@@ -235,7 +234,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _patientRepository = patientRepository;
             _birthOutcomeRepository = birthOutcomeRepository;
             _babyDetailsRepository = babyDetailsRepository;
-            _medicalNoteRepository = medicalNoteRepository;
+            //_medicalNoteRepository = medicalNoteRepository;
             _fhrRepository = fhrRepository;
             _contractionRepository = contractionRepository;
             _cervixDilatationRepository = cervixDilatationRepository;
@@ -335,9 +334,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     DeliveryTime = _birthOutcome.DeliveryTime;
                     DeliveryMode = _birthOutcome.DeliveryMode.ToString();
                     NumberOfBabies = _birthOutcome.NumberOfBabies.ToString();
-                    MaternalOutcome = _birthOutcome.MaternalSurvived ? "Survived" : "Deceased";
-                    PerineumStatus = _birthOutcome.PerinealStatus?.ToString() ?? "Not recorded";
-                    EstimatedBloodLoss = _birthOutcome.EstimatedBloodLoss ?? 0;
+                    MaternalOutcome = _birthOutcome.MaternalStatus == MaternalOutcomeStatus.Survived ? "Survived" : "Deceased";
+                    PerineumStatus = _birthOutcome.PerinealStatus.ToString() ?? "Not recorded";
+                    EstimatedBloodLoss = _birthOutcome.EstimatedBloodLoss;
                     PlacentaStatus = _birthOutcome.PlacentaComplete ? "Complete" : "Incomplete";
 
                     // Complications
@@ -354,7 +353,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     var interventions = new List<string>();
                     if (_birthOutcome.OxytocinGiven) interventions.Add("Oxytocin");
                     if (_birthOutcome.AntibioticsGiven) interventions.Add("Antibiotics");
-                    if (_birthOutcome.BloodTransfusion) interventions.Add("Blood Transfusion");
+                    if (_birthOutcome.BloodTransfusionGiven) interventions.Add("Blood Transfusion");
                     HasInterventions = interventions.Count > 0;
                     InterventionsText = string.Join(", ", interventions);
 
@@ -368,11 +367,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         BabyDetailsList.Add(new BabyDetailViewModel
                         {
                             BabyLabel = babies.Count > 1 ? $"Baby {babyNum}" : "Baby",
-                            Sex = baby.Sex?.ToString() ?? "Unknown",
-                            BirthWeight = baby.BirthWeight?.ToString() ?? "N/A",
-                            ApgarScores = $"{baby.ApgarScore1Min ?? 0}/{baby.ApgarScore5Min ?? 0}/{baby.ApgarScore10Min ?? 0}",
-                            Outcome = baby.BabyAlive ? (baby.RequiredResuscitation ? "Alive (Resuscitated)" : "Alive") : "Stillborn",
-                            OutcomeColor = baby.BabyAlive ? Colors.Green : Colors.Red
+                            Sex = baby.Sex.ToString() ?? "Unknown",
+                            BirthWeight = baby.BirthWeight == 0m ? $"{baby.BirthWeight}" : "N/A",
+                            ApgarScores = $"{baby.Apgar1Min ?? 0}/{baby.Apgar5Min ?? 0}",
+                            Outcome = !string.IsNullOrWhiteSpace(baby.DeathCause) ? (baby.ResuscitationRequired ? "Alive (Resuscitated)" : "Alive") : "Stillborn",
+                            OutcomeColor = !string.IsNullOrWhiteSpace(baby.DeathCause) ? Colors.Green : Colors.Red
                         });
                         babyNum++;
                     }
@@ -382,7 +381,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 await LoadMeasurementsAsync();
 
                 // Load medical notes
-                await LoadMedicalNotesAsync();
+                //await LoadMedicalNotesAsync();
 
                 // Load assessments and plans
                 await LoadAssessmentPlansAsync();
@@ -410,29 +409,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             var allMeasurements = new List<MeasurementEntryViewModel>();
 
             // Load FHR
-            var fhrEntries = await _fhrRepository.ListAsync(_partographId.Value);
+            var fhrEntries = await _fhrRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in fhrEntries)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
                 {
                     Time = entry.Time,
                     Category = "Fetal Heart Rate",
-                    Value = $"{entry.HeartRate} bpm",
+                    Value = $"{entry.Rate} bpm",
                     Notes = entry.Notes ?? "",
-                    StatusText = GetFhrStatus(entry.HeartRate),
-                    StatusColor = GetFhrStatusColor(entry.HeartRate)
+                    StatusText = GetFhrStatus(entry.Rate ?? 0),
+                    StatusColor = GetFhrStatusColor(entry.Rate ?? 0)
                 });
             }
 
             // Load Contractions
-            var contractions = await _contractionRepository.ListAsync(_partographId.Value);
+            var contractions = await _contractionRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in contractions)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
                 {
                     Time = entry.Time,
                     Category = "Contractions",
-                    Value = $"{entry.Frequency}/10min, {entry.Duration}s duration",
+                    Value = $"{entry.FrequencyPer10Min}/10min, {entry.DurationSeconds}s duration",
                     Notes = entry.Notes ?? "",
                     StatusText = "Recorded",
                     StatusColor = Color.FromArgb("#3B82F6")
@@ -440,14 +439,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Cervix Dilation
-            var dilations = await _cervixDilatationRepository.ListAsync(_partographId.Value);
+            var dilations = await _cervixDilatationRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in dilations)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
                 {
                     Time = entry.Time,
                     Category = "Cervical Dilation",
-                    Value = $"{entry.Dilation} cm",
+                    Value = $"{entry.DilatationCm} cm",
                     Notes = entry.Notes ?? "",
                     StatusText = "Recorded",
                     StatusColor = Color.FromArgb("#8B5CF6")
@@ -455,14 +454,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Head Descent
-            var descents = await _headDescentRepository.ListAsync(_partographId.Value);
+            var descents = await _headDescentRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in descents)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
                 {
                     Time = entry.Time,
                     Category = "Head Descent",
-                    Value = entry.Descent.ToString(),
+                    Value = entry.DescentRate.ToString(),
                     Notes = entry.Notes ?? "",
                     StatusText = "Recorded",
                     StatusColor = Color.FromArgb("#6366F1")
@@ -470,7 +469,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load BP
-            var bpEntries = await _bpRepository.ListAsync(_partographId.Value);
+            var bpEntries = await _bpRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in bpEntries)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
@@ -485,29 +484,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Temperature
-            var temps = await _temperatureRepository.ListAsync(_partographId.Value);
+            var temps = await _temperatureRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in temps)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
                 {
                     Time = entry.Time,
                     Category = "Temperature",
-                    Value = $"{entry.Celsius:F1}°C",
+                    Value = $"{entry.TemperatureCelsius:F1}°C",
                     Notes = entry.Notes ?? "",
-                    StatusText = GetTempStatus(entry.Celsius),
-                    StatusColor = GetTempStatusColor(entry.Celsius)
+                    StatusText = GetTempStatus(entry.TemperatureCelsius),
+                    StatusColor = GetTempStatusColor(entry.TemperatureCelsius)
                 });
             }
 
             // Load Urine
-            var urineEntries = await _urineRepository.ListAsync(_partographId.Value);
+            var urineEntries = await _urineRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in urineEntries)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
                 {
                     Time = entry.Time,
                     Category = "Urine",
-                    Value = $"Protein: {entry.ProteinLevel}, Acetone: {entry.AcetoneLevel}",
+                    Value = $"Protein: {entry.Protein}, Acetone: {entry.Ketones}",
                     Notes = entry.Notes ?? "",
                     StatusText = "Recorded",
                     StatusColor = Color.FromArgb("#F59E0B")
@@ -515,7 +514,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Amniotic Fluid
-            var amnioticEntries = await _amnioticFluidRepository.ListAsync(_partographId.Value);
+            var amnioticEntries = await _amnioticFluidRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in amnioticEntries)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
@@ -530,7 +529,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Fetal Position
-            var positions = await _fetalPositionRepository.ListAsync(_partographId.Value);
+            var positions = await _fetalPositionRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in positions)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
@@ -545,14 +544,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Caput
-            var caputEntries = await _caputRepository.ListAsync(_partographId.Value);
+            var caputEntries = await _caputRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in caputEntries)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
                 {
                     Time = entry.Time,
                     Category = "Caput",
-                    Value = entry.Formation.ToString(),
+                    Value = entry.Degree.ToString(),
                     Notes = entry.Notes ?? "",
                     StatusText = "Recorded",
                     StatusColor = Color.FromArgb("#EC4899")
@@ -560,7 +559,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Moulding
-            var mouldingEntries = await _mouldingRepository.ListAsync(_partographId.Value);
+            var mouldingEntries = await _mouldingRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in mouldingEntries)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
@@ -575,7 +574,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Companion
-            var companions = await _companionRepository.ListAsync(_partographId.Value);
+            var companions = await _companionRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in companions)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
@@ -590,14 +589,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Posture
-            var postures = await _postureRepository.ListAsync(_partographId.Value);
+            var postures = await _postureRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in postures)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
                 {
                     Time = entry.Time,
                     Category = "Maternal Posture",
-                    Value = entry.Position.ToString(),
+                    Value = entry.Posture.ToString(),
                     Notes = entry.Notes ?? "",
                     StatusText = "Recorded",
                     StatusColor = Color.FromArgb("#06B6D4")
@@ -605,7 +604,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Oral Fluid
-            var oralFluids = await _oralFluidRepository.ListAsync(_partographId.Value);
+            var oralFluids = await _oralFluidRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in oralFluids)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
@@ -620,14 +619,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load Pain Relief
-            var painReliefs = await _painReliefRepository.ListAsync(_partographId.Value);
+            var painReliefs = await _painReliefRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in painReliefs)
             {
                 allMeasurements.Add(new MeasurementEntryViewModel
                 {
                     Time = entry.Time,
                     Category = "Pain Relief",
-                    Value = entry.Method.ToString(),
+                    Value = entry.PainRelief.ToString(),
                     Notes = entry.Notes ?? "",
                     StatusText = "Given",
                     StatusColor = Color.FromArgb("#A855F7")
@@ -646,35 +645,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private async Task LoadMedicalNotesAsync()
-        {
-            if (_partographId == null) return;
+        //private async Task LoadMedicalNotesAsync()
+        //{
+        //    if (_partographId == null) return;
 
-            var notes = await _medicalNoteRepository.ListAsync(_partographId.Value);
-            TotalNotes = notes.Count;
+        //    var notes = await _medicalNoteRepository.ListAsync(_partographId.Value);
+        //    TotalNotes = notes.Count;
 
-            MedicalNotes.Clear();
-            foreach (var note in notes.OrderByDescending(n => n.Time))
-            {
-                MedicalNotes.Add(new MedicalNoteViewModel
-                {
-                    Time = note.Time,
-                    NoteType = note.NoteType ?? "General",
-                    Content = note.Notes ?? note.Content ?? "",
-                    Handler = note.HandlerName ?? "Unknown",
-                    IsImportant = note.IsImportant,
-                    TypeColor = GetNoteTypeColor(note.NoteType),
-                    BorderColor = note.IsImportant ? Color.FromArgb("#EF4444") : Color.FromArgb("#E5E7EB")
-                });
-            }
-        }
+        //    MedicalNotes.Clear();
+        //    foreach (var note in notes.OrderByDescending(n => n.Time))
+        //    {
+        //        MedicalNotes.Add(new MedicalNoteViewModel
+        //        {
+        //            Time = note.Time,
+        //            NoteType = note.NoteType ?? "General",
+        //            Content = note.Notes ?? note.Content ?? "",
+        //            Handler = note.HandlerName ?? "Unknown",
+        //            IsImportant = note.IsImportant,
+        //            TypeColor = GetNoteTypeColor(note.NoteType),
+        //            BorderColor = note.IsImportant ? Color.FromArgb("#EF4444") : Color.FromArgb("#E5E7EB")
+        //        });
+        //    }
+        //}
 
         private async Task LoadAssessmentPlansAsync()
         {
             if (_partographId == null) return;
 
-            var assessments = await _assessmentRepository.ListAsync(_partographId.Value);
-            var plans = await _planRepository.ListAsync(_partographId.Value);
+            var assessments = await _assessmentRepository.ListByPatientAsync(_partographId.Value);
+            var plans = await _planRepository.ListByPatientAsync(_partographId.Value);
 
             // Combine assessments and plans by time
             var combined = new Dictionary<DateTime, AssessmentPlanViewModel>();
@@ -718,7 +717,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     };
                 }
 
-                combined[roundedTime].Plan = plan.PlanDetails ?? "";
+                combined[roundedTime].Plan = plan.Notes ?? "";
             }
 
             AssessmentPlanEntries.Clear();
@@ -735,19 +734,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             MedicationEntries.Clear();
 
             // Load Oxytocin
-            var oxytocinEntries = await _oxytocinRepository.ListAsync(_partographId.Value);
+            var oxytocinEntries = await _oxytocinRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in oxytocinEntries)
             {
                 MedicationEntries.Add(new MedicationViewModel
                 {
                     Time = entry.Time,
                     Name = "Oxytocin",
-                    Details = $"Dose: {entry.Dose} U/L, Rate: {entry.DropsPerMin} drops/min"
+                    Details = $"Dose: {entry.TotalVolumeInfused} U/L, Rate: {entry.DoseMUnitsPerMin} drops/min"
                 });
             }
 
             // Load Medications
-            var medications = await _medicationEntryRepository.ListAsync(_partographId.Value);
+            var medications = await _medicationEntryRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in medications)
             {
                 MedicationEntries.Add(new MedicationViewModel
@@ -759,14 +758,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
 
             // Load IV Fluids
-            var ivFluids = await _ivFluidEntryRepository.ListAsync(_partographId.Value);
+            var ivFluids = await _ivFluidEntryRepository.ListByPatientAsync(_partographId.Value);
             foreach (var entry in ivFluids)
             {
                 MedicationEntries.Add(new MedicationViewModel
                 {
                     Time = entry.Time,
                     Name = $"IV Fluid: {entry.FluidType}",
-                    Details = $"Volume: {entry.Volume}mL, Rate: {entry.Rate}mL/hr"
+                    Details = $"Volume: {entry.VolumeInfused}mL, Rate: {entry.RateMlPerHour}mL/hr"
                 });
             }
 
@@ -845,24 +844,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             return Color.FromArgb("#10B981");
         }
 
-        private static string GetAmnioticStatus(AmnioticFluidColor color)
+        private static string GetAmnioticStatus(string color)
         {
             return color switch
             {
-                AmnioticFluidColor.Clear => "Normal",
-                AmnioticFluidColor.Meconium => "Alert",
-                AmnioticFluidColor.Bloody => "Alert",
+                "Clear" => "Normal",
+                "Meconium" => "Alert",
+                "Bloody" => "Alert",
                 _ => "Recorded"
             };
         }
 
-        private static Color GetAmnioticStatusColor(AmnioticFluidColor color)
+        private static Color GetAmnioticStatusColor(string color)
         {
             return color switch
             {
-                AmnioticFluidColor.Clear => Color.FromArgb("#10B981"),
-                AmnioticFluidColor.Meconium => Color.FromArgb("#EF4444"),
-                AmnioticFluidColor.Bloody => Color.FromArgb("#EF4444"),
+                "Clear" => Color.FromArgb("#10B981"),
+                "Meconium" => Color.FromArgb("#EF4444"),
+                "Bloody" => Color.FromArgb("#EF4444"),
                 _ => Color.FromArgb("#F59E0B")
             };
         }
