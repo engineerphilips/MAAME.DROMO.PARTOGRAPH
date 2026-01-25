@@ -251,7 +251,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [RelayCommand]
         private Task ViewPartograph(CompletedPatientItem item)
-            => Shell.Current.GoToAsync($"partograph?id={item.Partograph.ID}");
+            => Shell.Current.GoToAsync($"partographdetails?id={item.Partograph.ID}");
 
         [RelayCommand]
         private Task ViewSecondStagePartograph(CompletedPatientItem item)

@@ -128,6 +128,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 
         private static string GetLoadingMessage(string route)
         {
+            if (route.Contains("partographdetails")) return "Loading Partograph Details...";
             if (route.Contains("secondpartograph")) return "Loading Second Stage...";
             if (route.Contains("thirdpartograph")) return "Loading Third Stage...";
             if (route.Contains("fourthpartograph")) return "Loading Fourth Stage...";

@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.PartographDetailsPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
+             Title="Partograph Details"
+             BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#111827}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+
+            <!-- Section Card Style -->
+            <Style x:Key="SectionCardStyle" TargetType="Border">
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1F2937}" />
+                <Setter Property="Padding" Value="16" />
+                <Setter Property="Margin" Value="0,0,0,12" />
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="12" />
+                </Setter>
+                <Setter Property="Shadow">
+                    <Shadow Brush="{AppThemeBinding Light=#15000000, Dark=#30000000}"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="1" />
+                </Setter>
+            </Style>
+
+            <!-- Section Header Style -->
+            <Style x:Key="SectionHeaderStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#1F2937, Dark=#F9FAFB}" />
+                <Setter Property="Margin" Value="0,0,0,12" />
+            </Style>
+
+            <!-- Entry Item Style -->
+            <Style x:Key="EntryItemStyle" TargetType="Border">
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="Stroke" Value="{AppThemeBinding Light=#E5E7EB, Dark=#374151}" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#F9FAFB, Dark=#111827}" />
+                <Setter Property="Padding" Value="12" />
+                <Setter Property="Margin" Value="0,0,0,8" />
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="8" />
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Print"
+                     Command="{Binding PrintPartographCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.print_16_regular}" />
+        <ToolbarItem Text="Export"
+                     Command="{Binding ExportPartographCommand}"
+                     IconImageSource="{x:Static fonts:FluentUI.arrow_download_16_regular}" />
+    </ContentPage.ToolbarItems>
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="0">
+
+                <!-- Patient Header Card -->
+                <Border Style="{StaticResource SectionCardStyle}"
+                        BackgroundColor="{AppThemeBinding Light=#10B981, Dark=#047857}">
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                        <!-- Patient Info -->
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="4">
+                            <Label Text="{Binding PatientName}"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="White" />
+                            <Label Text="{Binding PatientInfo}"
+                                   FontSize="14"
+                                   TextColor="White"
+                                   Opacity="0.9" />
+                        </VerticalStackLayout>
+
+                        <!-- Completed Badge -->
+                        <Border Grid.Row="0" Grid.Column="1"
+                                BackgroundColor="White"
+                                Padding="12,6"
+                                VerticalOptions="Start">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <Label Text="COMPLETED"
+                                   FontSize="11"
+                                   FontAttributes="Bold"
+                                   TextColor="#10B981" />
+                        </Border>
+
+                        <!-- Labour Duration Summary -->
+                        <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*" Margin="0,16,0,0">
+                            <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center">
+                                <Label Text="{Binding TotalLaborDuration}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Total Duration"
+                                       FontSize="11"
+                                       TextColor="White"
+                                       Opacity="0.8"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                                <Label Text="{Binding DeliveryMode}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Delivery Mode"
+                                       FontSize="11"
+                                       TextColor="White"
+                                       Opacity="0.8"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
+                                <Label Text="{Binding NumberOfBabies}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Babies"
+                                       FontSize="11"
+                                       TextColor="White"
+                                       Opacity="0.8"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <!-- Delivery Time -->
+                        <HorizontalStackLayout Grid.Row="2" Grid.ColumnSpan="2" Margin="0,12,0,0" Spacing="8">
+                            <Label Text="&#xE917;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="16"
+                                   TextColor="White"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding DeliveryTime, StringFormat='Delivered: {0:dddd, dd MMM yyyy HH:mm}'}"
+                                   FontSize="13"
+                                   TextColor="White"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Labour Timeline Section -->
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8" Margin="0,0,0,12">
+                            <Label Text="&#xE916;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="20"
+                                   TextColor="{AppThemeBinding Light=#3B82F6, Dark=#60A5FA}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Labour Timeline"
+                                   Style="{StaticResource SectionHeaderStyle}"
+                                   Margin="0" />
+                        </HorizontalStackLayout>
+
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*,Auto" RowSpacing="12">
+                            <!-- First Stage Start -->
+                            <BoxView Grid.Row="0" Grid.Column="0"
+                                     WidthRequest="12" HeightRequest="12"
+                                     CornerRadius="6"
+                                     Color="#3B82F6"
+                                     VerticalOptions="Center" />
+                            <Label Grid.Row="0" Grid.Column="1"
+                                   Text="Labour Started"
+                                   FontSize="14"
+                                   VerticalOptions="Center"
+                                   Margin="12,0,0,0" />
+                            <Label Grid.Row="0" Grid.Column="2"
+                                   Text="{Binding LaborStartTime, StringFormat='{0:dd MMM HH:mm}'}"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#3B82F6, Dark=#60A5FA}" />
+
+                            <!-- Second Stage -->
+                            <BoxView Grid.Row="1" Grid.Column="0"
+                                     WidthRequest="12" HeightRequest="12"
+                                     CornerRadius="6"
+                                     Color="#8B5CF6"
+                                     VerticalOptions="Center" />
+                            <Label Grid.Row="1" Grid.Column="1"
+                                   Text="Second Stage Started"
+                                   FontSize="14"
+                                   VerticalOptions="Center"
+                                   Margin="12,0,0,0" />
+                            <Label Grid.Row="1" Grid.Column="2"
+                                   Text="{Binding SecondStageStartTime, StringFormat='{0:dd MMM HH:mm}'}"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#8B5CF6, Dark=#A78BFA}" />
+
+                            <!-- Third Stage -->
+                            <BoxView Grid.Row="2" Grid.Column="0"
+                                     WidthRequest="12" HeightRequest="12"
+                                     CornerRadius="6"
+                                     Color="#F59E0B"
+                                     VerticalOptions="Center" />
+                            <Label Grid.Row="2" Grid.Column="1"
+                                   Text="Third Stage (Placenta)"
+                                   FontSize="14"
+                                   VerticalOptions="Center"
+                                   Margin="12,0,0,0" />
+                            <Label Grid.Row="2" Grid.Column="2"
+                                   Text="{Binding ThirdStageStartTime, StringFormat='{0:dd MMM HH:mm}'}"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#F59E0B, Dark=#FBBF24}" />
+
+                            <!-- Fourth Stage / Completion -->
+                            <BoxView Grid.Row="3" Grid.Column="0"
+                                     WidthRequest="12" HeightRequest="12"
+                                     CornerRadius="6"
+                                     Color="#10B981"
+                                     VerticalOptions="Center" />
+                            <Label Grid.Row="3" Grid.Column="1"
+                                   Text="Fourth Stage (Completed)"
+                                   FontSize="14"
+                                   VerticalOptions="Center"
+                                   Margin="12,0,0,0" />
+                            <Label Grid.Row="3" Grid.Column="2"
+                                   Text="{Binding FourthStageStartTime, StringFormat='{0:dd MMM HH:mm}'}"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#10B981, Dark=#34D399}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Birth Outcome Section -->
+                <Border Style="{StaticResource SectionCardStyle}"
+                        IsVisible="{Binding BirthOutcome, Converter={StaticResource IsNotNullConverter}}">
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8" Margin="0,0,0,12">
+                            <Label Text="&#xE9EA;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="20"
+                                   TextColor="{AppThemeBinding Light=#10B981, Dark=#34D399}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Birth Outcome"
+                                   Style="{StaticResource SectionHeaderStyle}"
+                                   Margin="0" />
+                        </HorizontalStackLayout>
+
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,*" RowSpacing="12" ColumnSpacing="16">
+                            <!-- Maternal Outcome -->
+                            <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource EntryItemStyle}">
+                                <VerticalStackLayout>
+                                    <Label Text="Maternal Outcome"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                    <Label Text="{Binding MaternalOutcome}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#10B981, Dark=#34D399}" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Perineum Status -->
+                            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource EntryItemStyle}">
+                                <VerticalStackLayout>
+                                    <Label Text="Perineum"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                    <Label Text="{Binding PerineumStatus}"
+                                           FontSize="14"
+                                           FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Blood Loss -->
+                            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource EntryItemStyle}">
+                                <VerticalStackLayout>
+                                    <Label Text="Estimated Blood Loss"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                    <Label Text="{Binding EstimatedBloodLoss, StringFormat='{0} mL'}"
+                                           FontSize="14"
+                                           FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Placenta -->
+                            <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource EntryItemStyle}">
+                                <VerticalStackLayout>
+                                    <Label Text="Placenta"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                    <Label Text="{Binding PlacentaStatus}"
+                                           FontSize="14"
+                                           FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Complications -->
+                            <Border Grid.Row="2" Grid.ColumnSpan="2"
+                                    Style="{StaticResource EntryItemStyle}"
+                                    IsVisible="{Binding HasComplications}">
+                                <VerticalStackLayout>
+                                    <Label Text="Complications"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light=#EF4444, Dark=#F87171}" />
+                                    <Label Text="{Binding ComplicationsText}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#EF4444, Dark=#F87171}" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Interventions -->
+                            <Border Grid.Row="3" Grid.ColumnSpan="2"
+                                    Style="{StaticResource EntryItemStyle}"
+                                    IsVisible="{Binding HasInterventions}">
+                                <VerticalStackLayout>
+                                    <Label Text="Interventions"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                    <Label Text="{Binding InterventionsText}"
+                                           FontSize="14"
+                                           FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Baby Details Section -->
+                <Border Style="{StaticResource SectionCardStyle}"
+                        IsVisible="{Binding HasBabyDetails}">
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8" Margin="0,0,0,12">
+                            <Label Text="&#xEA19;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="20"
+                                   TextColor="{AppThemeBinding Light=#EC4899, Dark=#F472B6}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Baby Details"
+                                   Style="{StaticResource SectionHeaderStyle}"
+                                   Margin="0" />
+                        </HorizontalStackLayout>
+
+                        <CollectionView ItemsSource="{Binding BabyDetailsList}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="pagemodels:BabyDetailViewModel">
+                                    <Border Style="{StaticResource EntryItemStyle}">
+                                        <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,*,*" RowSpacing="8" ColumnSpacing="12">
+                                            <!-- Baby Number -->
+                                            <Label Grid.Row="0" Grid.ColumnSpan="3"
+                                                   Text="{Binding BabyLabel}"
+                                                   FontSize="14"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#EC4899, Dark=#F472B6}" />
+
+                                            <!-- Sex -->
+                                            <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                                                <Label Text="Sex" FontSize="10" TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                <Label Text="{Binding Sex}" FontSize="13" FontAttributes="Bold" />
+                                            </VerticalStackLayout>
+
+                                            <!-- Weight -->
+                                            <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                                                <Label Text="Birth Weight" FontSize="10" TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                <Label Text="{Binding BirthWeight, StringFormat='{0} g'}" FontSize="13" FontAttributes="Bold" />
+                                            </VerticalStackLayout>
+
+                                            <!-- APGAR -->
+                                            <VerticalStackLayout Grid.Row="1" Grid.Column="2">
+                                                <Label Text="APGAR (1/5/10)" FontSize="10" TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                <Label Text="{Binding ApgarScores}" FontSize="13" FontAttributes="Bold" />
+                                            </VerticalStackLayout>
+
+                                            <!-- Outcome -->
+                                            <VerticalStackLayout Grid.Row="2" Grid.ColumnSpan="3">
+                                                <Label Text="Outcome" FontSize="10" TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                <Label Text="{Binding Outcome}"
+                                                       FontSize="13"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{Binding OutcomeColor}" />
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Clinical Measurements Timeline -->
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8" Margin="0,0,0,12">
+                            <Label Text="&#xE9B3;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="20"
+                                   TextColor="{AppThemeBinding Light=#6366F1, Dark=#818CF8}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Clinical Measurements"
+                                   Style="{StaticResource SectionHeaderStyle}"
+                                   Margin="0" />
+                            <Label Text="{Binding TotalMeasurements, StringFormat='({0} entries)'}"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <CollectionView ItemsSource="{Binding MeasurementEntries}"
+                                        MaximumHeightRequest="500">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="pagemodels:MeasurementEntryViewModel">
+                                    <Border Style="{StaticResource EntryItemStyle}">
+                                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*,Auto">
+                                            <!-- Time -->
+                                            <Label Grid.Row="0" Grid.Column="0"
+                                                   Text="{Binding Time, StringFormat='{0:HH:mm}'}"
+                                                   FontSize="14"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#6366F1, Dark=#818CF8}"
+                                                   VerticalOptions="Center" />
+
+                                            <!-- Category and Value -->
+                                            <VerticalStackLayout Grid.Row="0" Grid.Column="1" Margin="12,0,0,0">
+                                                <Label Text="{Binding Category}"
+                                                       FontSize="13"
+                                                       FontAttributes="Bold" />
+                                                <Label Text="{Binding Value}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#374151, Dark=#D1D5DB}" />
+                                            </VerticalStackLayout>
+
+                                            <!-- Status Indicator -->
+                                            <Border Grid.Row="0" Grid.Column="2"
+                                                    BackgroundColor="{Binding StatusColor}"
+                                                    Padding="8,4"
+                                                    VerticalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="4" />
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding StatusText}"
+                                                       FontSize="10"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White" />
+                                            </Border>
+
+                                            <!-- Notes -->
+                                            <Label Grid.Row="1" Grid.ColumnSpan="3"
+                                                   Text="{Binding Notes}"
+                                                   FontSize="11"
+                                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                                   Margin="0,8,0,0"
+                                                   IsVisible="{Binding Notes, Converter={StaticResource IsNotNullOrEmptyConverter}}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Button Text="View All Measurements"
+                                Command="{Binding ViewAllMeasurementsCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#312E81}"
+                                TextColor="{AppThemeBinding Light=#6366F1, Dark=#A5B4FC}"
+                                FontSize="13"
+                                HeightRequest="40"
+                                CornerRadius="8"
+                                Margin="0,8,0,0"
+                                IsVisible="{Binding HasMoreMeasurements}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Medical Notes Section -->
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8" Margin="0,0,0,12">
+                            <Label Text="&#xE70E;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="20"
+                                   TextColor="{AppThemeBinding Light=#F59E0B, Dark=#FBBF24}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Medical Notes"
+                                   Style="{StaticResource SectionHeaderStyle}"
+                                   Margin="0" />
+                            <Label Text="{Binding TotalNotes, StringFormat='({0} notes)'}"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <CollectionView ItemsSource="{Binding MedicalNotes}"
+                                        MaximumHeightRequest="400">
+                            <CollectionView.EmptyView>
+                                <Label Text="No medical notes recorded"
+                                       FontSize="13"
+                                       TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                                       HorizontalOptions="Center"
+                                       Margin="0,20" />
+                            </CollectionView.EmptyView>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="pagemodels:MedicalNoteViewModel">
+                                    <Border Style="{StaticResource EntryItemStyle}"
+                                            Stroke="{Binding BorderColor}">
+                                        <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                                            <!-- Note Type Badge and Time -->
+                                            <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="8">
+                                                <Border BackgroundColor="{Binding TypeColor}"
+                                                        Padding="8,2">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="4" />
+                                                    </Border.StrokeShape>
+                                                    <Label Text="{Binding NoteType}"
+                                                           FontSize="10"
+                                                           FontAttributes="Bold"
+                                                           TextColor="White" />
+                                                </Border>
+                                                <Label Text="{Binding Time, StringFormat='{0:dd MMM HH:mm}'}"
+                                                       FontSize="11"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                                       VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- Important Flag -->
+                                            <Label Grid.Row="0" Grid.Column="1"
+                                                   Text="&#xEB56;"
+                                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                                   FontSize="16"
+                                                   TextColor="#EF4444"
+                                                   IsVisible="{Binding IsImportant}" />
+
+                                            <!-- Note Content -->
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2"
+                                                   Text="{Binding Content}"
+                                                   FontSize="13"
+                                                   LineHeight="1.4"
+                                                   Margin="0,8,0,0" />
+
+                                            <!-- Handler -->
+                                            <Label Grid.Row="2" Grid.ColumnSpan="2"
+                                                   Text="{Binding Handler, StringFormat='Recorded by: {0}'}"
+                                                   FontSize="10"
+                                                   TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                                                   Margin="0,8,0,0" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Assessment & Plan History -->
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8" Margin="0,0,0,12">
+                            <Label Text="&#xE9F5;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="20"
+                                   TextColor="{AppThemeBinding Light=#14B8A6, Dark=#2DD4BF}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Assessments &amp; Plans"
+                                   Style="{StaticResource SectionHeaderStyle}"
+                                   Margin="0" />
+                        </HorizontalStackLayout>
+
+                        <CollectionView ItemsSource="{Binding AssessmentPlanEntries}"
+                                        MaximumHeightRequest="400">
+                            <CollectionView.EmptyView>
+                                <Label Text="No assessments recorded"
+                                       FontSize="13"
+                                       TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                                       HorizontalOptions="Center"
+                                       Margin="0,20" />
+                            </CollectionView.EmptyView>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="pagemodels:AssessmentPlanViewModel">
+                                    <Border Style="{StaticResource EntryItemStyle}">
+                                        <VerticalStackLayout Spacing="8">
+                                            <!-- Time Header -->
+                                            <Label Text="{Binding Time, StringFormat='{0:dd MMM yyyy HH:mm}'}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#14B8A6, Dark=#2DD4BF}" />
+
+                                            <!-- Assessment -->
+                                            <VerticalStackLayout IsVisible="{Binding Assessment, Converter={StaticResource IsNotNullOrEmptyConverter}}">
+                                                <Label Text="Assessment"
+                                                       FontSize="10"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                <Label Text="{Binding Assessment}"
+                                                       FontSize="13"
+                                                       LineHeight="1.3" />
+                                            </VerticalStackLayout>
+
+                                            <!-- Plan -->
+                                            <VerticalStackLayout IsVisible="{Binding Plan, Converter={StaticResource IsNotNullOrEmptyConverter}}">
+                                                <Label Text="Plan"
+                                                       FontSize="10"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                                <Label Text="{Binding Plan}"
+                                                       FontSize="13"
+                                                       LineHeight="1.3" />
+                                            </VerticalStackLayout>
+
+                                            <!-- Handler -->
+                                            <Label Text="{Binding Handler, StringFormat='By: {0}'}"
+                                                   FontSize="10"
+                                                   TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Medications & IV Fluids Section -->
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8" Margin="0,0,0,12">
+                            <Label Text="&#xE78F;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="20"
+                                   TextColor="{AppThemeBinding Light=#EF4444, Dark=#F87171}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Medications &amp; IV Fluids"
+                                   Style="{StaticResource SectionHeaderStyle}"
+                                   Margin="0" />
+                        </HorizontalStackLayout>
+
+                        <CollectionView ItemsSource="{Binding MedicationEntries}"
+                                        MaximumHeightRequest="300">
+                            <CollectionView.EmptyView>
+                                <Label Text="No medications administered"
+                                       FontSize="13"
+                                       TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                                       HorizontalOptions="Center"
+                                       Margin="0,20" />
+                            </CollectionView.EmptyView>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="pagemodels:MedicationViewModel">
+                                    <Border Style="{StaticResource EntryItemStyle}">
+                                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*">
+                                            <Label Grid.Row="0" Grid.Column="0"
+                                                   Text="{Binding Time, StringFormat='{0:HH:mm}'}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#EF4444, Dark=#F87171}" />
+                                            <Label Grid.Row="0" Grid.Column="1"
+                                                   Text="{Binding Name}"
+                                                   FontSize="13"
+                                                   FontAttributes="Bold"
+                                                   Margin="12,0,0,0" />
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2"
+                                                   Text="{Binding Details}"
+                                                   FontSize="11"
+                                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                                   Margin="0,4,0,0" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Clinical Notes Summary (Generated) -->
+                <Border Style="{StaticResource SectionCardStyle}"
+                        IsVisible="{Binding ClinicalNotesSummary, Converter={StaticResource IsNotNullOrEmptyConverter}}">
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8" Margin="0,0,0,12">
+                            <Label Text="&#xE70E;"
+                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                   FontSize="20"
+                                   TextColor="{AppThemeBinding Light=#8B5CF6, Dark=#A78BFA}"
+                                   VerticalOptions="Center" />
+                            <Label Text="Clinical Summary"
+                                   Style="{StaticResource SectionHeaderStyle}"
+                                   Margin="0" />
+                        </HorizontalStackLayout>
+
+                        <Border BackgroundColor="{AppThemeBinding Light=#F5F3FF, Dark=#1E1B4B}"
+                                Padding="12"
+                                StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Label Text="{Binding ClinicalNotesSummary}"
+                                   FontSize="13"
+                                   LineHeight="1.5"
+                                   FontFamily="Monospace" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Bottom Spacing -->
+                <BoxView HeightRequest="20" Color="Transparent" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>
