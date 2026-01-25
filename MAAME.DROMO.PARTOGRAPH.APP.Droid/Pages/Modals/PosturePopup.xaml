@@ -39,7 +39,7 @@
                     </core:SfTextInputLayout>
 
                     <VerticalStackLayout Padding="10,0,0,0">
-                        <Label Text="Is is the baby posture?" FontAttributes="Bold"/>
+                        <Label Text="What is the mother posture?" FontAttributes="Bold"/>
 
                         <buttons:SfSegmentedControl x:Name="segmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="2" SelectedIndex="{Binding PostureIndex, Mode=TwoWay}">
                             <buttons:SfSegmentedControl.ItemsSource>

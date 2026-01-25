@@ -223,8 +223,8 @@
 
                                 <!-- Action Button -->
                                 <Button Grid.Row="3"
-                                        Text="Monitor Second Stage"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:CompletedPatientsPageModel}}, Path=ViewSecondStagePartographCommand, x:DataType=pagemodels:CompletedPatientsPageModel}"
+                                        Text="View Partograph"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:CompletedPatientsPageModel}}, Path=ViewPartographCommand, x:DataType=pagemodels:CompletedPatientsPageModel}"
                                         CommandParameter="{Binding .}"
                                         BackgroundColor="#10B981"
                                         TextColor="White"

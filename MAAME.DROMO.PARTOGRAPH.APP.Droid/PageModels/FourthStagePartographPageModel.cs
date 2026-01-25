@@ -1108,7 +1108,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     "OK");
 
                 // Navigate back to active patients
-                await Shell.Current.GoToAsync("//activepatients");
+                //await Shell.Current.GoToAsync("//activepatients");
+                await Shell.Current.GoToAsync("///");
             }
             catch (Exception ex)
             {
