@@ -1,0 +1,101 @@
+@using MAAME.DROMO.PARTOGRAPH.MONITORING.Services
+@implements IDisposable
+@inject IGlobalToastService ToastService
+
+<div class="toast-container position-fixed top-0 end-0 p-4" style="z-index: 1060; pointer-events: none;">
+    @foreach (var toast in toasts)
+    {
+        <div style="pointer-events: auto;" @key="toast.Id">
+            <GlobalToast Title="@toast.Title" 
+                         Message="@toast.Message" 
+                         Type="@toast.Type" 
+                         IsClosing="@toast.IsClosing"
+                         OnClose="() => RemoveToast(toast.Id)" 
+                         OnClick="() => RemoveToast(toast.Id)" />
+        </div>
+    }
+</div>
+
+@code {
+    private List<ToastInstance> toasts = new();
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += ShowToast;
+    }
+
+    private void ShowToast(string title, string message, ToastType type)
+    {
+        var toast = new ToastInstance
+        {
+            Id = Guid.NewGuid(),
+            Title = title,
+            Message = message,
+            Type = type,
+            TimeStamp = DateTime.Now
+        };
+
+        toasts.Add(toast);
+        InvokeAsync(StateHasChanged);
+
+        // Auto remove after 5 seconds
+        var timer = new System.Timers.Timer(5000);
+        timer.AutoReset = false;
+        timer.Elapsed += (sender, e) =>
+        {
+            StartCloseAnimation(toast.Id);
+            timer.Dispose();
+        };
+        timer.Start();
+    }
+
+    private void StartCloseAnimation(Guid id)
+    {
+        var toast = toasts.FirstOrDefault(t => t.Id == id);
+        if (toast != null)
+        {
+            toast.IsClosing = true;
+            InvokeAsync(StateHasChanged);
+
+            // Wait for animation to finish before removing
+            var timer = new System.Timers.Timer(400); // Matches CSS animation duration
+            timer.AutoReset = false;
+            timer.Elapsed += (sender, e) =>
+            {
+                RemoveToastInternal(id);
+                timer.Dispose();
+            };
+            timer.Start();
+        }
+    }
+
+    private void RemoveToast(Guid id)
+    {
+        StartCloseAnimation(id);
+    }
+    
+    private void RemoveToastInternal(Guid id)
+    {
+        var toast = toasts.FirstOrDefault(t => t.Id == id);
+        if (toast != null)
+        {
+            toasts.Remove(toast);
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        ToastService.OnShow -= ShowToast;
+    }
+
+    private class ToastInstance
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; } = "";
+        public string Message { get; set; } = "";
+        public ToastType Type { get; set; }
+        public DateTime TimeStamp { get; set; }
+        public bool IsClosing { get; set; }
+    }
+}

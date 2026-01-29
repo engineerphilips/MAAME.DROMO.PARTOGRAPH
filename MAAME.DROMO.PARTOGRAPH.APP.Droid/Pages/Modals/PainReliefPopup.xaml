@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<sfPopup:SfPopup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<sfPopup:SfPopup AnimationMode='SlideOnTop' xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
@@ -222,3 +222,4 @@
     </sfPopup:SfPopup.ContentTemplate>
 
 </sfPopup:SfPopup>
+

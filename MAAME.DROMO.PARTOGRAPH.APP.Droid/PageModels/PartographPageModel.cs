@@ -100,6 +100,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private DateTime _startTime; // = DateTime.Today.AddHours(6);
 
         [ObservableProperty]
+        private Color _riskColor = Colors.Green;
+
+        [ObservableProperty]
+        private string _riskLevel = "Low Risk";
+
+        [ObservableProperty]
+        private int _riskScore = 0;
+
+        [ObservableProperty]
         private string _patientName = string.Empty;
 
         [ObservableProperty]
@@ -130,23 +139,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private int _currentDilation;
 
-        //[ObservableProperty]
-        //private ObservableCollection<Partograph> _partographEntries = new();
+        [ObservableProperty]
+        private ObservableCollection<ChartDataPoint> _cervicalDilationData = new();
 
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _cervicalDilationData = new();
+        [ObservableProperty]
+        private ObservableCollection<ChartDataPoint> _alertLineData = new();
 
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _fetalHeartRateData = new();
-
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _contractionsData = new();
-
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _alertLineData = new();
-
-        //[ObservableProperty]
-        //private ObservableCollection<ChartDataPoint> _actionLineData = new();
+        [ObservableProperty]
+        private ObservableCollection<ChartDataPoint> _actionLineData = new();
 
         [ObservableProperty]
         bool _isBusy;
@@ -301,7 +301,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         // Bishop Score Properties
         [ObservableProperty]
-        private string _bishopScoreButtonColor = "LightGray";
+        private string _bishopScoreButtonColor = "Transparent";
 
         [ObservableProperty]
         private string _bishopScoreLatestValue = string.Empty;
@@ -463,6 +463,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 ActiveAlerts.Add(alert);
                 UpdateAlertSummary();
+                UpdateRiskStatus();
             });
         }
 
@@ -478,6 +479,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     ActiveAlerts.Remove(alert);
                     UpdateAlertSummary();
+                    UpdateRiskStatus();
                 }
             });
         }
@@ -1068,17 +1070,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     if (latestBishopScore.TotalScore >= 9)
                     {
                         BishopScoreStatusColor = "#4CAF50"; // Green - Favorable
-                        BishopScoreButtonColor = "#E8F5E9"; // Light green background
+                        BishopScoreButtonColor = "#264CAF50"; // 15% Green Tint (or Transparent: "Transparent")
                     }
                     else if (latestBishopScore.TotalScore >= 6)
                     {
                         BishopScoreStatusColor = "#FF9800"; // Orange - Moderately favorable
-                        BishopScoreButtonColor = "#FFF3E0"; // Light orange background
+                        BishopScoreButtonColor = "#26FF9800"; // 15% Orange Tint
                     }
                     else
                     {
                         BishopScoreStatusColor = "#F44336"; // Red - Unfavorable
-                        BishopScoreButtonColor = "#FFEBEE"; // Light red background
+                        BishopScoreButtonColor = "#26F44336"; // 15% Red Tint
                     }
                 }
                 else
@@ -1099,17 +1101,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         if (totalScore >= 9)
                         {
                             BishopScoreStatusColor = "#4CAF50"; // Green - Favorable
-                            BishopScoreButtonColor = "#E8F5E9"; // Light green background
+                            BishopScoreButtonColor = "#264CAF50"; // 15% Green Tint
                         }
                         else if (totalScore >= 6)
                         {
                             BishopScoreStatusColor = "#FF9800"; // Orange - Moderately favorable
-                            BishopScoreButtonColor = "#FFF3E0"; // Light orange background
+                            BishopScoreButtonColor = "#26FF9800"; // 15% Orange Tint
                         }
                         else
                         {
                             BishopScoreStatusColor = "#F44336"; // Red - Unfavorable
-                            BishopScoreButtonColor = "#FFEBEE"; // Light red background
+                            BishopScoreButtonColor = "#26F44336"; // 15% Red Tint
                         }
                     }
                     else
@@ -1120,7 +1122,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         BishopScoreInterpretation = "Insufficient data";
                         BishopScoreNotes = "Tap to record Bishop Score";
                         BishopScoreStatusColor = "#808080"; // Gray - No data
-                        BishopScoreButtonColor = "LightGray";
+                        BishopScoreButtonColor = "Transparent";
                     }
                 }
             }
@@ -1430,6 +1432,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 else
                     CurrentDilation = (Patient?.CurrentDilatation ?? 0) > (Patient?.CervicalDilationOnAdmission ?? 0) ? Patient?.CervicalDilationOnAdmission ?? 0 : (Patient?.CurrentDilatation ?? 0);
 
+                // Prepare chart data for embedded chart
+                PrepareCervicalDilationChart();
+
                 //if (_patient.Companions.Any())
                 //    CompanionDescription = _patient.Companions?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.CompanionDisplay ?? string.Empty;
                 //else
@@ -1554,6 +1559,76 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private Task AddEntry()
             => Shell.Current.GoToAsync($"partographentry?patientId={Patient?.ID}");
+
+        private void PrepareCervicalDilationChart()
+        {
+            try
+            {
+                CervicalDilationData.Clear();
+                AlertLineData.Clear();
+                ActionLineData.Clear();
+
+                if (Patient?.Dilatations == null || !Patient.Dilatations.Any() || !Patient.LaborStartTime.HasValue)
+                    return;
+
+                var dilatations = Patient.Dilatations.OrderBy(d => d.Time).ToList();
+
+                // Plot actual dilatation data
+                foreach (var dil in dilatations)
+                {
+                    CervicalDilationData.Add(new ChartDataPoint
+                    {
+                        Time = dil.Time,
+                        Value = dil.DilatationCm
+                    });
+                }
+
+                // WHO Labour Care Guide 2020: Alert and Action Lines
+                // Active labor starts at 5cm
+                var activeLaborEntry = dilatations.FirstOrDefault(d => d.DilatationCm >= 5);
+                
+                if (activeLaborEntry != null)
+                {
+                    var startTime = activeLaborEntry.Time;
+
+                    // WHO 2020: Alert line - 1cm per hour from 5cm (reaches 10cm in 5 hours)
+                    for (double hour = 0; hour <= 5; hour += 0.5)
+                    {
+                        var time = startTime.AddHours(hour);
+                        var dilatation = 5 + hour; // 1cm per hour from 5cm
+                        if (dilatation > 10) dilatation = 10;
+
+                        AlertLineData.Add(new ChartDataPoint
+                        {
+                            Time = time,
+                            Value = (float)dilatation
+                        });
+
+                        if (dilatation >= 10) break;
+                    }
+
+                    // WHO 2020: Action line - 4 hours to the right of alert line
+                    for (double hour = 0; hour <= 9; hour += 0.5)
+                    {
+                        var time = startTime.AddHours(hour);
+                        var dilatation = 5 + Math.Max(0, hour - 4); // Starts 4 hours later, then 1cm/hour
+                        if (dilatation > 10) dilatation = 10;
+
+                        ActionLineData.Add(new ChartDataPoint
+                        {
+                            Time = time,
+                            Value = (float)dilatation
+                        });
+
+                        if (dilatation >= 10) break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+            }
+        }
 
         [RelayCommand]
         private async Task Print()
@@ -2340,11 +2415,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = false;
             }
         }
-    }
+        private void UpdateRiskStatus()
+        {
+            var alerts = _alertEngine.GetActiveAlerts();
+            var criticalCount = alerts.Count(a => a.Severity == AlertSeverity.Critical);
+            var warningCount = alerts.Count(a => a.Severity == AlertSeverity.Warning);
 
-    //public class ChartDataPoint
-    //{
-    //    public DateTime Time { get; set; }
-    //    public double Value { get; set; }
-    //}
+            RiskScore = (criticalCount * 5) + (warningCount * 2);
+
+            if (criticalCount > 0)
+            {
+                RiskLevel = "CRITICAL";
+                RiskColor = Colors.Red; 
+            }
+            else if (warningCount > 0)
+            {
+                RiskLevel = "WARNING";
+                RiskColor = Colors.Orange;
+            }
+            else
+            {
+                RiskLevel = "LOW RISK";
+                RiskColor = Colors.Green;
+            }
+        }
+    }
 }

@@ -4,6 +4,7 @@
 @inject IEnhancedAlertService AlertService
 @inject IPredictiveAnalyticsService PredictiveService
 @inject NavigationManager Navigation
+@using MAAME.DROMO.PARTOGRAPH.MONITORING.Components.Clinical
 
 <PageTitle>Partograph Details - MAAME DROMO Monitoring</PageTitle>
 
@@ -26,29 +27,29 @@ else if (laborCase == null)
 }
 else
 {
-    <!-- Header -->
+<!-- Header -->
     <div class="dashboard-header mb-4">
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
-                <button class="btn btn-outline-secondary me-3" @onclick="GoBack">
+                <button class="btn btn-white border shadow-sm me-3 hover-lift rounded-circle" @onclick="GoBack" style="width: 40px; height: 40px;">
                     <i class="bi bi-arrow-left"></i>
                 </button>
                 <div>
-                    <h2 class="mb-1">
-                        <span class="risk-indicator @GetRiskClass(laborCase.RiskLevel) me-2"></span>
+                    <h2 class="mb-1 text-gradient-primary fw-bold">
+                        <span class="risk-indicator @GetRiskClass(laborCase.RiskLevel) me-2 shadow-sm"></span>
                         @laborCase.PatientName
                     </h2>
-                    <p class="text-muted mb-0">
+                    <p class="text-secondary mb-0">
                         @laborCase.HospitalNumber | @laborCase.Gravida @laborCase.Parity | @laborCase.Age yrs
                     </p>
                 </div>
             </div>
             <div class="d-flex gap-2 align-items-center">
-                <span class="badge @GetRiskBadgeClass(laborCase.RiskLevel) fs-6 py-2 px-3">
+                <span class="badge @GetRiskBadgeClass(laborCase.RiskLevel) fs-6 py-2 px-3 shadow-sm rounded-pill">
                     @laborCase.RiskLevel
                 </span>
-                <button class="btn btn-outline-secondary" @onclick="RefreshData">
-                    <i class="bi bi-arrow-clockwise"></i>
+                <button class="btn btn-white border shadow-sm hover-lift" @onclick="RefreshData">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh
                 </button>
             </div>
         </div>
@@ -57,51 +58,51 @@ else
     <!-- Summary Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-hospital text-primary me-2 fs-4"></i>
-                        <span class="text-muted small">Facility</span>
+            <div class="stat-card p-4 h-100 position-relative hover-lift">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="icon-box bg-primary-subtle text-primary me-3 rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-hospital fs-5"></i>
                     </div>
-                    <h6 class="mb-0">@laborCase.FacilityName</h6>
-                    <small class="text-muted">@laborCase.DistrictName, @laborCase.RegionName</small>
+                    <span class="text-secondary text-uppercase fw-bold small">Facility</span>
                 </div>
+                <h6 class="mb-1 fw-bold text-dark text-truncate">@laborCase.FacilityName</h6>
+                <small class="text-secondary">@laborCase.DistrictName, @laborCase.RegionName</small>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-clock text-info me-2 fs-4"></i>
-                        <span class="text-muted small">Labour Duration</span>
+            <div class="stat-card p-4 h-100 position-relative hover-lift">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="icon-box bg-info-subtle text-info me-3 rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-clock fs-5"></i>
                     </div>
-                    <h4 class="mb-0">@FormatDuration(laborCase.LaborDuration)</h4>
-                    <small class="text-muted">Started: @(laborCase.LaborStartTime?.ToString("HH:mm") ?? "N/A")</small>
+                    <span class="text-secondary text-uppercase fw-bold small">Duration</span>
                 </div>
+                <h4 class="mb-0 fw-bold text-dark">@FormatDuration(laborCase.LaborDuration)</h4>
+                <small class="text-secondary">Started: @(laborCase.LaborStartTime?.ToString("HH:mm") ?? "N/A")</small>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-graph-up text-success me-2 fs-4"></i>
-                        <span class="text-muted small">Labour Stage</span>
+            <div class="stat-card p-4 h-100 position-relative hover-lift">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="icon-box bg-success-subtle text-success me-3 rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-graph-up fs-5"></i>
                     </div>
-                    <h5 class="mb-0">@laborCase.LaborStage</h5>
-                    <small class="text-muted">Dilatation: @laborCase.CurrentDilatation cm</small>
+                    <span class="text-secondary text-uppercase fw-bold small">Stage</span>
                 </div>
+                <h5 class="mb-1 fw-bold text-dark">@laborCase.LaborStage</h5>
+                <small class="text-secondary">Dilatation: @laborCase.CurrentDilatation cm</small>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-person text-warning me-2 fs-4"></i>
-                        <span class="text-muted small">Assigned Midwife</span>
+            <div class="stat-card p-4 h-100 position-relative hover-lift">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="icon-box bg-warning-subtle text-warning me-3 rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-person fs-5"></i>
                     </div>
-                    <h6 class="mb-0">@laborCase.AssignedMidwife</h6>
-                    <small class="text-muted">Last assessment: @GetTimeAgo(laborCase.LastAssessmentTime)</small>
+                    <span class="text-secondary text-uppercase fw-bold small">Midwife</span>
                 </div>
+                <h6 class="mb-1 fw-bold text-dark">@laborCase.AssignedMidwife</h6>
+                <small class="text-secondary">Assessment: @GetTimeAgo(laborCase.LastAssessmentTime)</small>
             </div>
         </div>
     </div>
@@ -109,169 +110,43 @@ else
     <div class="row g-4">
         <!-- Left Column - Vitals & Progress -->
         <div class="col-lg-8">
-            <!-- Current Vitals -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0"><i class="bi bi-heart-pulse me-2 text-danger"></i>Current Vitals</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <!-- FHR -->
-                        <div class="col-md-3">
-                            <div class="vital-card @(IsVitalCritical(laborCase.LatestFHR, "FHR") ? "vital-critical" : laborCase.IsFHRDue ? "vital-due" : "")">
-                                <div class="vital-icon">
-                                    <i class="bi bi-heart-pulse"></i>
-                                </div>
-                                <div class="vital-value">@(laborCase.LatestFHR?.ToString() ?? "--")</div>
-                                <div class="vital-label">FHR (bpm)</div>
-                                <div class="vital-time">@GetTimeAgo(laborCase.LatestFHRTime)</div>
-                                @if (laborCase.IsFHRDue)
-                                {
-                                    <span class="vital-due-badge">DUE</span>
-                                }
-                            </div>
-                        </div>
-                        <!-- BP -->
-                        <div class="col-md-3">
-                            <div class="vital-card @(IsVitalCritical(laborCase.LatestSystolicBP, "BP") ? "vital-critical" : laborCase.IsBPDue ? "vital-due" : "")">
-                                <div class="vital-icon">
-                                    <i class="bi bi-droplet"></i>
-                                </div>
-                                <div class="vital-value">@(laborCase.LatestSystolicBP?.ToString() ?? "--")/@(laborCase.LatestDiastolicBP?.ToString() ?? "--")</div>
-                                <div class="vital-label">Blood Pressure</div>
-                                <div class="vital-time">@GetTimeAgo(laborCase.LatestBPTime)</div>
-                                @if (laborCase.IsBPDue)
-                                {
-                                    <span class="vital-due-badge">DUE</span>
-                                }
-                            </div>
-                        </div>
-                        <!-- Temperature -->
-                        <div class="col-md-3">
-                            <div class="vital-card">
-                                <div class="vital-icon">
-                                    <i class="bi bi-thermometer-half"></i>
-                                </div>
-                                <div class="vital-value">@(laborCase.LatestTemperature?.ToString("F1") ?? "--")°C</div>
-                                <div class="vital-label">Temperature</div>
-                                <div class="vital-time">-</div>
-                            </div>
-                        </div>
-                        <!-- Contractions -->
-                        <div class="col-md-3">
-                            <div class="vital-card">
-                                <div class="vital-icon">
-                                    <i class="bi bi-graph-up"></i>
-                                </div>
-                                <div class="vital-value">@(laborCase.ContractionsPerTenMinutes?.ToString() ?? "--")</div>
-                                <div class="vital-label">Contractions/10min</div>
-                                <div class="vital-time">-</div>
-                            </div>
-                        </div>
+            <!-- WHO Labour Care Guide -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-journal-medical me-2 text-primary"></i>WHO Labour Care Guide</h5>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-white text-secondary border shadow-sm rounded-pill"><i class="bi bi-clock me-1"></i>Active Phase</span>
+                        @* <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill">2020 Edition</span> *@
                     </div>
                 </div>
-            </div>
-
-            <!-- Labor Progress Chart -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0"><i class="bi bi-bar-chart me-2 text-primary"></i>Labour Progress</h5>
-                </div>
-                <div class="card-body">
-                    <div class="partograph-chart">
-                        <!-- Dilatation Progress Bar -->
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="fw-semibold">Cervical Dilatation</span>
-                                <span class="badge bg-primary">@laborCase.CurrentDilatation / 10 cm</span>
-                            </div>
-                            <div class="progress" style="height: 25px;">
-                                <div class="progress-bar @GetProgressBarClass(laborCase.RiskLevel)"
-                                     role="progressbar"
-                                     style="width: @(laborCase.CurrentDilatation * 10)%">
-                                    @laborCase.CurrentDilatation cm
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between mt-1 small text-muted">
-                                <span>0 cm</span>
-                                <span>Latent (0-4)</span>
-                                <span>Active (5-9)</span>
-                                <span>Fully Dilated (10)</span>
-                            </div>
-                        </div>
-
-                        <!-- Station Progress -->
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="fw-semibold">Head Descent (Station)</span>
-                                <span class="badge bg-info">@laborCase.CurrentStation</span>
-                            </div>
-                            <div class="station-indicator">
-                                <div class="station-scale">
-                                    @for (int i = -3; i <= 3; i++)
-                                    {
-                                        <div class="station-mark @(laborCase.CurrentStation == i ? "active" : "")">
-                                            <span class="station-value">@(i > 0 ? "+" : "")@i</span>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Labor Stage Timeline -->
-                        <div>
-                            <span class="fw-semibold d-block mb-2">Labour Stage Timeline</span>
-                            <div class="stage-timeline">
-                                <div class="stage-item @(laborCase.LaborStage == "First Stage" ? "active" : laborCase.LaborStage != "First Stage" && laborCase.LaborStartTime.HasValue ? "completed" : "")">
-                                    <div class="stage-dot"></div>
-                                    <div class="stage-label">First Stage</div>
-                                </div>
-                                <div class="stage-line @(laborCase.LaborStage != "First Stage" ? "completed" : "")"></div>
-                                <div class="stage-item @(laborCase.LaborStage == "Second Stage" ? "active" : laborCase.LaborStage == "Third Stage" || laborCase.LaborStage == "Fourth Stage" ? "completed" : "")">
-                                    <div class="stage-dot"></div>
-                                    <div class="stage-label">Second Stage</div>
-                                </div>
-                                <div class="stage-line @(laborCase.LaborStage == "Third Stage" || laborCase.LaborStage == "Fourth Stage" ? "completed" : "")"></div>
-                                <div class="stage-item @(laborCase.LaborStage == "Third Stage" ? "active" : laborCase.LaborStage == "Fourth Stage" ? "completed" : "")">
-                                    <div class="stage-dot"></div>
-                                    <div class="stage-label">Third Stage</div>
-                                </div>
-                                <div class="stage-line @(laborCase.LaborStage == "Fourth Stage" ? "completed" : "")"></div>
-                                <div class="stage-item @(laborCase.LaborStage == "Fourth Stage" ? "active" : "")">
-                                    <div class="stage-dot"></div>
-                                    <div class="stage-label">Fourth Stage</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <WHOLaborCareGuide Data="@partographData" />
             </div>
         </div>
 
         <!-- Right Column - Alerts & Risk -->
         <div class="col-lg-4">
             <!-- Active Alerts -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Active Alerts</h5>
-                    <span class="badge bg-danger">@laborCase.AlertCount</span>
+            <div class="glass-panel mb-4 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Active Alerts</h5>
+                    <span class="badge bg-danger rounded-pill shadow-sm">@laborCase.AlertCount</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     @if (laborCase.ActiveAlerts.Any())
                     {
                         @foreach (var alert in laborCase.ActiveAlerts)
                         {
-                            <div class="alert alert-danger d-flex align-items-center mb-2 py-2">
-                                <i class="bi bi-exclamation-circle me-2"></i>
-                                <span class="small">@alert</span>
+                            <div class="alert alert-danger d-flex align-items-center mb-2 py-3 border-0 shadow-sm rounded-3 hover-lift" style="background: #fff5f5;">
+                                <i class="bi bi-exclamation-circle me-3 fs-5"></i>
+                                <span class="fw-medium text-dark">@alert</span>
                             </div>
                         }
                     }
                     else
                     {
-                        <div class="text-center py-3 text-muted">
-                            <i class="bi bi-check-circle fs-1 text-success"></i>
-                            <p class="mt-2 mb-0">No active alerts</p>
+                        <div class="text-center py-4">
+                            <i class="bi bi-check-circle fs-1 text-success opacity-50"></i>
+                            <p class="mt-2 mb-0 text-secondary">No active alerts</p>
                         </div>
                     }
                 </div>
@@ -280,13 +155,13 @@ else
             <!-- Risk Prediction -->
             @if (riskPrediction != null)
             {
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="bi bi-shield-exclamation me-2 text-warning"></i>Risk Assessment</h5>
+                <div class="glass-panel mb-4 p-4">
+                    <div class="mb-4 border-bottom pb-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-shield-exclamation me-2 text-warning"></i>Risk Assessment</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <div class="risk-score-circle @GetRiskScoreClass(riskPrediction.OverallRiskScore)">
+                    <div class="card-body p-0">
+                        <div class="text-center mb-4">
+                            <div class="risk-score-circle @GetRiskScoreClass(riskPrediction.OverallRiskScore) shadow-sm">
                                 <span class="risk-score-value">@riskPrediction.OverallRiskScore.ToString("F0")</span>
                                 <span class="risk-score-label">Risk Score</span>
                             </div>
@@ -294,12 +169,12 @@ else
                         <div class="risk-factors">
                             @foreach (var factor in riskPrediction.RiskFactors.Take(5))
                             {
-                                <div class="risk-factor-item mb-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="small">@factor.Name</span>
-                                        <span class="badge @GetSeverityBadgeClass(factor.Severity) badge-sm">@factor.Severity</span>
+                                <div class="risk-factor-item mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="small fw-bold text-dark">@factor.Name</span>
+                                        <span class="badge @GetSeverityBadgeClass(factor.Severity) badge-sm rounded-pill shadow-sm">@factor.Severity</span>
                                     </div>
-                                    <div class="progress" style="height: 4px;">
+                                    <div class="progress shadow-sm" style="height: 6px; border-radius: 3px;">
                                         <div class="progress-bar @GetSeverityBarClass(factor.Severity)" style="width: @(factor.Contribution * 100)%"></div>
                                     </div>
                                 </div>
@@ -307,12 +182,12 @@ else
                         </div>
                         @if (riskPrediction.Recommendations.Any())
                         {
-                            <hr />
-                            <h6 class="mb-2"><i class="bi bi-lightbulb me-1"></i>Recommendations</h6>
-                            <ul class="small mb-0 ps-3">
+                            <hr class="opacity-25 my-3" />
+                            <h6 class="mb-3 fw-bold text-primary"><i class="bi bi-lightbulb me-2"></i>Recommendations</h6>
+                            <ul class="small mb-0 ps-3 text-secondary">
                                 @foreach (var rec in riskPrediction.Recommendations.Take(3))
                                 {
-                                    <li>@rec</li>
+                                    <li class="mb-2">@rec</li>
                                 }
                             </ul>
                         }
@@ -321,30 +196,30 @@ else
             }
 
             <!-- Measurement Schedule -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0"><i class="bi bi-calendar-check me-2 text-info"></i>Next Measurements</h5>
+            <div class="glass-panel p-4">
+                <div class="mb-4 border-bottom pb-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-calendar-check me-2 text-info"></i>Next Measurements</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="measurement-schedule">
-                        <div class="measurement-item @(laborCase.IsFHRDue ? "due" : "")">
-                            <i class="bi bi-heart-pulse me-2"></i>
-                            <span>FHR</span>
-                            <span class="ms-auto badge @(laborCase.IsFHRDue ? "bg-danger" : "bg-secondary")">
+                        <div class="measurement-item @(laborCase.IsFHRDue ? "due" : "") hover-lift shadow-sm">
+                            <i class="bi bi-heart-pulse me-3 fs-5 text-danger"></i>
+                            <span class="fw-medium text-dark">FHR</span>
+                            <span class="ms-auto badge @(laborCase.IsFHRDue ? "bg-danger" : "bg-secondary") rounded-pill shadow-sm">
                                 @(laborCase.IsFHRDue ? "Now" : $"In {laborCase.MinutesUntilNextMeasurement} min")
                             </span>
                         </div>
-                        <div class="measurement-item @(laborCase.IsBPDue ? "due" : "")">
-                            <i class="bi bi-droplet me-2"></i>
-                            <span>Blood Pressure</span>
-                            <span class="ms-auto badge @(laborCase.IsBPDue ? "bg-danger" : "bg-secondary")">
+                        <div class="measurement-item @(laborCase.IsBPDue ? "due" : "") hover-lift shadow-sm">
+                            <i class="bi bi-droplet me-3 fs-5 text-primary"></i>
+                            <span class="fw-medium text-dark">Blood Pressure</span>
+                            <span class="ms-auto badge @(laborCase.IsBPDue ? "bg-danger" : "bg-secondary") rounded-pill shadow-sm">
                                 @(laborCase.IsBPDue ? "Now" : "As scheduled")
                             </span>
                         </div>
-                        <div class="measurement-item @(laborCase.IsDilatationDue ? "due" : "")">
-                            <i class="bi bi-graph-up me-2"></i>
-                            <span>Cervical Assessment</span>
-                            <span class="ms-auto badge @(laborCase.IsDilatationDue ? "bg-danger" : "bg-secondary")">
+                        <div class="measurement-item @(laborCase.IsDilatationDue ? "due" : "") hover-lift shadow-sm">
+                            <i class="bi bi-graph-up me-3 fs-5 text-success"></i>
+                            <span class="fw-medium text-dark">Cervical Assessment</span>
+                            <span class="ms-auto badge @(laborCase.IsDilatationDue ? "bg-danger" : "bg-secondary") rounded-pill shadow-sm">
                                 @(laborCase.IsDilatationDue ? "Now" : "As scheduled")
                             </span>
                         </div>
@@ -364,10 +239,10 @@ else
         animation: pulse 2s infinite;
     }
 
-    .risk-indicator.critical { background: #dc3545; }
-    .risk-indicator.high { background: #fd7e14; }
-    .risk-indicator.moderate { background: #ffc107; }
-    .risk-indicator.normal { background: #28a745; }
+    .risk-indicator.critical { background: #dc3545; box-shadow: 0 0 10px rgba(220, 53, 69, 0.5); }
+    .risk-indicator.high { background: #fd7e14; box-shadow: 0 0 10px rgba(253, 126, 20, 0.5); }
+    .risk-indicator.moderate { background: #ffc107; box-shadow: 0 0 10px rgba(255, 193, 7, 0.5); }
+    .risk-indicator.normal { background: #28a745; box-shadow: 0 0 10px rgba(40, 167, 69, 0.5); }
 
     @@keyframes pulse {
         0%, 100% { opacity: 1; transform: scale(1); }
@@ -375,17 +250,13 @@ else
     }
 
     .vital-card {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 1.25rem;
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
         text-align: center;
         position: relative;
-        border: 2px solid transparent;
-        transition: all 0.2s;
-    }
-
-    .vital-card:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.2s ease-in-out;
     }
 
     .vital-card.vital-critical {
@@ -399,9 +270,8 @@ else
     }
 
     .vital-icon {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
         color: #6c757d;
-        margin-bottom: 0.5rem;
     }
 
     .vital-critical .vital-icon {
@@ -409,8 +279,8 @@ else
     }
 
     .vital-value {
-        font-size: 1.75rem;
-        font-weight: 700;
+        font-size: 1.5rem;
+        font-weight: 800;
         color: #212529;
     }
 
@@ -423,12 +293,12 @@ else
         color: #6c757d;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        font-weight: 600;
     }
 
     .vital-time {
         font-size: 0.7rem;
         color: #adb5bd;
-        margin-top: 0.25rem;
     }
 
     .vital-due-badge {
@@ -437,60 +307,67 @@ else
         right: -8px;
         background: #fd7e14;
         color: white;
-        font-size: 0.6rem;
-        font-weight: 600;
-        padding: 2px 8px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 4px 10px;
         border-radius: 12px;
+        box-shadow: 0 2px 5px rgba(253, 126, 20, 0.3);
     }
 
     .station-indicator {
-        padding: 1rem 0;
+        padding: 1.5rem 0;
     }
 
     .station-scale {
         display: flex;
         justify-content: space-between;
         position: relative;
-        padding: 0 10px;
+        padding: 0 15px;
     }
 
     .station-scale::before {
         content: '';
         position: absolute;
         top: 50%;
-        left: 10px;
-        right: 10px;
+        left: 15px;
+        right: 15px;
         height: 4px;
         background: #e9ecef;
         transform: translateY(-50%);
+        border-radius: 2px;
     }
 
     .station-mark {
         position: relative;
         z-index: 1;
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
-        background: #e9ecef;
+        background: white;
+        border: 2px solid #e9ecef;
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all 0.2s;
     }
 
     .station-mark.active {
         background: #0d6efd;
+        border-color: #0d6efd;
         color: white;
+        transform: scale(1.1);
     }
 
     .station-value {
-        font-size: 0.75rem;
-        font-weight: 600;
+        font-size: 0.8rem;
+        font-weight: 700;
     }
 
     .stage-timeline {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding: 0 10px;
     }
 
     .stage-item {
@@ -498,21 +375,23 @@ else
         flex-direction: column;
         align-items: center;
         flex: 0 0 auto;
+        position: relative;
+        z-index: 2;
     }
 
     .stage-dot {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
         border-radius: 50%;
-        background: #e9ecef;
-        border: 2px solid #dee2e6;
-        margin-bottom: 4px;
+        background: white;
+        border: 3px solid #dee2e6;
+        transition: all 0.3s;
     }
 
     .stage-item.active .stage-dot {
-        background: #0d6efd;
+        background: white;
         border-color: #0d6efd;
-        animation: pulse 2s infinite;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
     }
 
     .stage-item.completed .stage-dot {
@@ -521,21 +400,26 @@ else
     }
 
     .stage-label {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         color: #6c757d;
+        font-weight: 500;
+        white-space: nowrap;
     }
 
     .stage-item.active .stage-label {
         color: #0d6efd;
-        font-weight: 600;
+        font-weight: 700;
     }
 
     .stage-line {
         flex: 1;
-        height: 2px;
+        height: 3px;
         background: #e9ecef;
-        margin: 0 8px;
-        margin-bottom: 20px;
+        margin: 0 5px;
+        margin-bottom: 24px;
+        border-radius: 2px;
+        position: relative;
+        z-index: 1;
     }
 
     .stage-line.completed {
@@ -543,69 +427,75 @@ else
     }
 
     .risk-score-circle {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         margin: 0 auto;
-        border: 4px solid;
+        border: 8px solid;
+        background: white;
     }
 
     .risk-score-circle.low {
-        background: rgba(40, 167, 69, 0.1);
         border-color: #28a745;
         color: #28a745;
     }
 
     .risk-score-circle.moderate {
-        background: rgba(255, 193, 7, 0.1);
         border-color: #ffc107;
         color: #856404;
     }
 
     .risk-score-circle.high {
-        background: rgba(253, 126, 20, 0.1);
         border-color: #fd7e14;
         color: #fd7e14;
     }
 
     .risk-score-circle.critical {
-        background: rgba(220, 53, 69, 0.1);
         border-color: #dc3545;
         color: #dc3545;
     }
 
     .risk-score-value {
-        font-size: 1.75rem;
-        font-weight: 700;
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1;
     }
 
     .risk-score-label {
-        font-size: 0.65rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-top: 5px;
     }
 
     .measurement-item {
         display: flex;
         align-items: center;
-        padding: 0.75rem;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 0.75rem;
+        background: white;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.2s;
+    }
+
+    .measurement-item:hover {
+        transform: translateY(-2px);
     }
 
     .measurement-item.due {
         background: #fff3cd;
-        border: 1px solid #ffc107;
+        border: 1px solid rgba(255, 193, 7, 0.5);
     }
 
     .badge-sm {
         font-size: 0.65rem;
-        padding: 0.2em 0.5em;
+        padding: 0.35em 0.6em;
     }
 </style>
 
@@ -614,7 +504,8 @@ else
     public Guid PartographId { get; set; }
 
     private bool isLoading = true;
-    private LiveLaborCase? laborCase;
+    private PartographDetailsDto? partographData;
+    private LiveLaborCase? laborCase => partographData?.CaseInfo; // Computed property for backward compatibility
     private RiskPrediction? riskPrediction;
 
     protected override async Task OnInitializedAsync()
@@ -627,12 +518,13 @@ else
         isLoading = true;
         try
         {
-            var laborTask = LiveLaborService.GetLaborCaseAsync(PartographId);
+            // Fetch detailed data including historical points for LCG
+            var laborTask = LiveLaborService.GetPartographDetailsAsync(PartographId);
             var riskTask = PredictiveService.GetRiskPredictionAsync(PartographId);
 
             await Task.WhenAll(laborTask, riskTask);
 
-            laborCase = await laborTask;
+            partographData = await laborTask;
             riskPrediction = await riskTask;
         }
         finally

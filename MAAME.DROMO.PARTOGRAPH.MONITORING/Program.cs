@@ -26,13 +26,18 @@ builder.Services.AddBlazoredLocalStorage();
 
 // Add Blazored Toast for notifications
 builder.Services.AddBlazoredToast();
+builder.Services.AddScoped<IGlobalToastService, GlobalToastService>();
+
+// Register Authorization Message Handler
+builder.Services.AddScoped<AuthorizationMessageHandler>();
 
 // Add HTTP client for API calls to the SERVICE project
 builder.Services.AddHttpClient("PartographAPI", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "http://192.168.100.4:5218");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
-});
+})
+.AddHttpMessageHandler<AuthorizationMessageHandler>();
 
 // Register HttpClient factory
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("PartographAPI"));
@@ -84,6 +89,10 @@ builder.Services.AddScoped<IAlertThresholdService, AlertThresholdService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IOfflineQueueService, OfflineQueueService>();
 builder.Services.AddScoped<IReportVisualizationService, ReportVisualizationService>();
+
+// CDS & Audit (Maturity Features)
+builder.Services.AddScoped<ICDSService, CDSService>();
+builder.Services.AddScoped<IAuditLogService, AuditLogService>(); // Placeholder registration
 
 // Robson Classification Service (WHO 2017)
 builder.Services.AddScoped<IRobsonClassificationService, RobsonClassificationService>();

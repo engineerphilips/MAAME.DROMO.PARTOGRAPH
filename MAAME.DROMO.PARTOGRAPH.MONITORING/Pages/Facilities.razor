@@ -9,24 +9,24 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="mb-1">
-                <i class="bi bi-hospital me-2 text-success"></i>
+            <h2 class="mb-1 text-gradient-primary fw-bold">
+                <i class="bi bi-hospital me-2"></i>
                 Health Facilities
             </h2>
-            <p class="text-muted mb-0">
+            <p class="text-secondary mb-0">
                 @accessLevelText | @filteredFacilities.Count facilities
             </p>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary" @onclick="LoadData">
+            <button class="btn btn-white border shadow-sm hover-lift" @onclick="LoadData">
                 <i class="bi bi-arrow-clockwise me-1"></i> Refresh
             </button>
-            <button class="btn btn-outline-primary" @onclick="ExportData">
+            <button class="btn btn-white border shadow-sm hover-lift" @onclick="ExportData">
                 <i class="bi bi-download me-1"></i> Export
             </button>
             <AuthorizeView Roles="Admin">
                 <Authorized>
-                    <a href="/facility-onboarding" class="btn btn-success">
+                    <a href="/facility-onboarding" class="btn btn-primary shadow-sm hover-lift">
                         <i class="bi bi-plus-lg me-1"></i> Add Facility
                     </a>
                 </Authorized>
@@ -38,116 +38,119 @@
 <!-- Summary Cards -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="text-muted mb-1">Total Facilities</p>
-                        <h3 class="mb-0">@facilities.Count</h3>
-                    </div>
-                    <div class="stat-icon bg-primary-subtle text-primary">
-                        <i class="bi bi-hospital"></i>
-                    </div>
+        <div class="stat-card p-4 h-100 position-relative hover-lift">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="text-secondary text-uppercase fw-bold small mb-2">Total Facilities</h5>
+                    <h2 class="mb-0 fw-bold text-dark display-6">@facilities.Count</h2>
                 </div>
+                <div class="icon-box bg-primary-subtle text-primary rounded-circle p-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                    <i class="bi bi-hospital fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-3 text-success small">
+                <i class="bi bi-graph-up me-1"></i>
+                <span>Registered across districts</span>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="text-muted mb-1">Active Facilities</p>
-                        <h3 class="mb-0 text-success">@facilities.Count(f => f.IsActive)</h3>
-                    </div>
-                    <div class="stat-icon bg-success-subtle text-success">
-                        <i class="bi bi-check-circle"></i>
-                    </div>
+        <div class="stat-card p-4 h-100 position-relative hover-lift">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="text-secondary text-uppercase fw-bold small mb-2">Active Facilities</h5>
+                    <h2 class="mb-0 fw-bold text-success display-6">@facilities.Count(f => f.IsActive)</h2>
                 </div>
+                <div class="icon-box bg-success-subtle text-success rounded-circle p-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                    <i class="bi bi-check-circle fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-3 text-secondary small">
+                <span>Operational status</span>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="text-muted mb-1">Active Labours</p>
-                        <h3 class="mb-0 text-warning">@facilities.Sum(f => f.ActiveLabors)</h3>
-                    </div>
-                    <div class="stat-icon bg-warning-subtle text-warning">
-                        <i class="bi bi-hourglass-split"></i>
-                    </div>
+        <div class="stat-card p-4 h-100 position-relative hover-lift">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="text-secondary text-uppercase fw-bold small mb-2">Active Labours</h5>
+                    <h2 class="mb-0 fw-bold text-warning display-6">@facilities.Sum(f => f.ActiveLabors)</h2>
                 </div>
+                <div class="icon-box bg-warning-subtle text-warning rounded-circle p-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                    <i class="bi bi-hourglass-split fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-3 text-secondary small">
+                <span>Ongoing cases</span>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="text-muted mb-1">Today's Deliveries</p>
-                        <h3 class="mb-0 text-info">@facilities.Sum(f => f.DeliveriesToday)</h3>
-                    </div>
-                    <div class="stat-icon bg-info-subtle text-info">
-                        <i class="bi bi-clipboard2-pulse"></i>
-                    </div>
+        <div class="stat-card p-4 h-100 position-relative hover-lift">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="text-secondary text-uppercase fw-bold small mb-2">Today's Deliveries</h5>
+                    <h2 class="mb-0 fw-bold text-info display-6">@facilities.Sum(f => f.DeliveriesToday)</h2>
                 </div>
+                <div class="icon-box bg-info-subtle text-info rounded-circle p-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                    <i class="bi bi-clipboard2-pulse fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-3 text-secondary small">
+                <span>Total for today</span>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Filter Section -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body py-3">
-        <div class="row g-3 align-items-center">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0">
-                        <i class="bi bi-search text-muted"></i>
-                    </span>
-                    <input type="text" class="form-control border-start-0"
-                           placeholder="Search facilities..."
-                           @bind="searchTerm" @bind:event="oninput" />
-                </div>
+<div class="glass-panel mb-4 p-4">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-4">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white border-end-0 text-muted">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" class="form-control border-start-0 ps-0"
+                       placeholder="Search facilities..."
+                       @bind="searchTerm" @bind:event="oninput" />
             </div>
-            <div class="col-md-2">
-                <select class="form-select" @bind="typeFilter">
-                    <option value="">All Types</option>
-                    <option value="Hospital">Hospital</option>
-                    <option value="Health Center">Health Center</option>
-                    <option value="Clinic">Clinic</option>
-                    <option value="CHPS">CHPS Compound</option>
-                    <option value="Maternity Home">Maternity Home</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select class="form-select" @bind="levelFilter">
-                    <option value="">All Levels</option>
-                    <option value="Primary">Primary</option>
-                    <option value="Secondary">Secondary</option>
-                    <option value="Tertiary">Tertiary</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select class="form-select" @bind="statusFilter">
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="withLabors">With Active Labours</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <div class="btn-group w-100">
-                    <button class="btn @(viewMode == "grid" ? "btn-primary" : "btn-outline-primary")" @onclick="() => SetTab(TabState.Grid.ToString().ToLower())">
-                        <i class="bi bi-grid"></i>
-                    </button>
-                    <button class="btn @(viewMode == "table" ? "btn-primary" : "btn-outline-primary")" @onclick="() => SetTab(TabState.Table.ToString().ToLower())">
-                        <i class="bi bi-list"></i>
-                    </button>
-                </div>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select shadow-sm text-secondary" @bind="typeFilter">
+                <option value="">All Types</option>
+                <option value="Hospital">Hospital</option>
+                <option value="Health Center">Health Center</option>
+                <option value="Clinic">Clinic</option>
+                <option value="CHPS">CHPS Compound</option>
+                <option value="Maternity Home">Maternity Home</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select shadow-sm text-secondary" @bind="levelFilter">
+                <option value="">All Levels</option>
+                <option value="Primary">Primary</option>
+                <option value="Secondary">Secondary</option>
+                <option value="Tertiary">Tertiary</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select shadow-sm text-secondary" @bind="statusFilter">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="withLabors">With Active Labours</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <div class="btn-group w-100 shadow-sm rounded-pill" role="group">
+                <button class="btn @(viewMode == "grid" ? "btn-primary" : "btn-white border")" @onclick="() => SetTab(TabState.Grid.ToString().ToLower())">
+                    <i class="bi bi-grid"></i>
+                </button>
+                <button class="btn @(viewMode == "table" ? "btn-primary" : "btn-white border")" @onclick="() => SetTab(TabState.Table.ToString().ToLower())">
+                    <i class="bi bi-list"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -159,98 +162,96 @@
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-3 text-muted">Loading facilities...</p>
+        <p class="mt-3 text-secondary">Loading facilities...</p>
     </div>
 }
 else if (viewMode == "grid")
 {
     <!-- Grid View -->
-    <div class="row g-4">
+    <div class="row g-4 mb-4">
         @foreach (var facility in filteredFacilities)
         {
             <div class="col-md-6 col-lg-4">
-                <div class="card facility-card border-0 shadow-sm h-100 @(!facility.IsActive ? "opacity-75" : "")">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div class="facility-icon @GetFacilityIconClass(facility.Type)">
-                                <i class="bi @GetFacilityIcon(facility.Type)"></i>
-                            </div>
-                            <div class="d-flex gap-2">
-                                @if (facility.ActiveLabors > 0)
-                                {
-                                    <span class="badge bg-warning text-dark">
-                                        <i class="bi bi-hourglass-split me-1"></i>@facility.ActiveLabors active
-                                    </span>
-                                }
-                                <span class="badge @(facility.IsActive ? "bg-success" : "bg-secondary")">
-                                    @(facility.IsActive ? "Active" : "Inactive")
+                <div class="glass-panel facility-card h-100 @(!facility.IsActive ? "opacity-75" : "") p-4 hover-lift">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="facility-icon @GetFacilityIconClass(facility.Type) shadow-sm">
+                            <i class="bi @GetFacilityIcon(facility.Type)"></i>
+                        </div>
+                        <div class="d-flex gap-2">
+                            @if (facility.ActiveLabors > 0)
+                            {
+                                <span class="badge bg-warning text-dark rounded-pill shadow-sm">
+                                    <i class="bi bi-hourglass-split me-1"></i>@facility.ActiveLabors active
                                 </span>
-                            </div>
+                            }
+                            <span class="badge @(facility.IsActive ? "bg-success" : "bg-secondary") rounded-pill shadow-sm">
+                                @(facility.IsActive ? "Active" : "Inactive")
+                            </span>
                         </div>
+                    </div>
 
-                        <h5 class="card-title mb-1">@facility.Name</h5>
-                        <p class="text-muted small mb-3">
-                            <i class="bi bi-geo-alt me-1"></i>@facility.DistrictName
-                            <span class="mx-2">|</span>
-                            <span class="badge bg-light text-dark">@facility.Type</span>
-                            <span class="badge bg-light text-dark">@facility.Level</span>
-                        </p>
+                    <h5 class="card-title mb-1 fw-bold text-dark">@facility.Name</h5>
+                    <p class="text-secondary small mb-3">
+                        <i class="bi bi-geo-alt me-1"></i>@facility.DistrictName
+                        <span class="mx-2">|</span>
+                        <span class="badge bg-light text-dark border">@facility.Type</span>
+                        <span class="badge bg-light text-dark border">@facility.Level</span>
+                    </p>
 
-                        <div class="facility-stats">
-                            <div class="row text-center g-2">
-                                <div class="col-4">
-                                    <div class="stat-mini">
-                                        <span class="stat-value text-primary">@facility.DeliveriesToday</span>
-                                        <span class="stat-label">Today</span>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="stat-mini">
-                                        <span class="stat-value text-success">@facility.DeliveriesThisMonth</span>
-                                        <span class="stat-label">Month</span>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="stat-mini">
-                                        <span class="stat-value text-info">@facility.StaffCount</span>
-                                        <span class="stat-label">Staff</span>
-                                    </div>
+                    <div class="facility-stats p-2 rounded bg-light-subtle mb-3">
+                        <div class="row text-center g-2">
+                            <div class="col-4 border-end">
+                                <div class="stat-mini">
+                                    <span class="stat-value text-primary fw-bold">@facility.DeliveriesToday</span>
+                                    <span class="stat-label text-secondary" style="font-size: 0.7rem;">Today</span>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-                            <small class="text-muted">
-                                <i class="bi bi-clock me-1"></i>
-                                @if (facility.LastActivityTime.HasValue)
-                                {
-                                    @GetTimeAgo(facility.LastActivityTime.Value)
-                                }
-                                else
-                                {
-                                    <span>No recent activity</span>
-                                }
-                            </small>
-                            <div class="d-flex gap-1">
-                                <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewFacilityDetails(facility)" title="View Details">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <a href="live-labor?facility=@facility.ID" class="btn btn-sm btn-outline-warning" title="View Active Labours">
-                                    <i class="bi bi-activity"></i>
-                                </a>
+                            <div class="col-4 border-end">
+                                <div class="stat-mini">
+                                    <span class="stat-value text-success fw-bold">@facility.DeliveriesThisMonth</span>
+                                    <span class="stat-label text-secondary" style="font-size: 0.7rem;">Month</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-mini">
+                                    <span class="stat-value text-info fw-bold">@facility.StaffCount</span>
+                                    <span class="stat-label text-secondary" style="font-size: 0.7rem;">Staff</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>
+                            @if (facility.LastActivityTime.HasValue)
+                            {
+                                @GetTimeAgo(facility.LastActivityTime.Value)
+                            }
+                            else
+                            {
+                                <span>No recent activity</span>
+                            }
+                        </small>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-white border shadow-sm rounded-pill px-3 hover-lift" @onclick="() => ViewFacilityDetails(facility)" title="View Details">
+                                <i class="bi bi-eye"></i> Details
+                            </button>
+                            <a href="live-labor?facility=@facility.ID" class="btn btn-sm btn-outline-warning rounded-pill px-3 shadow-sm hover-lift" title="View Active Labours">
+                                <i class="bi bi-activity"></i> Monitor
+                            </a>
+                        </div>
+                    </div>
+
                     <!-- Performance Indicator -->
-                    <div class="card-footer bg-transparent border-0 py-2">
+                    <div class="mt-3 pt-2">
                         <div class="d-flex align-items-center">
-                            <span class="me-2 small">Performance:</span>
-                            <div class="progress flex-grow-1" style="height: 6px;">
-                                <div class="progress-bar @GetPerformanceBarClass(facility.PerformanceStatus)"
+                            <span class="me-2 small text-secondary">Performance:</span>
+                            <div class="progress flex-grow-1 shadow-sm" style="height: 8px; border-radius: 4px;">
+                                <div class="progress-bar @GetPerformanceBarClass(facility.PerformanceStatus) rounded-pill"
                                      style="width: @GetPerformanceWidth(facility.PerformanceStatus)%"></div>
                             </div>
-                            <span class="ms-2 small @GetPerformanceTextClass(facility.PerformanceStatus)">
+                            <span class="ms-2 small fw-semibold @GetPerformanceTextClass(facility.PerformanceStatus)">
                                 @facility.PerformanceStatus
                             </span>
                         </div>
@@ -263,93 +264,91 @@ else if (viewMode == "grid")
 else
 {
     <!-- Table View -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Facility</th>
-                            <th>Type</th>
-                            <th>Level</th>
-                            <th>District</th>
-                            <th class="text-center">Active Labours</th>
-                            <th class="text-center">Today</th>
-                            <th class="text-center">Month</th>
-                            <th class="text-center">Staff</th>
-                            <th>Last Activity</th>
-                            <th>Status</th>
-                            <th class="text-end">Actions</th>
+    <div class="glass-panel p-0 mb-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-secondary small text-uppercase">Facility</th>
+                        <th class="py-3 text-secondary small text-uppercase">Type</th>
+                        <th class="py-3 text-secondary small text-uppercase">Level</th>
+                        <th class="py-3 text-secondary small text-uppercase">District</th>
+                        <th class="text-center py-3 text-secondary small text-uppercase">Active Labours</th>
+                        <th class="text-center py-3 text-secondary small text-uppercase">Today</th>
+                        <th class="text-center py-3 text-secondary small text-uppercase">Month</th>
+                        <th class="text-center py-3 text-secondary small text-uppercase">Staff</th>
+                        <th class="py-3 text-secondary small text-uppercase">Last Activity</th>
+                        <th class="py-3 text-secondary small text-uppercase">Status</th>
+                        <th class="text-end pe-4 py-3 text-secondary small text-uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var facility in filteredFacilities)
+                    {
+                        <tr class="@(!facility.IsActive ? "bg-light text-muted" : "") transition-all">
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="facility-icon-small @GetFacilityIconClass(facility.Type) me-3 shadow-sm text-white">
+                                        <i class="bi @GetFacilityIcon(facility.Type)"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@facility.Name</div>
+                                        <small class="text-secondary">@facility.Code</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-white text-dark border shadow-sm">@facility.Type</span></td>
+                            <td><span class="badge bg-white text-dark border shadow-sm">@facility.Level</span></td>
+                            <td>@facility.DistrictName</td>
+                            <td class="text-center">
+                                @if (facility.ActiveLabors > 0)
+                                {
+                                    <span class="badge bg-warning text-dark rounded-pill shadow-sm">@facility.ActiveLabors</span>
+                                }
+                                else
+                                {
+                                    <span class="text-secondary">-</span>
+                                }
+                            </td>
+                            <td class="text-center fw-bold text-primary">@facility.DeliveriesToday</td>
+                            <td class="text-center">@facility.DeliveriesThisMonth</td>
+                            <td class="text-center">@facility.StaffCount</td>
+                            <td>
+                                @if (facility.LastActivityTime.HasValue)
+                                {
+                                    <small class="text-secondary">@GetTimeAgo(facility.LastActivityTime.Value)</small>
+                                }
+                                else
+                                {
+                                    <small class="text-muted">-</small>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge @(facility.IsActive ? "bg-success" : "bg-secondary") rounded-pill shadow-sm">
+                                    @(facility.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group btn-group-sm shadow-sm rounded-pill overflow-hidden">
+                                    <button class="btn btn-outline-primary" @onclick="() => ViewFacilityDetails(facility)" title="Details">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <a href="live-labor?facility=@facility.ID" class="btn btn-outline-warning" title="Labors">
+                                        <i class="bi bi-activity"></i>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var facility in filteredFacilities)
-                        {
-                            <tr class="@(!facility.IsActive ? "table-secondary" : "")">
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="facility-icon-small @GetFacilityIconClass(facility.Type) me-2">
-                                            <i class="bi @GetFacilityIcon(facility.Type)"></i>
-                                        </div>
-                                        <div>
-                                            <div class="fw-semibold">@facility.Name</div>
-                                            <small class="text-muted">@facility.Code</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-light text-dark">@facility.Type</span></td>
-                                <td><span class="badge bg-light text-dark">@facility.Level</span></td>
-                                <td>@facility.DistrictName</td>
-                                <td class="text-center">
-                                    @if (facility.ActiveLabors > 0)
-                                    {
-                                        <span class="badge bg-warning text-dark">@facility.ActiveLabors</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">-</span>
-                                    }
-                                </td>
-                                <td class="text-center fw-semibold text-primary">@facility.DeliveriesToday</td>
-                                <td class="text-center">@facility.DeliveriesThisMonth</td>
-                                <td class="text-center">@facility.StaffCount</td>
-                                <td>
-                                    @if (facility.LastActivityTime.HasValue)
-                                    {
-                                        <small>@GetTimeAgo(facility.LastActivityTime.Value)</small>
-                                    }
-                                    else
-                                    {
-                                        <small class="text-muted">-</small>
-                                    }
-                                </td>
-                                <td>
-                                    <span class="badge @(facility.IsActive ? "bg-success" : "bg-secondary")">
-                                        @(facility.IsActive ? "Active" : "Inactive")
-                                    </span>
-                                </td>
-                                <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" @onclick="() => ViewFacilityDetails(facility)" title="Details">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <a href="live-labor?facility=@facility.ID" class="btn btn-outline-warning" title="Labors">
-                                            <i class="bi bi-activity"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
 
         @if (!filteredFacilities.Any())
         {
-            <div class="card-body text-center py-5">
-                <i class="bi bi-hospital text-muted" style="font-size: 3rem;"></i>
-                <p class="mt-3 text-muted">No facilities found matching your criteria</p>
+            <div class="text-center py-5">
+                <i class="bi bi-hospital text-muted opacity-25" style="font-size: 3rem;"></i>
+                <p class="mt-3 text-secondary">No facilities found matching your criteria</p>
             </div>
         }
     </div>
@@ -358,41 +357,41 @@ else
 <!-- Facility Details Modal -->
 @if (showDetailsModal && selectedFacility != null)
 {
-    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-hospital me-2"></i>
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content glass-panel border-0 shadow-lg" style="background: #fff;">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold text-gradient-primary">
+                        <i class="bi bi-hospital me-2 text-primary"></i>
                         @selectedFacility.Name
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" @onclick="CloseDetailsModal"></button>
+                    <button type="button" class="btn-close" @onclick="CloseDetailsModal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <h6 class="text-muted mb-3">Facility Information</h6>
-                            <table class="table table-sm">
+                            <h6 class="text-secondary text-uppercase small fw-bold mb-3">Facility Information</h6>
+                            <table class="table table-borderless table-sm">
                                 <tr>
-                                    <td class="text-muted">Code</td>
+                                    <td class="text-secondary">Code</td>
                                     <td class="fw-semibold">@selectedFacility.Code</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Type</td>
-                                    <td><span class="badge bg-primary">@selectedFacility.Type</span></td>
+                                    <td class="text-secondary">Type</td>
+                                    <td><span class="badge bg-primary-subtle text-primary rounded-pill">@selectedFacility.Type</span></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Level</td>
-                                    <td><span class="badge bg-info">@selectedFacility.Level</span></td>
+                                    <td class="text-secondary">Level</td>
+                                    <td><span class="badge bg-info-subtle text-info rounded-pill">@selectedFacility.Level</span></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">District</td>
-                                    <td>@selectedFacility.DistrictName</td>
+                                    <td class="text-secondary">District</td>
+                                    <td class="fw-medium">@selectedFacility.DistrictName</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Status</td>
+                                    <td class="text-secondary">Status</td>
                                     <td>
-                                        <span class="badge @(selectedFacility.IsActive ? "bg-success" : "bg-secondary")">
+                                        <span class="badge @(selectedFacility.IsActive ? "bg-success" : "bg-secondary") rounded-pill">
                                             @(selectedFacility.IsActive ? "Active" : "Inactive")
                                         </span>
                                     </td>
@@ -400,30 +399,30 @@ else
                             </table>
                         </div>
                         <div class="col-md-6">
-                            <h6 class="text-muted mb-3">Statistics</h6>
+                            <h6 class="text-secondary text-uppercase small fw-bold mb-3">Statistics</h6>
                             <div class="row g-3">
                                 <div class="col-6">
-                                    <div class="p-3 bg-primary-subtle rounded text-center">
-                                        <h3 class="mb-0 text-primary">@selectedFacility.DeliveriesToday</h3>
-                                        <small class="text-muted">Today's Deliveries</small>
+                                    <div class="p-3 bg-primary-subtle rounded-3 text-center h-100">
+                                        <h3 class="mb-0 text-primary fw-bold">@selectedFacility.DeliveriesToday</h3>
+                                        <small class="text-muted small text-uppercase">Today's Deliveries</small>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="p-3 bg-success-subtle rounded text-center">
-                                        <h3 class="mb-0 text-success">@selectedFacility.DeliveriesThisMonth</h3>
-                                        <small class="text-muted">This Month</small>
+                                    <div class="p-3 bg-success-subtle rounded-3 text-center h-100">
+                                        <h3 class="mb-0 text-success fw-bold">@selectedFacility.DeliveriesThisMonth</h3>
+                                        <small class="text-muted small text-uppercase">This Month</small>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="p-3 bg-warning-subtle rounded text-center">
-                                        <h3 class="mb-0 text-warning">@selectedFacility.ActiveLabors</h3>
-                                        <small class="text-muted">Active Labours</small>
+                                    <div class="p-3 bg-warning-subtle rounded-3 text-center h-100">
+                                        <h3 class="mb-0 text-warning fw-bold">@selectedFacility.ActiveLabors</h3>
+                                        <small class="text-muted small text-uppercase">Active Labours</small>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="p-3 bg-info-subtle rounded text-center">
-                                        <h3 class="mb-0 text-info">@selectedFacility.StaffCount</h3>
-                                        <small class="text-muted">Staff Members</small>
+                                    <div class="p-3 bg-info-subtle rounded-3 text-center h-100">
+                                        <h3 class="mb-0 text-info fw-bold">@selectedFacility.StaffCount</h3>
+                                        <small class="text-muted small text-uppercase">Staff Members</small>
                                     </div>
                                 </div>
                             </div>
@@ -432,21 +431,24 @@ else
 
                     @if (selectedFacility.LastActivityTime.HasValue)
                     {
-                        <div class="alert alert-info mt-4 mb-0">
-                            <i class="bi bi-clock me-1"></i>
-                            Last activity: @selectedFacility.LastActivityTime.Value.ToString("MMMM dd, yyyy HH:mm")
-                            (@GetTimeAgo(selectedFacility.LastActivityTime.Value))
+                        <div class="alert alert-light border shadow-sm mt-4 mb-0 d-flex align-items-center">
+                            <i class="bi bi-clock me-2 text-primary"></i>
+                            <div>
+                                <span class="fw-medium">Last activity:</span> 
+                                <span class="text-secondary">@selectedFacility.LastActivityTime.Value.ToString("MMMM dd, yyyy HH:mm")</span>
+                                <small class="text-muted ms-1">(@GetTimeAgo(selectedFacility.LastActivityTime.Value))</small>
+                            </div>
                         </div>
                     }
                 </div>
-                <div class="modal-footer">
-                    <a href="live-labor?facility=@selectedFacility.ID" class="btn btn-warning">
+                <div class="modal-footer border-top bg-light">
+                    <a href="live-labor?facility=@selectedFacility.ID" class="btn btn-warning shadow-sm hover-lift">
                         <i class="bi bi-activity me-1"></i> View Active Labours
                     </a>
-                    <a href="deliveries?facility=@selectedFacility.ID" class="btn btn-primary">
+                    <a href="deliveries?facility=@selectedFacility.ID" class="btn btn-primary shadow-sm hover-lift">
                         <i class="bi bi-clipboard2-pulse me-1"></i> View Deliveries
                     </a>
-                    <button type="button" class="btn btn-secondary" @onclick="CloseDetailsModal">Close</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="CloseDetailsModal">Close</button>
                 </div>
             </div>
         </div>

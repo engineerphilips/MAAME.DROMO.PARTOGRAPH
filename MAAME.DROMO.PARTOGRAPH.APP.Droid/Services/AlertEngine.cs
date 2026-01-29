@@ -43,6 +43,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             // Analyze gestational age for post-term pregnancy
             newAlerts.AddRange(AnalyzeGestationalAge(patient));
 
+            // Analyze for Obstructed Labor signs
+            newAlerts.AddRange(AnalyzeObstructedLabor(patient));
+
+            // Analyze for Sepsis Risk
+            newAlerts.AddRange(AnalyzeSepsisRisk(patient));
+
             // Update active alerts list
             UpdateActiveAlerts(newAlerts);
 
@@ -974,6 +980,121 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     MeasurementType = "Gestational Age",
                     CurrentValue = egaDisplay,
                     ExpectedRange = "≤40W (estimated delivery)"
+                });
+            }
+
+            return alerts;
+        }
+
+        /// <summary>
+        /// Analyzes signs of obstructed labor (Moulding > 2+, Caput > 2+)
+        /// </summary>
+        private List<ClinicalAlert> AnalyzeObstructedLabor(Partograph patient)
+        {
+            var alerts = new List<ClinicalAlert>();
+
+            if (patient.Mouldings != null && patient.Mouldings.Any())
+            {
+                var latestMoulding = patient.Mouldings.OrderByDescending(m => m.Time).First();
+                if (!string.IsNullOrEmpty(latestMoulding.Degree) && (latestMoulding.Degree.Contains("3") || latestMoulding.Degree.Contains("+++")))
+                {
+                    alerts.Add(new ClinicalAlert
+                    {
+                        Severity = AlertSeverity.Critical,
+                        Category = AlertCategory.Labor,
+                        Title = "Signs of Obstructed Labor: Severe Moulding",
+                        Message = $"Moulding: {latestMoulding.Degree}. Severe moulding suggests cephalopelvic disproportion.",
+                        RecommendedActions = new List<string>
+                        {
+                            "URGENT: Senior obstetrician review",
+                            "Stop oxytocin immediately if running",
+                            "Assess for uterine rupture risk",
+                            "Prepare for Cesarean Section",
+                            "Do not apply fundal pressure"
+                        },
+                        MeasurementType = "Moulding",
+                        CurrentValue = latestMoulding.Degree,
+                        ExpectedRange = "0 or +"
+                    });
+                }
+            }
+
+            if (patient.Caputs != null && patient.Caputs.Any())
+            {
+                var latestCaput = patient.Caputs.OrderByDescending(c => c.Time).First();
+                if (!string.IsNullOrEmpty(latestCaput.Degree) && (latestCaput.Degree.Contains("3") || latestCaput.Degree.Contains("+++")))
+                {
+                    alerts.Add(new ClinicalAlert
+                    {
+                        Severity = AlertSeverity.Critical,
+                        Category = AlertCategory.Labor,
+                        Title = "Signs of Obstructed Labor: Severe Caput",
+                        Message = $"Caput Succedaneum: {latestCaput.Degree}. Severe caput suggests obstructed labor.",
+                        RecommendedActions = new List<string>
+                        {
+                            "URGENT: Evaluate for obstruction",
+                            "Assess fetal station and position",
+                            "Consider operative delivery"
+                        },
+                        MeasurementType = "Caput",
+                        CurrentValue = latestCaput.Degree,
+                        ExpectedRange = "0 or +"
+                    });
+                }
+            }
+
+            return alerts;
+        }
+
+        /// <summary>
+        /// Analyzes risk of maternal sepsis (Fever + Tachycardia)
+        /// </summary>
+        private List<ClinicalAlert> AnalyzeSepsisRisk(Partograph patient)
+        {
+            var alerts = new List<ClinicalAlert>();
+            
+            bool hasFever = false;
+            double tempVal = 0;
+            if (patient.Temperatures.Any())
+            {
+                 var t = patient.Temperatures.OrderByDescending(x => x.Time).First();
+                 if (t.TemperatureCelsius >= AlertThresholds.TEMP_WARNING_MAX) {
+                     hasFever = true;
+                     tempVal = t.TemperatureCelsius;
+                 }
+            }
+
+            bool hasTachycardia = false;
+            int pulseVal = 0;
+            if (patient.BPs.Any()) 
+            {
+                var bp = patient.BPs.OrderByDescending(b => b.Time).First();
+                if (bp.Pulse > 100) {
+                    hasTachycardia = true;
+                    pulseVal = bp.Pulse;
+                }
+            }
+
+            if (hasFever && hasTachycardia)
+            {
+                alerts.Add(new ClinicalAlert
+                {
+                    Severity = AlertSeverity.Critical,
+                    Category = AlertCategory.Maternal,
+                    Title = "Sepsis Risk Detected",
+                    Message = $"Combination of Fever ({tempVal:F1}°C) and Tachycardia ({pulseVal} bpm) suggests Chorioamnionitis or Sepsis.",
+                    RecommendedActions = new List<string>
+                    {
+                        "Start broad-spectrum antibiotics immediately (IV)",
+                        "Take blood cultures and full blood count",
+                        "Assess uterine tenderness and foul-smelling liquor",
+                        "Hydrate (IV fluids)",
+                        "Plan for expedited delivery",
+                        "Notify Neonatal team"
+                    },
+                    MeasurementType = "Sepsis Screen",
+                    CurrentValue = "Positive",
+                    ExpectedRange = "Negative"
                 });
             }
 

@@ -9,16 +9,16 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="mb-1">
+            <h2 class="mb-1 text-gradient-primary fw-bold">
                 <i class="bi bi-exclamation-triangle me-2 text-warning"></i>
                 Complications Tracking
             </h2>
-            <p class="text-muted mb-0">
+            <p class="text-secondary mb-0">
                 @accessLevelText | @DateTime.Now.ToString("dddd, MMMM dd, yyyy")
             </p>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary" @onclick="RefreshData">
+            <button class="btn btn-white border shadow-sm hover-lift" @onclick="RefreshData">
                 <i class="bi bi-arrow-clockwise me-1"></i> Refresh
             </button>
         </div>
@@ -31,7 +31,7 @@
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-3 text-muted">Loading complications data...</p>
+        <p class="mt-3 text-secondary">Loading complications data...</p>
     </div>
 }
 else
@@ -39,64 +39,56 @@ else
     <!-- Summary Cards -->
     <div class="row g-4 mb-4">
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">Today's Complications</p>
-                            <h3 class="mb-0">@summary?.ComplicationsToday</h3>
-                        </div>
-                        <div class="stat-icon bg-danger-subtle text-danger">
-                            <i class="bi bi-exclamation-diamond"></i>
-                        </div>
+            <div class="stat-card p-4 h-100 hover-lift">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-secondary mb-1">Today's Complications</p>
+                        <h3 class="mb-0 fw-bold text-dark">@summary?.ComplicationsToday</h3>
+                    </div>
+                    <div class="icon-box bg-danger-subtle text-danger rounded-circle p-2 shadow-sm" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-exclamation-diamond fs-4"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">Today's Referrals</p>
-                            <h3 class="mb-0">@summary?.ReferralsToday</h3>
-                        </div>
-                        <div class="stat-icon bg-warning-subtle text-warning">
-                            <i class="bi bi-arrow-left-right"></i>
-                        </div>
+            <div class="stat-card p-4 h-100 hover-lift">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-secondary mb-1">Today's Referrals</p>
+                        <h3 class="mb-0 fw-bold text-dark">@summary?.ReferralsToday</h3>
+                    </div>
+                    <div class="icon-box bg-warning-subtle text-warning rounded-circle p-2 shadow-sm" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-arrow-left-right fs-4"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">High Risk Labors</p>
-                            <h3 class="mb-0">@summary?.HighRiskLabors</h3>
-                        </div>
-                        <div class="stat-icon bg-danger-subtle text-danger">
-                            <i class="bi bi-exclamation-octagon"></i>
-                        </div>
+            <div class="stat-card p-4 h-100 hover-lift">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-secondary mb-1">High Risk Labors</p>
+                        <h3 class="mb-0 fw-bold text-dark">@summary?.HighRiskLabors</h3>
+                    </div>
+                    <div class="icon-box bg-danger-subtle text-danger rounded-circle p-2 shadow-sm" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-exclamation-octagon fs-4"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">Active Labors</p>
-                            <h3 class="mb-0">@summary?.ActiveLabors</h3>
-                        </div>
-                        <div class="stat-icon bg-info-subtle text-info">
-                            <i class="bi bi-hourglass-split"></i>
-                        </div>
+            <div class="stat-card p-4 h-100 hover-lift">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-secondary mb-1">Active Labors</p>
+                        <h3 class="mb-0 fw-bold text-dark">@summary?.ActiveLabors</h3>
+                    </div>
+                    <div class="icon-box bg-info-subtle text-info rounded-circle p-2 shadow-sm" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-hourglass-split fs-4"></i>
                     </div>
                 </div>
             </div>
@@ -106,24 +98,24 @@ else
     <!-- Complications by Category -->
     <div class="row g-4 mb-4">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
+            <div class="glass-panel h-100 p-0 overflow-hidden">
+                <div class="d-flex align-items-center p-4 bg-light bg-opacity-50 border-bottom">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-list-check me-2 text-danger"></i>
                         Complications by Category
                     </h5>
                 </div>
-                <div class="card-body">
+                <div class="p-0">
                     @if (complicationStats?.Any() == true)
                     {
                         <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-light">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="bg-light">
                                     <tr>
-                                        <th>Complication Type</th>
-                                        <th>Count</th>
-                                        <th>Severity</th>
-                                        <th>Distribution</th>
+                                        <th class="ps-4 py-3 text-secondary border-0">Complication Type</th>
+                                        <th class="py-3 text-secondary border-0">Count</th>
+                                        <th class="py-3 text-secondary border-0">Severity</th>
+                                        <th class="pe-4 py-3 text-secondary border-0">Distribution</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -134,20 +126,20 @@ else
                                     {
                                         var percentage = totalComplications > 0 ? (double)complication.Count / totalComplications * 100 : 0;
                                         <tr>
-                                            <td>
+                                            <td class="ps-4">
                                                 <i class="bi bi-exclamation-circle me-2 @GetSeverityIconClass(complication.Severity)"></i>
-                                                @complication.ComplicationType
+                                                <span class="fw-medium text-dark">@complication.ComplicationType</span>
                                             </td>
-                                            <td><span class="badge bg-secondary">@complication.Count</span></td>
+                                            <td><span class="badge bg-secondary-subtle text-secondary rounded-pill">@complication.Count</span></td>
                                             <td>
-                                                <span class="badge @GetSeverityBadgeClass(complication.Severity)">
+                                                <span class="badge @GetSeverityBadgeClass(complication.Severity) rounded-pill shadow-sm">
                                                     @complication.Severity
                                                 </span>
                                             </td>
-                                            <td style="width: 30%;">
-                                                <div class="progress" style="height: 15px;">
+                                            <td class="pe-4" style="width: 30%;">
+                                                <div class="progress shadow-sm" style="height: 10px; border-radius: 5px;">
                                                     <div class="progress-bar @GetSeverityProgressClass(complication.Severity)"
-                                                         style="width: @percentage%">
+                                                         style="width: @percentage%; border-radius: 5px;">
                                                     </div>
                                                 </div>
                                             </td>
@@ -159,9 +151,9 @@ else
                     }
                     else
                     {
-                        <div class="text-center py-4">
-                            <i class="bi bi-check-circle fs-1 text-success"></i>
-                            <p class="text-muted mt-2">No complications recorded this period</p>
+                        <div class="text-center py-5">
+                            <i class="bi bi-check-circle fs-1 text-success opacity-50"></i>
+                            <p class="text-secondary mt-2">No complications recorded this period</p>
                         </div>
                     }
                 </div>
@@ -169,14 +161,14 @@ else
         </div>
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
+            <div class="glass-panel h-100 p-4">
+                <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-pie-chart me-2 text-primary"></i>
                         Severity Distribution
                     </h5>
                 </div>
-                <div class="card-body">
+                <div>
                     @if (complicationStats?.Any() == true)
                     {
                         var totalCount = complicationStats.Sum(c => c.Count);
@@ -188,14 +180,14 @@ else
                             @foreach (var group in severityGroups)
                             {
                                 var percentage = totalCount > 0 ? (double)group.Count / totalCount * 100 : 0;
-                                <div class="mb-3">
+                                <div class="mb-4">
                                     <div class="d-flex justify-content-between mb-1">
                                         <span class="@GetSeverityTextClass(group.Severity) fw-semibold">@group.Severity</span>
-                                        <span class="badge @GetSeverityBadgeClass(group.Severity)">@group.Count</span>
+                                        <span class="badge @GetSeverityBadgeClass(group.Severity) rounded-pill shadow-sm">@group.Count</span>
                                     </div>
-                                    <div class="progress" style="height: 25px;">
+                                    <div class="progress shadow-sm" style="height: 15px; border-radius: 8px;">
                                         <div class="progress-bar @GetSeverityProgressClass(group.Severity)"
-                                             style="width: @percentage%">
+                                             style="width: @percentage%; border-radius: 8px;">
                                             @percentage.ToString("F1")%
                                         </div>
                                     </div>
@@ -203,17 +195,17 @@ else
                             }
                         </div>
 
-                        <hr />
+                        <hr class="my-4 text-secondary opacity-25" />
                         <div class="text-center">
-                            <h4 class="mb-1 text-danger">@totalCount</h4>
-                            <small class="text-muted">Total Complications</small>
+                            <h1 class="mb-0 fw-bold text-gradient-danger display-4">@totalCount</h1>
+                            <small class="text-secondary text-uppercase tracking-wide">Total Complications</small>
                         </div>
                     }
                     else
                     {
                         <div class="text-center py-4">
-                            <i class="bi bi-shield-check fs-1 text-success"></i>
-                            <p class="text-muted mt-2">No complications to display</p>
+                            <i class="bi bi-shield-check fs-1 text-success opacity-50"></i>
+                            <p class="text-secondary mt-2">No complications to display</p>
                         </div>
                     }
                 </div>
@@ -224,23 +216,23 @@ else
     <!-- Complication Trend -->
     <div class="row g-4 mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
+            <div class="glass-panel p-4">
+                <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-graph-up-arrow me-2 text-primary"></i>
                         Complication Trend (Last 30 Days)
                     </h5>
                 </div>
-                <div class="card-body">
+                <div>
                     @if (complicationTrend?.Any() == true)
                     {
                         <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead class="table-light">
+                            <table class="table table-sm align-middle">
+                                <thead class="text-secondary">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Complications</th>
-                                        <th>Trend</th>
+                                        <th class="border-0">Date</th>
+                                        <th class="border-0">Complications</th>
+                                        <th class="border-0">Trend</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -250,12 +242,12 @@ else
                                     @foreach (var trend in complicationTrend.OrderByDescending(t => t.Date).Take(10))
                                     {
                                         <tr>
-                                            <td>@trend.Date.ToString("MMM dd, yyyy")</td>
-                                            <td><span class="badge bg-warning">@trend.Value</span></td>
-                                            <td style="width: 50%;">
-                                                <div class="progress" style="height: 15px;">
+                                            <td class="text-secondary border-0">@trend.Date.ToString("MMM dd, yyyy")</td>
+                                            <td class="border-0"><span class="badge bg-warning text-dark rounded-pill shadow-sm">@trend.Value</span></td>
+                                            <td class="border-0" style="width: 50%;">
+                                                <div class="progress shadow-sm" style="height: 10px; border-radius: 5px;">
                                                     <div class="progress-bar bg-danger"
-                                                         style="width: @(maxValue > 0 ? (double)trend.Value / maxValue * 100 : 0)%">
+                                                         style="width: @(maxValue > 0 ? (double)trend.Value / maxValue * 100 : 0)%; border-radius: 5px;">
                                                     </div>
                                                 </div>
                                             </td>
@@ -268,8 +260,8 @@ else
                     else
                     {
                         <div class="text-center py-4">
-                            <i class="bi bi-graph-up fs-1 text-muted"></i>
-                            <p class="text-muted mt-2">No trend data available</p>
+                            <i class="bi bi-graph-up fs-1 text-secondary opacity-50"></i>
+                            <p class="text-secondary mt-2">No trend data available</p>
                         </div>
                     }
                 </div>
@@ -280,32 +272,32 @@ else
     <!-- Alerts Section -->
     <div class="row g-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
+            <div class="glass-panel p-0 overflow-hidden">
+                <div class="d-flex justify-content-between align-items-center p-4 bg-light bg-opacity-50 border-bottom">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-bell me-2 text-warning"></i>
                         Active Complication Alerts
                     </h5>
-                    <a href="alerts" class="btn btn-sm btn-outline-primary">View All Alerts</a>
+                    <a href="alerts" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm hover-lift">View All Alerts</a>
                 </div>
-                <div class="card-body p-0">
+                <div class="p-0">
                     @if (alerts?.Any() == true)
                     {
                         <div class="list-group list-group-flush">
                             @foreach (var alert in alerts.Take(5))
                             {
-                                <div class="list-group-item @GetAlertBackgroundClass(alert.Severity)">
-                                    <div class="d-flex align-items-start">
-                                        <div class="me-3">
+                                <div class="list-group-item @GetAlertBackgroundClass(alert.Severity) border-bottom-0 border-top bg-opacity-10 hover-bg-light transition-all">
+                                    <div class="d-flex align-items-start p-2">
+                                        <div class="me-3 mt-1">
                                             <i class="bi @GetAlertIcon(alert.Severity) fs-4"></i>
                                         </div>
                                         <div class="flex-grow-1">
                                             <div class="d-flex justify-content-between">
-                                                <h6 class="mb-1">@alert.Title</h6>
-                                                <small class="text-muted">@alert.CreatedAt.ToString("MMM dd, HH:mm")</small>
+                                                <h6 class="mb-1 fw-bold text-dark">@alert.Title</h6>
+                                                <small class="text-secondary">@alert.CreatedAt.ToString("MMM dd, HH:mm")</small>
                                             </div>
-                                            <p class="mb-1 small">@alert.Message</p>
-                                            <small class="text-muted">
+                                            <p class="mb-1 small text-dark">@alert.Message</p>
+                                            <small class="text-secondary">
                                                 <i class="bi bi-hospital me-1"></i>@alert.FacilityName
                                                 @if (!string.IsNullOrEmpty(alert.DistrictName))
                                                 {
@@ -320,9 +312,9 @@ else
                     }
                     else
                     {
-                        <div class="p-4 text-center">
-                            <i class="bi bi-check-circle fs-1 text-success"></i>
-                            <p class="text-muted mt-2 mb-0">No active alerts</p>
+                        <div class="p-5 text-center">
+                            <i class="bi bi-check-circle fs-1 text-success opacity-50"></i>
+                            <p class="text-secondary mt-2 mb-0">No active alerts</p>
                         </div>
                     }
                 </div>

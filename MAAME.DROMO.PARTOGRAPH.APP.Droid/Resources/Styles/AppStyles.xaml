@@ -5,6 +5,7 @@
     xmlns:f="clr-namespace:Fonts"
     xmlns:pullToRefresh="clr-namespace:Syncfusion.Maui.Toolkit.PullToRefresh;assembly=Syncfusion.Maui.Toolkit"
     xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <x:Double x:Key="sizeNone">0</x:Double>
@@ -288,13 +289,29 @@
         <Setter Property="Padding" Value="{OnIdiom 15, Desktop=20}"/>
     </Style>
 
+    <Style x:Key="SurfaceCardStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E1E1E}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="16,8" />
+    </Style>
+
     <sf:LabelStyle x:Key="lightThemeLabelStyle" TextColor="{StaticResource DarkOnLightBackground}" FontSize="{OnIdiom 18, Desktop=24}"/> 
     <sf:LabelStyle x:Key="darkThemeLabelStyle" TextColor="{StaticResource LightOnDarkBackground}" FontSize="{OnIdiom 18, Desktop=24}"/>
-    <Style TargetType="sf:SfTextInputLayout"> 
+    <!--<Style TargetType="sf:SfTextInputLayout"> 
         <Setter Property="ContainerType" Value="Outlined"/> 
         <Setter Property="ContainerBackground" Value="Transparent"/> 
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}"/> 
         <Setter Property="HintLabelStyle" Value="{AppThemeBinding Light={StaticResource lightThemeLabelStyle}, Dark={StaticResource darkThemeLabelStyle}}"/> 
+    </Style>-->
+
+    <Style TargetType="core:SfTextInputLayout">
+        <Setter Property="ContainerType" Value="Outlined"/>
+        <Setter Property="ContainerBackground" Value="Transparent"/>
+        <Setter Property="OutlineCornerRadius" Value="8"/>
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}"/>
+        <Setter Property="HintLabelStyle" Value="{AppThemeBinding Light={StaticResource lightThemeLabelStyle}, Dark={StaticResource darkThemeLabelStyle}}"/>
     </Style>
     
 
@@ -308,6 +325,42 @@
         <Setter Property="TransitionMode" Value="SlideOnTop"/>
         <Setter Property="PullingThreshold" Value="100"/>
         <Setter Property="ProgressColor" Value="{StaticResource Primary}"/>
+    </Style>
+
+    <!-- Standard Button Styles -->
+    <Style x:Key="PrimaryActionStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="HeightRequest" Value="50" />
+        <Setter Property="Padding" Value="15,0" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <Style x:Key="SecondaryActionStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#E2E8F0, Dark=#334155}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="HeightRequest" Value="50" />
+        <Setter Property="Padding" Value="15,0" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <Style x:Key="DestructiveActionStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="#FEE2E2" />
+        <Setter Property="TextColor" Value="#EF4444" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="HeightRequest" Value="50" />
+        <Setter Property="Padding" Value="15,0" />
+        <Setter Property="FontSize" Value="16" />
+        <!--<Style.Triggers>
+            <AppThemeTrigger Theme="Dark">
+                <Setter Property="BackgroundColor" Value="#450A0A" />
+            </AppThemeTrigger>
+        </Style.Triggers>-->
     </Style>
 
 </ResourceDictionary>

@@ -41,6 +41,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Models
         // Risk assessment
         public string RiskLevel { get; set; } = "Normal"; // Normal, Moderate, High, Critical
         public List<string> ActiveAlerts { get; set; } = new();
+        public List<ClinicalAlert> ClinicalAlerts { get; set; } = new(); // Smart Alert Objects
         public int AlertCount { get; set; }
         public int CriticalAlertCount { get; set; }
 

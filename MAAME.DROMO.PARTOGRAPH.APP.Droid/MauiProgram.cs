@@ -103,7 +103,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<LabourTimerService>(); // Labour stage timers and APGAR reminders
             builder.Services.AddSingleton<PartographNotesService>(); // Dynamic clinical notes generation
             builder.Services.AddSingleton<IReportService, ReportService>(); // Comprehensive reporting service
-            builder.Services.AddHttpClient<IPartographPdfService, PartographPdfService>(); // PDF generation service
+            // PDF generation service (Local)
+            builder.Services.AddTransient<IPartographPdfService, PartographPdfService>();
 
             // Register JWT Token Storage Service
             builder.Services.AddSingleton<ITokenStorageService, TokenStorageService>();

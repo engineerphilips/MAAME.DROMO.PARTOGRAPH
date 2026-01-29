@@ -1,0 +1,173 @@
+@page "/admin/audit-trails"
+@attribute [Authorize(Roles = "Admin")]
+@inject IAuditLogService AuditService
+
+<PageTitle>Forensic Audit Trails - MAAME DROMO</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1 text-gradient-primary fw-bold">
+                <i class="bi bi-fingerprint me-2"></i>
+                Forensic Audit Trails
+            </h2>
+            <p class="text-secondary mb-0">
+                Immutable record of all data modifications and access events
+            </p>
+        </div>
+        <div>
+            <button class="btn btn-outline-secondary shadow-sm" @onclick="LoadLogs">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="glass-panel p-4 mb-4">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-secondary">Filter by User</label>
+            <input type="text" class="form-control" placeholder="Search user..." @bind="filterUser" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-secondary">Filter by Patient</label>
+            <input type="text" class="form-control" placeholder="Search patient..." @bind="filterPatient" />
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-primary w-100" @onclick="LoadLogs">
+                <i class="bi bi-filter me-2"></i> Apply Filters
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Retrieving cryptographic logs...</p>
+    </div>
+}
+else
+{
+    <div class="glass-panel p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Timestamp (UTC)</th>
+                        <th>Actor</th>
+                        <th>Action</th>
+                        <th>Entity / Field</th>
+                        <th>Change Detail</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in filteredLogs)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
+                                <small class="text-muted">@GetTimeAgo(log.Timestamp)</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-box-sm bg-light rounded-circle me-2 text-primary small fw-bold">
+                                        @GetInitials(log.UserName)
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark">@log.UserName</div>
+                                        <small class="text-secondary" style="font-size: 0.75rem">UID: @log.UserId.ToString().Substring(0, 8)...</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge @GetActionBadgeClass(log.ActionType) rounded-pill">
+                                    @log.ActionType
+                                </span>
+                            </td>
+                            <td>
+                                <div class="text-dark fw-medium">@log.EntityName</div>
+                                <div class="text-secondary small">Field: <span class="text-primary">@log.FieldName</span></div>
+                                @if (!string.IsNullOrEmpty(log.PatientName))
+                                {
+                                    <div class="text-muted small fst-italic">Patient: @log.PatientName</div>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2 font-monospace small">
+                                    @if (!string.IsNullOrEmpty(log.OldValue))
+                                    {
+                                        <span class="text-danger bg-danger-subtle px-1 rounded text-decoration-line-through">@log.OldValue</span>
+                                        <i class="bi bi-arrow-right text-muted"></i>
+                                    }
+                                    <span class="text-success bg-success-subtle px-1 rounded">@log.NewValue</span>
+                                </div>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(log.Reason))
+                                {
+                                    <span class="text-secondary fst-italic">"@log.Reason"</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted opacity-50">-</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@code {
+    private bool isLoading = true;
+    private List<AuditLogEntry> logs = new();
+    private string filterUser = "";
+    private string filterPatient = "";
+
+    private IEnumerable<AuditLogEntry> filteredLogs => logs
+        .Where(x => string.IsNullOrEmpty(filterUser) || x.UserName.Contains(filterUser, StringComparison.OrdinalIgnoreCase))
+        .Where(x => string.IsNullOrEmpty(filterPatient) || (x.PatientName?.Contains(filterPatient, StringComparison.OrdinalIgnoreCase) ?? false));
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadLogs();
+    }
+
+    private async Task LoadLogs()
+    {
+        isLoading = true;
+        await Task.Delay(500); // UI feel
+        logs = await AuditService.GetRecentLogsAsync(100);
+        isLoading = false;
+    }
+
+    private string GetActionBadgeClass(string action) => action?.ToUpper() switch
+    {
+        "CREATE" => "bg-success",
+        "UPDATE" => "bg-primary",
+        "DELETE" => "bg-danger",
+        "OVERRIDE" => "bg-warning text-dark",
+        _ => "bg-secondary"
+    };
+
+    private string GetTimeAgo(DateTime time)
+    {
+        var span = DateTime.UtcNow - time;
+        if (span.TotalMinutes < 60) return $"{span.TotalMinutes:F0}m ago";
+        if (span.TotalHours < 24) return $"{span.TotalHours:F0}h ago";
+        return $"{span.TotalDays:F0}d ago";
+    }
+
+    private string GetInitials(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return "?";
+        var parts = name.Split(' ');
+        if (parts.Length > 1) return $"{parts[0][0]}{parts[1][0]}";
+        return name.Substring(0, Math.Min(2, name.Length));
+    }
+}

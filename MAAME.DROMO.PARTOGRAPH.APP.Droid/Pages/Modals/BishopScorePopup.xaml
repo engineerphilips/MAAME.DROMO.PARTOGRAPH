@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<sfPopup:SfPopup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<sfPopup:SfPopup AnimationMode='SlideOnTop' xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
@@ -181,18 +181,12 @@ Placeholder="0-100%" />
                         <Button Grid.Column="0"
                             Text="Cancel"
                             Command="{Binding CancelCommand}"
-                            BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                            TextColor="{AppThemeBinding Light=#333, Dark=White}"
-                            HeightRequest="45"
-                            CornerRadius="10" />
+                            Style="{StaticResource SecondaryActionStyle}" />
 
                         <Button Grid.Column="1"
                             Text="Save Score"
                             Command="{Binding SaveCommand}"
-                            BackgroundColor="#4CAF50"
-                            TextColor="White"
-                            HeightRequest="45"
-                            CornerRadius="10" />
+                            Style="{StaticResource PrimaryActionStyle}" />
                     </Grid>
 
                 </VerticalStackLayout>
@@ -201,3 +195,4 @@ Placeholder="0-100%" />
     </sfPopup:SfPopup.ContentTemplate>
 
 </sfPopup:SfPopup>
+

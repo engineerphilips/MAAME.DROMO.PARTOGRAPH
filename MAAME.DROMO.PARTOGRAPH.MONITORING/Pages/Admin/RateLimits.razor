@@ -8,15 +8,15 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="mb-1">
-                <i class="bi bi-speedometer2 me-2 text-primary"></i>
+            <h2 class="mb-1 text-gradient-primary fw-bold">
+                <i class="bi bi-speedometer2 me-2"></i>
                 API Rate Limiting
             </h2>
-            <p class="text-muted mb-0">
+            <p class="text-secondary mb-0">
                 Configure request limits by access level to prevent abuse
             </p>
         </div>
-        <button class="btn btn-outline-secondary" @onclick="RefreshData">
+        <button class="btn btn-white border shadow-sm hover-lift" @onclick="RefreshData">
             <i class="bi bi-arrow-clockwise me-1"></i> Refresh
         </button>
     </div>
@@ -33,27 +33,29 @@
 else
 {
     <!-- Tabs -->
-    <ul class="nav nav-tabs mb-4">
-        <li class="nav-item">
-            <button class="nav-link @(activeTab == "config" ? "active" : "")" @onclick="() => activeTab = TabState.Config.ToString().ToLower()">
-                <i class="bi bi-sliders me-1"></i> Configuration
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link @(activeTab == "usage" ? "active" : "")" @onclick="() => activeTab = TabState.Usage.ToString().ToLower()">
-                <i class="bi bi-graph-up me-1"></i> Current Usage
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link @(activeTab == "violations" ? "active" : "")" @onclick="() => activeTab = TabState.Violations.ToString().ToLower()">
-                <i class="bi bi-exclamation-triangle me-1 text-warning"></i> Violations
-                @if (violations.Any())
-                {
-                    <span class="badge bg-warning text-dark ms-1">@violations.Count</span>
-                }
-            </button>
-        </li>
-    </ul>
+    <div class="glass-panel p-2 d-inline-block mb-4">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-3 @(activeTab == "config" ? "active shadow-sm" : "text-secondary")" @onclick="() => activeTab = TabState.Config.ToString().ToLower()">
+                    <i class="bi bi-sliders me-1"></i> Configuration
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-3 @(activeTab == "usage" ? "active shadow-sm" : "text-secondary")" @onclick="() => activeTab = TabState.Usage.ToString().ToLower()">
+                    <i class="bi bi-graph-up me-1"></i> Current Usage
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-3 @(activeTab == "violations" ? "active shadow-sm" : "text-secondary")" @onclick="() => activeTab = TabState.Violations.ToString().ToLower()">
+                    <i class="bi bi-exclamation-triangle me-1 @(activeTab == "violations" ? "" : "text-warning")"></i> Violations
+                    @if (violations.Any())
+                    {
+                        <span class="badge bg-warning text-dark ms-1 rounded-pill">@violations.Count</span>
+                    }
+                </button>
+            </li>
+        </ul>
+    </div>
 
     @if (activeTab == "config")
     {
@@ -62,49 +64,50 @@ else
             @foreach (var config in rateLimitConfigs)
             {
                 <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">
+                    <div class="glass-panel h-100 p-0 transition-all hover-lift">
+                        <div class="p-4 border-bottom d-flex justify-content-between align-items-center bg-light bg-opacity-50 rounded-top">
+                            <h5 class="mb-0 fw-bold text-dark">
                                 <i class="bi @GetAccessLevelIcon(config.AccessLevel) me-2 @GetAccessLevelColor(config.AccessLevel)"></i>
                                 @config.AccessLevel
                             </h5>
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch pt-1">
                                 <input class="form-check-input" type="checkbox" id="enabled-@config.ID"
                                        checked="@config.IsEnabled"
+                                       style="cursor: pointer; width: 3em; height: 1.5em;"
                                        @onchange="e => ToggleConfig(config, (bool)(e.Value ?? false))" />
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="p-4">
                             <div class="mb-3">
-                                <label class="form-label small text-muted">Requests per Minute</label>
+                                <label class="form-label small text-secondary fw-semibold">Requests per Minute</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" @bind="config.RequestsPerMinute" min="1" />
-                                    <span class="input-group-text">/min</span>
+                                    <span class="input-group-text bg-light text-secondary">/min</span>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label small text-muted">Requests per Hour</label>
+                                <label class="form-label small text-secondary fw-semibold">Requests per Hour</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" @bind="config.RequestsPerHour" min="1" />
-                                    <span class="input-group-text">/hr</span>
+                                    <span class="input-group-text bg-light text-secondary">/hr</span>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label small text-muted">Requests per Day</label>
+                                <label class="form-label small text-secondary fw-semibold">Requests per Day</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" @bind="config.RequestsPerDay" min="1" />
-                                    <span class="input-group-text">/day</span>
+                                    <span class="input-group-text bg-light text-secondary">/day</span>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label small text-muted">Burst Limit</label>
+                            <div class="mb-4">
+                                <label class="form-label small text-secondary fw-semibold">Burst Limit</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" @bind="config.BurstLimit" min="1" />
-                                    <span class="input-group-text">req</span>
+                                    <span class="input-group-text bg-light text-secondary">req</span>
                                 </div>
-                                <small class="text-muted">Max requests in short burst</small>
+                                <small class="text-secondary opacity-75">Max requests in short burst</small>
                             </div>
-                            <button class="btn btn-primary w-100" @onclick="() => SaveConfig(config)" disabled="@isSaving">
+                            <button class="btn btn-primary w-100 rounded-pill shadow-sm" @onclick="() => SaveConfig(config)" disabled="@isSaving">
                                 @if (isSaving && savingConfigId == config.ID)
                                 {
                                     <span class="spinner-border spinner-border-sm me-1"></span>
@@ -117,59 +120,62 @@ else
             }
         </div>
 
-        <div class="alert alert-info mt-4">
-            <h6><i class="bi bi-info-circle me-2"></i>About Rate Limiting</h6>
-            <ul class="mb-0 small">
-                <li><strong>National</strong> users have higher limits for bulk operations and data exports</li>
-                <li><strong>Regional</strong> users have moderate limits suitable for regional management</li>
-                <li><strong>District</strong> users have standard limits for day-to-day operations</li>
-                <li><strong>Burst Limit</strong> allows short spikes in traffic without throttling</li>
-            </ul>
+        <div class="alert alert-info mt-4 glass-panel border-info bg-info-subtle bg-opacity-10 d-flex align-items-start">
+            <i class="bi bi-info-circle text-info fs-4 me-3 mt-1"></i>
+            <div>
+                <h6 class="fw-bold text-info">About Rate Limiting</h6>
+                <ul class="mb-0 small text-secondary list-unstyled">
+                    <li class="mb-1"><i class="bi bi-dot me-1"></i><strong>National</strong> users have higher limits for bulk operations and data exports</li>
+                    <li class="mb-1"><i class="bi bi-dot me-1"></i><strong>Regional</strong> users have moderate limits suitable for regional management</li>
+                    <li class="mb-1"><i class="bi bi-dot me-1"></i><strong>District</strong> users have standard limits for day-to-day operations</li>
+                    <li><i class="bi bi-dot me-1"></i><strong>Burst Limit</strong> allows short spikes in traffic without throttling</li>
+                </ul>
+            </div>
         </div>
     }
     else if (activeTab == "usage")
     {
         <!-- Current Usage -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Current API Usage</h5>
+        <div class="glass-panel p-0 mb-4 overflow-hidden">
+            <div class="p-4 border-bottom bg-light bg-opacity-50">
+                <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-graph-up me-2 text-primary"></i>Current API Usage</h5>
             </div>
             <div class="card-body p-0">
                 @if (currentUsage.Any())
                 {
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                            <thead class="bg-light">
                                 <tr>
-                                    <th>User</th>
-                                    <th>Access Level</th>
-                                    <th>This Minute</th>
-                                    <th>This Hour</th>
-                                    <th>Today</th>
-                                    <th>Usage</th>
-                                    <th>Status</th>
+                                    <th class="ps-4 py-3 text-secondary border-0">User</th>
+                                    <th class="py-3 text-secondary border-0">Access Level</th>
+                                    <th class="py-3 text-secondary border-0">This Minute</th>
+                                    <th class="py-3 text-secondary border-0">This Hour</th>
+                                    <th class="py-3 text-secondary border-0">Today</th>
+                                    <th class="py-3 text-secondary border-0">Usage</th>
+                                    <th class="pe-4 py-3 text-secondary border-0">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var usage in currentUsage)
                                 {
-                                    <tr class="@(usage.IsThrottled ? "table-danger" : "")">
-                                        <td>
-                                            <div class="fw-semibold">@usage.UserName</div>
+                                    <tr class="@(usage.IsThrottled ? "table-danger bg-danger-subtle bg-opacity-10" : "")">
+                                        <td class="ps-4">
+                                            <div class="fw-semibold text-dark">@usage.UserName</div>
                                         </td>
                                         <td>
-                                            <span class="badge @GetAccessLevelBadgeClass(usage.AccessLevel)">
+                                            <span class="badge @GetAccessLevelBadgeClass(usage.AccessLevel) rounded-pill shadow-sm">
                                                 @usage.AccessLevel
                                             </span>
                                         </td>
-                                        <td>
-                                            @usage.RequestsThisMinute / @usage.LimitPerMinute
+                                        <td class="text-secondary font-monospace">
+                                            @usage.RequestsThisMinute <span class="text-muted small">/ @usage.LimitPerMinute</span>
                                         </td>
-                                        <td>
-                                            @usage.RequestsThisHour / @usage.LimitPerHour
+                                        <td class="text-secondary font-monospace">
+                                            @usage.RequestsThisHour <span class="text-muted small">/ @usage.LimitPerHour</span>
                                         </td>
-                                        <td>
-                                            @usage.RequestsToday.ToString("N0") / @usage.LimitPerDay.ToString("N0")
+                                        <td class="text-secondary font-monospace">
+                                            @usage.RequestsToday.ToString("N0") <span class="text-muted small">/ @usage.LimitPerDay.ToString("N0")</span>
                                         </td>
                                         <td style="width: 150px;">
                                             <div class="progress" style="height: 6px;">
@@ -178,20 +184,20 @@ else
                                             </div>
                                             <small class="text-muted">@usage.UsagePercentage.ToString("F1")%</small>
                                         </td>
-                                        <td>
+                                        <td class="pe-4">
                                             @if (usage.IsThrottled)
                                             {
-                                                <span class="badge bg-danger">
+                                                <span class="badge bg-danger rounded-pill">
                                                     <i class="bi bi-x-circle me-1"></i> Throttled
                                                 </span>
                                                 @if (usage.ThrottledUntil.HasValue)
                                                 {
-                                                    <div class="small text-muted">Until @usage.ThrottledUntil.Value.ToString("HH:mm")</div>
+                                                    <div class="small text-danger mt-1">Until @usage.ThrottledUntil.Value.ToString("HH:mm")</div>
                                                 }
                                             }
                                             else
                                             {
-                                                <span class="badge bg-success">
+                                                <span class="badge bg-success rounded-pill">
                                                     <i class="bi bi-check-circle me-1"></i> OK
                                                 </span>
                                             }
@@ -205,8 +211,8 @@ else
                 else
                 {
                     <div class="text-center py-5">
-                        <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
-                        <p class="mt-3 text-muted">No active API usage data</p>
+                        <i class="bi bi-graph-up text-muted opacity-25" style="font-size: 3rem;"></i>
+                        <p class="mt-3 text-secondary">No active API usage data</p>
                     </div>
                 }
             </div>
@@ -215,50 +221,50 @@ else
     else if (activeTab == "violations")
     {
         <!-- Violations -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
+        <div class="glass-panel p-0 mb-4 overflow-hidden">
+            <div class="p-4 border-bottom bg-light bg-opacity-50 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-dark">
                     <i class="bi bi-exclamation-triangle me-2 text-warning"></i>
                     Rate Limit Violations (Last 24 Hours)
                 </h5>
-                <span class="badge bg-warning text-dark">@violations.Count violations</span>
+                <span class="badge bg-warning text-dark border border-warning rounded-pill">@violations.Count violations</span>
             </div>
             <div class="card-body p-0">
                 @if (violations.Any())
                 {
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                            <thead class="bg-light">
                                 <tr>
-                                    <th>Time</th>
-                                    <th>User</th>
-                                    <th>Endpoint</th>
-                                    <th>Violation Type</th>
-                                    <th>Requests</th>
-                                    <th>Limit</th>
-                                    <th>IP Address</th>
+                                    <th class="ps-4 py-3 text-secondary border-0">Time</th>
+                                    <th class="py-3 text-secondary border-0">User</th>
+                                    <th class="py-3 text-secondary border-0">Endpoint</th>
+                                    <th class="py-3 text-secondary border-0">Violation Type</th>
+                                    <th class="py-3 text-secondary border-0">Requests</th>
+                                    <th class="py-3 text-secondary border-0">Limit</th>
+                                    <th class="pe-4 py-3 text-secondary border-0">IP Address</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var violation in violations)
                                 {
                                     <tr>
-                                        <td>
-                                            <div>@violation.ViolationTime.ToString("MMM dd, HH:mm")</div>
+                                        <td class="ps-4">
+                                            <div class="fw-semibold text-dark">@violation.ViolationTime.ToString("MMM dd, HH:mm")</div>
                                             <small class="text-muted">@GetTimeAgo(violation.ViolationTime)</small>
                                         </td>
                                         <td>
-                                            <div class="fw-semibold">@violation.UserName</div>
+                                            <div class="fw-semibold text-dark">@violation.UserName</div>
                                         </td>
-                                        <td><code class="small">@violation.Endpoint</code></td>
+                                        <td><code class="small bg-light px-2 py-1 rounded text-primary">@violation.Endpoint</code></td>
                                         <td>
-                                            <span class="badge @GetViolationTypeBadgeClass(violation.ViolationType)">
+                                            <span class="badge @GetViolationTypeBadgeClass(violation.ViolationType) rounded-pill shadow-sm">
                                                 @violation.ViolationType
                                             </span>
                                         </td>
-                                        <td class="text-danger fw-semibold">@violation.RequestCount</td>
-                                        <td>@violation.Limit</td>
-                                        <td><code class="small">@violation.IPAddress</code></td>
+                                        <td class="text-danger fw-bold">@violation.RequestCount</td>
+                                        <td class="text-secondary">@violation.Limit</td>
+                                        <td class="pe-4"><code class="small text-muted">@violation.IPAddress</code></td>
                                     </tr>
                                 }
                             </tbody>
@@ -268,8 +274,8 @@ else
                 else
                 {
                     <div class="text-center py-5">
-                        <i class="bi bi-shield-check text-success" style="font-size: 3rem;"></i>
-                        <p class="mt-3 text-muted">No rate limit violations in the last 24 hours</p>
+                        <i class="bi bi-shield-check text-success opacity-50" style="font-size: 3rem;"></i>
+                        <p class="mt-3 text-secondary">No rate limit violations in the last 24 hours</p>
                     </div>
                 }
             </div>

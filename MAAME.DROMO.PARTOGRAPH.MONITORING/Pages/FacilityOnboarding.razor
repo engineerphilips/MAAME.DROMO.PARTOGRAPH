@@ -12,18 +12,23 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-            <button class="btn btn-outline-secondary me-3" @onclick="GoBack">
+            <button class="btn btn-white border shadow-sm me-3 hover-lift rounded-circle p-2" @onclick="GoBack" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
                 <i class="bi bi-arrow-left"></i>
             </button>
             <div>
-                <h2 class="mb-1">
-                    <i class="bi bi-hospital me-2 text-primary"></i>
+                <h2 class="mb-1 text-gradient-primary fw-bold">
+                    <i class="bi bi-building-plus me-2"></i>
                     Facility Onboarding
                 </h2>
-                <p class="text-muted mb-0">
-                    Register a new health facility in the system
+                <p class="text-secondary mb-0">
+                    Register new health facilities onto the platform
                 </p>
             </div>
+        </div>
+        <div>
+            <a href="/facilities" class="btn btn-outline-primary shadow-sm rounded-pill px-4">
+                <i class="bi bi-list-ul me-2"></i> Back to List
+            </a>
         </div>
     </div>
 </div>
@@ -49,220 +54,211 @@
 
 <div class="row">
     <div class="col-lg-8">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="bi bi-building me-2"></i>Facility Information</h5>
+        <div class="glass-panel p-4 mb-4">
+            <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="bi bi-pencil-square me-2 text-primary"></i>
+                    Facility Details
+                </h5>
             </div>
-            <div class="card-body">
-                <EditForm Model="@model" OnValidSubmit="HandleSubmit">
-                    <DataAnnotationsValidator />
-
-                    <!-- Basic Information -->
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-3">Basic Information</h6>
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label class="form-label">Facility Name <span class="text-danger">*</span></label>
-                                <InputText class="form-control" @bind-Value="model.Name" placeholder="e.g., Korle Bu Teaching Hospital" />
-                                <ValidationMessage For="@(() => model.Name)" class="text-danger small" />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Facility Code <span class="text-danger">*</span></label>
-                                <InputText class="form-control" @bind-Value="model.Code" placeholder="e.g., KBTH" style="text-transform: uppercase;" />
-                                <ValidationMessage For="@(() => model.Code)" class="text-danger small" />
-                                <small class="text-muted">Unique identifier for the facility</small>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Facility Type <span class="text-danger">*</span></label>
-                                <InputSelect class="form-select" @bind-Value="model.Type">
-                                    <option value="Hospital">Hospital</option>
-                                    <option value="Clinic">Clinic</option>
-                                    <option value="Health Center">Health Center</option>
-                                    <option value="CHPS Compound">CHPS Compound</option>
-                                    <option value="Maternity Home">Maternity Home</option>
-                                </InputSelect>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Facility Level <span class="text-danger">*</span></label>
-                                <InputSelect class="form-select" @bind-Value="model.Level">
-                                    <option value="Primary">Primary</option>
-                                    <option value="Secondary">Secondary</option>
-                                    <option value="Tertiary">Tertiary</option>
-                                </InputSelect>
-                                <small class="text-muted">Level of care provided</small>
-                            </div>
-                        </div>
+            
+            <EditForm Model="@model" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">Facility Name <span class="text-danger">*</span></label>
+                        <InputText class="form-control" @bind-Value="model.Name" placeholder="e.g. Korle Bu Teaching Hospital" />
+                        <ValidationMessage For="@(() => model.Name)" />
                     </div>
 
-                    <!-- Location Hierarchy -->
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-3">Location Hierarchy</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Region <span class="text-danger">*</span></label>
-                                <InputSelect class="form-select" @bind-Value="selectedRegionId" @oninput="OnRegionChanged" disabled="@isRegionLocked">
-                                    <option value="">-- Select Region --</option>
-                                    @foreach (var region in regions)
-                                    {
-                                        <option value="@region.ID">@region.Name</option>
-                                    }
-                                </InputSelect>
-                                <ValidationMessage For="@(() => model.RegionId)" class="text-danger small" />
-                                @if (isRegionLocked)
-                                {
-                                    <small class="text-muted">Region is set based on your admin access level</small>
-                                }
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">District <span class="text-danger">*</span></label>
-                                <InputSelect class="form-select" @bind-Value="selectedDistrictId" disabled="@(isDistrictLocked || !selectedRegionId.HasValue)">
-                                    <option value="">-- Select District --</option>
-                                    @foreach (var district in filteredDistricts)
-                                    {
-                                        <option value="@district.ID">@district.Name (@district.Type)</option>
-                                    }
-                                </InputSelect>
-                                <ValidationMessage For="@(() => model.DistrictId)" class="text-danger small" />
-                                @if (isDistrictLocked)
-                                {
-                                    <small class="text-muted">District is set based on your admin access level</small>
-                                }
-                                else if (!selectedRegionId.HasValue)
-                                {
-                                    <small class="text-muted">Select a region first</small>
-                                }
-                            </div>
-                        </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Facility Code <span class="text-danger">*</span></label>
+                        <InputText class="form-control" @bind-Value="model.Code" placeholder="e.g. KBTH" />
+                        <small class="text-muted">Unique identifier for the facility</small>
+                        <ValidationMessage For="@(() => model.Code)" />
                     </div>
 
-                    <!-- Address Information -->
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-3">Address Information</h6>
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label class="form-label">Street Address</label>
-                                <InputText class="form-control" @bind-Value="model.Address" placeholder="e.g., Korle Bu Road" />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">City <span class="text-danger">*</span></label>
-                                <InputText class="form-control" @bind-Value="model.City" placeholder="e.g., Accra" />
-                                <ValidationMessage For="@(() => model.City)" class="text-danger small" />
-                            </div>
-                        </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Facility Type <span class="text-danger">*</span></label>
+                        <InputSelect class="form-select" @bind-Value="model.Type">
+                            <option value="">Select Type...</option>
+                            <option value="Hospital">Hospital</option>
+                            <option value="HealthCenter">Health Center</option>
+                            <option value="Clinic">Clinic</option>
+                            <option value="CHPS">CHPS Compound</option>
+                            <option value="MaternityHome">Maternity Home</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => model.Type)" />
                     </div>
 
-                    <!-- Contact Information -->
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-3">Contact Information</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Phone Number</label>
-                                <InputText class="form-control" @bind-Value="model.Phone" placeholder="e.g., +233 XXX XXX XXX" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Email Address</label>
-                                <InputText class="form-control" type="email" @bind-Value="model.Email" placeholder="e.g., info@facility.com" />
-                            </div>
-                        </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Facility Level <span class="text-danger">*</span></label>
+                        <InputSelect class="form-select" @bind-Value="model.Level">
+                            <option value="">Select Level...</option>
+                            <option value="Tertiary">Tertiary</option>
+                            <option value="Secondary">Secondary</option>
+                            <option value="Primary">Primary</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => model.Level)" />
                     </div>
 
-                    <!-- GPS Location -->
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-3">GPS Location (Optional)</h6>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Latitude</label>
-                                <InputNumber class="form-control" @bind-Value="model.Latitude" placeholder="e.g., 5.5560" step="0.0001" />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Longitude</label>
-                                <InputNumber class="form-control" @bind-Value="model.Longitude" placeholder="e.g., -0.1969" step="0.0001" />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Ghana Post GPS</label>
-                                <InputText class="form-control" @bind-Value="model.GHPostGPS" placeholder="e.g., GA-123-4567" />
-                            </div>
-                        </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Ownership</label>
+                        <InputSelect class="form-select" @bind-Value="model.Ownership">
+                            <option value="Public">Public (Government)</option>
+                            <option value="Private">Private</option>
+                            <option value="CHAG">CHAG (Mission)</option>
+                            @* <option value="Quasi">Quasi-Government</option> *@
+                        </InputSelect>
                     </div>
 
-                    <!-- Submit Button -->
-                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
-                        <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">
+                    <div class="col-12 mt-4">
+                        <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">
+                            <i class="bi bi-geo-alt me-2 text-danger"></i>Location Information
+                        </h6>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Region <span class="text-danger">*</span></label>
+                        <select class="form-select" @onchange="OnRegionChanged" value="@selectedRegionId" disabled="@isRegionLocked">
+                            <option value="">Select Region...</option>
+                            @foreach (var region in regions)
+                            {
+                                <option value="@region.ID">@region.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">District <span class="text-danger">*</span></label>
+                        <select class="form-select" @bind="selectedDistrictId" disabled="@(isDistrictLocked || !selectedRegionId.HasValue)">
+                            <option value="">Select District...</option>
+                            @foreach (var district in filteredDistricts)
+                            {
+                                <option value="@district.ID">@district.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">City/Town <span class="text-danger">*</span></label>
+                        <InputText class="form-control" @bind-Value="model.City" />
+                        <ValidationMessage For="@(() => model.City)" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Address / GPS Address</label>
+                        <InputText class="form-control" @bind-Value="model.Address" placeholder="e.g. GA-123-4567" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">GPS Latitude</label>
+                        <InputNumber class="form-control" @bind-Value="model.Latitude" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">GPS Longitude</label>
+                        <InputNumber class="form-control" @bind-Value="model.Longitude" />
+                    </div>
+                    
+                    <div class="col-12 mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                         <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                        <button type="submit" class="btn btn-primary px-4" disabled="@isSubmitting">
                             @if (isSubmitting)
                             {
-                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                                 <span>Registering...</span>
                             }
                             else
                             {
-                                <i class="bi bi-check-lg me-2"></i>
+                                <i class="bi bi-check-lg me-1"></i>
                                 <span>Register Facility</span>
                             }
                         </button>
                     </div>
-                </EditForm>
-            </div>
+                </div>
+            </EditForm>
         </div>
     </div>
 
     <!-- Help Panel -->
     <div class="col-lg-4">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white">
-                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Onboarding Guide</h6>
+        <div class="glass-panel p-4 mb-4">
+            <div class="d-flex align-items-center mb-3 border-bottom pb-3">
+                <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-info-circle me-2 text-info"></i>Onboarding Guide</h6>
             </div>
-            <div class="card-body">
+            <div>
                 <div class="mb-3">
-                    <h6 class="fw-semibold">Required Fields</h6>
-                    <p class="small text-muted">
+                    <h6 class="fw-semibold text-dark">Required Fields</h6>
+                    <p class="small text-secondary">
                         Fields marked with <span class="text-danger">*</span> are required for facility registration.
                     </p>
                 </div>
                 <div class="mb-3">
-                    <h6 class="fw-semibold">Facility Code</h6>
-                    <p class="small text-muted">
+                    <h6 class="fw-semibold text-dark">Facility Code</h6>
+                    <p class="small text-secondary">
                         Enter a unique code for the facility. This is used for identification across the system.
-                        Examples: KBTH, RH, 37MH
+                        Examples: <span class="badge bg-light text-dark border">KBTH</span>, <span class="badge bg-light text-dark border">RH</span>
                     </p>
                 </div>
                 <div class="mb-3">
-                    <h6 class="fw-semibold">Location Hierarchy</h6>
-                    <p class="small text-muted">
+                    <h6 class="fw-semibold text-dark">Location Hierarchy</h6>
+                    <p class="small text-secondary">
                         All facilities must be assigned to a district. Districts are organized under regions.
                     </p>
                 </div>
                 <div>
-                    <h6 class="fw-semibold">GPS Coordinates</h6>
-                    <p class="small text-muted mb-0">
+                    <h6 class="fw-semibold text-dark">GPS Coordinates</h6>
+                    <p class="small text-secondary mb-0">
                         GPS coordinates help in mapping and referral routing. You can use Ghana Post GPS addresses as well.
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white">
-                <h6 class="mb-0"><i class="bi bi-building me-2"></i>Facility Types</h6>
+        <div class="glass-panel p-4">
+            <div class="d-flex align-items-center mb-3 border-bottom pb-3">
+                <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-building me-2 text-secondary"></i>Facility Types</h6>
             </div>
-            <div class="card-body">
+            <div>
                 <ul class="list-unstyled small mb-0">
-                    <li class="mb-2">
-                        <strong>Hospital</strong>: Full-service medical facility with inpatient care
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="bi bi-hospital text-primary me-2 fs-5"></i>
+                        <div>
+                            <strong class="d-block text-dark">Hospital</strong>
+                            <span class="text-secondary">Full-service medical facility with inpatient care</span>
+                        </div>
                     </li>
-                    <li class="mb-2">
-                        <strong>Clinic</strong>: Outpatient medical services
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="bi bi-hospital text-success me-2 fs-5"></i>
+                        <div>
+                            <strong class="d-block text-dark">Center</strong>
+                            <span class="text-secondary">Primary healthcare services</span>
+                        </div>
                     </li>
-                    <li class="mb-2">
-                        <strong>Health Center</strong>: Primary healthcare services
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="bi bi-shop text-warning me-2 fs-5"></i>
+                        <div>
+                            <strong class="d-block text-dark">Clinic</strong>
+                            <span class="text-secondary">Outpatient medical services</span>
+                        </div>
                     </li>
-                    <li class="mb-2">
-                        <strong>CHPS Compound</strong>: Community-based Health Planning and Services
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="bi bi-house-heart text-danger me-2 fs-5"></i>
+                        <div>
+                            <strong class="d-block text-dark">Maternity Home</strong>
+                            <span class="text-secondary">Specialized maternal care facility</span>
+                        </div>
                     </li>
-                    <li>
-                        <strong>Maternity Home</strong>: Specialized maternal care facility
+                    <li class="d-flex align-items-start">
+                        <i class="bi bi-house-door text-info me-2 fs-5"></i>
+                        <div>
+                            <strong class="d-block text-dark">CHPS Compound</strong>
+                            <span class="text-secondary">Community-based Health Planning and Services</span>
+                        </div>
                     </li>
                 </ul>
             </div>

@@ -115,7 +115,14 @@
     </ContentPage.Resources>
 
     <tabView:SfTabView x:Name="TabView" TabBarHeight="72" EnableSwiping="False" TabBarPlacement="Bottom">
-        <tabView:SfTabItem Header="Home" ImagePosition="Top" ImageSource="home_svgrepo.png">
+        <!--<tabView:SfTabView.SelectionIndicatorSettings>
+            <tabView:SelectionIndicatorSettings Color="{StaticResource Primary}" StrokeThickness="3" />
+        </tabView:SfTabView.SelectionIndicatorSettings>-->
+
+        <tabView:SfTabItem Header="Home" ImagePosition="Top">
+            <tabView:SfTabItem.ImageSource>
+                <FontImageSource FontFamily="FluentUI" Glyph="&#xf481;" Color="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"/>
+            </tabView:SfTabItem.ImageSource>
             <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
                 <ScrollView>
                     <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*"
@@ -123,9 +130,9 @@
                           RowSpacing="16">
 
                         <!-- ==================== HEADER SECTION ==================== -->
-                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
-                            <VerticalStackLayout VerticalOptions="Center" Spacing="4">
-                                <Label Text="Labour Monitoring Dashboard" Style="{StaticResource HeaderStyle}" />
+                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,4">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="Labour Monitoring Dashboard" Style="{StaticResource HeaderStyle}" FontSize="24"/>
                                 <HorizontalStackLayout Spacing="8">
                                     <Label Text="{Binding Today, StringFormat='{0:ddd, MMM dd, yyyy}'}"
                                            Style="{StaticResource SubheaderStyle}" />
@@ -195,9 +202,13 @@
                                         <Label Text="In progress now" TextColor="#FFFFFFAA" />
                                     </HorizontalStackLayout>
                                 </Grid>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding NavigateToActivePatientsCommand}" />
-                                </Border.GestureRecognizers>
+                                <Border.Behaviors>
+                                    <toolkit:TouchBehavior Command="{Binding NavigateToActivePatientsCommand}"
+                                                           PressedOpacity="0.6"
+                                                           PressedScale="0.95"
+                                                           DefaultAnimationDuration="150"
+                                                           DefaultAnimationEasing="{x:Static Easing.CubicOut}" />
+                                </Border.Behaviors>
                             </Border>
 
                             <!-- Pre-Labour Card -->
@@ -228,9 +239,13 @@
                                         <Label Text="Awaiting labour" TextColor="#FFFFFFAA" />
                                     </HorizontalStackLayout>
                                 </Grid>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding NavigateToPendingPatientsCommand}" />
-                                </Border.GestureRecognizers>
+                                <Border.Behaviors>
+                                    <toolkit:TouchBehavior Command="{Binding NavigateToPendingPatientsCommand}"
+                                                           PressedOpacity="0.6"
+                                                           PressedScale="0.95"
+                                                           DefaultAnimationDuration="150"
+                                                           DefaultAnimationEasing="{x:Static Easing.CubicOut}" />
+                                </Border.Behaviors>
                             </Border>
 
                             <!-- Delivered Today Card -->
@@ -262,9 +277,13 @@
                                                TextColor="#FFFFFFAA" />
                                     </HorizontalStackLayout>
                                 </Grid>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding NavigateToCompletedPatientsCommand}" />
-                                </Border.GestureRecognizers>
+                                <Border.Behaviors>
+                                    <toolkit:TouchBehavior Command="{Binding NavigateToCompletedPatientsCommand}"
+                                                           PressedOpacity="0.6"
+                                                           PressedScale="0.95"
+                                                           DefaultAnimationDuration="150"
+                                                           DefaultAnimationEasing="{x:Static Easing.CubicOut}" />
+                                </Border.Behaviors>
                             </Border>
 
                             <!-- Emergency Card -->
@@ -295,9 +314,13 @@
                                         <Label Text="Immediate attention" TextColor="#FFFFFFAA" />
                                     </HorizontalStackLayout>
                                 </Grid>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding NavigateToEmergencyPatientsCommand}" />
-                                </Border.GestureRecognizers>
+                                <Border.Behaviors>
+                                    <toolkit:TouchBehavior Command="{Binding NavigateToEmergencyPatientsCommand}"
+                                                           PressedOpacity="0.6"
+                                                           PressedScale="0.95"
+                                                           DefaultAnimationDuration="150"
+                                                           DefaultAnimationEasing="{x:Static Easing.CubicOut}" />
+                                </Border.Behaviors>
                             </Border>
                         </Grid>
 
@@ -895,15 +918,24 @@
             </RefreshView>
         </tabView:SfTabItem>
 
-        <tabView:SfTabItem Header="Pending" ImageSource="pending_silent_mute_sound_audio_off_svgrepo.png">
+        <tabView:SfTabItem Header="Pending">
+             <tabView:SfTabItem.ImageSource>
+                <FontImageSource FontFamily="FluentUI" Glyph="&#xf2de;" Color="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"/>
+            </tabView:SfTabItem.ImageSource>
             <views:PendingPatientsView x:Name="PendingPatients" Loaded="PendingPatients_Loaded" />
         </tabView:SfTabItem>
 
-        <tabView:SfTabItem Header="Active" ImageSource="bell_active_svgrepo.png">
+        <tabView:SfTabItem Header="Active">
+             <tabView:SfTabItem.ImageSource>
+                <FontImageSource FontFamily="FluentUI" Glyph="&#xe702;" Color="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"/>
+            </tabView:SfTabItem.ImageSource>
             <views:ActivePatientsView x:Name="ActivePatients" Loaded="ActivePatients_Loaded" />
         </tabView:SfTabItem>
 
-        <tabView:SfTabItem Header="Completed" ImageSource="todo_done_svgrepo.png">
+        <tabView:SfTabItem Header="Completed">
+             <tabView:SfTabItem.ImageSource>
+                <FontImageSource FontFamily="FluentUI" Glyph="&#xf299;" Color="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"/>
+            </tabView:SfTabItem.ImageSource>
             <views:CompletedPatientsView x:Name="CompletedPatients" Loaded="CompletedPatients_Loaded" />
         </tabView:SfTabItem>
     </tabView:SfTabView>

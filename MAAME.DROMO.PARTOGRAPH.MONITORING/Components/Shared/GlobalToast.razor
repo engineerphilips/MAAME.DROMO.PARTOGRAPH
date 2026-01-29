@@ -1,0 +1,74 @@
+@using MAAME.DROMO.PARTOGRAPH.MONITORING.Services
+
+<div class="toast-item glass-panel mb-3 p-3 shadow-lg d-flex align-items-start @AnimationClass" @onclick="OnClick">
+    <div class="icon-box-sm rounded-circle p-2 me-3 @IconBgClass text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+        <i class="@IconClass"></i>
+    </div>
+    <div class="flex-grow-1">
+        <h6 class="mb-1 fw-bold text-dark">@Title</h6>
+        <p class="mb-0 small text-secondary">@Message</p>
+    </div>
+    <button type="button" class="btn-close ms-2" aria-label="Close" @onclick="OnClose"></button>
+</div>
+
+<style>
+    .toast-item {
+        width: 350px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .toast-item.closing {
+        animation: slideOutRight 0.4s forwards cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @@keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @@keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+</style>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Message { get; set; } = "";
+    [Parameter] public ToastType Type { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter] public bool IsClosing { get; set; }
+
+    private string AnimationClass => IsClosing ? "closing" : "";
+
+    private string IconClass => Type switch
+    {
+        ToastType.Success => "bi bi-check-lg",
+        ToastType.Error => "bi bi-x-lg",
+        ToastType.Warning => "bi bi-exclamation-lg",
+        ToastType.Info => "bi bi-info-lg",
+        _ => "bi bi-info-lg"
+    };
+
+    private string IconBgClass => Type switch
+    {
+        ToastType.Success => "bg-success",
+        ToastType.Error => "bg-danger",
+        ToastType.Warning => "bg-warning",
+        ToastType.Info => "bg-primary",
+        _ => "bg-primary"
+    };
+}

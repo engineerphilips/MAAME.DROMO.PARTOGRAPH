@@ -56,6 +56,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
         public string Code { get; set; } = string.Empty;
         public string Type { get; set; } = "Hospital"; // Hospital, Clinic, Health Center
         public string Level { get; set; } = "Primary"; // Primary, Secondary, Tertiary
+        public string Ownership { get; set; } = "Public (Government)"; // Public (Government), 
         public string Address { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;

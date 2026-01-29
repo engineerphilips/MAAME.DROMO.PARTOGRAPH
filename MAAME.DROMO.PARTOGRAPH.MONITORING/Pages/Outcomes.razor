@@ -9,16 +9,16 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="mb-1">
+            <h2 class="mb-1 text-gradient-primary">
                 <i class="bi bi-graph-up me-2 text-success"></i>
                 Outcomes Analytics
             </h2>
-            <p class="text-muted mb-0">
+            <p class="text-secondary mb-0">
                 @accessLevelText | @DateTime.Now.ToString("dddd, MMMM dd, yyyy")
             </p>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary" @onclick="RefreshData">
+            <button class="btn btn-outline-secondary shadow-sm" @onclick="RefreshData">
                 <i class="bi bi-arrow-clockwise me-1"></i> Refresh
             </button>
         </div>
@@ -39,64 +39,57 @@ else
     <!-- Summary Cards -->
     <div class="row g-4 mb-4">
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">Total Deliveries (Month)</p>
-                            <h3 class="mb-0">@summary?.TotalDeliveriesThisMonth</h3>
-                        </div>
-                        <div class="stat-icon bg-success-subtle text-success">
-                            <i class="bi bi-clipboard2-pulse"></i>
-                        </div>
+            <div class="stat-card p-3 h-100 glass-panel hover-lift">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-secondary text-uppercase fw-semibold" style="font-size: 0.7rem;">Total Deliveries</small>
+                        <h3 class="mb-0 fw-bold text-dark">@summary?.TotalDeliveriesThisMonth</h3>
+                        <small class="text-muted" style="font-size: 0.7rem;">This Month</small>
+                    </div>
+                    <div class="stat-icon bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <i class="bi bi-clipboard2-pulse fs-4"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100 border-danger">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">Maternal Deaths</p>
-                            <h3 class="mb-0 text-danger">@(mortalityStats?.MaternalDeaths ?? summary?.MaternalDeaths ?? 0)</h3>
-                        </div>
-                        <div class="stat-icon bg-danger-subtle text-danger">
-                            <i class="bi bi-heart-pulse"></i>
-                        </div>
+            <div class="stat-card p-3 h-100 glass-panel hover-lift border-bottom border-4 border-danger">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-secondary text-uppercase fw-semibold" style="font-size: 0.7rem;">Maternal Deaths</small>
+                        <h3 class="mb-0 fw-bold text-danger">@(mortalityStats?.MaternalDeaths ?? summary?.MaternalDeaths ?? 0)</h3>
+                    </div>
+                    <div class="stat-icon bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <i class="bi bi-heart-pulse fs-4"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100 border-warning">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">Neonatal Deaths</p>
-                            <h3 class="mb-0 text-warning">@(mortalityStats?.NeonatalDeaths ?? summary?.NeonatalDeaths ?? 0)</h3>
-                        </div>
-                        <div class="stat-icon bg-warning-subtle text-warning">
-                            <i class="bi bi-emoji-frown"></i>
-                        </div>
+            <div class="stat-card p-3 h-100 glass-panel hover-lift border-bottom border-4 border-warning">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-secondary text-uppercase fw-semibold" style="font-size: 0.7rem;">Neonatal Deaths</small>
+                        <h3 class="mb-0 fw-bold text-warning">@(mortalityStats?.NeonatalDeaths ?? summary?.NeonatalDeaths ?? 0)</h3>
+                    </div>
+                    <div class="stat-icon bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <i class="bi bi-emoji-frown fs-4"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100 border-secondary">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">Stillbirths</p>
-                            <h3 class="mb-0 text-secondary">@(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0)</h3>
-                        </div>
-                        <div class="stat-icon bg-secondary-subtle text-secondary">
-                            <i class="bi bi-dash-circle"></i>
-                        </div>
+            <div class="stat-card p-3 h-100 glass-panel hover-lift border-bottom border-4 border-secondary">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-secondary text-uppercase fw-semibold" style="font-size: 0.7rem;">Stillbirths</small>
+                        <h3 class="mb-0 fw-bold text-secondary">@(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0)</h3>
+                    </div>
+                    <div class="stat-icon bg-secondary-subtle text-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <i class="bi bi-dash-circle fs-4"></i>
                     </div>
                 </div>
             </div>
@@ -106,78 +99,76 @@ else
     <!-- Mortality Summary -->
     <div class="row g-4 mb-4">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
+            <div class="glass-panel h-100 p-0">
+                <div class="p-4 border-bottom border-light">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-heart-pulse me-2 text-danger"></i>
                         Mortality Indicators
                     </h5>
                 </div>
-                <div class="card-body">
+                <div class="p-4">
                     <div class="row">
                         <div class="col-md-4 mb-4">
-                            <div class="text-center p-4 rounded bg-danger bg-opacity-10">
+                            <div class="text-center p-4 rounded-3 h-100 d-flex flex-column justify-content-center bg-danger bg-opacity-10 border border-danger-subtle">
                                 <i class="bi bi-heart-pulse-fill fs-1 text-danger mb-2"></i>
-                                <h2 class="mb-1 text-danger">@(mortalityStats?.MaternalDeaths ?? summary?.MaternalDeaths ?? 0)</h2>
-                                <p class="text-muted mb-2">Maternal Deaths</p>
+                                <h2 class="mb-1 text-danger fw-bold">@(mortalityStats?.MaternalDeaths ?? summary?.MaternalDeaths ?? 0)</h2>
+                                <p class="text-muted mb-2 small text-uppercase fw-semibold">Maternal Deaths</p>
                                 @if (mortalityStats?.MaternalMortalityRatio > 0)
                                 {
-                                    <span class="badge bg-danger">
-                                        MMR: @mortalityStats.MaternalMortalityRatio.ToString("F1") per 100,000
+                                    <span class="badge bg-danger rounded-pill shadow-sm mt-auto">
+                                        MMR: @mortalityStats.MaternalMortalityRatio.ToString("F1") per 100k
                                     </span>
                                 }
                             </div>
                         </div>
                         <div class="col-md-4 mb-4">
-                            <div class="text-center p-4 rounded bg-warning bg-opacity-10">
+                            <div class="text-center p-4 rounded-3 h-100 d-flex flex-column justify-content-center bg-warning bg-opacity-10 border border-warning-subtle">
                                 <i class="bi bi-emoji-frown-fill fs-1 text-warning mb-2"></i>
-                                <h2 class="mb-1 text-warning">@(mortalityStats?.NeonatalDeaths ?? summary?.NeonatalDeaths ?? 0)</h2>
-                                <p class="text-muted mb-2">Neonatal Deaths</p>
+                                <h2 class="mb-1 text-warning fw-bold">@(mortalityStats?.NeonatalDeaths ?? summary?.NeonatalDeaths ?? 0)</h2>
+                                <p class="text-muted mb-2 small text-uppercase fw-semibold">Neonatal Deaths</p>
                                 @if (mortalityStats?.NeonatalMortalityRate > 0)
                                 {
-                                    <span class="badge bg-warning">
-                                        NMR: @mortalityStats.NeonatalMortalityRate.ToString("F1") per 1,000
+                                    <span class="badge bg-warning text-dark rounded-pill shadow-sm mt-auto">
+                                        NMR: @mortalityStats.NeonatalMortalityRate.ToString("F1") per 1k
                                     </span>
                                 }
                             </div>
                         </div>
                         <div class="col-md-4 mb-4">
-                            <div class="text-center p-4 rounded bg-secondary bg-opacity-10">
+                            <div class="text-center p-4 rounded-3 h-100 d-flex flex-column justify-content-center bg-secondary bg-opacity-10 border border-secondary-subtle">
                                 <i class="bi bi-dash-circle-fill fs-1 text-secondary mb-2"></i>
-                                <h2 class="mb-1 text-secondary">@(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0)</h2>
-                                <p class="text-muted mb-2">Stillbirths</p>
+                                <h2 class="mb-1 text-secondary fw-bold">@(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0)</h2>
+                                <p class="text-muted mb-2 small text-uppercase fw-semibold">Stillbirths</p>
                                 @if (mortalityStats?.StillbirthRate > 0)
                                 {
-                                    <span class="badge bg-secondary">
-                                        SBR: @mortalityStats.StillbirthRate.ToString("F1") per 1,000
+                                    <span class="badge bg-secondary rounded-pill shadow-sm mt-auto">
+                                        SBR: @mortalityStats.StillbirthRate.ToString("F1") per 1k
                                     </span>
                                 }
                             </div>
                         </div>
                     </div>
 
-                    <hr />
-
-                    <div class="alert alert-info mb-0">
-                        <i class="bi bi-info-circle me-2"></i>
-                        <strong>Note:</strong> Mortality rates are calculated based on deliveries recorded in the system.
-                        MMR = Maternal Mortality Ratio (per 100,000 live births),
-                        NMR = Neonatal Mortality Rate (per 1,000 live births),
-                        SBR = Stillbirth Rate (per 1,000 total births).
+                    <div class="alert alert-info mb-0 d-flex align-items-start border-0 bg-info-subtle text-info-emphasis">
+                        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+                        <small>
+                            <strong>Note:</strong> Mortality rates are calculated based on deliveries recorded in the system.
+                            MMR = Maternal Mortality Ratio, NMR = Neonatal Mortality Rate, SBR = Stillbirth Rate.
+                        </small>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
+            <div class="glass-panel h-100 p-4">
+                <div class="d-flex align-items-center mb-4 border-bottom border-light pb-3">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-pie-chart me-2 text-primary"></i>
-                        Delivery Outcomes Summary
+                        Delivery Outcomes
                     </h5>
                 </div>
-                <div class="card-body">
+                <div>
                     @{
                         var totalDeliveries = summary?.TotalDeliveriesThisMonth ?? 0;
                         var livebirths = totalDeliveries - (mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0);
@@ -185,41 +176,35 @@ else
                     }
 
                     <div class="text-center mb-4">
-                        <div class="display-4 fw-bold text-success">@liveBirthRate.ToString("F1")%</div>
-                        <p class="text-muted">Live Birth Rate</p>
+                        <div class="display-4 fw-bold text-gradient-primary">@liveBirthRate.ToString("F1")%</div>
+                        <p class="text-secondary fw-medium">Live Birth Rate</p>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <div class="d-flex justify-content-between mb-1">
-                            <span class="text-success">Live Births</span>
-                            <span class="badge bg-success">@livebirths</span>
+                            <span class="text-success fw-bold small">Live Births</span>
+                            <span class="badge bg-success-subtle text-success rounded-pill">@livebirths</span>
                         </div>
-                        <div class="progress" style="height: 25px;">
-                            <div class="progress-bar bg-success" style="width: @liveBirthRate%">
-                                @liveBirthRate.ToString("F1")%
-                            </div>
+                        <div class="progress shadow-sm" style="height: 12px; border-radius: 6px;">
+                            <div class="progress-bar bg-success" style="width: @liveBirthRate%; border-radius: 6px;"></div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-4">
                         @{
                             var stillbirthRate = totalDeliveries > 0 ? (double)(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0) / totalDeliveries * 100 : 0;
                         }
                         <div class="d-flex justify-content-between mb-1">
-                            <span class="text-secondary">Stillbirths</span>
-                            <span class="badge bg-secondary">@(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0)</span>
+                            <span class="text-secondary fw-bold small">Stillbirths</span>
+                            <span class="badge bg-secondary-subtle text-secondary rounded-pill">@(mortalityStats?.Stillbirths ?? summary?.Stillbirths ?? 0)</span>
                         </div>
-                        <div class="progress" style="height: 25px;">
-                            <div class="progress-bar bg-secondary" style="width: @stillbirthRate%">
-                                @stillbirthRate.ToString("F1")%
-                            </div>
+                        <div class="progress shadow-sm" style="height: 12px; border-radius: 6px;">
+                            <div class="progress-bar bg-secondary" style="width: @stillbirthRate%; border-radius: 6px;"></div>
                         </div>
                     </div>
 
-                    <hr />
-
-                    <div class="text-center">
-                        <h4 class="mb-1">@totalDeliveries</h4>
+                    <div class="text-center mt-auto pt-3 border-top border-light">
+                        <h4 class="mb-1 fw-bold text-dark">@totalDeliveries</h4>
                         <small class="text-muted">Total Deliveries This Month</small>
                     </div>
                 </div>
@@ -230,101 +215,91 @@ else
     <!-- Delivery Mode Outcomes -->
     <div class="row g-4 mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
+            <div class="glass-panel p-0 overflow-hidden">
+                <div class="p-4 border-bottom border-light">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-clipboard2-data me-2 text-primary"></i>
                         Delivery Mode Distribution
                     </h5>
                 </div>
-                <div class="card-body">
+                <div class="p-4">
                     @if (deliveryModes != null)
                     {
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <div class="card border-0 bg-success bg-opacity-10 h-100">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-check-circle fs-1 text-success mb-2"></i>
-                                        <h3 class="mb-1">@deliveryModes.NormalVaginal</h3>
-                                        <p class="text-muted mb-0">Normal Vaginal</p>
-                                        <small class="badge bg-success mt-2">@deliveryModes.NormalVaginalPercent.ToString("F1")%</small>
-                                    </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3">
+                                <div class="p-3 rounded-3 h-100 text-center bg-success bg-opacity-10 border border-success-subtle transition-all hover-lift">
+                                    <i class="bi bi-check-circle-fill fs-1 text-success mb-2"></i>
+                                    <h3 class="mb-1 fw-bold text-dark">@deliveryModes.NormalVaginal</h3>
+                                    <p class="text-muted mb-0 small text-uppercase fw-bold">Normal Vaginal</p>
+                                    <span class="badge bg-success rounded-pill mt-2">@deliveryModes.NormalVaginalPercent.ToString("F1")%</span>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <div class="card border-0 bg-info bg-opacity-10 h-100">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-hand-index fs-1 text-info mb-2"></i>
-                                        <h3 class="mb-1">@deliveryModes.AssistedVaginal</h3>
-                                        <p class="text-muted mb-0">Assisted Vaginal</p>
-                                        @{
-                                            var assistedPercent = deliveryModes.Total > 0 ? (double)deliveryModes.AssistedVaginal / deliveryModes.Total * 100 : 0;
-                                        }
-                                        <small class="badge bg-info mt-2">@assistedPercent.ToString("F1")%</small>
-                                    </div>
+                            <div class="col-md-3">
+                                <div class="p-3 rounded-3 h-100 text-center bg-info bg-opacity-10 border border-info-subtle transition-all hover-lift">
+                                    <i class="bi bi-hand-index-thumb-fill fs-1 text-info mb-2"></i>
+                                    <h3 class="mb-1 fw-bold text-dark">@deliveryModes.AssistedVaginal</h3>
+                                    <p class="text-muted mb-0 small text-uppercase fw-bold">Assisted Vaginal</p>
+                                    @{
+                                        var assistedPercent = deliveryModes.Total > 0 ? (double)deliveryModes.AssistedVaginal / deliveryModes.Total * 100 : 0;
+                                    }
+                                    <span class="badge bg-info text-dark rounded-pill mt-2">@assistedPercent.ToString("F1")%</span>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <div class="card border-0 bg-warning bg-opacity-10 h-100">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-calendar-check fs-1 text-warning mb-2"></i>
-                                        <h3 class="mb-1">@deliveryModes.ElectiveCaesarean</h3>
-                                        <p class="text-muted mb-0">Elective C-Section</p>
-                                        @{
-                                            var electivePercent = deliveryModes.Total > 0 ? (double)deliveryModes.ElectiveCaesarean / deliveryModes.Total * 100 : 0;
-                                        }
-                                        <small class="badge bg-warning mt-2">@electivePercent.ToString("F1")%</small>
-                                    </div>
+                            <div class="col-md-3">
+                                <div class="p-3 rounded-3 h-100 text-center bg-warning bg-opacity-10 border border-warning-subtle transition-all hover-lift">
+                                    <i class="bi bi-calendar-check-fill fs-1 text-warning mb-2"></i>
+                                    <h3 class="mb-1 fw-bold text-dark">@deliveryModes.ElectiveCaesarean</h3>
+                                    <p class="text-muted mb-0 small text-uppercase fw-bold">Elective C-Section</p>
+                                    @{
+                                        var electivePercent = deliveryModes.Total > 0 ? (double)deliveryModes.ElectiveCaesarean / deliveryModes.Total * 100 : 0;
+                                    }
+                                    <span class="badge bg-warning text-dark rounded-pill mt-2">@electivePercent.ToString("F1")%</span>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <div class="card border-0 bg-danger bg-opacity-10 h-100">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-exclamation-triangle fs-1 text-danger mb-2"></i>
-                                        <h3 class="mb-1">@deliveryModes.EmergencyCaesarean</h3>
-                                        <p class="text-muted mb-0">Emergency C-Section</p>
-                                        @{
-                                            var emergencyPercent = deliveryModes.Total > 0 ? (double)deliveryModes.EmergencyCaesarean / deliveryModes.Total * 100 : 0;
-                                        }
-                                        <small class="badge bg-danger mt-2">@emergencyPercent.ToString("F1")%</small>
-                                    </div>
+                            <div class="col-md-3">
+                                <div class="p-3 rounded-3 h-100 text-center bg-danger bg-opacity-10 border border-danger-subtle transition-all hover-lift">
+                                    <i class="bi bi-exclamation-triangle-fill fs-1 text-danger mb-2"></i>
+                                    <h3 class="mb-1 fw-bold text-dark">@deliveryModes.EmergencyCaesarean</h3>
+                                    <p class="text-muted mb-0 small text-uppercase fw-bold">Emergency C-Section</p>
+                                    @{
+                                        var emergencyPercent = deliveryModes.Total > 0 ? (double)deliveryModes.EmergencyCaesarean / deliveryModes.Total * 100 : 0;
+                                    }
+                                    <span class="badge bg-danger rounded-pill mt-2">@emergencyPercent.ToString("F1")%</span>
                                 </div>
                             </div>
                         </div>
 
-                        <hr />
-
                         <div class="row">
                             <div class="col-md-6">
-                                <h6>Overall C-Section Rate</h6>
-                                <div class="progress" style="height: 30px;">
+                                <h6 class="text-secondary fw-bold small text-uppercase mb-3">Overall C-Section Rate</h6>
+                                <div class="progress mb-2 shadow-sm" style="height: 24px; border-radius: 12px;">
                                     <div class="progress-bar @(deliveryModes.CaesareanPercent > 15 ? "bg-warning" : "bg-success")"
-                                         style="width: @deliveryModes.CaesareanPercent%">
+                                         style="width: @deliveryModes.CaesareanPercent%; border-radius: 12px;">
                                         @deliveryModes.CaesareanPercent.ToString("F1")%
                                     </div>
                                 </div>
                                 @if (deliveryModes.CaesareanPercent > 15)
                                 {
-                                    <small class="text-warning">
-                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                    <small class="text-warning fw-medium">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
                                         Above WHO recommended rate (10-15%)
                                     </small>
                                 }
                                 else
                                 {
-                                    <small class="text-success">
-                                        <i class="bi bi-check-circle me-1"></i>
+                                    <small class="text-success fw-medium">
+                                        <i class="bi bi-check-circle-fill me-1"></i>
                                         Within WHO recommended range
                                     </small>
                                 }
                             </div>
                             <div class="col-md-6">
-                                <h6>Vaginal Delivery Rate</h6>
+                                <h6 class="text-secondary fw-bold small text-uppercase mb-3">Vaginal Delivery Rate</h6>
                                 @{
                                     var vaginalRate = 100 - deliveryModes.CaesareanPercent;
                                 }
-                                <div class="progress" style="height: 30px;">
-                                    <div class="progress-bar bg-success" style="width: @vaginalRate%">
+                                <div class="progress mb-2 shadow-sm" style="height: 24px; border-radius: 12px;">
+                                    <div class="progress-bar bg-success" style="width: @vaginalRate%; border-radius: 12px;">
                                         @vaginalRate.ToString("F1")%
                                     </div>
                                 </div>
@@ -336,9 +311,11 @@ else
                     }
                     else
                     {
-                        <div class="text-center py-4">
-                            <i class="bi bi-inbox fs-1 text-muted"></i>
-                            <p class="text-muted mt-2">No delivery mode data available</p>
+                        <div class="text-center py-5">
+                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                <i class="bi bi-inbox fs-2 text-muted"></i>
+                            </div>
+                            <p class="text-muted mb-0">No delivery mode data available</p>
                         </div>
                     }
                 </div>
@@ -349,67 +326,74 @@ else
     <!-- Facility Performance -->
     <div class="row g-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
+            <div class="glass-panel p-0 overflow-hidden">
+                <div class="p-4 border-bottom border-light">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-building me-2 text-primary"></i>
                         Facility Performance Rankings
                     </h5>
                 </div>
-                <div class="card-body">
-                    @if (facilityPerformance?.Any() == true)
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Facility</th>
-                                        <th>District</th>
-                                        <th>Deliveries</th>
-                                        <th>C-Section Rate</th>
-                                        <th>Complication Rate</th>
-                                        <th>Grade</th>
+                
+                @if (facilityPerformance?.Any() == true)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="bg-light text-secondary small text-uppercase">
+                                <tr>
+                                    <th class="ps-4 py-3 border-0">Facility</th>
+                                    <th class="py-3 border-0">District</th>
+                                    <th class="py-3 border-0">Deliveries</th>
+                                    <th class="py-3 border-0">C-Section Rate</th>
+                                    <th class="py-3 border-0">Complication Rate</th>
+                                    <th class="py-3 border-0">Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var facility in facilityPerformance.Take(10))
+                                {
+                                    <tr class="border-bottom border-light">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-2 bg-primary-subtle text-primary rounded px-2 py-1">
+                                                    <i class="bi bi-hospital"></i>
+                                                </div>
+                                                <span class="fw-bold text-dark">@facility.FacilityName</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="text-muted">@facility.DistrictName</span></td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border rounded-pill">@facility.TotalDeliveries</span>
+                                        </td>
+                                        <td>
+                                            <span class="@(facility.CaesareanRate > 15 ? "text-warning fw-bold" : "text-success fw-bold")">
+                                                @facility.CaesareanRate.ToString("F1")%
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="@(facility.ComplicationRate > 10 ? "text-danger fw-bold" : "text-success fw-bold")">
+                                                @facility.ComplicationRate.ToString("F1")%
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge rounded-pill @GetGradeBadgeClass(facility.PerformanceGrade)">
+                                                @facility.PerformanceGrade
+                                            </span>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var facility in facilityPerformance.Take(10))
-                                    {
-                                        <tr>
-                                            <td>
-                                                <i class="bi bi-hospital me-2 text-primary"></i>
-                                                @facility.FacilityName
-                                            </td>
-                                            <td>@facility.DistrictName</td>
-                                            <td><span class="badge bg-primary">@facility.TotalDeliveries</span></td>
-                                            <td>
-                                                <span class="@(facility.CaesareanRate > 15 ? "text-warning" : "text-success")">
-                                                    @facility.CaesareanRate.ToString("F1")%
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="@(facility.ComplicationRate > 10 ? "text-danger" : "text-success")">
-                                                    @facility.ComplicationRate.ToString("F1")%
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="badge @GetGradeBadgeClass(facility.PerformanceGrade)">
-                                                    @facility.PerformanceGrade
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                            <i class="bi bi-building fs-2 text-muted"></i>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-4">
-                            <i class="bi bi-building fs-1 text-muted"></i>
-                            <p class="text-muted mt-2">No facility performance data available</p>
-                        </div>
-                    }
-                </div>
+                        <p class="text-muted mb-0">No facility performance data available</p>
+                    </div>
+                }
             </div>
         </div>
     </div>

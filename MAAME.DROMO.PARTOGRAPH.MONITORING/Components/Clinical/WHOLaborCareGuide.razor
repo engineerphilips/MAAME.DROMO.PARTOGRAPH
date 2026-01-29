@@ -1,0 +1,653 @@
+@using MAAME.DROMO.PARTOGRAPH.MONITORING.Models
+
+<div class="who-lcg-container">
+    @if (Data == null || Data.GuideData == null || !Data.GuideData.TimePoints.Any())
+    {
+        <div class="text-center p-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Loading WHO Labour Care Guide...</p>
+        </div>
+    }
+    else
+    {
+        <!-- GRID HEADER -->
+        <div class="lcg-grid-header sticky-top">
+            <!-- Col 1: Spacer for Vertical Text (35px) -->
+            <div class="lcg-header-spacer border-end"></div>
+            
+            <!-- Col 2: Labels (165px) -->
+            <div class="lcg-header-labels">
+                <div class="header-label">Time</div>
+                <div class="header-alert">ALERT</div>
+            </div>
+            
+            <!-- Col 3: First Stage Data -->
+            <div class="lcg-header-first-stage">
+                <div class="lcg-stage-title">
+                    <span>&#9664;</span> ACTIVE FIRST STAGE <span>&#9654;</span>
+                </div>
+                <div class="lcg-time-columns">
+                    @for (int i = 0; i < 12; i++)
+                    {
+                        var time = i < Data.GuideData.TimePoints.Count ? Data.GuideData.TimePoints[i] : (DateTime?)null;
+                        <div class="lcg-col-header">
+                            <div class="hour-label">@(time?.ToString("HH:mm") ?? ":")</div>
+                            <div class="hour-index">@(i + 1)</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Col 4: Second Stage Data -->
+            <div class="lcg-header-second-stage">
+                <div class="lcg-stage-title">
+                    <span>&#9664;</span> SECOND STAGE <span>&#9654;</span>
+                </div>
+                <div class="lcg-second-stage-cols">
+                    @for (int i = 0; i < 3; i++)
+                    {
+                        <div class="lcg-col-header">
+                            <div class="hour-label">:</div>
+                            <div class="hour-index">@(i + 1)</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="lcg-grid-body">
+            
+            <!-- SECTION 1: SUPPORTIVE CARE -->
+            <div class="lcg-section-row section-thick-border">
+                <div class="lcg-section-title rotate-text">SUPPORTIVE CARE</div>
+                <div class="lcg-section-content">
+                    <RowLabel Label="Companion" Alert="N" />
+                    <RowData Data="@Data.GuideData.Companion" />
+                    <RowLabel Label="Pain relief" Alert="N" />
+                    <RowData Data="@Data.GuideData.PainRelief" />
+                    <RowLabel Label="Oral fluid" Alert="N" />
+                    <RowData Data="@Data.GuideData.OralFluid" />
+                    <RowLabel Label="Posture" Alert="SP" />
+                    <RowData Data="@Data.GuideData.Posture" />
+                </div>
+                <!-- Second Stage Placeholders -->
+                <div class="lcg-second-stage-content">
+                    @for(int i=0; i<4; i++) { <div class="lcg-row-placeholder"></div> }
+                </div>
+            </div>
+
+            <!-- SECTION 2: CARE OF THE BABY -->
+            <div class="lcg-section-row section-thick-border">
+                <div class="lcg-section-title rotate-text">BABY</div>
+                <div class="lcg-section-content">
+                    <RowLabel Label="Baseline FHR" Alert="<110&#10;>160" />
+                    <RowDataMetric Points="@Data.GuideData.BaselineFHR" Min="110" Max="160" />
+                    
+                    <RowLabel Label="FHR deceleration" Alert="L" />
+                    <RowData Points="@Data.GuideData.FHRDeceleration" />
+                    
+                    <RowLabel Label="Amniotic fluid" Alert="M+++&#10;B" />
+                    <RowData Points="@Data.GuideData.AmnioticFluid" />
+                    
+                    <RowLabel Label="Fetal position" Alert="P, T" />
+                    <RowData Data="@Data.GuideData.FetalPosition" />
+                    
+                    <RowLabel Label="Caput" Alert="+++" />
+                    <RowData Data="@Data.GuideData.Caput" />
+                    
+                    <RowLabel Label="Moulding" Alert="+++" />
+                    <RowData Data="@Data.GuideData.Moulding" />
+                </div>
+                <div class="lcg-second-stage-content">
+                     @for(int i=0; i<6; i++) { <div class="lcg-row-placeholder"></div> }
+                </div>
+            </div>
+
+            <!-- SECTION 3: CARE OF THE WOMAN -->
+            <div class="lcg-section-row section-thick-border">
+                <div class="lcg-section-title rotate-text">WOMAN</div>
+                <div class="lcg-section-content">
+                    <RowLabel Label="Pulse" Alert="<60&#10;>120" />
+                    <RowDataMetric Points="@Data.GuideData.Pulse" Min="60" Max="120" />
+                    
+                    <RowLabel Label="Systolic BP" Alert="<80&#10;>140" />
+                    <RowDataMetric Points="@Data.GuideData.SystolicBP" Min="80" Max="140" />
+                    
+                    <RowLabel Label="Diastolic BP" Alert=">90" />
+                    <RowDataMetric Points="@Data.GuideData.DiastolicBP" Max="90" />
+                    
+                    <RowLabel Label="Temperature °C" Alert="<35.0&#10;>37.5" />
+                    <RowDataMetric Points="@Data.GuideData.Temperature" Min="35.0" Max="37.5" IsDecimal="true" />
+                    
+                    <RowLabel Label="Urine" Alert="P++&#10;A++" />
+                    <RowDataUrine Protein="@Data.GuideData.UrineProtein" Acetone="@Data.GuideData.UrineAcetone" />
+                </div>
+                <div class="lcg-second-stage-content">
+                    @for(int i=0; i<5; i++) { <div class="lcg-row-placeholder"></div> }
+                </div>
+            </div>
+
+            <!-- SECTION 4: LABOUR PROGRESS -->
+            <div class="lcg-section-row section-thick-border">
+                <div class="lcg-section-title rotate-text">LABOUR PROGRESS</div>
+                <div class="lcg-section-content">
+                    <RowLabel Label="Contractions/10 min" Alert="<2&#10;>5" />
+                    <RowDataMetric Points="@Data.GuideData.ContractionFrequency" Min="2" Max="5" />
+                    
+                    <RowLabel Label="Duration of contractions" Alert="<20&#10;>60" />
+                    <RowDataMetric Points="@Data.GuideData.ContractionDuration" Min="20" Max="60" />
+
+                    <!-- Cervix Plot (10cm - 5cm) -->
+                     <div class="cervix-grid-container">
+                         <div class="cervix-labels">
+                             <div class="cervix-row-label">10</div>
+                             <div class="cervix-row-label">9 <span>≥ 2h</span></div>
+                             <div class="cervix-row-label">8 <span>≥ 2.5h</span></div>
+                             <div class="cervix-row-label">7 <span>≥ 3h</span></div>
+                             <div class="cervix-row-label">6 <span>≥ 5h</span></div>
+                             <div class="cervix-row-label">5 <span>≥ 6h</span></div>
+                         </div>
+                         <div class="cervix-grid-data position-relative">
+                             <!-- Grid Lines -->
+                             @for(int r=0; r<6; r++) 
+                             {
+                                 <div class="grid-row-line" style="top: @(r * 30 + 15)px"></div>
+                             }
+                             @for(int c=0; c<12; c++)
+                             {
+                                 <div class="grid-col-line" style="left: @(c * 100 / 12.0)%"></div>
+                             }
+                             
+                             <!-- Correct X Plot Implementation -->
+                             @foreach(var point in Data.GuideData.Dilatation)
+                             {
+                                 // Only plot if between 5 and 10
+                                 if (point.Value >= 5 && point.Value <= 10)
+                                 {
+                                     // Calculate row (10 is top/0, 5 is bottom)
+                                     double rowIndex = 10 - point.Value; 
+                                     // 30px per row
+                                     double top = rowIndex * 30 + 5; // +5 for centering
+                                     
+                                     int colIndex = Data.GuideData.TimePoints.IndexOf(point.Time);
+                                     if(colIndex >= 0 && colIndex < 12)
+                                     {
+                                         double left = (colIndex * (100.0/12.0)) + (100.0/24.0); // Center of column
+                                         <div class="plot-point-x" style="top: @(top)px; left: @(left)%;">X</div>
+                                     }
+                                 }
+                             }
+                         </div>
+                     </div>
+                     
+                     <!-- Descent Plot (5 - 0) -->
+                     <div class="cervix-grid-container mt-2">
+                         <div class="cervix-labels">
+                             <div class="cervix-row-label">5</div>
+                             <div class="cervix-row-label">4</div>
+                             <div class="cervix-row-label">3</div>
+                             <div class="cervix-row-label">2</div>
+                             <div class="cervix-row-label">1</div>
+                             <div class="cervix-row-label">0</div>
+                         </div>
+                         <div class="cervix-grid-data position-relative">
+                             <!-- Grid Lines -->
+                             @for(int r=0; r<6; r++) { <div class="grid-row-line" style="top: @(r * 30 + 15)px"></div> }
+                             @for(int c=0; c<12; c++) { <div class="grid-col-line" style="left: @(c * 100 / 12.0)%"></div> }
+
+                             <!-- Plot O -->
+                             @foreach(var point in Data.GuideData.Descent)
+                             {
+                                 if (point.Value >= 0 && point.Value <= 5)
+                                 {
+                                     double rowIndex = 5 - point.Value;
+                                     double top = rowIndex * 30 + 5;
+                                     int colIndex = Data.GuideData.TimePoints.IndexOf(point.Time);
+                                     if(colIndex >= 0 && colIndex < 12)
+                                     {
+                                         double left = (colIndex * (100.0/12.0)) + (100.0/24.0);
+                                         <div class="plot-point-o" style="top: @(top)px; left: @(left)%;">O</div>
+                                     }
+                                 }
+                             }
+                         </div>
+                     </div>
+                </div>
+                 <div class="lcg-second-stage-content bg-light d-flex align-items-center justify-content-center text-center p-2">
+                    <span class="text-secondary small">In active first stage, plot 'X' to record cervical dilatation. Alert triggered when lag time is exceeded.</span>
+                </div>
+            </div>
+
+            <!-- SECTION 5: THERAPEUTICS -->
+            <div class="lcg-section-row section-thick-border">
+                <div class="lcg-section-title rotate-text">THERAPEUTICS</div>
+                <div class="lcg-section-content">
+                    <RowLabel Label="Oxytocin (U/L, drops/min)" Alert="N" />
+                    <RowDataMetric Points="@Data.GuideData.Oxytocin" />
+                    
+                    <RowLabel Label="Medicine" Alert="N" />
+                    <div class="lcg-data-row">
+                        @for (int i = 0; i < 12; i++)
+                        {
+                            <div class="lcg-data-cell border-end"></div>
+                        }
+                    </div>
+
+                    <RowLabel Label="IV fluids" Alert="N" />
+                    <RowDataMetric Data="@Data.GuideData.IVFluids" />
+                </div>
+                 <div class="lcg-second-stage-content">
+                    @for(int i=0; i<3; i++) { <div class="lcg-row-placeholder"></div> }
+                </div>
+            </div>
+
+            <!-- SECTION 6: SHARED DECISION MAKING -->
+            <div class="lcg-section-row section-thick-border">
+                <div class="lcg-section-title rotate-text">SHARED DECISION-MAKING</div>
+                <div class="lcg-section-content">
+                    <RowLabel Label="ASSESSMENT" Alert="" />
+                    <RowData Points="@Data.GuideData.Assessment" Rotate="true" />
+                    
+                    <RowLabel Label="PLAN" Alert=""Style="height: 80px;" />
+                    <div class="lcg-data-row" style="height: 80px;">
+                        @for (int i = 0; i < 12; i++)
+                        {
+                             var val = i < Data.GuideData.Plan.Count ? Data.GuideData.Plan[i].Value : "";
+                            <div class="lcg-data-cell border-end small p-1"><div class="rotate-cell-text">@val</div></div>
+                        }
+                    </div>
+                </div>
+                <div class="lcg-second-stage-content">
+                    <div class="lcg-row-placeholder" style="height: 40px;"></div>
+                    <div class="lcg-row-placeholder" style="height: 80px;"></div>
+                </div>
+            </div>
+             
+             <!-- INITIALS -->
+             <div class="lcg-section-row section-thick-border">
+                <div class="lcg-section-title"></div>
+                <div class="lcg-section-content">
+                     <RowLabel Label="INITIALS" Alert="" />
+                     <RowData Points="@Data.GuideData.Initials" />
+                </div>
+                <div class="lcg-second-stage-content"><div class="lcg-row-placeholder"></div></div>
+             </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public PartographDetailsDto Data { get; set; }
+
+    private DateTime? GetTime(int index)
+    {
+        if (Data?.GuideData?.TimePoints == null || index < 0 || index >= Data.GuideData.TimePoints.Count) 
+            return null;
+        return Data.GuideData.TimePoints[index];
+    }
+}
+
+<!-- Helper RenderFragments -->
+@{
+    void RowLabel(string Label, string Alert, string Style = "height: 40px;")
+    {
+        <div class="lcg-row-header" style="@Style">
+            <div class="label-text">@Label</div>
+            <div class="alert-text">@Alert</div>
+        </div>
+    }
+
+    void RowData(List<CategoricalPoint> Points, bool Rotate = false)
+    {
+        <div class="lcg-data-row" style="height: 40px;">
+            @for (int i = 0; i < 12; i++)
+            {
+                var time = GetTime(i);
+                CategoricalPoint? point = null;
+                if (time.HasValue && Points != null)
+                {
+                    point = Points.FirstOrDefault(p => Math.Abs((p.Time - time.Value).TotalMinutes) < 5);
+                }
+
+                var val = point?.Value ?? "";
+                var isAlert = point?.IsAlert ?? false;
+
+                <div class="lcg-data-cell border-end">
+                    @if (!string.IsNullOrEmpty(val))
+                    {
+                        <span class="@(isAlert ? "alert-circle" : "") @(Rotate ? "rotate-cell-text" : "")">@val</span>
+                    }
+                </div>
+            }
+        </div>
+    }
+    
+    void RowDataMetric(List<MeasurementPoint> Points, double? Min = null, double? Max = null, bool IsDecimal = false)
+    {
+         <div class="lcg-data-row" style="height: 40px;">
+            @for (int i = 0; i < 12; i++)
+            {
+                var time = GetTime(i);
+                MeasurementPoint? pt = null;
+                if (time.HasValue && Points != null)
+                {
+                    pt = Points.FirstOrDefault(p => Math.Abs((p.Time - time.Value).TotalMinutes) < 5);
+                }
+
+                bool isAlert = false;
+                if (pt != null)
+                {
+                    if (Min.HasValue && pt.Value < Min.Value) isAlert = true;
+                    if (Max.HasValue && pt.Value > Max.Value) isAlert = true;
+                }
+
+                <div class="lcg-data-cell border-end">
+                    @if (pt != null)
+                    {
+                        <span class="@(isAlert ? "alert-circle" : "")">
+                            @(IsDecimal ? pt.Value.ToString("0.0") : pt.Value.ToString("0.#"))
+                        </span>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    void RowDataUrine(List<CategoricalPoint> Protein, List<CategoricalPoint> Acetone)
+    {
+         <div class="lcg-data-row" style="height: 40px;">
+            @for (int i = 0; i < 12; i++)
+            {
+                var time = GetTime(i);
+                string pVal = "", aVal = "";
+                
+                if (time.HasValue)
+                {
+                    var p = Protein?.FirstOrDefault(x => Math.Abs((x.Time - time.Value).TotalMinutes) < 5);
+                    var a = Acetone?.FirstOrDefault(x => Math.Abs((x.Time - time.Value).TotalMinutes) < 5);
+                    pVal = p?.Value ?? "";
+                    aVal = a?.Value ?? "";
+                }
+
+                <div class="lcg-data-cell border-end small">
+                    @if (!string.IsNullOrEmpty(pVal) || !string.IsNullOrEmpty(aVal))
+                    {
+                        <span>@(pVal)/@(aVal)</span>
+                    }
+                </div>
+            }
+        </div>
+    }
+}
+
+<style>
+    .who-lcg-container {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        border: 2px solid #000;
+        background: white;
+        overflow-x: auto;
+        color: #000;
+        font-size: 14px;
+    }
+    
+    /* Grid Layout - Adjusted for Exact Proportions */
+    .lcg-grid-header {
+        display: grid;
+        grid-template-columns: 35px 165px 1fr 180px; /* Exact match to rows */
+        border-bottom: 2px solid #000;
+        background: #fff;
+    }
+    
+    .lcg-header-spacer {
+        border-right: 2px solid #000;
+        background: #f8f9fa;
+    }
+
+    .lcg-header-labels {
+        display: flex;
+        border-right: 2px solid #000;
+    }
+
+    .lcg-header-first-stage, .lcg-header-second-stage {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .lcg-header-first-stage { border-right: 2px solid #000; }
+    
+    .lcg-stage-title {
+        text-align: center;
+        font-weight: 800;
+        font-size: 11px;
+        border-bottom: 1px solid #000;
+        background: #fff;
+        padding: 4px;
+        letter-spacing: 1px;
+    }
+    
+    .lcg-section-row {
+        display: grid;
+        grid-template-columns: 35px 1fr 180px; /* SectionTitle | Content | Second Stage */
+        border-bottom: 2px solid #000;
+    }
+    
+    .section-thick-border {
+        border-bottom: 3px solid #000 !important;
+    }
+
+    .lcg-section-title {
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 11px;
+        color: #000;
+        border-right: 2px solid #000;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 0;
+    }
+    
+    .rotate-text {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+
+    .lcg-section-content {
+        display: grid;
+        grid-template-columns: 165px 1fr; /* RowLabels(100)+Alert(65) | DataCells */
+    }
+
+    .lcg-row-header {
+        display: flex;
+        align-items: stretch;
+        border-bottom: 1px solid #000;
+        border-right: 2px solid #000;
+    }
+    
+    /* Header specific adjustments */
+    .header-label { width: 100px; padding-left: 5px; display: flex; align-items: center; justify-content: center; border-right: 1px solid #000; font-weight: bold; font-size: 12px; }
+    .header-alert { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; background: #e9ecef; border-left: 1px solid #000; }
+
+    .label-text { 
+        width: 100px; 
+        padding-left: 5px; 
+        font-size: 12px; 
+        font-weight: 600; 
+        color: #000; 
+        display: flex; 
+        align-items: center; 
+        border-right: 1px solid #000;
+        line-height: 1.1;
+    }
+    .alert-text { 
+        flex: 1; 
+        text-align: center; 
+        font-size: 10px; 
+        color: #dc3545; 
+        font-weight: 700; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+        background: #fff;
+        padding: 2px;
+        white-space: pre-wrap;
+        line-height: 1.1;
+    }
+
+    /* Data Area */
+    .lcg-time-columns {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        flex: 1;
+    }
+    
+    .lcg-col-header {
+        text-align: center;
+        border-right: 1px solid #000;
+        font-size: 12px;
+        display: flex; 
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+    .hour-label { border-bottom: 1px dashed #999; padding: 2px; color: #0d6efd; font-weight: 500; min-height: 20px; }
+    .hour-index { font-weight: bold; font-size: 11px; color: #000; padding: 2px 0; }
+
+    .lcg-data-row {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        border-bottom: 1px solid #000;
+        min-height: 40px; /* Force height */
+    }
+    
+    .lcg-data-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        color: #0d6efd; 
+        border-right: 1px solid #000;
+        position: relative;
+        padding: 0;
+        height: 100%;
+    }
+
+    .alert-circle {
+        border: 2px solid #dc3545;
+        border-radius: 50%;
+        width: 28px; /* Slightly smaller to fit cell */
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    /* Second Stage - Distinct Style */
+    .lcg-second-stage-header, .lcg-stage-header {
+        grid-column: span 1; 
+        text-align: center;
+        font-weight: 800;
+        border-bottom: 1px solid #000;
+        padding: 5px;
+        background: #fff;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+    .lcg-stage-header { border-right: 2px solid #000; }
+    
+    .lcg-second-stage-cols {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .lcg-second-stage-content {
+        border-left: 2px solid #000;
+        background: #fff;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .lcg-row-placeholder {
+        height: 100%;
+        width: 100%;
+        border-bottom: 1px solid #000;
+        border-right: 1px solid #000;
+    }
+    
+    /* Labour Progress Matrix */
+    .cervix-grid-container {
+        display: grid;
+        grid-template-columns: 165px 1fr;
+        border-bottom: 2px solid #000; /* Separator for section */
+        height: 180px; 
+    }
+    .cervix-labels {
+        border-right: 2px solid #000;
+    }
+    .cervix-row-label {
+        height: 30px;
+        border-bottom: 1px solid #000;
+        display: flex;
+        align-items: center;
+        padding-left: 5px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    .cervix-row-label span {
+        margin-left: auto;
+        margin-right: 5px;
+        font-size: 10px;
+        color: #dc3545;
+        background: white;
+        padding: 0 4px;
+        border: 1px solid #dc3545;
+        border-radius: 4px;
+    }
+    .grid-row-line { position: absolute; left: 0; right: 0; height: 1px; background: #e9ecef; z-index: 0; }
+    .grid-col-line { position: absolute; top: 0; bottom: 0; width: 1px; background: #000; z-index: 0; } /* Vertical lines should be visible */
+    
+    .plot-point-x {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        font-family: sans-serif;
+        font-weight: 900;
+        font-size: 18px;
+        color: #0d6efd;
+        z-index: 10;
+        text-shadow: 0 0 2px white;
+    }
+    .plot-point-o {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        font-family: sans-serif;
+        font-weight: 900;
+        font-size: 18px;
+        color: #198754; 
+        border: 2px solid #198754;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0; 
+        z-index: 10;
+        background: white;
+    }
+    
+    .rotate-cell-text {
+        white-space: nowrap;
+        transform: rotate(-90deg);
+        transform-origin: center;
+        width: 10px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+</style>

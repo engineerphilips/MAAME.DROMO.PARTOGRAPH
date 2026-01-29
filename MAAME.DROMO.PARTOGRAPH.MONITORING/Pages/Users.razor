@@ -9,19 +9,19 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="mb-1">
-                <i class="bi bi-people me-2 text-primary"></i>
+            <h2 class="mb-1 text-gradient-primary fw-bold">
+                <i class="bi bi-people me-2"></i>
                 User Management
             </h2>
-            <p class="text-muted mb-0">
+            <p class="text-secondary mb-0">
                 Manage system users and access permissions
             </p>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary" @onclick="LoadData">
+            <button class="btn btn-white border shadow-sm hover-lift" @onclick="LoadData">
                 <i class="bi bi-arrow-clockwise me-1"></i> Refresh
             </button>
-            <button class="btn btn-primary" @onclick="ShowCreateModal">
+            <button class="btn btn-primary shadow-sm hover-lift" @onclick="ShowCreateModal">
                 <i class="bi bi-person-plus me-1"></i> Enroll User
             </button>
         </div>
@@ -31,146 +31,134 @@
 <!-- Statistics Cards -->
 <div class="row g-3 mb-4">
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body text-center">
-                <div class="stat-icon bg-primary-subtle text-primary mx-auto mb-2">
-                    <i class="bi bi-people"></i>
-                </div>
-                <h3 class="mb-0">@statistics.TotalUsers</h3>
-                <small class="text-muted">Total Users</small>
+        <div class="stat-card p-3 h-100 text-center hover-lift position-relative">
+            <div class="icon-box-sm bg-primary-subtle text-primary mx-auto mb-2 rounded-circle shadow-sm">
+                <i class="bi bi-people fs-5"></i>
             </div>
+            <h3 class="mb-0 fw-bold text-dark">@statistics.TotalUsers</h3>
+            <small class="text-secondary fw-semibold text-uppercase" style="font-size: 0.7rem;">Total Users</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body text-center">
-                <div class="stat-icon bg-success-subtle text-success mx-auto mb-2">
-                    <i class="bi bi-person-check"></i>
-                </div>
-                <h3 class="mb-0">@statistics.ActiveUsers</h3>
-                <small class="text-muted">Active</small>
+        <div class="stat-card p-3 h-100 text-center hover-lift position-relative">
+            <div class="icon-box-sm bg-success-subtle text-success mx-auto mb-2 rounded-circle shadow-sm">
+                <i class="bi bi-person-check fs-5"></i>
             </div>
+            <h3 class="mb-0 fw-bold text-dark">@statistics.ActiveUsers</h3>
+            <small class="text-secondary fw-semibold text-uppercase" style="font-size: 0.7rem;">Active</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body text-center">
-                <div class="stat-icon bg-danger-subtle text-danger mx-auto mb-2">
-                    <i class="bi bi-person-lock"></i>
-                </div>
-                <h3 class="mb-0">@statistics.LockedUsers</h3>
-                <small class="text-muted">Locked</small>
+        <div class="stat-card p-3 h-100 text-center hover-lift position-relative">
+            <div class="icon-box-sm bg-danger-subtle text-danger mx-auto mb-2 rounded-circle shadow-sm">
+                <i class="bi bi-person-lock fs-5"></i>
             </div>
+            <h3 class="mb-0 fw-bold text-dark">@statistics.LockedUsers</h3>
+            <small class="text-secondary fw-semibold text-uppercase" style="font-size: 0.7rem;">Locked</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body text-center">
-                <div class="stat-icon bg-warning-subtle text-warning mx-auto mb-2">
-                    <i class="bi bi-shield-check"></i>
-                </div>
-                <h3 class="mb-0">@statistics.AdminUsers</h3>
-                <small class="text-muted">Admins</small>
+        <div class="stat-card p-3 h-100 text-center hover-lift position-relative">
+            <div class="icon-box-sm bg-warning-subtle text-warning mx-auto mb-2 rounded-circle shadow-sm">
+                <i class="bi bi-shield-check fs-5"></i>
             </div>
+            <h3 class="mb-0 fw-bold text-dark">@statistics.AdminUsers</h3>
+            <small class="text-secondary fw-semibold text-uppercase" style="font-size: 0.7rem;">Admins</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body text-center">
-                <div class="stat-icon bg-info-subtle text-info mx-auto mb-2">
-                    <i class="bi bi-globe"></i>
-                </div>
-                <h3 class="mb-0">@statistics.NationalUsers</h3>
-                <small class="text-muted">National</small>
+        <div class="stat-card p-3 h-100 text-center hover-lift position-relative">
+            <div class="icon-box-sm bg-info-subtle text-info mx-auto mb-2 rounded-circle shadow-sm">
+                <i class="bi bi-globe fs-5"></i>
             </div>
+            <h3 class="mb-0 fw-bold text-dark">@statistics.NationalUsers</h3>
+            <small class="text-secondary fw-semibold text-uppercase" style="font-size: 0.7rem;">National</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body text-center">
-                <div class="stat-icon bg-secondary-subtle text-secondary mx-auto mb-2">
-                    <i class="bi bi-clock-history"></i>
-                </div>
-                <h3 class="mb-0">@statistics.LoggedInToday</h3>
-                <small class="text-muted">Active Today</small>
+        <div class="stat-card p-3 h-100 text-center hover-lift position-relative">
+            <div class="icon-box-sm bg-secondary-subtle text-secondary mx-auto mb-2 rounded-circle shadow-sm">
+                <i class="bi bi-clock-history fs-5"></i>
             </div>
+            <h3 class="mb-0 fw-bold text-dark">@statistics.LoggedInToday</h3>
+            <small class="text-secondary fw-semibold text-uppercase" style="font-size: 0.7rem;">Active Today</small>
         </div>
     </div>
 </div>
 
 <!-- Filter Tabs -->
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "all" ? "active" : "")" @onclick="() => SetTab(TabState.All.ToString().ToLower())">
-            <i class="bi bi-list me-1"></i> All Users
-            <span class="badge bg-primary ms-1">@users.Count</span>
-        </button>
-    </li>
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "active" ? "active" : "")" @onclick="() => SetTab(TabState.Active.ToString().ToLower())">
-            <i class="bi bi-check-circle me-1 text-success"></i> Active
-        </button>
-    </li>
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "inactive" ? "active" : "")" @onclick="() => SetTab(TabState.Inactive.ToString().ToLower())">
-            <i class="bi bi-x-circle me-1 text-secondary"></i> Inactive
-        </button>
-    </li>
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "locked" ? "active" : "")" @onclick="() => SetTab(TabState.Locked.ToString().ToLower())">
-            <i class="bi bi-lock me-1 text-danger"></i> Locked
-        </button>
-    </li>
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "national" ? "active" : "")" @onclick="() => SetTab(TabState.National.ToString().ToLower())">
-            <i class="bi bi-globe me-1 text-info"></i> National
-        </button>
-    </li>
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "regional" ? "active" : "")" @onclick="() => SetTab(TabState.Regional.ToString().ToLower())">
-            <i class="bi bi-map me-1 text-primary"></i> Regional
-        </button>
-    </li>
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "district" ? "active" : "")" @onclick="() => SetTab(TabState.District.ToString().ToLower())">
-            <i class="bi bi-building me-1 text-warning"></i> District
-        </button>
-    </li>
-</ul>
+<div class="glass-panel p-2 d-inline-block mb-4">
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "all" ? "active shadow-sm" : "text-secondary")" @onclick="() => SetTab(TabState.All.ToString().ToLower())">
+                <i class="bi bi-list me-1"></i> All Users
+                <span class="badge bg-white text-primary ms-1 rounded-pill">@users.Count</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "active" ? "active shadow-sm" : "text-secondary")" @onclick="() => SetTab(TabState.Active.ToString().ToLower())">
+                <i class="bi bi-check-circle me-1 @(activeTab == "active" ? "" : "text-success")"></i> Active
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "inactive" ? "active shadow-sm" : "text-secondary")" @onclick="() => SetTab(TabState.Inactive.ToString().ToLower())">
+                <i class="bi bi-x-circle me-1 @(activeTab == "inactive" ? "" : "text-secondary")"></i> Inactive
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "locked" ? "active shadow-sm" : "text-secondary")" @onclick="() => SetTab(TabState.Locked.ToString().ToLower())">
+                <i class="bi bi-lock me-1 @(activeTab == "locked" ? "" : "text-danger")"></i> Locked
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "national" ? "active shadow-sm" : "text-secondary")" @onclick="() => SetTab(TabState.National.ToString().ToLower())">
+                <i class="bi bi-globe me-1 @(activeTab == "national" ? "" : "text-info")"></i> National
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "regional" ? "active shadow-sm" : "text-secondary")" @onclick="() => SetTab(TabState.Regional.ToString().ToLower())">
+                <i class="bi bi-map me-1 @(activeTab == "regional" ? "" : "text-primary")"></i> Regional
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "district" ? "active shadow-sm" : "text-secondary")" @onclick="() => SetTab(TabState.District.ToString().ToLower())">
+                <i class="bi bi-building me-1 @(activeTab == "district" ? "" : "text-warning")"></i> District
+            </button>
+        </li>
+    </ul>
+</div>
 
 <!-- Search Bar -->
-<div class="card border-0 shadow-sm mb-3">
-    <div class="card-body py-2">
-        <div class="row align-items-center">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0">
-                        <i class="bi bi-search text-muted"></i>
-                    </span>
-                    <input type="text" class="form-control border-start-0" placeholder="Search users..."
-                           @bind="searchTerm" @bind:event="oninput" @onkeyup="OnSearchChanged" />
-                </div>
+<div class="glass-panel p-4 mb-4">
+    <div class="row align-items-center g-3">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-secondary">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" class="form-control border-start-0 ps-0" placeholder="Search users by name or email..."
+                       @bind="searchTerm" @bind:event="oninput" @onkeyup="OnSearchChanged" />
             </div>
-            <div class="col-md-3">
-                <select class="form-select" @bind="roleFilter" @bind:event="onchange">
-                    <option value="">All Roles</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Analyst">Analyst</option>
-                    <option value="Viewer">Viewer</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" @bind="accessFilter" @bind:event="onchange">
-                    <option value="">All Access Levels</option>
-                    <option value="National">National</option>
-                    <option value="Regional">Regional</option>
-                    <option value="District">District</option>
-                </select>
-            </div>
-            <div class="col-md-2 text-end">
-                <span class="text-muted small">@filteredUsers.Count of @users.Count users</span>
-            </div>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" @bind="roleFilter" @bind:event="onchange">
+                <option value="">All Roles</option>
+                <option value="Admin">Admin</option>
+                <option value="Manager">Manager</option>
+                <option value="Analyst">Analyst</option>
+                <option value="Viewer">Viewer</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" @bind="accessFilter" @bind:event="onchange">
+                <option value="">All Access Levels</option>
+                <option value="National">National</option>
+                <option value="Regional">Regional</option>
+                <option value="District">District</option>
+            </select>
+        </div>
+        <div class="col-md-2 text-end">
+            <span class="badge bg-light text-secondary border rounded-pill">@filteredUsers.Count of @users.Count users</span>
         </div>
     </div>
 </div>
@@ -181,140 +169,138 @@
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-3 text-muted">Loading users...</p>
+        <p class="mt-3 text-secondary">Loading users...</p>
     </div>
 }
 else
 {
     <!-- Users Table -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>User</th>
-                            <th>Access Level</th>
-                            <th>Role</th>
-                            <th>Region/District</th>
-                            <th>Status</th>
-                            <th>Last Login</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in filteredUsers)
-                        {
-                            <tr class="@(user.IsLocked ? "table-warning" : "")">
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-avatar @GetAvatarClass(user.Role) me-3">
-                                            @GetInitials(user.FullName)
-                                        </div>
-                                        <div>
-                                            <div class="fw-semibold">@user.FullName</div>
-                                            <small class="text-muted">@user.Email</small>
-                                        </div>
+    <div class="glass-panel p-0 mb-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light bg-opacity-50">
+                    <tr>
+                        <th class="ps-4 py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">User</th>
+                        <th class="py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Access Level</th>
+                        <th class="py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Role</th>
+                        <th class="py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Region/District</th>
+                        <th class="py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Status</th>
+                        <th class="py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Last Login</th>
+                        <th class="text-end pe-4 py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in filteredUsers)
+                    {
+                        <tr class="transition-all hover-bg-light @(user.IsLocked ? "bg-warning-subtle bg-opacity-10" : "")">
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar @GetAvatarClass(user.Role) me-3 shadow-sm">
+                                        @GetInitials(user.FullName)
                                     </div>
-                                </td>
-                                <td>
-                                    <span class="badge @GetAccessLevelBadgeClass(user.AccessLevel)">
-                                        <i class="bi @GetAccessLevelIcon(user.AccessLevel) me-1"></i>
-                                        @user.AccessLevel
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge @GetRoleBadgeClass(user.Role)">
-                                        @user.Role
-                                    </span>
-                                </td>
-                                <td>
-                                    @if (!string.IsNullOrEmpty(user.RegionName))
+                                    <div>
+                                        <div class="fw-bold text-dark">@user.FullName</div>
+                                        <small class="text-secondary">@user.Email</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge @GetAccessLevelBadgeClass(user.AccessLevel) rounded-pill shadow-sm px-3 py-2">
+                                    <i class="bi @GetAccessLevelIcon(user.AccessLevel) me-1"></i>
+                                    @user.AccessLevel
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge @GetRoleBadgeClass(user.Role) rounded-pill shadow-sm px-3">
+                                    @user.Role
+                                </span>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(user.RegionName))
+                                {
+                                    <div class="fw-medium text-dark">@user.RegionName</div>
+                                    @if (!string.IsNullOrEmpty(user.DistrictName))
                                     {
-                                        <div>@user.RegionName</div>
-                                        @if (!string.IsNullOrEmpty(user.DistrictName))
-                                        {
-                                            <small class="text-muted">@user.DistrictName</small>
-                                        }
+                                        <small class="text-secondary">@user.DistrictName</small>
                                     }
-                                    else
-                                    {
-                                        <span class="text-muted">-</span>
-                                    }
-                                </td>
-                                <td>
+                                }
+                                else
+                                {
+                                    <span class="text-muted opacity-50">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (user.IsLocked)
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">
+                                        <i class="bi bi-lock-fill me-1"></i> Locked
+                                    </span>
+                                }
+                                else if (user.IsActive)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill">
+                                        <i class="bi bi-x-circle-fill me-1"></i> Inactive
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @if (user.LastLogin.HasValue)
+                                {
+                                    <div class="fw-medium text-dark">@user.LastLogin.Value.ToString("MMM dd, HH:mm")</div>
+                                    <small class="text-muted">@GetTimeAgo(user.LastLogin.Value)</small>
+                                }
+                                else
+                                {
+                                    <span class="text-muted opacity-50">Never</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group btn-group-sm shadow-sm rounded-pill overflow-hidden bg-white">
+                                    <button class="btn btn-white border-0 text-primary hover-bg-light" @onclick="() => ShowEditModal(user)" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
                                     @if (user.IsLocked)
                                     {
-                                        <span class="badge bg-danger">
-                                            <i class="bi bi-lock me-1"></i> Locked
-                                        </span>
+                                        <button class="btn btn-white border-0 text-success hover-bg-light" @onclick="() => UnlockUser(user)" title="Unlock">
+                                            <i class="bi bi-unlock"></i>
+                                        </button>
                                     }
-                                    else if (user.IsActive)
+                                    @if (user.IsActive)
                                     {
-                                        <span class="badge bg-success">
-                                            <i class="bi bi-check-circle me-1"></i> Active
-                                        </span>
+                                        <button class="btn btn-white border-0 text-warning hover-bg-light" @onclick="() => DeactivateUser(user)" title="Deactivate">
+                                            <i class="bi bi-person-dash"></i>
+                                        </button>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">
-                                            <i class="bi bi-x-circle me-1"></i> Inactive
-                                        </span>
-                                    }
-                                </td>
-                                <td>
-                                    @if (user.LastLogin.HasValue)
-                                    {
-                                        <div>@user.LastLogin.Value.ToString("MMM dd, HH:mm")</div>
-                                        <small class="text-muted">@GetTimeAgo(user.LastLogin.Value)</small>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Never</span>
-                                    }
-                                </td>
-                                <td class="text-end">
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-primary" @onclick="() => ShowEditModal(user)" title="Edit">
-                                            <i class="bi bi-pencil"></i>
+                                        <button class="btn btn-white border-0 text-success hover-bg-light" @onclick="() => ActivateUser(user)" title="Activate">
+                                            <i class="bi bi-person-check"></i>
                                         </button>
-                                        @if (user.IsLocked)
-                                        {
-                                            <button class="btn btn-sm btn-outline-success" @onclick="() => UnlockUser(user)" title="Unlock">
-                                                <i class="bi bi-unlock"></i>
-                                            </button>
-                                        }
-                                        @if (user.IsActive)
-                                        {
-                                            <button class="btn btn-sm btn-outline-warning" @onclick="() => DeactivateUser(user)" title="Deactivate">
-                                                <i class="bi bi-person-dash"></i>
-                                            </button>
-                                        }
-                                        else
-                                        {
-                                            <button class="btn btn-sm btn-outline-success" @onclick="() => ActivateUser(user)" title="Activate">
-                                                <i class="bi bi-person-check"></i>
-                                            </button>
-                                        }
-                                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => ShowResetPasswordModal(user)" title="Reset Password">
-                                            <i class="bi bi-key"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => ConfirmDelete(user)" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                    }
+                                    <button class="btn btn-white border-0 text-secondary hover-bg-light" @onclick="() => ShowResetPasswordModal(user)" title="Reset Password">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                    <button class="btn btn-white border-0 text-danger hover-bg-light" @onclick="() => ConfirmDelete(user)" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
         @if (!filteredUsers.Any())
         {
-            <div class="card-body text-center py-5">
-                <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
-                <p class="mt-3 text-muted">No users found matching your criteria</p>
+            <div class="text-center py-5">
+                <i class="bi bi-people text-muted opacity-25" style="font-size: 3rem;"></i>
+                <p class="mt-3 text-secondary">No users found matching your criteria</p>
             </div>
         }
     </div>

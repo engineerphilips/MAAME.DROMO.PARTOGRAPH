@@ -6,10 +6,12 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
     public class LiveLaborService : ILiveLaborService
     {
         private readonly HttpClient _httpClient;
+        private readonly ICDSService _cdsService;
 
-        public LiveLaborService(HttpClient httpClient)
+        public LiveLaborService(HttpClient httpClient, ICDSService cdsService)
         {
             _httpClient = httpClient;
+            _cdsService = cdsService;
         }
 
         public async Task<LiveLaborSummary> GetLiveLaborSummaryAsync(DashboardFilter? filter = null)
@@ -29,17 +31,45 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
 
         public async Task<List<LiveLaborCase>> GetActiveLaborCasesAsync(DashboardFilter? filter = null)
         {
+            List<LiveLaborCase> cases;
             try
             {
                 var queryParams = BuildQueryParams(filter);
                 var response = await _httpClient.GetFromJsonAsync<List<LiveLaborCase>>($"api/monitoring/live-labor/cases{queryParams}");
-                return response ?? GenerateMockCases(filter);
+                cases = response ?? GenerateMockCases(filter);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error getting active labor cases: {ex.Message}");
-                return GenerateMockCases(filter);
+                cases = GenerateMockCases(filter);
             }
+
+            // Apply Clinical Decision Support (Simulating Backend Logic)
+            foreach (var labCase in cases)
+            {
+                try 
+                {
+                    // We generate guide data to give the rules engine historical context if needed
+                    var guideData = GenerateMockGuideData(labCase);
+                    labCase.ClinicalAlerts = _cdsService.EvaluateCase(labCase, guideData);
+                    
+                    // Update risk level based on CDS
+                    if (labCase.ClinicalAlerts.Any(a => a.Severity == Models.ClinicalAlertSeverity.Emergency || a.Severity == Models.ClinicalAlertSeverity.Critical))
+                    {
+                        labCase.RiskLevel = "Critical";
+                    }
+                    else if (labCase.ClinicalAlerts.Any(a => a.Severity == Models.ClinicalAlertSeverity.Warning))
+                    {
+                        if (labCase.RiskLevel != "Critical") labCase.RiskLevel = "High";
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error running CDS for case {labCase.PartographId}: {e.Message}");
+                }
+            }
+
+            return cases;
         }
 
         public async Task<LiveLaborCase?> GetLaborCaseAsync(Guid partographId)
@@ -47,13 +77,164 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
             try
             {
                 var response = await _httpClient.GetFromJsonAsync<LiveLaborCase>($"api/monitoring/live-labor/cases/{partographId}");
-                return response;
+                return response ?? GenerateMockCase(partographId);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error getting labor case: {ex.Message}");
-                return null;
+                return GenerateMockCase(partographId);
             }
+        }
+
+        public async Task<PartographDetailsDto?> GetPartographDetailsAsync(Guid partographId)
+        {
+            var laborCase = await GetLaborCaseAsync(partographId);
+            if (laborCase == null) return null;
+
+            return new PartographDetailsDto
+            {
+                CaseInfo = laborCase,
+                GuideData = GenerateMockGuideData(laborCase)
+            };
+        }
+
+        private LiveLaborCase GenerateMockCase(Guid partographId)
+        {
+            var random = new Random();
+            return new LiveLaborCase
+            {
+                PartographId = partographId,
+                PatientId = Guid.NewGuid(),
+                PatientName = "Ama Osei",
+                HospitalNumber = "MRN-12345",
+                Age = 28,
+                Gravida = "G2",
+                Parity = "P1",
+                FacilityName = "Korle Bu Teaching Hospital",
+                DistrictName = "Accra Metro",
+                RegionName = "Greater Accra",
+                AdmissionTime = DateTime.UtcNow.AddHours(-6),
+                LaborStartTime = DateTime.UtcNow.AddHours(-5),
+                CurrentDilatation = 7,
+                CurrentStation = 0,
+                LaborStage = "First Stage",
+                LatestFHR = 138,
+                LatestFHRTime = DateTime.UtcNow.AddMinutes(-5),
+                LatestSystolicBP = 118,
+                LatestDiastolicBP = 76, 
+                LatestBPTime = DateTime.UtcNow.AddMinutes(-30),
+                LatestTemperature = 36.8m,
+                ContractionsPerTenMinutes = 4,
+                RiskLevel = "Normal",
+                ActiveAlerts = new List<string>(),
+                AssignedMidwife = "MW-Sarah",
+                LastAssessmentTime = DateTime.UtcNow.AddMinutes(-15)
+            };
+        }
+
+        private LaborCareGuideData GenerateMockGuideData(LiveLaborCase laborCase)
+        {
+            var data = new LaborCareGuideData
+            {
+                StartTime = laborCase.LaborStartTime ?? DateTime.UtcNow.AddHours(-6),
+                TimePoints = new List<DateTime>()
+            };
+
+            var random = new Random();
+            var duration = DateTime.UtcNow - data.StartTime;
+            var intervals = (int)(duration.TotalMinutes / 30) + 1; // 30 min intervals
+
+            // Generate time points
+            for (int i = 0; i < intervals; i++)
+            {
+                data.TimePoints.Add(data.StartTime.AddMinutes(i * 30));
+            }
+
+            // Generate historical data matching current state
+            foreach (var time in data.TimePoints)
+            {
+                // Progress curve (Sigmoid-like for dilatation)
+                double progressRatio = (time - data.StartTime).TotalHours / 8.0; // Assume 8h labor
+                if (progressRatio > 1) progressRatio = 1;
+                
+                // Dilatation (starts at 4cm -> ends at current)
+                double dilation = 4 + (laborCase.CurrentDilatation - 4) * progressRatio;
+                // Add some noise
+                dilation += (random.NextDouble() - 0.5) * 0.5;
+                if (dilation > 10) dilation = 10;
+                
+                // Descent (starts at -3 -> ends at current)
+                double descent = -3 + (laborCase.CurrentStation - (-3)) * progressRatio;
+
+                if (time.Minute % 60 == 0 || time.Minute == 0) // Hourly measurements
+                {
+                    data.Dilatation.Add(new MeasurementPoint { Time = time, Value = Math.Round(dilation, 1) });
+                    data.Descent.Add(new MeasurementPoint { Time = time, Value = Math.Round(descent, 0) });
+                }
+
+                // Section 1: Supportive Care (every 30m)
+                data.Companion.Add(new CategoricalPoint { Time = time, Value = "Y" });
+                data.PainRelief.Add(new CategoricalPoint 
+                { 
+                    Time = time, 
+                    Value = random.Next(10) == 0 ? "N" : "Y", // Occasional No
+                    IsAlert = false 
+                });
+                data.OralFluid.Add(new CategoricalPoint { Time = time, Value = "Y" });
+                data.Posture.Add(new CategoricalPoint { Time = time, Value = random.Next(2) == 0 ? "MO" : "SUP" });
+
+                // Section 2: Baby (every 30m)
+                int baseFHR = 130 + random.Next(-10, 15);
+                data.BaselineFHR.Add(new MeasurementPoint 
+                { 
+                    Time = time, 
+                    Value = baseFHR,
+                    IsAlert = baseFHR < 110 || baseFHR > 160
+                });
+                data.FHRDeceleration.Add(new CategoricalPoint { Time = time, Value = "N" });
+                data.AmnioticFluid.Add(new CategoricalPoint { Time = time, Value = "C" });
+                data.FetalPosition.Add(new CategoricalPoint { Time = time, Value = "OA" });
+                data.Caput.Add(new CategoricalPoint { Time = time, Value = "0" });
+                data.Moulding.Add(new CategoricalPoint { Time = time, Value = "0" });
+
+                // Section 3: Woman (every 30m)
+                int pulse = 80 + random.Next(-10, 15);
+                data.Pulse.Add(new MeasurementPoint { Time = time, Value = pulse, IsAlert = pulse > 100 });
+
+                if (time.Minute == 0) // Hourly BP
+                {
+                    data.SystolicBP.Add(new MeasurementPoint { Time = time, Value = 110 + random.Next(0, 20) });
+                    data.DiastolicBP.Add(new MeasurementPoint { Time = time, Value = 70 + random.Next(0, 15) });
+                }
+                
+                if (time.Hour % 4 == 0 && time.Minute == 0) // 4-hourly Temp
+                {
+                    data.Temperature.Add(new MeasurementPoint { Time = time, Value = 36.5 + random.NextDouble() });
+                }
+                data.UrineProtein.Add(new CategoricalPoint { Time = time, Value = "-" });
+                data.UrineAcetone.Add(new CategoricalPoint { Time = time, Value = "-" });
+                data.UrineVolume.Add(new MeasurementPoint { Time = time, Value = random.Next(50, 200) });
+
+                // Section 4: Labor Progress (Contractions)
+                int contractions = 3 + (int)(2 * progressRatio);
+                if (contractions > 5) contractions = 5;
+                data.ContractionFrequency.Add(new MeasurementPoint { Time = time, Value = contractions });
+                data.ContractionDuration.Add(new MeasurementPoint { Time = time, Value = random.Next(35, 50) });
+
+                // Section 5: Medication
+                if (progressRatio > 0.5)
+                {
+                    data.Oxytocin.Add(new MeasurementPoint { Time = time, Value = 15 + (int)(10 * (progressRatio - 0.5)) });
+                }
+                data.IVFluids.Add(new MeasurementPoint { Time = time, Value = 100 });
+
+                // Section 6: Shared Decision Making
+                data.Assessment.Add(new CategoricalPoint { Time = time, Value = "NORMAL PROGRESS" });
+                data.Plan.Add(new CategoricalPoint { Time = time, Value = "Continue routine monitoring" });
+                data.Initials.Add(new CategoricalPoint { Time = time, Value = "MW" });
+            }
+
+            return data;
         }
 
         public async Task<List<LiveLaborCase>> GetCriticalCasesAsync(DashboardFilter? filter = null)

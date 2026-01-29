@@ -6,78 +6,97 @@
 
 <PageTitle>Login - MAAME DROMO Monitoring</PageTitle>
 
-<div class="login-container">
-    <div class="login-card">
-        <div class="login-header">
-            <div class="logo-container">
-                <i class="bi bi-heart-pulse-fill text-danger fs-1"></i>
-            </div>
-            <h2 class="mt-3 mb-1">MAAME.DROMO</h2>
-            <p class="text-muted">Insight Dashboard</p>
-        </div>
+<div class="mb-5 text-center text-lg-start">
+    <h2 class="fw-bold mb-2 text-dark">Welcome Back</h2>
+    <p class="text-secondary">Please enter your credentials to access the system.</p>
+</div>
 
-        <div class="login-body">
-            @if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="alert alert-danger" role="alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    @errorMessage
-                </div>
-            }
-
-            <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
-                <DataAnnotationsValidator />
-
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                        <InputText id="email" class="form-control" @bind-Value="loginModel.Email" placeholder="Enter your email" />
-                    </div>
-                    <ValidationMessage For="@(() => loginModel.Email)" class="text-danger small" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" placeholder="Enter your password" />
-                    </div>
-                    <ValidationMessage For="@(() => loginModel.Password)" class="text-danger small" />
-                </div>
-
-                <div class="mb-3 form-check">
-                    <InputCheckbox id="rememberMe" class="form-check-input" @bind-Value="loginModel.RememberMe" />
-                    <label class="form-check-label" for="rememberMe">Remember me</label>
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100" disabled="@isLoading">
-                    @if (isLoading)
-                    {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>Signing in...</span>
-                    }
-                    else
-                    {
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        <span>Sign In</span>
-                    }
-                </button>
-            </EditForm>
-
-            <div class="mt-4 text-center">
-                <a href="#" class="text-decoration-none">Forgot password?</a>
-            </div>
-        </div>
-
-        <div class="login-footer">
-            <p class="text-muted small mb-0">
-                <i class="bi bi-shield-check me-1"></i>
-                Secure connection
-            </p>
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger d-flex align-items-center mb-4 border-0 shadow-sm rounded-3 fade show bg-danger-subtle text-danger p-3" role="alert">
+        <i class="bi bi-exclamation-octagon-fill me-3 fs-5"></i>
+        <div>
+            <strong>Access Denied</strong>
+            <div class="small">@errorMessage</div>
         </div>
     </div>
+}
+
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+
+    <div class="form-floating mb-4 position-relative">
+        <InputText id="email" class="form-control bg-light border-0 ps-5" @bind-Value="loginModel.Email" placeholder="name@example.com" style="height: 3.5rem;" />
+        <label for="email" class="ps-5 text-secondary">Email Address</label>
+        <div class="position-absolute top-50 start-0 translate-middle-y ps-3 text-secondary">
+            <i class="bi bi-envelope-fill fs-5"></i>
+        </div>
+        <ValidationMessage For="@(() => loginModel.Email)" class="text-danger small mt-1 ps-2" />
+    </div>
+
+    <div class="form-floating mb-4 position-relative">
+        <InputText id="password" type="password" class="form-control bg-light border-0 ps-5" @bind-Value="loginModel.Password" placeholder="Password" style="height: 3.5rem;" />
+        <label for="password" class="ps-5 text-secondary">Password</label>
+        <div class="position-absolute top-50 start-0 translate-middle-y ps-3 text-secondary">
+            <i class="bi bi-lock-fill fs-5"></i>
+        </div>
+        <ValidationMessage For="@(() => loginModel.Password)" class="text-danger small mt-1 ps-2" />
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div class="form-check">
+            <InputCheckbox id="rememberMe" class="form-check-input border-secondary" @bind-Value="loginModel.RememberMe" />
+            <label class="form-check-label text-secondary small select-none" for="rememberMe">Remember me</label>
+        </div>
+        <a href="#" class="text-decoration-none fw-semibold text-primary small">Forgot password?</a>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill shadow-lg hover-lift position-relative overflow-hidden" disabled="@isLoading">
+        @if (isLoading)
+        {
+            <div class="d-flex align-items-center justify-content-center">
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>Authenticating...</span>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex align-items-center justify-content-center fw-bold text-uppercase tracking-wide" style="letter-spacing: 1px;">
+                Sign In <i class="bi bi-arrow-right ms-2"></i>
+            </div>
+        }
+    </button>
+</EditForm>
+
+<div class="mt-5 text-center">
+    <div class="d-inline-flex align-items-center px-3 py-1 rounded-pill bg-success-subtle text-success small">
+        <i class="bi bi-shield-lock-fill me-2"></i>
+        <span>256-bit Secure Connection</span>
+    </div>
 </div>
+
+<style>
+    .form-control:focus {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+    
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    }
+    
+    .hover-lift {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .hover-lift:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4) !important;
+    }
+    
+    .select-none { user-select: none; }
+</style>
 
 @code {
     private LoginRequest loginModel = new();
@@ -109,12 +128,12 @@
             }
             else
             {
-                errorMessage = result.ErrorMessage ?? "Login failed. Please try again.";
+                errorMessage = result.ErrorMessage ?? "Login failed. Please check your credentials.";
             }
         }
         catch (Exception ex)
         {
-            errorMessage = $"An error occurred: {ex.Message}";
+            errorMessage = $"System error: {ex.Message}";
         }
         finally
         {

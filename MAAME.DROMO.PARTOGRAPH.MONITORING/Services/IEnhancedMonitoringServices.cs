@@ -10,6 +10,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
         Task<LiveLaborSummary> GetLiveLaborSummaryAsync(DashboardFilter? filter = null);
         Task<List<LiveLaborCase>> GetActiveLaborCasesAsync(DashboardFilter? filter = null);
         Task<LiveLaborCase?> GetLaborCaseAsync(Guid partographId);
+        Task<PartographDetailsDto?> GetPartographDetailsAsync(Guid partographId);
         Task<List<LiveLaborCase>> GetCriticalCasesAsync(DashboardFilter? filter = null);
         Task<List<LiveLaborCase>> GetMeasurementsDueCasesAsync(DashboardFilter? filter = null);
     }

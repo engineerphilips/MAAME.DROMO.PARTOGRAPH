@@ -46,7 +46,7 @@
                     <Label Text="&#xE95E;" 
                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                            FontSize="50"
-                           TextColor="#2196F3"
+                           TextColor="{StaticResource Primary}"
                            HorizontalOptions="Center"
                            VerticalOptions="Center" />
                 </Border>
@@ -56,7 +56,7 @@
                     <Label Text="Maame.Dromo" 
                            FontSize="32" 
                            FontAttributes="Bold"
-                           TextColor="{AppThemeBinding Light=#1976D2, Dark=White}"
+                           TextColor="{StaticResource Primary}"
                            HorizontalOptions="Center" />
                     <Label Text="Enhancing Maternal Deliveries in Ghana" 
                            FontSize="16"
@@ -80,84 +80,50 @@
                         <Label Text="Sign In"
                                FontSize="26"
                                FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}"
+                               TextColor="{StaticResource Primary}"
                                HorizontalOptions="Center" />
 
                         <!-- Email/Username Field -->
-                        <Border StrokeThickness="1"
-                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2A2A2A}"
-                                Padding="12,0"
-                                HeightRequest="50">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="12" />
-                            </Border.StrokeShape>
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Label Grid.Column="0"
-                                       Text="&#xf5be;"
+                        <sf:SfTextInputLayout Hint="Email or Staff ID"
+                                              ContainerType="Outlined"
+                                              ContainerBackground="Transparent">
+                            <sf:SfTextInputLayout.LeadingView>
+                                <Label Text="&#xf5be;"
                                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                       FontSize="22"
+                                       FontSize="20"
                                        TextColor="{AppThemeBinding Light=#757575, Dark=#9E9E9E}"
-                                       VerticalOptions="Center" />
-                                <Entry x:Name="EmailEntry"
-                                       Grid.Column="1"
-                                       Text="{Binding Email}"
-                                       Placeholder="Email or Staff ID"
-                                       Keyboard="Email"
-                                       BackgroundColor="Transparent"
-                                       VerticalOptions="Center" />
-                            </Grid>
-                        </Border>
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center" />
+                            </sf:SfTextInputLayout.LeadingView>
+                            <Entry x:Name="EmailEntry"
+                                   Text="{Binding Email}"
+                                   Keyboard="Email" 
+                                   HeightRequest="40" />
+                        </sf:SfTextInputLayout>
 
                         <!-- Password Field -->
-                        <Border StrokeThickness="1"
-                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2A2A2A}"
-                                Padding="12,0"
-                                HeightRequest="50">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="12" />
-                            </Border.StrokeShape>
-                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                                <Label Grid.Column="0"
-                                       Text="&#xe790;"
+                        <sf:SfTextInputLayout Hint="Password"
+                                              ContainerType="Outlined"
+                                              ContainerBackground="Transparent"
+                                              EnablePasswordVisibilityToggle="True">
+                            <sf:SfTextInputLayout.LeadingView>
+                                <Label Text="&#xe790;"
                                        FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                       FontSize="22"
+                                       FontSize="20"
                                        TextColor="{AppThemeBinding Light=#757575, Dark=#9E9E9E}"
-                                       VerticalOptions="Center" />
-                                <Entry Grid.Column="1"
-                                       Text="{Binding Password}"
-                                       Placeholder="Password"
-                                       IsPassword="{Binding IsPasswordVisible, Converter={toolkit:InvertedBoolConverter}}"
-                                       BackgroundColor="Transparent"
-                                       VerticalOptions="Center" />
-                                <Border Grid.Column="2"
-                                        StrokeThickness="0"
-                                        BackgroundColor="Transparent"
-                                        WidthRequest="44"
-                                        HeightRequest="44"
-                                        VerticalOptions="Center">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="22" />
-                                    </Border.StrokeShape>
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding TogglePasswordVisibilityCommand}" />
-                                    </Border.GestureRecognizers>
-                                    <Label Text="{Binding IsPasswordVisible, Converter={StaticResource PasswordIconConverter}}"
-                                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                           FontSize="22"
-                                           TextColor="{AppThemeBinding Light=#757575, Dark=#9E9E9E}"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
-                                </Border>
-                            </Grid>
-                        </Border>
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center" />
+                            </sf:SfTextInputLayout.LeadingView>
+                            <Entry Text="{Binding Password}"
+                                   IsPassword="True"
+                                   HeightRequest="40" />
+                        </sf:SfTextInputLayout>
 
                         <!-- Remember Me -->
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <CheckBox Grid.Column="0"
                                       IsChecked="{Binding RememberMe}"
-                                      Color="#2196F3" />
+                                      Color="{StaticResource Primary}" />
                             <Label Grid.Column="1"
                                    Text="Remember me"
                                    VerticalOptions="Center"
@@ -168,7 +134,7 @@
                             </Label>
                             <Label Grid.Column="2"
                                    Text="Forgot Password?"
-                                   TextColor="#2196F3"
+                                   TextColor="{StaticResource Primary}"
                                    TextDecorations="Underline"
                                    VerticalOptions="Center">
                                 <Label.GestureRecognizers>
@@ -185,17 +151,13 @@
                                IsVisible="{Binding HasError}" />
 
                         <!-- Login Button -->
+                        <!-- Login Button -->
                         <Button Text="LOGIN"
+                                Style="{StaticResource PrimaryActionStyle}"
                                 Command="{Binding LoginCommand}"
-                                BackgroundColor="#2196F3"
-                                TextColor="White"
-                                FontAttributes="Bold"
-                                FontSize="16"
-                                HeightRequest="50"
-                                CornerRadius="12"
                                 Margin="0,10,0,0">
                             <Button.Shadow>
-                                <Shadow Brush="#2196F3" Offset="0,4" Radius="12" Opacity="0.35" />
+                                <Shadow Brush="{StaticResource Primary}" Offset="0,4" Radius="12" Opacity="0.35" />
                             </Button.Shadow>
                         </Button>
 

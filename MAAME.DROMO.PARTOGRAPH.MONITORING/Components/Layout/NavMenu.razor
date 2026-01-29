@@ -1,14 +1,16 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IAuthService AuthService
 
-<div class="d-flex flex-column h-100">
+<div class="d-flex flex-column h-100 sidebar-content">
     <!-- Brand -->
-    <div class="px-3 py-4 border-bottom border-secondary">
-        <a href="/" class="d-flex align-items-center text-white text-decoration-none">
-            @* <i class="bi bi-heart-pulse-fill fs-3 me-2 text-danger"></i> *@
+    <div class="px-4 py-4 mb-2">
+        <a href="/" class="d-flex align-items-center text-decoration-none">
+            <div class="brand-icon me-3">
+                <i class="bi bi-heart-pulse-fill"></i>
+            </div>
             <div>
-                <span class="fs-5 fw-bold">MAAME.DROMO</span>
-                <small class="d-block text-muted">Insight</small>
+                <span class="d-block text-white fw-bold fs-5 tracking-tight">MAAME.DROMO</span>
+                <small class="d-block text-white-50 small tracking-wide text-uppercase">Insight</small>
             </div>
         </a>
     </div>
@@ -16,54 +18,60 @@
     <!-- User Profile Section -->
     <AuthorizeView>
         <Authorized>
-            <div class="px-3 py-3 border-bottom border-secondary user-profile-section">
-                <div class="d-flex align-items-center">
-                    <div class="user-avatar @GetAvatarClass(context.User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value ?? "Viewer")">
+            <div class="mx-3 mb-4 p-3 rounded-3 user-card">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="user-avatar shadow-sm @GetAvatarClass(context.User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value ?? "Viewer")">
                         @GetInitials(context.User.Identity?.Name ?? "User")
                     </div>
-                    <div class="ms-3 flex-grow-1 overflow-hidden">
-                        <span class="d-block text-white text-truncate fw-semibold">@context.User.Identity?.Name</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="badge @GetAccessLevelBadgeClass(context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District") badge-sm">
-                                @(context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District")
-                            </span>
-                            <span class="badge bg-secondary badge-sm">
+                    <div class="ms-3 overflow-hidden">
+                        <span class="d-block text-white fw-semibold text-truncate small">@context.User.Identity?.Name</span>
+                        <div class="d-flex align-items-center gap-1 mt-1">
+                            <span class="badge bg-white bg-opacity-10 text-white border border-white border-opacity-10" style="font-size: 0.6rem;">
                                 @(context.User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value ?? "Viewer")
                             </span>
                         </div>
-                        @{
-                            var accessLevel = context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District";
-                            var regionName = context.User.Claims.FirstOrDefault(c => c.Type == "RegionName")?.Value;
-                            var districtName = context.User.Claims.FirstOrDefault(c => c.Type == "DistrictName")?.Value;
-                        }
-                        @if (accessLevel != "National")
+                    </div>
+                </div>
+                
+                @{
+                    var accessLevel = context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District";
+                    var regionName = context.User.Claims.FirstOrDefault(c => c.Type == "RegionName")?.Value;
+                    var districtName = context.User.Claims.FirstOrDefault(c => c.Type == "DistrictName")?.Value;
+                }
+                
+                @if (accessLevel != "National")
+                {
+                    <div class="location-badge">
+                        @if (accessLevel == "Regional" && !string.IsNullOrEmpty(regionName))
                         {
-                            <div class="mt-1">
-                                @if (accessLevel == "Regional" && !string.IsNullOrEmpty(regionName))
-                                {
-                                    <small class="text-white d-block text-truncate">
-                                        <i class="bi bi-geo-alt me-1"></i>@regionName
-                                    </small>
-                                }
-                                else if (accessLevel == "District")
-                                {
-                                    @if (!string.IsNullOrEmpty(districtName))
-                                    {
-                                        <small class="text-white d-block text-truncate">
-                                            <i class="bi bi-buildings me-1"></i>@districtName
-                                        </small>
-                                    }
-                                    @if (!string.IsNullOrEmpty(regionName))
-                                    {
-                                        <small class="text-white d-block text-truncate" style="font-size: 0.65rem;">
-                                            <i class="bi bi-geo-alt me-1"></i>@regionName
-                                        </small>
-                                    }
-                                }
-                            </div>
+                            <small class="d-flex align-items-center text-white-50">
+                                <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
+                                <span class="text-truncate">@regionName</span>
+                            </small>
+                        }
+                        else if (accessLevel == "District")
+                        {
+                            @if (!string.IsNullOrEmpty(districtName))
+                            {
+                                <small class="d-flex align-items-center text-white-50 mb-1">
+                                    <i class="bi bi-buildings-fill me-2 text-info"></i>
+                                    <span class="text-truncate">@districtName</span>
+                                </small>
+                            }
+                            @if (!string.IsNullOrEmpty(regionName))
+                            {
+                                <small class="d-flex align-items-center text-white-50" style="font-size: 0.7rem;">
+                                    <i class="bi bi-geo-alt me-2"></i>
+                                    <span class="text-truncate">@regionName</span>
+                                </small>
+                            }
                         }
                     </div>
-                    <a href="logout" class="btn btn-sm btn-outline-light ms-2" title="Logout">
+                }
+                
+                <div class="mt-3 pt-3 border-top border-white border-opacity-10 d-flex justify-content-between align-items-center">
+                    <small class="text-white-50">Session Active</small>
+                    <a href="logout" class="btn btn-icon btn-sm text-white-50 hover-text-white" title="Logout">
                         <i class="bi bi-box-arrow-right"></i>
                     </a>
                 </div>
@@ -72,42 +80,48 @@
     </AuthorizeView>
 
     <!-- Navigation -->
-    <nav class="flex-grow-1 py-3 overflow-auto">
-        <ul class="nav nav-pills flex-column px-2">
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="" Match="NavLinkMatch.All">
-                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+    <nav class="flex-grow-1 px-3 overflow-auto custom-scrollbar">
+        <ul class="nav flex-column gap-1">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>
+                    <span class="nav-text">Dashboard</span>
                 </NavLink>
             </li>
 
             <!-- Live Monitoring Section -->
-            <li class="nav-item mt-3 mb-1">
-                <span class="text-grey small px-3 text-uppercase">Live Monitoring</span>
+            <li class="nav-header mt-4 mb-2 ps-3 text-uppercase text-white-50 small fw-bold tracking-wider" style="font-size: 0.7rem;">
+                Live Monitoring
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="live-labor">
-                    <i class="bi bi-activity me-2 text-danger"></i> Live Labour Board
+            <li class="nav-item">
+                <NavLink class="nav-link" href="live-labor">
+                    <span class="nav-icon text-danger"><i class="bi bi-activity"></i></span>
+                    <span class="nav-text">Live Labour Board</span>
+                    <span class="badge bg-danger ms-auto animate-pulse">LIVE</span>
                 </NavLink>
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="alerts">
-                    <i class="bi bi-bell me-2 text-warning"></i> Alert Management
+            <li class="nav-item">
+                <NavLink class="nav-link" href="alerts">
+                    <span class="nav-icon text-warning"><i class="bi bi-bell"></i></span>
+                    <span class="nav-text">Alert Management</span>
                 </NavLink>
             </li>
 
             <AuthorizeView Policy="NationalAccess">
                 <Authorized>
-                    <li class="nav-item mt-3 mb-1">
-                        <span class="text-grey small px-3 text-uppercase">National</span>
+                    <li class="nav-header mt-4 mb-2 ps-3 text-uppercase text-white-50 small fw-bold tracking-wider" style="font-size: 0.7rem;">
+                        National
                     </li>
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-white" href="national">
-                            <i class="bi bi-globe me-2"></i> National Overview
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="national">
+                            <span class="nav-icon"><i class="bi bi-globe"></i></span>
+                            <span class="nav-text">National Overview</span>
                         </NavLink>
                     </li>
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-white" href="regions">
-                            <i class="bi bi-map me-2"></i> All Regions
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="regions">
+                            <span class="nav-icon"><i class="bi bi-map"></i></span>
+                            <span class="nav-text">All Regions</span>
                         </NavLink>
                     </li>
                 </Authorized>
@@ -115,12 +129,13 @@
 
             <AuthorizeView Policy="RegionalAccess">
                 <Authorized>
-                    <li class="nav-item mt-3 mb-1">
-                        <span class="text-grey small px-3 text-uppercase">Regional</span>
+                    <li class="nav-header mt-4 mb-2 ps-3 text-uppercase text-white-50 small fw-bold tracking-wider" style="font-size: 0.7rem;">
+                        Regional
                     </li>
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-white" href="regional">
-                            <i class="bi bi-geo-alt me-2"></i> Regional Overview
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="regional">
+                            <span class="nav-icon"><i class="bi bi-geo-alt"></i></span>
+                            <span class="nav-text">Regional Overview</span>
                         </NavLink>
                     </li>
                 </Authorized>
@@ -133,95 +148,108 @@
                     }
                     @if (districtAccessLevel == "District")
                     {
-                        <li class="nav-item mt-3 mb-1">
-                            <span class="text-grey small px-3 text-uppercase">District</span>
+                        <li class="nav-header mt-4 mb-2 ps-3 text-uppercase text-white-50 small fw-bold tracking-wider" style="font-size: 0.7rem;">
+                            District
                         </li>
-                        <li class="nav-item mb-1">
-                            <NavLink class="nav-link text-white" href="district">
-                                <i class="bi bi-buildings me-2"></i> District Overview
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="district">
+                                <span class="nav-icon"><i class="bi bi-buildings"></i></span>
+                                <span class="nav-text">District Overview</span>
                             </NavLink>
                         </li>
                     }
                 </Authorized>
             </AuthorizeView>
 
-            <li class="nav-item mt-3 mb-1">
-                <span class="text-grey small px-3 text-uppercase">Analytics</span>
+            <li class="nav-header mt-4 mb-2 ps-3 text-uppercase text-white-50 small fw-bold tracking-wider" style="font-size: 0.7rem;">
+                Analytics
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="deliveries">
-                    <i class="bi bi-clipboard2-pulse me-2"></i> Deliveries
+            <li class="nav-item">
+                <NavLink class="nav-link" href="deliveries">
+                    <span class="nav-icon"><i class="bi bi-clipboard2-pulse"></i></span>
+                    <span class="nav-text">Deliveries</span>
                 </NavLink>
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="complications">
-                    <i class="bi bi-exclamation-triangle me-2"></i> Complications
+            <li class="nav-item">
+                <NavLink class="nav-link" href="complications">
+                    <span class="nav-icon"><i class="bi bi-exclamation-triangle"></i></span>
+                    <span class="nav-text">Complications</span>
                 </NavLink>
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="referrals">
-                    <i class="bi bi-arrow-left-right me-2"></i> Referrals
+            <li class="nav-item">
+                <NavLink class="nav-link" href="referrals">
+                    <span class="nav-icon"><i class="bi bi-arrow-left-right"></i></span>
+                    <span class="nav-text">Referrals</span>
                 </NavLink>
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="outcomes">
-                    <i class="bi bi-graph-up me-2"></i> Outcomes
+            <li class="nav-item">
+                <NavLink class="nav-link" href="outcomes">
+                    <span class="nav-icon"><i class="bi bi-graph-up"></i></span>
+                    <span class="nav-text">Outcomes</span>
                 </NavLink>
             </li>
 
             <!-- Advanced Analytics Section -->
-            <li class="nav-item mt-3 mb-1">
-                <span class="text-grey small px-3 text-uppercase">Advanced Analytics</span>
+            <li class="nav-header mt-4 mb-2 ps-3 text-uppercase text-white-50 small fw-bold tracking-wider" style="font-size: 0.7rem;">
+                Advanced Analytics
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="poc-dashboard">
-                    <i class="bi bi-bullseye me-2 text-success"></i> POC Progress
+            <li class="nav-item">
+                <NavLink class="nav-link" href="poc-dashboard">
+                    <span class="nav-icon text-success"><i class="bi bi-bullseye"></i></span>
+                    <span class="nav-text">POC Progress</span>
                 </NavLink>
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="robson">
-                    <i class="bi bi-diagram-3 me-2 text-warning"></i> Robson Classification
+            <li class="nav-item">
+                <NavLink class="nav-link" href="robson">
+                    <span class="nav-icon text-warning"><i class="bi bi-diagram-3"></i></span>
+                    <span class="nav-text">Robson Classification</span>
                 </NavLink>
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="predictive-analytics">
-                    <i class="bi bi-graph-up-arrow me-2 text-info"></i> Risk Prediction
+            <li class="nav-item">
+                <NavLink class="nav-link" href="predictive-analytics">
+                    <span class="nav-icon text-info"><i class="bi bi-graph-up-arrow"></i></span>
+                    <span class="nav-text">Risk Prediction</span>
                 </NavLink>
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="data-quality">
-                    <i class="bi bi-clipboard-check me-2 text-success"></i> Data Quality
+            <li class="nav-item">
+                <NavLink class="nav-link" href="data-quality">
+                    <span class="nav-icon text-white-50"><i class="bi bi-clipboard-check"></i></span>
+                    <span class="nav-text">Data Quality</span>
                 </NavLink>
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="benchmarks">
-                    <i class="bi bi-bar-chart-line me-2 text-primary"></i> Benchmarks
+            <li class="nav-item">
+                <NavLink class="nav-link" href="benchmarks">
+                    <span class="nav-icon text-primary"><i class="bi bi-bar-chart-line"></i></span>
+                    <span class="nav-text">Benchmarks</span>
                 </NavLink>
             </li>
 
-            <li class="nav-item mt-3 mb-1">
-                <span class="text-grey small px-3 text-uppercase">Reports</span>
+            <li class="nav-header mt-4 mb-2 ps-3 text-uppercase text-white-50 small fw-bold tracking-wider" style="font-size: 0.7rem;">
+                Reports
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="reports">
-                    <i class="bi bi-file-earmark-bar-graph me-2"></i> Generate Reports
+            <li class="nav-item">
+                <NavLink class="nav-link" href="reports">
+                    <span class="nav-icon"><i class="bi bi-file-earmark-bar-graph"></i></span>
+                    <span class="nav-text">Generate Reports</span>
                 </NavLink>
             </li>
 
             <!-- Settings Section -->
-            <li class="nav-item mt-3 mb-1">
-                <span class="text-grey small px-3 text-uppercase">Settings</span>
+            <li class="nav-header mt-4 mb-2 ps-3 text-uppercase text-white-50 small fw-bold tracking-wider" style="font-size: 0.7rem;">
+                Settings
             </li>
-            <li class="nav-item mb-1">
-                <NavLink class="nav-link text-white" href="alert-settings">
-                    <i class="bi bi-gear me-2"></i> Alert Settings
+            <li class="nav-item">
+                <NavLink class="nav-link" href="alert-settings">
+                    <span class="nav-icon"><i class="bi bi-gear"></i></span>
+                    <span class="nav-text">Alert Settings</span>
                 </NavLink>
             </li>
             <AuthorizeView Roles="Admin">
                 <Authorized>
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-white" href="facilities">
-                            <i class="bi bi-hospital me-2"></i> Facilities
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="facilities">
+                            <span class="nav-icon"><i class="bi bi-hospital"></i></span>
+                            <span class="nav-text">Facilities</span>
                         </NavLink>
                     </li>
                 </Authorized>
@@ -232,34 +260,45 @@
                     @{
                         var adminUserAccessLevel = context.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District";
                     }
-                    <li class="nav-item mt-3 mb-1">
-                        <span class="text-grey small px-3 text-uppercase">Administration</span>
+                    <li class="nav-header mt-4 mb-2 ps-3 text-uppercase text-white-50 small fw-bold tracking-wider" style="font-size: 0.7rem;">
+                        Administration
                     </li>
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-white" href="users">
-                            <i class="bi bi-people me-2"></i> Users
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="users">
+                            <span class="nav-icon"><i class="bi bi-people"></i></span>
+                            <span class="nav-text">Users</span>
                         </NavLink>
                     </li>
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-white" href="admin/user-activity">
-                            <i class="bi bi-activity me-2"></i> User Activity
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="admin/user-activity">
+                            <span class="nav-icon"><i class="bi bi-activity"></i></span>
+                            <span class="nav-text">User Activity</span>
                         </NavLink>
                     </li>
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-white" href="admin/notifications">
-                            <i class="bi bi-bell me-2"></i> Notifications
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="admin/audit-trails">
+                            <span class="nav-icon"><i class="bi bi-fingerprint"></i></span>
+                            <span class="nav-text">Audit Trails</span>
                         </NavLink>
                     </li>
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-white" href="admin/regions">
-                            <i class="bi bi-map me-2"></i> Manage Regions
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="admin/notifications">
+                            <span class="nav-icon"><i class="bi bi-bell"></i></span>
+                            <span class="nav-text">Notifications</span>
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="admin/regions">
+                            <span class="nav-icon"><i class="bi bi-map"></i></span>
+                            <span class="nav-text">Manage Regions</span>
                         </NavLink>
                     </li>
                     @if (adminUserAccessLevel == "National" || adminUserAccessLevel == "Regional")
                     {
-                        <li class="nav-item mb-1">
-                            <NavLink class="nav-link text-white" href="admin/feature-flags">
-                                <i class="bi bi-toggles me-2"></i> Feature Flags
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="admin/feature-flags">
+                                <span class="nav-icon"><i class="bi bi-toggles"></i></span>
+                                <span class="nav-text">Feature Flags</span>
                             </NavLink>
                         </li>
                     }
@@ -273,90 +312,120 @@
                     }
                     @if (userRole == "Admin")
                     {
-                        <li class="nav-item mb-1">
-                            <NavLink class="nav-link text-white" href="admin/rate-limits">
-                                <i class="bi bi-speedometer2 me-2"></i> Rate Limits
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="admin/rate-limits">
+                                <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>
+                                <span class="nav-text">Rate Limits</span>
                             </NavLink>
                         </li>
                     }
                 </Authorized>
             </AuthorizeView>
         </ul>
+        <div class="mb-5"></div>
     </nav>
 
     <!-- Footer -->
-    <div class="px-3 py-3 border-top border-secondary">
-        <div class="d-flex align-items-center justify-content-between mb-2">
-            <small class="text-white">
-                <i class="bi bi-info-circle me-1"></i> Version 2.1.0
+    <div class="px-4 py-3 border-top border-white border-opacity-10 bg-black bg-opacity-20">
+        <div class="d-flex align-items-center justify-content-between mb-1">
+            <small class="text-white-50" style="font-size: 0.7rem;">
+                v2.1.0-RC1
             </small>
-            <span class="badge bg-success badge-sm">
-                <i class="bi bi-check-circle me-1"></i> Online
-            </span>
+            <div class="d-flex align-items-center">
+                <span class="status-dot online me-1" style="width: 6px; height: 6px;"></span>
+                <small class="text-white-50" style="font-size: 0.7rem;">System Online</small>
+            </div>
         </div>
-        <small class="text-white d-block">
-            <i class="bi bi-calendar me-1"></i> @DateTime.Now.ToString("MMM dd, yyyy")
+        <small class="text-white-50 d-block" style="font-size: 0.65rem;">
+            &copy; @DateTime.Now.Year MAAME DROMO
         </small>
-        @* <div class="mt-2 pt-2 border-top border-secondary">
-            <a href="https://github.com/engineerphilips/MAAME.DROMO.PARTOGRAPH" target="_blank" class="text-muted text-decoration-none small">
-                <i class="bi bi-github me-1"></i> Documentation
-            </a>
-        </div> *@
     </div>
 </div>
 
 <style>
-    .user-profile-section {
-        background: rgba(255, 255, 255, 0.05);
+    .sidebar-content {
+        background: radial-gradient(circle at top right, #2d3748, #1a202c);
     }
-
-    .user-avatar {
+    
+    .brand-icon {
         width: 40px;
         height: 40px;
-        border-radius: 50%;
+        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 600;
-        font-size: 0.85rem;
         color: white;
-        flex-shrink: 0;
+        font-size: 1.25rem;
+        box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.4);
+    }
+    
+    .tracking-tight { letter-spacing: -0.025em; }
+    .tracking-wide { letter-spacing: 0.05em; }
+    .tracking-wider { letter-spacing: 0.1em; }
+    
+    .user-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(8px);
     }
 
-    .avatar-admin { background: linear-gradient(135deg, #dc3545, #c82333); }
-    .avatar-manager { background: linear-gradient(135deg, #0d6efd, #0a58ca); }
-    .avatar-analyst { background: linear-gradient(135deg, #198754, #157347); }
-    .avatar-viewer { background: linear-gradient(135deg, #6c757d, #5a6268); }
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: white;
+        flex-shrink: 0;
+        border: 2px solid rgba(255,255,255,0.1);
+    }
 
-    .badge-sm {
-        font-size: 0.65rem;
-        padding: 0.2em 0.5em;
+    .avatar-admin { background: linear-gradient(135deg, #ec4899, #be185d); }
+    .avatar-manager { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .avatar-analyst { background: linear-gradient(135deg, #10b981, #059669); }
+    .avatar-viewer { background: linear-gradient(135deg, #64748b, #475569); }
+    
+    .nav-icon {
+        width: 20px;
+        display: flex;
+        justify-content: center;
+        margin-right: 12px;
+        font-size: 1.1rem;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+    
+    .nav-link:hover .nav-icon, .nav-link.active .nav-icon {
+        opacity: 1;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .hover-text-white:hover {
+        color: white !important;
     }
 </style>
 
 @code {
-    private string GetAccessLevelBadge(string accessLevel)
-    {
-        return accessLevel switch
-        {
-            "National" => "National Admin",
-            "Regional" => "Regional Manager",
-            "District" => "District Officer",
-            _ => "User"
-        };
-    }
-
-    private string GetAccessLevelBadgeClass(string accessLevel)
-    {
-        return accessLevel switch
-        {
-            "National" => "bg-info",
-            "Regional" => "bg-primary",
-            "District" => "bg-warning text-dark",
-            _ => "bg-secondary"
-        };
-    }
-
     private string GetAvatarClass(string role)
     {
         return role switch

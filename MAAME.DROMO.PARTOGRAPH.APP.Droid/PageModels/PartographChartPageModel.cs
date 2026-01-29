@@ -1,7 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
-using MAAME.DROMO.PARTOGRAPH.APP.Droid.Helpers;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System;
 using System.Collections.ObjectModel;
@@ -200,7 +198,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     AlertLineData.Add(new ChartDataPoint
                     {
                         Time = time,
-                        Value = dilatation
+                        Value = (float)dilatation
                     });
 
                     if (dilatation >= 10) break;
@@ -216,7 +214,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     ActionLineData.Add(new ChartDataPoint
                     {
                         Time = time,
-                        Value = dilatation
+                        Value = (float)dilatation
                     });
 
                     if (dilatation >= 10) break;
@@ -356,8 +354,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 var startTime = temps.First().Time;
                 var endTime = temps.Last().Time;
 
-                TempUpperNormal.Add(new ChartDataPoint { Time = startTime, Value = 37.5 });
-                TempUpperNormal.Add(new ChartDataPoint { Time = endTime, Value = 37.5 });
+                TempUpperNormal.Add(new ChartDataPoint { Time = startTime, Value = 37.5f });
+                TempUpperNormal.Add(new ChartDataPoint { Time = endTime, Value = 37.5f });
             }
         }
 
@@ -385,11 +383,5 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 //Refresh().FireAndForgetSafeAsync(_errorHandler);
             }
         }
-    }
-
-    public class ChartDataPoint
-    {
-        public DateTime Time { get; set; }
-        public double Value { get; set; }
     }
 }

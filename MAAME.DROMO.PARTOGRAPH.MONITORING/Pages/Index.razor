@@ -10,26 +10,26 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
-            <h2 class="mb-1">
+            <h2 class="mb-1 text-gradient-primary">
                 <i class="bi bi-speedometer2 me-2 text-primary"></i>
                 Dashboard Overview
             </h2>
-            <p class="text-muted mb-0">
-                @accessLevelText | @locationText | @DateTime.Now.ToString("dddd, MMMM dd, yyyy")
+            <p class="text-secondary mb-0">
+                @accessLevelText <span class="mx-2">•</span> @locationText <span class="mx-2">•</span> @DateTime.Now.ToString("dddd, MMMM dd, yyyy")
             </p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
             <!-- Time Period Selector -->
-            <div class="btn-group" role="group">
-                <button class="btn @(selectedPeriod == "Today" ? "btn-primary" : "btn-outline-primary") btn-sm" @onclick='() => ChangePeriod("Today")'>Today</button>
-                <button class="btn @(selectedPeriod == "Week" ? "btn-primary" : "btn-outline-primary") btn-sm" @onclick='() => ChangePeriod("Week")'>Week</button>
-                <button class="btn @(selectedPeriod == "Month" ? "btn-primary" : "btn-outline-primary") btn-sm" @onclick='() => ChangePeriod("Month")'>Month</button>
-                <button class="btn @(selectedPeriod == "Year" ? "btn-primary" : "btn-outline-primary") btn-sm" @onclick='() => ChangePeriod("Year")'>Year</button>
+            <div class="glass-panel p-1 rounded-pill d-inline-flex shadow-sm">
+                <button class="btn btn-sm px-3 rounded-pill @(selectedPeriod == "Today" ? "btn-primary shadow-sm" : "btn-transparent text-secondary hover-bg-light")" @onclick='() => ChangePeriod("Today")'>Today</button>
+                <button class="btn btn-sm px-3 rounded-pill @(selectedPeriod == "Week" ? "btn-primary shadow-sm" : "btn-transparent text-secondary hover-bg-light")" @onclick='() => ChangePeriod("Week")'>Week</button>
+                <button class="btn btn-sm px-3 rounded-pill @(selectedPeriod == "Month" ? "btn-primary shadow-sm" : "btn-transparent text-secondary hover-bg-light")" @onclick='() => ChangePeriod("Month")'>Month</button>
+                <button class="btn btn-sm px-3 rounded-pill @(selectedPeriod == "Year" ? "btn-primary shadow-sm" : "btn-transparent text-secondary hover-bg-light")" @onclick='() => ChangePeriod("Year")'>Year</button>
             </div>
-            <button class="btn btn-outline-secondary btn-sm" @onclick="RefreshData" disabled="@isLoading">
+            <button class="btn btn-outline-secondary shadow-sm btn-sm px-3 rounded-pill" @onclick="RefreshData" disabled="@isLoading">
                 <i class="bi bi-arrow-clockwise me-1 @(isLoading ? "spin" : "")"></i> Refresh
             </button>
-            <a href="reports" class="btn btn-primary btn-sm">
+            <a href="reports" class="btn btn-primary shadow-sm btn-sm px-3 rounded-pill hover-lift">
                 <i class="bi bi-file-earmark-bar-graph me-1"></i> Generate Report
             </a>
         </div>
@@ -48,55 +48,56 @@
 else if (summary != null)
 {
     <!-- Enhanced KPI Cards with Sparklines -->
-    <div class="row g-3 mb-4">
+    <div class="row g-4 mb-4">
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1 small">Today's Deliveries</p>
-                            <h3 class="mb-0">@summary.TotalDeliveriesToday</h3>
-                        </div>
-                        <div class="stat-icon bg-primary-subtle text-primary">
-                            <i class="bi bi-clipboard2-pulse"></i>
-                        </div>
+            <div class="stat-card p-4 h-100 glass-panel hover-lift">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <p class="text-secondary text-uppercase fw-semibold small mb-1 tracking-wide">Today's Deliveries</p>
+                        <h3 class="mb-0 fw-bold display-6 text-dark">@summary.TotalDeliveriesToday</h3>
                     </div>
-                    <div class="sparkline-container mt-2">
-                        <canvas id="deliverySparkline" height="30"></canvas>
+                    <div class="stat-icon bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-clipboard2-pulse fs-3"></i>
                     </div>
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <small class="@(summary.DeliveryChangePercent >= 0 ? "text-success" : "text-danger")">
-                            <i class="bi @(summary.DeliveryChangePercent >= 0 ? "bi-arrow-up" : "bi-arrow-down")"></i>
-                            @Math.Abs(summary.DeliveryChangePercent).ToString("F1")% vs last period
-                        </small>
-                        <small class="text-muted">Month: @summary.TotalDeliveriesThisMonth</small>
+                </div>
+                <!-- Sparkline placeholder - in real app would interact with JS -->
+                <div class="sparkline-container position-relative mb-3">
+                    <canvas id="deliverySparkline" height="40" style="width: 100%;"></canvas>
+                </div>
+                <div class="d-flex justify-content-between align-items-center border-top border-light pt-3">
+                    <div class="badge @(summary.DeliveryChangePercent >= 0 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger") rounded-pill px-3">
+                        <i class="bi @(summary.DeliveryChangePercent >= 0 ? "bi-arrow-up" : "bi-arrow-down") me-1"></i>
+                        @Math.Abs(summary.DeliveryChangePercent).ToString("F1")%
                     </div>
+                    <small class="text-muted fw-medium">Month: @summary.TotalDeliveriesThisMonth</small>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1 small">Active Labours</p>
-                            <h3 class="mb-0">@summary.ActiveLabors</h3>
-                        </div>
-                        <div class="stat-icon bg-warning-subtle text-warning">
-                            <i class="bi bi-hourglass-split"></i>
-                        </div>
+            <div class="stat-card p-4 h-100 glass-panel hover-lift">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <p class="text-secondary text-uppercase fw-semibold small mb-1 tracking-wide">Active Labours</p>
+                        <h3 class="mb-0 fw-bold display-6 text-dark">@summary.ActiveLabors</h3>
                     </div>
-                    <div class="sparkline-container mt-2">
-                        <canvas id="laborSparkline" height="30"></canvas>
+                    <div class="stat-icon bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-hourglass-split fs-3"></i>
                     </div>
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <small class="text-danger">
-                            <i class="bi bi-exclamation-triangle"></i> High Risk: @summary.HighRiskLabors
-                        </small>
+                </div>
+                <div class="sparkline-container position-relative mb-3">
+                    <canvas id="laborSparkline" height="40" style="width: 100%;"></canvas>
+                </div>
+                <div class="d-flex justify-content-between align-items-center border-top border-light pt-3">
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-danger-subtle text-danger rounded-pill" title="High Risk">
+                            <i class="bi bi-exclamation-triangle me-1"></i>@summary.HighRiskLabors
+                        </span>
                         @if (liveLaborSummary != null)
                         {
-                            <small class="text-warning">Critical: @liveLaborSummary.CriticalCases</small>
+                            <span class="badge bg-warning-subtle text-warning rounded-pill" title="Critical">
+                                <i class="bi bi-lightning-fill me-1"></i>@liveLaborSummary.CriticalCases
+                            </span>
                         }
                     </div>
                 </div>
@@ -104,52 +105,50 @@ else if (summary != null)
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1 small">Complications Today</p>
-                            <h3 class="mb-0">@summary.ComplicationsToday</h3>
-                        </div>
-                        <div class="stat-icon bg-danger-subtle text-danger">
-                            <i class="bi bi-exclamation-diamond"></i>
-                        </div>
+            <div class="stat-card p-4 h-100 glass-panel hover-lift">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <p class="text-secondary text-uppercase fw-semibold small mb-1 tracking-wide">Complications</p>
+                        <h3 class="mb-0 fw-bold display-6 text-dark">@summary.ComplicationsToday</h3>
                     </div>
-                    <div class="sparkline-container mt-2">
-                        <canvas id="complicationSparkline" height="30"></canvas>
+                    <div class="stat-icon bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-exclamation-diamond fs-3"></i>
                     </div>
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <small class="@(summary.ComplicationChangePercent <= 0 ? "text-success" : "text-danger")">
-                            <i class="bi @(summary.ComplicationChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up")"></i>
-                            @Math.Abs(summary.ComplicationChangePercent).ToString("F1")% vs last period
-                        </small>
-                        <small class="text-muted">Referrals: @summary.ReferralsToday</small>
+                </div>
+                <div class="sparkline-container position-relative mb-3">
+                    <canvas id="complicationSparkline" height="40" style="width: 100%;"></canvas>
+                </div>
+                <div class="d-flex justify-content-between align-items-center border-top border-light pt-3">
+                    <div class="badge @(summary.ComplicationChangePercent <= 0 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger") rounded-pill px-3">
+                        <i class="bi @(summary.ComplicationChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up") me-1"></i>
+                        @Math.Abs(summary.ComplicationChangePercent).ToString("F1")%
                     </div>
+                    <small class="text-muted fw-medium">Refs: @summary.ReferralsToday</small>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card stat-card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1 small">Active Facilities</p>
-                            <h3 class="mb-0">@summary.ActiveFacilities</h3>
-                        </div>
-                        <div class="stat-icon bg-success-subtle text-success">
-                            <i class="bi bi-hospital"></i>
-                        </div>
+            <div class="stat-card p-4 h-100 glass-panel hover-lift">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <p class="text-secondary text-uppercase fw-semibold small mb-1 tracking-wide">Active Facilities</p>
+                        <h3 class="mb-0 fw-bold display-6 text-dark">@summary.ActiveFacilities</h3>
                     </div>
-                    <div class="sparkline-container mt-2">
-                        <canvas id="facilitySparkline" height="30"></canvas>
+                    <div class="stat-icon bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-hospital fs-3"></i>
                     </div>
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <small class="text-muted">
-                            <i class="bi bi-building"></i> Total: @summary.TotalFacilities
-                        </small>
-                        <small class="text-success">@((summary.ActiveFacilities * 100.0 / Math.Max(1, summary.TotalFacilities)).ToString("F0"))% active</small>
-                    </div>
+                </div>
+                <div class="sparkline-container position-relative mb-3">
+                    <canvas id="facilitySparkline" height="40" style="width: 100%;"></canvas>
+                </div>
+                <div class="d-flex justify-content-between align-items-center border-top border-light pt-3">
+                    <small class="text-muted fw-medium">
+                        <i class="bi bi-building me-1"></i>Total: @summary.TotalFacilities
+                    </small>
+                    <span class="text-success fw-bold small">
+                        @((summary.ActiveFacilities * 100.0 / Math.Max(1, summary.TotalFacilities)).ToString("F0"))% active
+                    </span>
                 </div>
             </div>
         </div>
@@ -159,56 +158,56 @@ else if (summary != null)
     <div class="row g-4 mb-4">
         <!-- Live Labor Monitoring -->
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
+            <div class="glass-panel h-100 p-0 overflow-hidden">
+                <div class="p-3 border-bottom border-light d-flex justify-content-between align-items-center bg-white bg-opacity-50">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-activity me-2 text-danger"></i>
                         Live Labour Monitoring
-                        <span class="badge bg-danger ms-2 pulse-badge">LIVE</span>
+                        <span class="badge bg-danger ms-2 pulse-badge fw-medium rounded-pill" style="font-size: 0.7em;">LIVE</span>
                     </h5>
-                    <a href="live-labor" class="btn btn-sm btn-outline-primary">
+                    <a href="live-labor" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm hover-lift">
                         <i class="bi bi-arrows-fullscreen me-1"></i> Full View
                     </a>
                 </div>
-                <div class="card-body">
+                <div class="p-4">
                     @if (liveLaborSummary != null)
                     {
                         <!-- Summary Stats -->
-                        <div class="row g-2 mb-3">
-                            <div class="col">
-                                <div class="live-stat-card bg-primary text-white">
-                                    <div class="live-stat-value">@liveLaborSummary.TotalActiveCases</div>
-                                    <div class="live-stat-label">Total Active</div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-6 col-md-2">
+                                <div class="p-2 rounded-3 text-center bg-primary text-white shadow-sm h-100 d-flex flex-column justify-content-center hover-lift transition-all">
+                                    <div class="fw-bold fs-4">@liveLaborSummary.TotalActiveCases</div>
+                                    <div class="small opacity-75 text-uppercase" style="font-size: 0.65rem;">Total Active</div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="live-stat-card bg-danger text-white">
-                                    <div class="live-stat-value">@liveLaborSummary.CriticalCases</div>
-                                    <div class="live-stat-label">Critical</div>
+                            <div class="col-6 col-md-2">
+                                <div class="p-2 rounded-3 text-center bg-danger text-white shadow-sm h-100 d-flex flex-column justify-content-center hover-lift transition-all">
+                                    <div class="fw-bold fs-4">@liveLaborSummary.CriticalCases</div>
+                                    <div class="small opacity-75 text-uppercase" style="font-size: 0.65rem;">Critical</div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="live-stat-card bg-warning text-dark">
-                                    <div class="live-stat-value">@liveLaborSummary.HighRiskCases</div>
-                                    <div class="live-stat-label">High Risk</div>
+                            <div class="col-6 col-md-2">
+                                <div class="p-2 rounded-3 text-center bg-warning text-dark shadow-sm h-100 d-flex flex-column justify-content-center hover-lift transition-all">
+                                    <div class="fw-bold fs-4">@liveLaborSummary.HighRiskCases</div>
+                                    <div class="small opacity-75 text-uppercase" style="font-size: 0.65rem;">High Risk</div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="live-stat-card bg-info text-white">
-                                    <div class="live-stat-value">@liveLaborSummary.ModerateRiskCases</div>
-                                    <div class="live-stat-label">Moderate</div>
+                            <div class="col-6 col-md-2">
+                                <div class="p-2 rounded-3 text-center bg-info text-white shadow-sm h-100 d-flex flex-column justify-content-center hover-lift transition-all">
+                                    <div class="fw-bold fs-4">@liveLaborSummary.ModerateRiskCases</div>
+                                    <div class="small opacity-75 text-uppercase" style="font-size: 0.65rem;">Moderate</div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="live-stat-card bg-success text-white">
-                                    <div class="live-stat-value">@liveLaborSummary.NormalCases</div>
-                                    <div class="live-stat-label">Normal</div>
+                            <div class="col-6 col-md-2">
+                                <div class="p-2 rounded-3 text-center bg-success text-white shadow-sm h-100 d-flex flex-column justify-content-center hover-lift transition-all">
+                                    <div class="fw-bold fs-4">@liveLaborSummary.NormalCases</div>
+                                    <div class="small opacity-75 text-uppercase" style="font-size: 0.65rem;">Normal</div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="live-stat-card bg-secondary text-white">
-                                    <div class="live-stat-value">@liveLaborSummary.MeasurementsDue</div>
-                                    <div class="live-stat-label">Due</div>
+                            <div class="col-6 col-md-2">
+                                <div class="p-2 rounded-3 text-center bg-secondary text-white shadow-sm h-100 d-flex flex-column justify-content-center hover-lift transition-all">
+                                    <div class="fw-bold fs-4">@liveLaborSummary.MeasurementsDue</div>
+                                    <div class="small opacity-75 text-uppercase" style="font-size: 0.65rem;">Due</div>
                                 </div>
                             </div>
                         </div>
@@ -216,30 +215,36 @@ else if (summary != null)
                         <!-- Critical Cases List -->
                         @if (liveLaborSummary.TopCriticalCases.Any())
                         {
-                            <h6 class="text-danger mb-2"><i class="bi bi-exclamation-triangle me-1"></i> Attention Required</h6>
+                            <h6 class="text-danger mb-3 fw-bold small text-uppercase tracking-wide"><i class="bi bi-exclamation-triangle-fill me-1"></i> Attention Required</h6>
                             <div class="critical-cases-list">
                                 @foreach (var laborCase in liveLaborSummary.TopCriticalCases.Take(4))
                                 {
-                                    <div class="critical-case-item @(laborCase.RiskLevel == "Critical" ? "case-critical" : "case-high")">
-                                        <div class="d-flex justify-content-between align-items-center">
+                                    <div class="critical-case-item @(laborCase.RiskLevel == "Critical" ? "border-danger bg-danger bg-opacity-10" : "border-warning bg-warning bg-opacity-10") p-3 mb-3 rounded-3 shadow-sm border border-start-4 transition-all hover-lift">
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                                             <div class="d-flex align-items-center">
-                                                <div class="risk-dot @(laborCase.RiskLevel == "Critical" ? "bg-danger" : "bg-warning")"></div>
-                                                <div class="ms-2">
-                                                    <span class="fw-semibold">@laborCase.PatientName</span>
-                                                    <small class="text-muted d-block">@laborCase.FacilityName</small>
+                                                <div class="flex-shrink-0">
+                                                    <span class="spinner-grow spinner-grow-sm @(laborCase.RiskLevel == "Critical" ? "text-danger" : "text-warning")" role="status" aria-hidden="true"></span>
+                                                </div>
+                                                <div class="ms-3">
+                                                    <span class="fw-bold d-block text-dark">@laborCase.PatientName</span>
+                                                    <small class="text-secondary d-flex align-items-center">
+                                                        <i class="bi bi-hospital me-1"></i> @laborCase.FacilityName
+                                                    </small>
                                                 </div>
                                             </div>
-                                            <div class="text-end">
-                                                <div class="vital-badges">
-                                                    <span class="badge @(IsVitalCritical(laborCase.LatestFHR, "FHR") ? "bg-danger" : "bg-secondary")">
+                                            <div class="text-end ms-auto">
+                                                <div class="vital-badges mb-1 d-flex gap-1 justify-content-end flex-wrap">
+                                                    <span class="badge @(IsVitalCritical(laborCase.LatestFHR, "FHR") ? "bg-danger" : "bg-secondary-subtle text-secondary") rounded-pill">
                                                         FHR: @(laborCase.LatestFHR?.ToString() ?? "--")
                                                     </span>
-                                                    <span class="badge bg-info">@laborCase.CurrentDilatation cm</span>
-                                                    <span class="badge bg-secondary">@FormatDuration(laborCase.LaborDuration)</span>
+                                                    <span class="badge bg-info-subtle text-info rounded-pill">@laborCase.CurrentDilatation cm</span>
+                                                    <span class="badge bg-light text-muted border rounded-pill">@FormatDuration(laborCase.LaborDuration)</span>
                                                 </div>
                                                 @if (laborCase.AlertCount > 0)
                                                 {
-                                                    <small class="text-danger">@laborCase.AlertCount alerts</small>
+                                                    <small class="text-danger fw-bold d-block">
+                                                        <i class="bi bi-bell-fill me-1"></i>@laborCase.AlertCount alerts
+                                                    </small>
                                                 }
                                             </div>
                                         </div>
@@ -249,9 +254,12 @@ else if (summary != null)
                         }
                         else
                         {
-                            <div class="text-center text-success py-3">
-                                <i class="bi bi-check-circle fs-3"></i>
-                                <p class="mb-0 mt-2">No critical cases at this time</p>
+                            <div class="text-center text-success py-5">
+                                <div class="mb-3">
+                                    <i class="bi bi-check-circle-fill fs-1 text-success bg-success-subtle p-3 rounded-circle"></i>
+                                </div>
+                                <h5 class="fw-bold">All Clear</h5>
+                                <p class="text-muted mb-0">No critical cases requiring immediate attention reported.</p>
                             </div>
                         }
                     }
@@ -261,98 +269,102 @@ else if (summary != null)
 
         <!-- Enhanced Alerts Panel -->
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-bell me-2 text-warning"></i>
+            <div class="glass-panel h-100 p-0 overflow-hidden">
+                <div class="p-3 border-bottom border-light d-flex justify-content-between align-items-center bg-white bg-opacity-50">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="bi bi-bell-fill me-2 text-warning"></i>
                         Alert Summary
                     </h5>
-                    <a href="alerts" class="btn btn-sm btn-outline-primary">View All</a>
+                    <a href="alerts" class="btn btn-sm btn-light text-primary fw-medium rounded-pill shadow-sm">View All</a>
                 </div>
-                <div class="card-body p-0">
+                <div class="p-0">
                     @if (alertSummary != null)
                     {
                         <!-- Alert Stats -->
-                        <div class="p-3 border-bottom">
+                        <div class="p-4 border-bottom border-light bg-light bg-opacity-25">
                             <div class="row g-2 text-center">
                                 <div class="col-4">
-                                    <div class="alert-stat">
-                                        <span class="alert-stat-value text-danger">@alertSummary.CriticalAlerts</span>
-                                        <span class="alert-stat-label">Critical</span>
+                                    <div class="p-2 bg-white rounded-3 shadow-sm border border-danger-subtle h-100">
+                                        <div class="fw-bold text-danger fs-4">@alertSummary.CriticalAlerts</div>
+                                        <div class="small text-secondary fw-medium text-uppercase" style="font-size: 0.65rem;">Critical</div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="alert-stat">
-                                        <span class="alert-stat-value text-warning">@alertSummary.WarningAlerts</span>
-                                        <span class="alert-stat-label">Warning</span>
+                                    <div class="p-2 bg-white rounded-3 shadow-sm border border-warning-subtle h-100">
+                                        <div class="fw-bold text-warning fs-4">@alertSummary.WarningAlerts</div>
+                                        <div class="small text-secondary fw-medium text-uppercase" style="font-size: 0.65rem;">Warning</div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="alert-stat">
-                                        <span class="alert-stat-value text-info">@alertSummary.InfoAlerts</span>
-                                        <span class="alert-stat-label">Info</span>
+                                    <div class="p-2 bg-white rounded-3 shadow-sm border border-info-subtle h-100">
+                                        <div class="fw-bold text-info fs-4">@alertSummary.InfoAlerts</div>
+                                        <div class="small text-secondary fw-medium text-uppercase" style="font-size: 0.65rem;">Info</div>
                                     </div>
                                 </div>
                             </div>
                             @if (alertSummary.UnacknowledgedAlerts > 0)
                             {
-                                <div class="alert alert-warning py-2 px-3 mb-0 mt-2 d-flex justify-content-between align-items-center">
-                                    <small><i class="bi bi-exclamation-circle me-1"></i> @alertSummary.UnacknowledgedAlerts unacknowledged</small>
-                                    <a href="alerts?filter=unacknowledged" class="btn btn-warning btn-sm py-0">Review</a>
+                                <div class="alert alert-warning py-2 px-3 mb-0 mt-3 d-flex justify-content-between align-items-center rounded-3 shadow-sm border-warning border-opacity-25 bg-warning-subtle text-warning-emphasis">
+                                    <small class="fw-bold"><i class="bi bi-exclamation-circle-fill me-1"></i> @alertSummary.UnacknowledgedAlerts unacknowledged</small>
+                                    <a href="alerts?filter=unacknowledged" class="btn btn-warning btn-sm py-0 px-2 rounded-pill fw-bold shadow-sm text-dark" style="font-size: 0.7rem;">Review</a>
                                 </div>
                             }
                         </div>
 
                         <!-- Alert Categories -->
-                        <div class="p-3 border-bottom">
-                            <small class="text-muted d-block mb-2">By Category</small>
+                        <div class="px-4 py-3 border-bottom border-light">
+                            <small class="text-uppercase text-secondary fw-bold small mb-2 d-block tracking-wide">By Category</small>
                             <div class="d-flex gap-2 flex-wrap">
-                                <span class="badge bg-danger-subtle text-danger">
-                                    <i class="bi bi-heart-pulse me-1"></i>Fetal: @alertSummary.FetalAlerts
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">
+                                    <i class="bi bi-heart-pulse-fill me-1"></i>Fetal: @alertSummary.FetalAlerts
                                 </span>
-                                <span class="badge bg-warning-subtle text-warning">
-                                    <i class="bi bi-person me-1"></i>Maternal: @alertSummary.MaternalAlerts
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">
+                                    <i class="bi bi-person-fill me-1"></i>Maternal: @alertSummary.MaternalAlerts
                                 </span>
-                                <span class="badge bg-info-subtle text-info">
-                                    <i class="bi bi-clock me-1"></i>Labour: @alertSummary.LaborAlerts
+                                <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill">
+                                    <i class="bi bi-clock-fill me-1"></i>Labour: @alertSummary.LaborAlerts
                                 </span>
                             </div>
                         </div>
 
                         <!-- Response Metrics -->
-                        <div class="p-3">
-                            <small class="text-muted d-block mb-2">Response Performance</small>
+                        <div class="px-4 py-3 bg-light bg-opacity-25 border-bottom border-light">
                             <div class="d-flex justify-content-between mb-1">
-                                <small>Response Compliance</small>
+                                <small class="fw-semibold text-secondary">Response Compliance</small>
                                 <small class="fw-bold @(alertSummary.ResponseCompliancePercent >= 80 ? "text-success" : "text-warning")">
                                     @alertSummary.ResponseCompliancePercent.ToString("F0")%
                                 </small>
                             </div>
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar @(alertSummary.ResponseCompliancePercent >= 80 ? "bg-success" : "bg-warning")"
+                            <div class="progress rounded-pill bg-white border border-light shadow-sm" style="height: 8px;">
+                                <div class="progress-bar rounded-pill @(alertSummary.ResponseCompliancePercent >= 80 ? "bg-success" : "bg-warning")"
                                      style="width: @alertSummary.ResponseCompliancePercent%"></div>
                             </div>
-                            <small class="text-muted mt-1 d-block">
-                                Avg response: @alertSummary.AverageResponseTimeMinutes.ToString("F0") min
+                            <small class="text-muted mt-2 d-block small">
+                                <i class="bi bi-clock-history me-1"></i> Avg response time: <span class="fw-semibold text-dark">@alertSummary.AverageResponseTimeMinutes.ToString("F0") min</span>
                             </small>
                         </div>
                     }
 
                     <!-- Recent Alerts -->
+                    <div class="d-flex justify-content-between align-items-center px-4 pt-3 pb-2">
+                         <span class="text-uppercase text-secondary fw-bold small tracking-wide">Recent Alerts</span>
+                    </div>
                     <div class="alerts-list">
                         @if (alerts?.Any() == true)
                         {
                             @foreach (var alert in alerts.Take(4))
                             {
-                                <div class="alert-item p-3 border-bottom @GetAlertClass(alert.Severity)">
-                                    <div class="d-flex align-items-start">
-                                        <div class="alert-icon me-2">
-                                            <i class="bi @GetAlertIcon(alert.Severity)"></i>
+                                <div class="alert-item px-4 py-3 border-bottom border-light hover-bg-light transition-all">
+                                    <div class="d-flex align-items-start position-relative">
+                                        <div class="alert-icon me-3 flex-shrink-0 @(alert.Severity == "Critical" ? "bg-danger-subtle text-danger" : alert.Severity == "Warning" ? "bg-warning-subtle text-warning" : "bg-info-subtle text-info") rounded-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="bi @GetAlertIcon(alert.Severity) fs-5"></i>
                                         </div>
-                                        <div class="flex-grow-1">
-                                            <p class="mb-1 fw-semibold small">@alert.Title</p>
-                                            <small class="text-muted">@alert.FacilityName</small>
-                                            <small class="d-block text-muted">@alert.CreatedAt.ToString("MMM dd, HH:mm")</small>
+                                        <div class="flex-grow-1 min-w-0">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <p class="mb-1 fw-bold text-dark small text-truncate pe-2">@alert.Title</p>
+                                                <small class="text-muted whitespace-nowrap" style="font-size: 0.7rem;">@alert.CreatedAt.ToString("HH:mm")</small>
+                                            </div>
+                                            <small class="text-secondary d-block text-truncate">@alert.FacilityName</small>
                                         </div>
                                     </div>
                                 </div>
@@ -360,9 +372,9 @@ else if (summary != null)
                         }
                         else
                         {
-                            <div class="p-4 text-center text-muted">
-                                <i class="bi bi-check-circle fs-1 text-success"></i>
-                                <p class="mb-0 mt-2">No active alerts</p>
+                            <div class="p-5 text-center text-muted">
+                                <i class="bi bi-bell-slash fs-1 text-secondary opacity-50"></i>
+                                <p class="mb-0 mt-3 small">No active alerts</p>
                             </div>
                         }
                     </div>
@@ -374,46 +386,53 @@ else if (summary != null)
     <!-- Delivery Mode Chart & Facility Performance -->
     <div class="row g-4 mb-4">
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-pie-chart me-2 text-primary"></i>
-                        Delivery Modes (@selectedPeriod)
+            <div class="glass-panel h-100 p-0 overflow-hidden">
+                <div class="p-3 border-bottom border-light d-flex justify-content-between align-items-center bg-white bg-opacity-50">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="bi bi-pie-chart-fill me-2 text-primary"></i>
+                        Delivery Modes
+                        <small class="text-muted fw-normal ms-2 ps-2 border-start">@selectedPeriod</small>
                     </h5>
                 </div>
-                <div class="card-body">
+                <div class="p-4">
                     @if (deliveryModes != null)
                     {
-                        <div class="row">
+                        <div class="row align-items-center h-100">
                             <div class="col-6">
-                                <canvas id="deliveryModeChart" width="200" height="200"></canvas>
+                                <div class="position-relative">
+                                    <canvas id="deliveryModeChart" width="200" height="200"></canvas>
+                                    @* <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                        <span class="d-block fw-bold small text-muted">Total</span>
+                                        <span class="d-block fw-bold fs-5">@deliveryModes.Total</span>
+                                    </div> *@
+                                </div>
                             </div>
                             <div class="col-6">
-                                <div class="delivery-mode-legend">
-                                    <div class="legend-item mb-2">
-                                        <span class="legend-color bg-success"></span>
-                                        <span class="legend-label">Normal Vaginal</span>
-                                        <span class="legend-value">@deliveryModes.NormalVaginal</span>
+                                <div class="delivery-mode-legend p-3 bg-light bg-opacity-50 rounded-3 border border-light">
+                                    <div class="legend-item mb-2 d-flex align-items-center">
+                                        <span class="legend-color bg-success shadow-sm rounded-circle me-2" style="width: 10px; height: 10px;"></span>
+                                        <span class="legend-label small fw-medium flex-grow-1">Normal</span>
+                                        <span class="legend-value small fw-bold">@deliveryModes.NormalVaginal</span>
                                     </div>
-                                    <div class="legend-item mb-2">
-                                        <span class="legend-color bg-info"></span>
-                                        <span class="legend-label">Assisted Vaginal</span>
-                                        <span class="legend-value">@deliveryModes.AssistedVaginal</span>
+                                    <div class="legend-item mb-2 d-flex align-items-center">
+                                        <span class="legend-color bg-info shadow-sm rounded-circle me-2" style="width: 10px; height: 10px;"></span>
+                                        <span class="legend-label small fw-medium flex-grow-1">Assisted</span>
+                                        <span class="legend-value small fw-bold">@deliveryModes.AssistedVaginal</span>
                                     </div>
-                                    <div class="legend-item mb-2">
-                                        <span class="legend-color bg-warning"></span>
-                                        <span class="legend-label">Elective C-Section</span>
-                                        <span class="legend-value">@deliveryModes.ElectiveCaesarean</span>
+                                    <div class="legend-item mb-2 d-flex align-items-center">
+                                        <span class="legend-color bg-warning shadow-sm rounded-circle me-2" style="width: 10px; height: 10px;"></span>
+                                        <span class="legend-label small fw-medium flex-grow-1">Elective C-Sec</span>
+                                        <span class="legend-value small fw-bold">@deliveryModes.ElectiveCaesarean</span>
                                     </div>
-                                    <div class="legend-item mb-2">
-                                        <span class="legend-color bg-danger"></span>
-                                        <span class="legend-label">Emergency C-Section</span>
-                                        <span class="legend-value">@deliveryModes.EmergencyCaesarean</span>
+                                    <div class="legend-item mb-2 d-flex align-items-center">
+                                        <span class="legend-color bg-danger shadow-sm rounded-circle me-2" style="width: 10px; height: 10px;"></span>
+                                        <span class="legend-label small fw-medium flex-grow-1">Emergency C-Sec</span>
+                                        <span class="legend-value small fw-bold">@deliveryModes.EmergencyCaesarean</span>
                                     </div>
-                                    <hr class="my-2" />
-                                    <div class="legend-item">
-                                        <span class="legend-label fw-bold">C-Section Rate</span>
-                                        <span class="legend-value fw-bold @(deliveryModes.CaesareanPercent > 15 ? "text-warning" : "text-success")">
+                                    <hr class="my-2 border-secondary opacity-10" />
+                                    <div class="legend-item d-flex align-items-center justify-content-between">
+                                        <span class="legend-label fw-bold small text-dark">C-Section Rate</span>
+                                        <span class="legend-value fw-bold @(deliveryModes.CaesareanPercent > 15 ? "text-danger" : "text-success")">
                                             @deliveryModes.CaesareanPercent.ToString("F1")%
                                         </span>
                                     </div>
@@ -427,32 +446,32 @@ else if (summary != null)
 
         <!-- Facility Performance Scorecard -->
         <div class="col-lg-7">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-trophy me-2 text-warning"></i>
+            <div class="glass-panel h-100 p-0 overflow-hidden">
+                <div class="p-3 border-bottom border-light d-flex justify-content-between align-items-center bg-white bg-opacity-50">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="bi bi-trophy-fill me-2 text-warning"></i>
                         Facility Performance
                     </h5>
-                    <div class="btn-group btn-group-sm">
-                        <button class="btn @(facilityView == "top" ? "btn-success" : "btn-outline-success")" @onclick='() => SetFacilityView("top")'>
-                            <i class="bi bi-arrow-up-circle me-1"></i>Top
+                    <div class="btn-group btn-group-sm rounded-pill shadow-sm bg-light p-1">
+                        <button class="btn btn-sm rounded-pill px-3 @(facilityView == "top" ? "btn-white shadow-sm fw-bold text-success" : "btn-light text-muted border-0")" @onclick='() => SetFacilityView("top")'>
+                            Top Performing
                         </button>
-                        <button class="btn @(facilityView == "bottom" ? "btn-danger" : "btn-outline-danger")" @onclick='() => SetFacilityView("bottom")'>
-                            <i class="bi bi-arrow-down-circle me-1"></i>Needs Support
+                        <button class="btn btn-sm rounded-pill px-3 @(facilityView == "bottom" ? "btn-white shadow-sm fw-bold text-danger" : "btn-light text-muted border-0")" @onclick='() => SetFacilityView("bottom")'>
+                            Needs Support
                         </button>
                     </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="bg-light bg-opacity-50">
                                 <tr>
-                                    <th class="ps-3">Rank</th>
-                                    <th>Facility</th>
-                                    <th class="text-center">Deliveries</th>
-                                    <th class="text-center">C-Section</th>
-                                    <th class="text-center">Score</th>
-                                    <th class="text-center">Grade</th>
+                                    <th class="ps-4 py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Rank</th>
+                                    <th class="py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Facility</th>
+                                    <th class="text-center py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Deliveries</th>
+                                    <th class="text-center py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">C-Section</th>
+                                    <th class="text-center py-3 fw-semibold text-secondary text-uppercase small tracking-wide border-bottom-0">Score</th>
+                                    <th class="text-center py-3 fw-semibold text-secondary text-uppercase small tracking-wide pe-4 border-bottom-0">Grade</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -460,34 +479,30 @@ else if (summary != null)
                                 {
                                     @foreach (var facility in currentFacilities.Take(5))
                                     {
-                                        <tr>
-                                            <td class="ps-3">
-                                                <span class="rank-badge @(facilityView == "top" ? "rank-top" : "rank-bottom")">
+                                        <tr class="transition-all hover-bg-light">
+                                            <td class="ps-4">
+                                                <span class="rank-badge @(facilityView == "top" ? "rank-top text-success bg-success-subtle border-success-subtle" : "rank-bottom text-danger bg-danger-subtle border-danger-subtle") fw-bold rounded-circle border d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
                                                     @facility.Rank
-                                                    @if (facility.RankChange != 0)
-                                                    {
-                                                        <i class="bi @(facility.RankChange > 0 ? "bi-arrow-up text-success" : "bi-arrow-down text-danger") ms-1 small"></i>
-                                                    }
                                                 </span>
                                             </td>
                                             <td>
-                                                <div class="fw-semibold">@facility.FacilityName</div>
-                                                <small class="text-muted">@facility.DistrictName</small>
+                                                <div class="fw-bold text-dark">@facility.FacilityName</div>
+                                                <small class="text-muted d-block">@facility.DistrictName</small>
                                             </td>
-                                            <td class="text-center">@facility.TotalDeliveries</td>
+                                            <td class="text-center text-secondary fw-medium">@facility.TotalDeliveries</td>
                                             <td class="text-center">
-                                                <span class="@(facility.CaesareanRate <= 15 ? "text-success" : "text-warning")">
+                                                <span class="badge @(facility.CaesareanRate <= 15 ? "bg-success-subtle text-success border border-success-subtle" : "bg-warning-subtle text-warning border border-warning-subtle") rounded-pill">
                                                     @facility.CaesareanRate.ToString("F1")%
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                <div class="progress" style="height: 6px; width: 60px; margin: 0 auto;">
-                                                    <div class="progress-bar @GetScoreColor(facility.OverallScore)" style="width: @facility.OverallScore%"></div>
+                                                <div class="progress rounded-pill bg-light border border-light" style="height: 6px; width: 60px; margin: 0 auto; margin-bottom: 4px;">
+                                                    <div class="progress-bar rounded-pill @GetScoreColor(facility.OverallScore)" style="width: @facility.OverallScore%"></div>
                                                 </div>
-                                                <small>@facility.OverallScore.ToString("F0")</small>
+                                                <small class="fw-bold text-dark">@facility.OverallScore.ToString("F0")</small>
                                             </td>
-                                            <td class="text-center">
-                                                <span class="badge @GetGradeClass(facility.PerformanceGrade)">@facility.PerformanceGrade</span>
+                                            <td class="text-center pe-4">
+                                                <span class="badge @GetGradeClass(facility.PerformanceGrade) rounded-circle shadow-sm border border-light d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">@facility.PerformanceGrade</span>
                                             </td>
                                         </tr>
                                     }
@@ -495,7 +510,8 @@ else if (summary != null)
                                 else
                                 {
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted py-4">
+                                        <td colspan="6" class="text-center text-muted py-5">
+                                            <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
                                             No facility data available
                                         </td>
                                     </tr>
@@ -511,102 +527,117 @@ else if (summary != null)
     <!-- Maternal Health Indicators -->
     <div class="row g-4 mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-heart-pulse me-2 text-danger"></i>
-                        Maternal Health Indicators (@selectedPeriod)
+            <div class="glass-panel p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="bi bi-heart-pulse-fill me-2 text-danger"></i>
+                        Maternal Health Indicators
+                        <small class="text-muted fw-normal ms-2 ps-2 border-start">@selectedPeriod</small>
                     </h5>
                 </div>
-                <div class="card-body">
-                    @if (maternalHealth != null)
-                    {
-                        <div class="row g-3">
-                            <!-- MMR -->
-                            <div class="col-md-6 col-lg-3">
-                                <div class="health-indicator-card @(maternalHealth.MMRStatus == "OnTarget" ? "indicator-success" : "indicator-warning")">
-                                    <div class="indicator-header">
-                                        <span class="indicator-title">Maternal Mortality Ratio</span>
-                                        <span class="indicator-target">Target: &lt;@maternalHealth.WHOTargetMMR</span>
+                @if (maternalHealth != null)
+                {
+                    <div class="row g-4">
+                        <!-- MMR -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="stat-card h-100 p-4 position-relative overflow-hidden @(maternalHealth.MMRStatus == "OnTarget" ? "border-success-subtle bg-success-subtle bg-opacity-10" : "border-warning-subtle bg-warning-subtle bg-opacity-10") hover-lift transition-all">
+                                    <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                                    <i class="bi bi-person-heart fs-1"></i>
+                                </div>
+                                <div class="position-relative z-1">
+                                    <div class="text-secondary text-uppercase fw-bold small mb-2 tracking-wide">Maternal Mortality</div>
+                                    <div class="mb-1">
+                                        <span class="display-6 fw-bold text-dark">@maternalHealth.MaternalMortalityRatio.ToString("F1")</span>
+                                        <span class="fs-6 text-muted">/ 100k</span>
                                     </div>
-                                    <div class="indicator-value">
-                                        @maternalHealth.MaternalMortalityRatio.ToString("F1")
-                                        <small class="indicator-unit">per 100,000</small>
-                                    </div>
-                                    <div class="indicator-detail">
-                                        <span>@maternalHealth.MaternalDeaths deaths / @maternalHealth.TotalLiveBirths live births</span>
-                                        <span class="@(maternalHealth.MMRChangePercent <= 0 ? "text-success" : "text-danger")">
-                                            <i class="bi @(maternalHealth.MMRChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up")"></i>
+                                    <div class="mb-3 text-secondary small">Target: &lt;@maternalHealth.WHOTargetMMR</div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center pt-3 border-top border-light">
+                                        <span class="small fw-medium text-muted">@maternalHealth.MaternalDeaths deaths</span>
+                                        <span class="badge @(maternalHealth.MMRChangePercent <= 0 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger") rounded-pill">
+                                            <i class="bi @(maternalHealth.MMRChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up") me-1"></i>
                                             @Math.Abs(maternalHealth.MMRChangePercent).ToString("F1")%
                                         </span>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- NMR -->
-                            <div class="col-md-6 col-lg-3">
-                                <div class="health-indicator-card @(maternalHealth.NMRStatus == "OnTarget" ? "indicator-success" : "indicator-warning")">
-                                    <div class="indicator-header">
-                                        <span class="indicator-title">Neonatal Mortality Rate</span>
-                                        <span class="indicator-target">Target: &lt;@maternalHealth.WHOTargetNMR</span>
+                        <!-- NMR -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="stat-card h-100 p-4 position-relative overflow-hidden @(maternalHealth.NMRStatus == "OnTarget" ? "border-success-subtle bg-success-subtle bg-opacity-10" : "border-warning-subtle bg-warning-subtle bg-opacity-10") hover-lift transition-all">
+                                <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                                    <i class="bi bi-emoji-smile fs-1"></i>
+                                </div>
+                                <div class="position-relative z-1">
+                                    <div class="text-secondary text-uppercase fw-bold small mb-2 tracking-wide">Neonatal Mortality</div>
+                                    <div class="mb-1">
+                                        <span class="display-6 fw-bold text-dark">@maternalHealth.NeonatalMortalityRate.ToString("F1")</span>
+                                        <span class="fs-6 text-muted">/ 1k</span>
                                     </div>
-                                    <div class="indicator-value">
-                                        @maternalHealth.NeonatalMortalityRate.ToString("F1")
-                                        <small class="indicator-unit">per 1,000</small>
-                                    </div>
-                                    <div class="indicator-detail">
-                                        <span>@maternalHealth.NeonatalDeaths deaths / @maternalHealth.TotalLiveBirths live births</span>
-                                        <span class="@(maternalHealth.NMRChangePercent <= 0 ? "text-success" : "text-danger")">
-                                            <i class="bi @(maternalHealth.NMRChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up")"></i>
+                                    <div class="mb-3 text-secondary small">Target: &lt;@maternalHealth.WHOTargetNMR</div>
+
+                                    <div class="d-flex justify-content-between align-items-center pt-3 border-top border-light">
+                                        <span class="small fw-medium text-muted">@maternalHealth.NeonatalDeaths deaths</span>
+                                        <span class="badge @(maternalHealth.NMRChangePercent <= 0 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger") rounded-pill">
+                                            <i class="bi @(maternalHealth.NMRChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up") me-1"></i>
                                             @Math.Abs(maternalHealth.NMRChangePercent).ToString("F1")%
                                         </span>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Stillbirth Rate -->
-                            <div class="col-md-6 col-lg-3">
-                                <div class="health-indicator-card @(maternalHealth.StillbirthRate <= maternalHealth.WHOTargetStillbirthRate ? "indicator-success" : "indicator-warning")">
-                                    <div class="indicator-header">
-                                        <span class="indicator-title">Stillbirth Rate</span>
-                                        <span class="indicator-target">Target: &lt;@maternalHealth.WHOTargetStillbirthRate</span>
+                        <!-- Stillbirth Rate -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="stat-card h-100 p-4 position-relative overflow-hidden @(maternalHealth.StillbirthRate <= maternalHealth.WHOTargetStillbirthRate ? "border-success-subtle bg-success-subtle bg-opacity-10" : "border-warning-subtle bg-warning-subtle bg-opacity-10") hover-lift transition-all">
+                                <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                                    <i class="bi bi-bandaid fs-1"></i>
+                                </div>
+                                <div class="position-relative z-1">
+                                    <div class="text-secondary text-uppercase fw-bold small mb-2 tracking-wide">Stillbirth Rate</div>
+                                    <div class="mb-1">
+                                        <span class="display-6 fw-bold text-dark">@maternalHealth.StillbirthRate.ToString("F1")</span>
+                                        <span class="fs-6 text-muted">/ 1k</span>
                                     </div>
-                                    <div class="indicator-value">
-                                        @maternalHealth.StillbirthRate.ToString("F1")
-                                        <small class="indicator-unit">per 1,000</small>
-                                    </div>
-                                    <div class="indicator-detail">
-                                        <span>@maternalHealth.Stillbirths stillbirths / @maternalHealth.TotalDeliveries deliveries</span>
-                                        <span class="@(maternalHealth.StillbirthRateChangePercent <= 0 ? "text-success" : "text-danger")">
-                                            <i class="bi @(maternalHealth.StillbirthRateChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up")"></i>
+                                    <div class="mb-3 text-secondary small">Target: &lt;@maternalHealth.WHOTargetStillbirthRate</div>
+
+                                    <div class="d-flex justify-content-between align-items-center pt-3 border-top border-light">
+                                        <span class="small fw-medium text-muted">@maternalHealth.Stillbirths stillbirths</span>
+                                        <span class="badge @(maternalHealth.StillbirthRateChangePercent <= 0 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger") rounded-pill">
+                                            <i class="bi @(maternalHealth.StillbirthRateChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up") me-1"></i>
                                             @Math.Abs(maternalHealth.StillbirthRateChangePercent).ToString("F1")%
                                         </span>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- C-Section Rate -->
-                            <div class="col-md-6 col-lg-3">
-                                <div class="health-indicator-card @(maternalHealth.CaesareanStatus == "OnTarget" ? "indicator-success" : "indicator-warning")">
-                                    <div class="indicator-header">
-                                        <span class="indicator-title">Caesarean Section Rate</span>
-                                        <span class="indicator-target">Target: @maternalHealth.WHOTargetCaesareanRateLow-@maternalHealth.WHOTargetCaesareanRateHigh%</span>
+                        <!-- C-Section Rate -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="stat-card h-100 p-4 position-relative overflow-hidden @(maternalHealth.CaesareanStatus == "OnTarget" ? "border-success-subtle bg-success-subtle bg-opacity-10" : "border-warning-subtle bg-warning-subtle bg-opacity-10") hover-lift transition-all">
+                                <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                                    <i class="bi bi-clipboard-pulse fs-1"></i>
+                                </div>
+                                <div class="position-relative z-1">
+                                    <div class="text-secondary text-uppercase fw-bold small mb-2 tracking-wide">C-Section Rate</div>
+                                    <div class="mb-1">
+                                        <span class="display-6 fw-bold text-dark">@maternalHealth.CaesareanRate.ToString("F1")%</span>
                                     </div>
-                                    <div class="indicator-value">
-                                        @maternalHealth.CaesareanRate.ToString("F1")%
-                                    </div>
-                                    <div class="indicator-detail">
-                                        <span>Complication Rate: @maternalHealth.ComplicationRate.ToString("F1")%</span>
-                                        <span class="@(maternalHealth.CaesareanRateChangePercent <= 0 ? "text-success" : "text-muted")">
-                                            <i class="bi @(maternalHealth.CaesareanRateChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up")"></i>
+                                    <div class="mb-3 text-secondary small">Target: @maternalHealth.WHOTargetCaesareanRateLow-@maternalHealth.WHOTargetCaesareanRateHigh%</div>
+
+                                    <div class="d-flex justify-content-between align-items-center pt-3 border-top border-light">
+                                        <span class="small fw-medium text-muted">Comp. Rate: @maternalHealth.ComplicationRate.ToString("F1")%</span>
+                                        <span class="badge @(maternalHealth.CaesareanRateChangePercent <= 0 ? "bg-success-subtle text-success" : "bg-secondary-subtle text-dark") rounded-pill">
+                                            <i class="bi @(maternalHealth.CaesareanRateChangePercent <= 0 ? "bi-arrow-down" : "bi-arrow-up") me-1"></i>
                                             @Math.Abs(maternalHealth.CaesareanRateChangePercent).ToString("F1")%
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    }
-                </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -614,55 +645,57 @@ else if (summary != null)
     <!-- Geographic Performance (Regions/Districts based on access level) -->
     <div class="row g-4 mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-geo-alt me-2 text-primary"></i>
+            <div class="glass-panel p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
                         @(accessLevel == "National" ? "Regional" : accessLevel == "Regional" ? "District" : "Facility") Performance
                     </h5>
                     @if (accessLevel == "National")
                     {
-                        <a href="regions" class="btn btn-sm btn-outline-primary">View All Regions</a>
+                        <a href="regions" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm hover-lift">View All Regions</a>
                     }
                     else if (accessLevel == "Regional")
                     {
-                        <a href="districts" class="btn btn-sm btn-outline-primary">View All Districts</a>
+                        <a href="districts" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm hover-lift">View All Districts</a>
                     }
                 </div>
-                <div class="card-body">
+                <div>
                     @if (geographicPerformance?.Any() == true)
                     {
-                        <div class="row g-3">
+                        <div class="row g-4">
                             @foreach (var area in geographicPerformance.Take(accessLevel == "District" ? 6 : 8))
                             {
                                 <div class="col-md-6 col-lg-3">
-                                    <div class="geo-performance-card @GetPerformanceClass(area.PerformanceStatus)">
-                                        <div class="geo-header">
-                                            <span class="geo-name">@area.Name</span>
-                                            <span class="performance-badge @GetPerformanceBadgeClass(area.PerformanceStatus)">
-                                                @area.PerformanceScore.ToString("F0")
+                                    <div class="stat-card h-100 p-4 @GetPerformanceClass(area.PerformanceStatus) hover-lift transition-all border border-light">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="text-truncate pe-2">
+                                                <h6 class="mb-1 fw-bold text-dark text-truncate">@area.Name</h6>
+                                                <small class="text-muted">@area.ActiveFacilities active</small>
+                                            </div>
+                                            <span class="badge rounded-pill @GetPerformanceBadgeClass(area.PerformanceStatus)">
+                                                Score: @area.PerformanceScore.ToString("F0")
                                             </span>
                                         </div>
-                                        <div class="geo-stats">
-                                            <div class="geo-stat">
-                                                <span class="geo-stat-value">@area.TotalDeliveries</span>
-                                                <span class="geo-stat-label">Deliveries</span>
+                                        <div class="bg-light bg-opacity-50 rounded-3 p-2 border border-light">
+                                            <div class="row g-0 text-center">
+                                                <div class="col-3 border-end border-light">
+                                                    <span class="fw-bold text-dark d-block">@area.TotalDeliveries</span>
+                                                    <span class="small text-secondary" style="font-size: 0.65rem;">Deliv.</span>
+                                                </div>
+                                                <div class="col-3 border-end border-light">
+                                                    <span class="fw-bold text-dark d-block">@area.ActiveLabors</span>
+                                                    <span class="small text-secondary" style="font-size: 0.65rem;">Active</span>
+                                                </div>
+                                                <div class="col-3 border-end border-light">
+                                                    <span class="fw-bold text-@(area.HighRiskCases > 3 ? "danger" : "warning") d-block">@area.HighRiskCases</span>
+                                                    <span class="small text-secondary" style="font-size: 0.65rem;">Risks</span>
+                                                </div>
+                                                <div class="col-3">
+                                                    <span class="fw-bold text-dark d-block">@area.CaesareanRate.ToString("F0")%</span>
+                                                    <span class="small text-secondary" style="font-size: 0.65rem;">C-Sec</span>
+                                                </div>
                                             </div>
-                                            <div class="geo-stat">
-                                                <span class="geo-stat-value">@area.ActiveLabors</span>
-                                                <span class="geo-stat-label">Active</span>
-                                            </div>
-                                            <div class="geo-stat">
-                                                <span class="geo-stat-value text-@(area.HighRiskCases > 3 ? "danger" : "warning")">@area.HighRiskCases</span>
-                                                <span class="geo-stat-label">High Risk</span>
-                                            </div>
-                                            <div class="geo-stat">
-                                                <span class="geo-stat-value">@area.CaesareanRate.ToString("F0")%</span>
-                                                <span class="geo-stat-label">C-Section</span>
-                                            </div>
-                                        </div>
-                                        <div class="geo-footer">
-                                            <small class="text-muted">@area.ActiveFacilities/@area.TotalFacilities facilities active</small>
                                         </div>
                                     </div>
                                 </div>
@@ -671,9 +704,9 @@ else if (summary != null)
                     }
                     else
                     {
-                        <div class="text-center text-muted py-4">
-                            <i class="bi bi-geo-alt fs-1"></i>
-                            <p class="mb-0 mt-2">No geographic data available</p>
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-geo-alt fs-1 opacity-25"></i>
+                            <p class="mb-0 mt-3">No geographic data available</p>
                         </div>
                     }
                 </div>
@@ -684,63 +717,59 @@ else if (summary != null)
     <!-- Quick Links Based on Access Level -->
     <div class="row g-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-grid me-2 text-primary"></i>
-                        Quick Access
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        @if (accessLevel == "National")
-                        {
-                            <div class="col-md-3">
-                                <a href="regions" class="quick-link-card">
-                                    <i class="bi bi-map text-primary"></i>
-                                    <span>View All Regions</span>
-                                    <small>@summary.TotalRegions regions</small>
-                                </a>
+            <div class="glass-panel p-4 bg-light bg-opacity-10">
+                <h5 class="fw-bold mb-4 text-center text-secondary text-uppercase tracking-wide small">Quick Access</h5>
+                <div class="row g-3 justify-content-center">
+                    @if (accessLevel == "National")
+                    {
+                        <div class="col-md-3">
+                            <a href="regions" class="stat-card h-100 text-center text-decoration-none p-4 d-block hover-lift transition-all border border-light">
+                                <div class="p-3 bg-primary-subtle text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                    <i class="bi bi-map-fill fs-3"></i>
+                                </div>
+                                <span class="d-block fw-bold text-dark mb-1">View All Regions</span>
+                                <small class="text-muted">@summary.TotalRegions regions</small>
+                            </a>
+                        </div>
+                    }
+                    @if (accessLevel == "National" || accessLevel == "Regional")
+                    {
+                        <div class="col-md-3">
+                            <a href="districts" class="stat-card h-100 text-center text-decoration-none p-4 d-block hover-lift transition-all border border-light">
+                                <div class="p-3 bg-info-subtle text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                    <i class="bi bi-building-fill fs-3"></i>
+                                </div>
+                                <span class="d-block fw-bold text-dark mb-1">View Districts</span>
+                                <small class="text-muted">@summary.TotalDistricts districts</small>
+                            </a>
+                        </div>
+                    }
+                    <div class="col-md-3">
+                        <a href="facilities" class="stat-card h-100 text-center text-decoration-none p-4 d-block hover-lift transition-all border border-light">
+                            <div class="p-3 bg-success-subtle text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-hospital-fill fs-3"></i>
                             </div>
-                        }
-                        @if (accessLevel == "National" || accessLevel == "Regional")
-                        {
-                            <div class="col-md-3">
-                                <a href="districts" class="quick-link-card">
-                                    <i class="bi bi-building text-info"></i>
-                                    <span>View Districts</span>
-                                    <small>@summary.TotalDistricts districts</small>
-                                </a>
+                            <span class="d-block fw-bold text-dark mb-1">View Facilities</span>
+                            <small class="text-muted">@summary.TotalFacilities facilities</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="live-labor" class="stat-card h-100 text-center text-decoration-none p-4 d-block hover-lift transition-all border border-light">
+                            <div class="p-3 bg-danger-subtle text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-activity fs-3"></i>
                             </div>
-                        }
-                        <div class="col-md-3">
-                            <a href="facilities" class="quick-link-card">
-                                <i class="bi bi-hospital text-success"></i>
-                                <span>View Facilities</span>
-                                <small>@summary.TotalFacilities facilities</small>
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="live-labor" class="quick-link-card">
-                                <i class="bi bi-activity text-danger"></i>
-                                <span>Live Labour Board</span>
-                                <small>@summary.ActiveLabors active cases</small>
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="deliveries" class="quick-link-card">
-                                <i class="bi bi-clipboard2-pulse text-warning"></i>
-                                <span>Delivery Analytics</span>
-                                <small>@summary.TotalDeliveriesThisYear this year</small>
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="alerts" class="quick-link-card">
-                                <i class="bi bi-bell text-danger"></i>
-                                <span>Alert Management</span>
-                                <small>@(alertSummary?.TotalActiveAlerts ?? 0) active alerts</small>
-                            </a>
-                        </div>
+                            <span class="d-block fw-bold text-dark mb-1">Live Labour Board</span>
+                            <small class="text-muted">@summary.ActiveLabors active cases</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                            <a href="reports" class="stat-card h-100 text-center text-decoration-none p-4 d-block hover-lift transition-all border border-light">
+                            <div class="p-3 bg-warning-subtle text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-file-earmark-bar-graph-fill fs-3"></i>
+                            </div>
+                            <span class="d-block fw-bold text-dark mb-1">Generate Report</span>
+                            <small class="text-muted">Export data</small>
+                        </a>
                     </div>
                 </div>
             </div>

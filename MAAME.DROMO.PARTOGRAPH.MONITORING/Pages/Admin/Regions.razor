@@ -9,16 +9,16 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="mb-1">
-                <i class="bi bi-sliders me-2 text-primary"></i>
+            <h2 class="mb-1 text-gradient-primary fw-bold">
+                <i class="bi bi-sliders me-2"></i>
                 Manage Regions & Districts
             </h2>
-            <p class="text-muted mb-0">
+            <p class="text-secondary mb-0">
                 Administrative configuration for geographic hierarchy
             </p>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary" @onclick="LoadData">
+            <button class="btn btn-white border shadow-sm hover-lift" @onclick="LoadData">
                 <i class="bi bi-arrow-clockwise me-1"></i> Refresh
             </button>
         </div>
@@ -28,46 +28,40 @@
 <!-- Summary Statistics -->
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="text-muted mb-1">Total Regions</p>
-                        <h3 class="mb-0">@regions.Count</h3>
-                    </div>
-                    <div class="stat-icon bg-primary-subtle text-primary">
-                        <i class="bi bi-map"></i>
-                    </div>
+        <div class="stat-card p-4 h-100 hover-lift">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-secondary mb-1">Total Regions</p>
+                    <h3 class="mb-0 fw-bold text-dark">@regions.Count</h3>
+                </div>
+                <div class="icon-box bg-primary-subtle text-primary rounded-circle shadow-sm">
+                    <i class="bi bi-map fs-4"></i>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="text-muted mb-1">Total Districts</p>
-                        <h3 class="mb-0">@regions.Sum(r => r.DistrictCount)</h3>
-                    </div>
-                    <div class="stat-icon bg-success-subtle text-success">
-                        <i class="bi bi-building"></i>
-                    </div>
+        <div class="stat-card p-4 h-100 hover-lift">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-secondary mb-1">Total Districts</p>
+                    <h3 class="mb-0 fw-bold text-dark">@regions.Sum(r => r.DistrictCount)</h3>
+                </div>
+                <div class="icon-box bg-success-subtle text-success rounded-circle shadow-sm">
+                    <i class="bi bi-building fs-4"></i>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100 stat-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="text-muted mb-1">Total Facilities</p>
-                        <h3 class="mb-0">@regions.Sum(r => r.FacilityCount)</h3>
-                    </div>
-                    <div class="stat-icon bg-info-subtle text-info">
-                        <i class="bi bi-hospital"></i>
-                    </div>
+        <div class="stat-card p-4 h-100 hover-lift">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-secondary mb-1">Total Facilities</p>
+                    <h3 class="mb-0 fw-bold text-dark">@regions.Sum(r => r.FacilityCount)</h3>
+                </div>
+                <div class="icon-box bg-info-subtle text-info rounded-circle shadow-sm">
+                    <i class="bi bi-hospital fs-4"></i>
                 </div>
             </div>
         </div>
@@ -80,7 +74,7 @@
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-3 text-muted">Loading regions...</p>
+        <p class="mt-3 text-secondary">Loading regions...</p>
     </div>
 }
 else
@@ -88,31 +82,31 @@ else
     <div class="row g-4">
         <!-- Regions List -->
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
+            <div class="glass-panel h-100 p-0 overflow-hidden">
+                <div class="p-4 border-bottom bg-light bg-opacity-50 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-dark">
                         <i class="bi bi-map me-2 text-primary"></i>
                         Regions
                     </h5>
-                    <span class="badge bg-primary">@regions.Count regions</span>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill">@regions.Count regions</span>
                 </div>
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
                         @foreach (var region in regions.OrderBy(r => r.Name))
                         {
-                            <button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center @(selectedRegion?.ID == region.ID ? "active" : "")"
+                            <button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3 border-bottom transition-all @(selectedRegion?.ID == region.ID ? "active bg-primary text-white border-primary" : "bg-transparent hover-bg-light")"
                                     @onclick="() => SelectRegion(region)">
                                 <div>
-                                    <div class="fw-semibold">@region.Name</div>
-                                    <small class="@(selectedRegion?.ID == region.ID ? "text-white-50" : "text-muted")">
+                                    <div class="fw-semibold @(selectedRegion?.ID == region.ID ? "text-white" : "text-dark")">@region.Name</div>
+                                    <small class="@(selectedRegion?.ID == region.ID ? "text-white-50" : "text-secondary")">
                                         @region.DistrictCount districts | @region.FacilityCount facilities
                                     </small>
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="badge @GetPerformanceBadge(region.PerformanceStatus)">
+                                    <span class="badge rounded-pill @(selectedRegion?.ID == region.ID ? "bg-white text-primary" : GetPerformanceBadge(region.PerformanceStatus))">
                                         @region.PerformanceStatus
                                     </span>
-                                    <i class="bi bi-chevron-right"></i>
+                                    <i class="bi bi-chevron-right @(selectedRegion?.ID == region.ID ? "text-white" : "text-secondary")"></i>
                                 </div>
                             </button>
                         }
@@ -126,62 +120,62 @@ else
             @if (selectedRegion != null)
             {
                 <!-- Region Details Card -->
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">
+                <div class="glass-panel p-0 mb-4 overflow-hidden shadow-sm">
+                    <div class="p-4 bg-primary text-white">
+                        <h5 class="mb-0 fw-bold">
                             <i class="bi bi-geo-alt me-2"></i>
                             @selectedRegion.Name Region
                         </h5>
                     </div>
-                    <div class="card-body">
+                    <div class="p-4">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <div class="text-center p-3 bg-light rounded">
-                                    <h4 class="text-primary mb-0">@selectedRegion.DistrictCount</h4>
-                                    <small class="text-muted">Districts</small>
+                                <div class="text-center p-3 bg-light rounded hover-lift transition-all border">
+                                    <h4 class="text-primary fw-bold mb-0">@selectedRegion.DistrictCount</h4>
+                                    <small class="text-secondary">Districts</small>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="text-center p-3 bg-light rounded">
-                                    <h4 class="text-success mb-0">@selectedRegion.FacilityCount</h4>
-                                    <small class="text-muted">Facilities</small>
+                                <div class="text-center p-3 bg-light rounded hover-lift transition-all border">
+                                    <h4 class="text-success fw-bold mb-0">@selectedRegion.FacilityCount</h4>
+                                    <small class="text-secondary">Facilities</small>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="text-center p-3 bg-light rounded">
-                                    <h4 class="text-info mb-0">@selectedRegion.DeliveriesThisMonth</h4>
-                                    <small class="text-muted">Deliveries (Month)</small>
+                                <div class="text-center p-3 bg-light rounded hover-lift transition-all border">
+                                    <h4 class="text-info fw-bold mb-0">@selectedRegion.DeliveriesThisMonth</h4>
+                                    <small class="text-secondary">Deliveries (Month)</small>
                                 </div>
                             </div>
                         </div>
 
-                        <hr />
+                        <hr class="text-secondary opacity-25 my-4" />
 
                         <div class="row">
                             <div class="col-md-6">
                                 <table class="table table-sm table-borderless mb-0">
                                     <tr>
-                                        <td class="text-muted">Region Code:</td>
-                                        <td class="fw-semibold">@selectedRegion.Code</td>
+                                        <td class="text-secondary">Region Code:</td>
+                                        <td class="fw-semibold text-dark">@selectedRegion.Code</td>
                                     </tr>
                                     <tr>
-                                        <td class="text-muted">Active Labours:</td>
-                                        <td class="fw-semibold">@selectedRegion.ActiveLabors</td>
+                                        <td class="text-secondary">Active Labours:</td>
+                                        <td class="fw-semibold text-dark">@selectedRegion.ActiveLabors</td>
                                     </tr>
                                 </table>
                             </div>
                             <div class="col-md-6">
                                 <table class="table table-sm table-borderless mb-0">
                                     <tr>
-                                        <td class="text-muted">C-Section Rate:</td>
+                                        <td class="text-secondary">C-Section Rate:</td>
                                         <td class="fw-semibold @(selectedRegion.CaesareanRate > 15 ? "text-warning" : "text-success")">
                                             @selectedRegion.CaesareanRate.ToString("F1")%
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-muted">Performance:</td>
+                                        <td class="text-secondary">Performance:</td>
                                         <td>
-                                            <span class="badge @GetPerformanceBadge(selectedRegion.PerformanceStatus)">
+                                            <span class="badge rounded-pill @GetPerformanceBadge(selectedRegion.PerformanceStatus)">
                                                 @selectedRegion.PerformanceStatus
                                             </span>
                                         </td>
@@ -193,13 +187,13 @@ else
                 </div>
 
                 <!-- Districts Table -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
+                <div class="glass-panel p-0 overflow-hidden">
+                    <div class="p-4 border-bottom bg-light bg-opacity-50 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold text-dark">
                             <i class="bi bi-building me-2 text-success"></i>
                             Districts in @selectedRegion.Name
                         </h5>
-                        <span class="badge bg-success">@regionDistricts.Count districts</span>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">@regionDistricts.Count districts</span>
                     </div>
                     <div class="card-body p-0">
                         @if (isLoadingDistricts)
@@ -214,43 +208,43 @@ else
                         {
                             <div class="table-responsive">
                                 <table class="table table-hover mb-0">
-                                    <thead class="table-light">
+                                    <thead class="bg-light">
                                         <tr>
-                                            <th>District</th>
-                                            <th>Type</th>
-                                            <th class="text-center">Facilities</th>
-                                            <th class="text-center">Active Labours</th>
-                                            <th class="text-center">Deliveries (Month)</th>
-                                            <th>Status</th>
+                                            <th class="ps-4 py-3 text-secondary border-0">District</th>
+                                            <th class="py-3 text-secondary border-0">Type</th>
+                                            <th class="text-center py-3 text-secondary border-0">Facilities</th>
+                                            <th class="text-center py-3 text-secondary border-0">Active Labours</th>
+                                            <th class="text-center py-3 text-secondary border-0">Deliveries (Month)</th>
+                                            <th class="pe-4 py-3 text-secondary border-0">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach (var district in regionDistricts.OrderBy(d => d.Name))
                                         {
                                             <tr>
-                                                <td>
-                                                    <div class="fw-semibold">@district.Name</div>
-                                                    <small class="text-muted">@district.Code</small>
+                                                <td class="ps-4">
+                                                    <div class="fw-semibold text-dark">@district.Name</div>
+                                                    <small class="text-secondary font-monospace">@district.Code</small>
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-light text-dark">@district.Type</span>
+                                                    <span class="badge bg-light text-secondary border">@district.Type</span>
                                                 </td>
                                                 <td class="text-center">
-                                                    <span class="badge bg-info">@district.FacilityCount</span>
+                                                    <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill">@district.FacilityCount</span>
                                                 </td>
                                                 <td class="text-center">
                                                     @if (district.ActiveLabors > 0)
                                                     {
-                                                        <span class="badge bg-warning text-dark">@district.ActiveLabors</span>
+                                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">@district.ActiveLabors</span>
                                                     }
                                                     else
                                                     {
                                                         <span class="text-muted">-</span>
                                                     }
                                                 </td>
-                                                <td class="text-center fw-semibold">@district.DeliveriesThisMonth</td>
-                                                <td>
-                                                    <span class="badge @GetPerformanceBadge(district.PerformanceStatus)">
+                                                <td class="text-center fw-semibold text-dark">@district.DeliveriesThisMonth</td>
+                                                <td class="pe-4">
+                                                    <span class="badge rounded-pill @GetPerformanceBadge(district.PerformanceStatus)">
                                                         @district.PerformanceStatus
                                                     </span>
                                                 </td>
@@ -263,8 +257,8 @@ else
                         else
                         {
                             <div class="text-center py-4">
-                                <i class="bi bi-building text-muted" style="font-size: 2rem;"></i>
-                                <p class="text-muted mt-2 mb-0">No districts found in this region</p>
+                                <i class="bi bi-building text-muted opacity-25" style="font-size: 2rem;"></i>
+                                <p class="text-secondary mt-2 mb-0">No districts found in this region</p>
                             </div>
                         }
                     </div>
@@ -273,41 +267,39 @@ else
             else
             {
                 <!-- No Selection State -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center py-5">
-                        <i class="bi bi-map text-muted" style="font-size: 4rem;"></i>
-                        <h5 class="mt-4 mb-2">Select a Region</h5>
-                        <p class="text-muted">
-                            Click on a region from the list to view its details and districts.
-                        </p>
-                    </div>
+                <div class="glass-panel p-5 text-center">
+                    <i class="bi bi-map text-muted opacity-25" style="font-size: 4rem;"></i>
+                    <h5 class="mt-4 mb-2 fw-bold text-dark">Select a Region</h5>
+                    <p class="text-secondary">
+                        Click on a region from the list to view its details and districts.
+                    </p>
                 </div>
             }
         </div>
     </div>
 
     <!-- Geographic Overview Map Placeholder -->
-    <div class="card border-0 shadow-sm mt-4">
-        <div class="card-header bg-white">
-            <h5 class="mb-0">
+    <div class="glass-panel p-0 mt-4 overflow-hidden">
+        <div class="p-4 border-bottom bg-light bg-opacity-50">
+            <h5 class="mb-0 fw-bold text-dark">
                 <i class="bi bi-globe me-2 text-primary"></i>
                 Geographic Overview
             </h5>
         </div>
-        <div class="card-body">
+        <div class="p-4">
             <div class="row g-3">
                 @foreach (var region in regions.OrderByDescending(r => r.FacilityCount).Take(6))
                 {
                     <div class="col-md-4 col-lg-2">
-                        <div class="region-card p-3 rounded @(selectedRegion?.ID == region.ID ? "region-selected" : "")"
+                        <div class="region-card p-3 rounded @(selectedRegion?.ID == region.ID ? "region-selected shadow-sm" : "bg-light bg-opacity-50 border") h-100 hover-lift text-center cursor-pointer"
                              @onclick="() => SelectRegion(region)">
                             <div class="text-center">
-                                <div class="region-icon mb-2">
+                                <div class="region-icon mb-3 shadow-sm mx-auto">
                                     <i class="bi bi-geo-alt-fill"></i>
                                 </div>
-                                <h6 class="mb-1">@region.Name</h6>
-                                <small class="text-muted d-block">@region.FacilityCount facilities</small>
-                                <div class="progress mt-2" style="height: 4px;">
+                                <h6 class="mb-1 fw-bold text-dark">@region.Name</h6>
+                                <small class="text-secondary d-block mb-2">@region.FacilityCount facilities</small>
+                                <div class="progress" style="height: 4px;">
                                     <div class="progress-bar @GetPerformanceBarClass(region.PerformanceStatus)"
                                          style="width: @GetPerformanceWidth(region.PerformanceStatus)%"></div>
                                 </div>

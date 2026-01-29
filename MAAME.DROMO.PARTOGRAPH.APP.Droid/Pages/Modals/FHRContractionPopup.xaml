@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<sfPopup:SfPopup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<sfPopup:SfPopup AnimationMode='SlideOnTop' xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.FHRContractionPopup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
@@ -73,11 +73,11 @@
                                                 Minimum="0" />
                     </core:SfTextInputLayout>
 
-                    <VerticalStackLayout Padding="10,0,0,0">
+                    <VerticalStackLayout Padding="0,10,0,5">
                         <Label Text="Contraction Strength" FontAttributes="Bold"/>
                     </VerticalStackLayout>
 
-                    <buttons:SfSegmentedControl x:Name="strengthSegmentedControl" CornerRadius="8" Margin="-10,0,0,0" VisibleSegmentsCount="3" SelectedIndex="{Binding StrengthIndex, Mode=TwoWay}">
+                    <buttons:SfSegmentedControl x:Name="strengthSegmentedControl" CornerRadius="8" VisibleSegmentsCount="3" SelectedIndex="{Binding StrengthIndex, Mode=TwoWay}">
                         <buttons:SfSegmentedControl.ItemsSource>
                             <x:Array Type="{x:Type x:String}">
                                 <x:String>Mild</x:String>
@@ -185,18 +185,12 @@
                     <Button Grid.Column="0"
                             Text="Cancel"
                             Command="{Binding CancelCommand}"
-                            BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                            TextColor="{AppThemeBinding Light=#333, Dark=White}"
-                            HeightRequest="50"
-                            CornerRadius="10" />
+                            Style="{StaticResource SecondaryActionStyle}" />
 
                     <Button Grid.Column="1"
                             Text="Save Assessment"
                             Command="{Binding SaveCommand}"
-                            BackgroundColor="#4CAF50"
-                            TextColor="White"
-                            HeightRequest="50"
-                            CornerRadius="10" />
+                            Style="{StaticResource PrimaryActionStyle}" />
                 </Grid>
 
             </VerticalStackLayout>
@@ -204,3 +198,4 @@
         </DataTemplate>
     </sfPopup:SfPopup.ContentTemplate>
 </sfPopup:SfPopup>
+

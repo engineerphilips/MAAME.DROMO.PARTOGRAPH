@@ -9,31 +9,33 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="mb-1">
+            <h2 class="mb-1 text-gradient-primary fw-bold">
                 <i class="bi bi-gear me-2 text-secondary"></i>
                 Alert Settings
             </h2>
-            <p class="text-muted mb-0">
+            <p class="text-secondary mb-0">
                 Configure alert thresholds and notification preferences
             </p>
         </div>
     </div>
 </div>
 
-<ul class="nav nav-tabs mb-4">
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "thresholds" ? "active" : "")"
-                @onclick="() => activeTab = TabState.Thresholds.ToString().ToLower()">
-            <i class="bi bi-sliders me-1"></i> Alert Thresholds
-        </button> 
-    </li>   
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "notifications" ? "active" : "")"
-                @onclick="() => activeTab = TabState.Notifications.ToString().ToLower()">
-            <i class="bi bi-bell me-1"></i> Notification Preferences
-        </button>
-    </li>
-</ul>
+<div class="glass-panel p-2 d-inline-block mb-4">
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "thresholds" ? "active shadow-sm" : "text-secondary")"
+                    @onclick="() => activeTab = TabState.Thresholds.ToString().ToLower()">
+                <i class="bi bi-sliders me-1"></i> Alert Thresholds
+            </button> 
+        </li>   
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "notifications" ? "active shadow-sm" : "text-secondary")"
+                    @onclick="() => activeTab = TabState.Notifications.ToString().ToLower()">
+                <i class="bi bi-bell me-1"></i> Notification Preferences
+            </button>
+        </li>
+    </ul>
+</div>
 
 @if (isLoading)
 {
@@ -41,6 +43,7 @@
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
+        <p class="mt-3 text-secondary">Loading settings...</p>
     </div>
 }
 else
@@ -50,123 +53,123 @@ else
         <!-- Alert Thresholds Configuration -->
         <div class="row">
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="bi bi-heart-pulse me-2 text-danger"></i>Fetal Heart Rate Thresholds</h5>
+                <div class="glass-panel mb-4 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-heart-pulse me-2 text-danger"></i>Fetal Heart Rate Thresholds</h5>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" @bind="thresholds.UseCustomThresholds" id="customFHR">
-                            <label class="form-check-label" for="customFHR">Custom</label>
+                            <input class="form-check-input hover-lift" type="checkbox" @bind="thresholds.UseCustomThresholds" id="customFHR">
+                            <label class="form-check-label fw-medium text-dark" for="customFHR">Enable Custom Thresholds</label>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Critical Low (bpm)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Critical Low (bpm)</label>
                                 <input type="number" class="form-control" @bind="thresholds.FHRCriticalLow"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 100 bpm</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 100 bpm</small>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Warning Low (bpm)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Warning Low (bpm)</label>
                                 <input type="number" class="form-control" @bind="thresholds.FHRWarningLow"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 110 bpm</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 110 bpm</small>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Warning High (bpm)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Warning High (bpm)</label>
                                 <input type="number" class="form-control" @bind="thresholds.FHRWarningHigh"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 160 bpm</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 160 bpm</small>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Critical High (bpm)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Critical High (bpm)</label>
                                 <input type="number" class="form-control" @bind="thresholds.FHRCriticalHigh"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 180 bpm</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 180 bpm</small>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="bi bi-droplet me-2 text-info"></i>Blood Pressure Thresholds</h5>
+                <div class="glass-panel mb-4 p-4">
+                    <div class="mb-4 border-bottom pb-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-droplet me-2 text-info"></i>Blood Pressure Thresholds</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Systolic Warning (mmHg)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Systolic Warning (mmHg)</label>
                                 <input type="number" class="form-control" @bind="thresholds.SystolicWarning"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 140 mmHg</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 140 mmHg</small>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Systolic Critical (mmHg)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Systolic Critical (mmHg)</label>
                                 <input type="number" class="form-control" @bind="thresholds.SystolicCritical"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 160 mmHg</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 160 mmHg</small>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Diastolic Warning (mmHg)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Diastolic Warning (mmHg)</label>
                                 <input type="number" class="form-control" @bind="thresholds.DiastolicWarning"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 90 mmHg</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 90 mmHg</small>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Diastolic Critical (mmHg)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Diastolic Critical (mmHg)</label>
                                 <input type="number" class="form-control" @bind="thresholds.DiastolicCritical"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 110 mmHg</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 110 mmHg</small>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="bi bi-clock me-2 text-warning"></i>Measurement Intervals</h5>
+                <div class="glass-panel mb-4 p-4">
+                    <div class="mb-4 border-bottom pb-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-clock me-2 text-warning"></i>Measurement Intervals</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label">FHR Interval (minutes)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">FHR Interval (minutes)</label>
                                 <input type="number" class="form-control" @bind="thresholds.FHRMeasurementInterval"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 30 min</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 30 min</small>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">BP Interval (minutes)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">BP Interval (minutes)</label>
                                 <input type="number" class="form-control" @bind="thresholds.BPMeasurementInterval"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 60 min</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 60 min</small>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Dilatation Interval (minutes)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Dilatation Interval (minutes)</label>
                                 <input type="number" class="form-control" @bind="thresholds.DilatationMeasurementInterval"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">WHO default: 240 min</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>WHO default: 240 min</small>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="bi bi-arrow-up-circle me-2 text-danger"></i>Escalation Settings</h5>
+                <div class="glass-panel mb-4 p-4">
+                    <div class="mb-4 border-bottom pb-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-arrow-up-circle me-2 text-danger"></i>Escalation Settings</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Escalation Timeout (minutes)</label>
+                                <label class="form-label text-secondary small text-uppercase fw-bold">Escalation Timeout (minutes)</label>
                                 <input type="number" class="form-control" @bind="thresholds.EscalationTimeoutMinutes"
                                        disabled="@(!thresholds.UseCustomThresholds)" />
-                                <small class="text-muted">Default: 15 minutes</small>
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Default: 15 minutes</small>
                             </div>
                             <div class="col-md-6 d-flex align-items-center">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" @bind="thresholds.AutoEscalateUnacknowledged"
+                                <div class="form-check form-switch pt-4">
+                                    <input class="form-check-input hover-lift" type="checkbox" @bind="thresholds.AutoEscalateUnacknowledged"
                                            disabled="@(!thresholds.UseCustomThresholds)" id="autoEscalate">
-                                    <label class="form-check-label" for="autoEscalate">
+                                    <label class="form-check-label text-dark" for="autoEscalate">
                                         Auto-escalate unacknowledged alerts
                                     </label>
                                 </div>
@@ -176,28 +179,28 @@ else
                 </div>
 
                 <div class="d-flex gap-2">
-                    <button class="btn btn-primary" @onclick="SaveThresholds">
+                    <button class="btn btn-primary px-4 hover-lift shadow-sm" @onclick="SaveThresholds">
                         <i class="bi bi-save me-1"></i> Save Settings
                     </button>
-                    <button class="btn btn-outline-secondary" @onclick="ResetToDefaults">
+                    <button class="btn btn-outline-secondary px-4 hover-lift shadow-sm" @onclick="ResetToDefaults">
                         <i class="bi bi-arrow-counterclockwise me-1"></i> Reset to WHO Defaults
                     </button>
                 </div>
             </div>
 
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm bg-light">
-                    <div class="card-body">
-                        <h6><i class="bi bi-info-circle me-2"></i>About Custom Thresholds</h6>
-                        <p class="small text-muted">
+                <div class="glass-panel p-4 bg-primary-subtle border-primary">
+                    <div class="card-body p-0">
+                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-info-circle me-2"></i>About Custom Thresholds</h6>
+                        <p class="small text-secondary mb-3">
                             Custom thresholds allow facilities to adjust alert triggers based on their specific
                             patient population and clinical context.
                         </p>
-                        <hr />
-                        <h6 class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Important</h6>
-                        <ul class="small text-muted mb-0">
-                            <li>WHO guidelines should be followed unless there is clinical justification</li>
-                            <li>Changes require supervisor approval</li>
+                        <hr class="border-primary opacity-25" />
+                        <h6 class="text-danger fw-bold mb-2"><i class="bi bi-exclamation-triangle me-2"></i>Important</h6>
+                        <ul class="small text-secondary mb-0 ps-3">
+                            <li class="mb-1">WHO guidelines should be followed unless there is clinical justification</li>
+                            <li class="mb-1">Changes require supervisor approval</li>
                             <li>All threshold changes are logged</li>
                         </ul>
                     </div>
@@ -210,98 +213,122 @@ else
         <!-- Notification Preferences -->
         <div class="row">
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="bi bi-bell me-2"></i>Notification Channels</h5>
+                <div class="glass-panel mb-4 p-4">
+                    <div class="mb-4 border-bottom pb-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-bell me-2 text-primary"></i>Notification Channels</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <div class="mb-4">
-                            <div class="form-check form-switch mb-2">
+                            <div class="form-check form-switch mb-3 p-3 bg-light rounded hover-lift transition-all">
                                 <input class="form-check-input" type="checkbox" @bind="subscription.InAppEnabled" id="inApp">
-                                <label class="form-check-label" for="inApp">
-                                    <i class="bi bi-app-indicator me-2"></i>In-App Notifications
+                                <label class="form-check-label fw-medium w-100" for="inApp">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-app-indicator me-3 fs-5 text-primary"></i>
+                                        <div>
+                                            <div class="text-dark">In-App Notifications</div>
+                                            <small class="text-secondary">Receive alerts directly within the dashboard</small>
+                                        </div>
+                                    </div>
                                 </label>
                             </div>
-                            <div class="form-check form-switch mb-2">
+                            <div class="form-check form-switch mb-3 p-3 bg-light rounded hover-lift transition-all">
                                 <input class="form-check-input" type="checkbox" @bind="subscription.PushEnabled" id="push">
-                                <label class="form-check-label" for="push">
-                                    <i class="bi bi-phone me-2"></i>Push Notifications
+                                <label class="form-check-label fw-medium w-100" for="push">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-phone me-3 fs-5 text-success"></i>
+                                        <div>
+                                            <div class="text-dark">Push Notifications</div>
+                                            <small class="text-secondary">Receive alerts on your mobile device</small>
+                                        </div>
+                                    </div>
                                 </label>
                             </div>
-                            <div class="form-check form-switch mb-2">
+                            <div class="form-check form-switch mb-3 p-3 bg-light rounded hover-lift transition-all">
                                 <input class="form-check-input" type="checkbox" @bind="subscription.EmailEnabled" id="email">
-                                <label class="form-check-label" for="email">
-                                    <i class="bi bi-envelope me-2"></i>Email Notifications
+                                <label class="form-check-label fw-medium w-100" for="email">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-envelope me-3 fs-5 text-warning"></i>
+                                        <div>
+                                            <div class="text-dark">Email Notifications</div>
+                                            <small class="text-secondary">Receive critical alerts via email</small>
+                                        </div>
+                                    </div>
                                 </label>
                             </div>
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch p-3 bg-light rounded hover-lift transition-all">
                                 <input class="form-check-input" type="checkbox" @bind="subscription.SmsEnabled" id="sms">
-                                <label class="form-check-label" for="sms">
-                                    <i class="bi bi-chat-dots me-2"></i>SMS Notifications
+                                <label class="form-check-label fw-medium w-100" for="sms">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-chat-dots me-3 fs-5 text-info"></i>
+                                        <div>
+                                            <div class="text-dark">SMS Notifications</div>
+                                            <small class="text-secondary">Urgent alerts sent to your phone</small>
+                                        </div>
+                                    </div>
                                 </label>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Alert Types</h5>
+                <div class="glass-panel mb-4 p-4">
+                    <div class="mb-4 border-bottom pb-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-funnel me-2 text-info"></i>Alert Types</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <div class="row">
-                            <div class="col-md-6">
-                                <h6>By Severity</h6>
-                                <div class="form-check mb-2">
+                            <div class="col-md-6 border-end pe-4">
+                                <h6 class="text-secondary text-uppercase small fw-bold mb-3">By Severity</h6>
+                                <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" @bind="subscription.CriticalAlerts" id="critical">
                                     <label class="form-check-label" for="critical">
-                                        <span class="badge bg-danger me-1">Critical</span> Alerts
+                                        <span class="badge bg-danger rounded-pill me-1 shadow-sm">Critical</span> Alerts
                                     </label>
                                 </div>
-                                <div class="form-check mb-2">
+                                <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" @bind="subscription.WarningAlerts" id="warning">
                                     <label class="form-check-label" for="warning">
-                                        <span class="badge bg-warning text-dark me-1">Warning</span> Alerts
+                                        <span class="badge bg-warning text-dark rounded-pill me-1 shadow-sm">Warning</span> Alerts
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" @bind="subscription.InfoAlerts" id="info">
                                     <label class="form-check-label" for="info">
-                                        <span class="badge bg-info me-1">Info</span> Alerts
+                                        <span class="badge bg-info rounded-pill me-1 shadow-sm">Info</span> Alerts
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <h6>By Category</h6>
-                                <div class="form-check mb-2">
+                            <div class="col-md-6 ps-4">
+                                <h6 class="text-secondary text-uppercase small fw-bold mb-3">By Category</h6>
+                                <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" @bind="subscription.FetalAlerts" id="fetal">
-                                    <label class="form-check-label" for="fetal">Fetal Monitoring Alerts</label>
+                                    <label class="form-check-label text-dark" for="fetal">Fetal Monitoring Alerts</label>
                                 </div>
-                                <div class="form-check mb-2">
+                                <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" @bind="subscription.MaternalAlerts" id="maternal">
-                                    <label class="form-check-label" for="maternal">Maternal Vital Alerts</label>
+                                    <label class="form-check-label text-dark" for="maternal">Maternal Vital Alerts</label>
                                 </div>
-                                <div class="form-check mb-2">
+                                <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" @bind="subscription.LaborAlerts" id="labor">
-                                    <label class="form-check-label" for="labor">Labor Progress Alerts</label>
+                                    <label class="form-check-label text-dark" for="labor">Labor Progress Alerts</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" @bind="subscription.SystemAlerts" id="system">
-                                    <label class="form-check-label" for="system">System Alerts</label>
+                                    <label class="form-check-label text-dark" for="system">System Alerts</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="bi bi-moon me-2"></i>Quiet Hours</h5>
+                <div class="glass-panel mb-4 p-4">
+                    <div class="mb-4 border-bottom pb-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-moon me-2 text-dark"></i>Quiet Hours</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" @bind="subscription.QuietHoursEnabled" id="quietHours">
-                            <label class="form-check-label" for="quietHours">
+                    <div class="card-body p-0">
+                        <div class="form-check form-switch mb-4">
+                            <input class="form-check-input hover-lift" type="checkbox" @bind="subscription.QuietHoursEnabled" id="quietHours">
+                            <label class="form-check-label fw-medium text-dark" for="quietHours">
                                 Enable Quiet Hours (Critical alerts still come through)
                             </label>
                         </div>
@@ -309,11 +336,11 @@ else
                         {
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Start Time</label>
+                                    <label class="form-label text-secondary small text-uppercase fw-bold">Start Time</label>
                                     <input type="time" class="form-control" @bind="QuietHoursStartString" />
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">End Time</label>
+                                    <label class="form-label text-secondary small text-uppercase fw-bold">End Time</label>
                                     <input type="time" class="form-control" @bind="QuietHoursEndString" />
                                 </div>
                             </div>
@@ -321,7 +348,7 @@ else
                     </div>
                 </div>
 
-                <button class="btn btn-primary" @onclick="SaveNotificationPreferences">
+                <button class="btn btn-primary px-4 hover-lift shadow-sm" @onclick="SaveNotificationPreferences">
                     <i class="bi bi-save me-1"></i> Save Preferences
                 </button>
             </div>

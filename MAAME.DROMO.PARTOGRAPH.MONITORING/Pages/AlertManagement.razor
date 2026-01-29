@@ -10,19 +10,19 @@
 <div class="dashboard-header mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="mb-1">
+            <h2 class="mb-1 text-gradient-primary">
                 <i class="bi bi-bell me-2 text-warning"></i>
                 Alert Management
             </h2>
-            <p class="text-muted mb-0">
+            <p class="text-secondary mb-0">
                 Monitor, acknowledge and resolve clinical alerts
             </p>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary" @onclick="LoadData">
+            <button class="btn btn-outline-secondary shadow-sm" @onclick="LoadData">
                 <i class="bi bi-arrow-clockwise me-1"></i> Refresh
             </button>
-            <a href="/alert-settings" class="btn btn-outline-primary">
+            <a href="/alert-settings" class="btn btn-primary shadow-sm">
                 <i class="bi bi-gear me-1"></i> Settings
             </a>
         </div>
@@ -32,92 +32,84 @@
 <!-- Response Metrics Cards -->
 <div class="row g-3 mb-4">
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <h3 class="text-primary mb-0">@metrics.TotalAlerts</h3>
-                <small class="text-muted">Total Alerts</small>
-            </div>
+        <div class="stat-card p-3 h-100 text-center hover-lift">
+            <h3 class="text-primary fw-bold mb-0">@metrics.TotalAlerts</h3>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.7rem;">Total Alerts</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <h3 class="text-warning mb-0">@metrics.PendingAlerts</h3>
-                <small class="text-muted">Pending</small>
-            </div>
+        <div class="stat-card p-3 h-100 text-center hover-lift border-bottom border-4 border-warning">
+            <h3 class="text-warning fw-bold mb-0">@metrics.PendingAlerts</h3>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.7rem;">Pending</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <h3 class="text-success mb-0">@metrics.AcknowledgedAlerts</h3>
-                <small class="text-muted">Acknowledged</small>
-            </div>
+        <div class="stat-card p-3 h-100 text-center hover-lift">
+            <h3 class="text-success fw-bold mb-0">@metrics.AcknowledgedAlerts</h3>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.7rem;">Acknowledged</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <h3 class="text-info mb-0">@metrics.AverageResponseTimeMinutes.ToString("F1")m</h3>
-                <small class="text-muted">Avg Response</small>
-            </div>
+        <div class="stat-card p-3 h-100 text-center hover-lift">
+            <h3 class="text-info fw-bold mb-0">@metrics.AverageResponseTimeMinutes.ToString("F1")<small class="fs-6 text-muted ms-1">m</small></h3>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.7rem;">Avg Response</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <h3 class="@(metrics.OverallResponseCompliance >= 80 ? "text-success" : "text-warning") mb-0">
-                    @metrics.OverallResponseCompliance.ToString("F0")%
+        <div class="stat-card p-3 h-100 text-center hover-lift">
+            <div class="d-flex align-items-center justify-content-center">
+                <h3 class="@(metrics.OverallResponseCompliance >= 80 ? "text-success" : "text-warning") fw-bold mb-0">
+                    @metrics.OverallResponseCompliance.ToString("F0")<small class="fs-6">%</small>
                 </h3>
-                <small class="text-muted">Compliance</small>
             </div>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.7rem;">Compliance</small>
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <h3 class="text-danger mb-0">@metrics.EscalatedAlerts</h3>
-                <small class="text-muted">Escalated</small>
-            </div>
+        <div class="stat-card p-3 h-100 text-center hover-lift border-bottom border-4 border-danger">
+            <h3 class="text-danger fw-bold mb-0">@metrics.EscalatedAlerts</h3>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.7rem;">Escalated</small>
         </div>
     </div>
 </div>
 
 <!-- Tabs -->
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "unacknowledged" ? "active" : "")"
-                @onclick="() => SetTab(TabState.Unacknowledged.ToString().ToLower())">
-            <i class="bi bi-exclamation-circle me-1 text-danger"></i>
-            Unacknowledged
-            @if (unacknowledgedAlerts.Count > 0)
-            {
-                <span class="badge bg-danger ms-1">@unacknowledgedAlerts.Count</span>
-            }
-        </button>
-    </li>
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "active" ? "active" : "")"
-            @onclick="() => SetTab(TabState.Active.ToString().ToLower())">
-            <i class="bi bi-clock-history me-1 text-warning"></i>
-            Active
-        </button> 
-    </li>
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "resolved" ? "active" : "")"
-                @onclick="() => SetTab(TabState.Resolved.ToString().ToLower())">
-            <i class="bi bi-check-circle me-1 text-success"></i>
-            Resolved
-        </button>
-    </li>
-    <li class="nav-item">
-        <button class="nav-link @(activeTab == "metrics" ? "active" : "")"
-                @onclick="() => SetTab(TabState.Metrics.ToString().ToLower())">
-            <i class="bi bi-graph-up me-1 text-info"></i>
-            Response Metrics
-        </button>
-    </li>
-</ul>
+<div class="glass-panel p-2 d-inline-block mb-4">
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "unacknowledged" ? "active" : "text-secondary")"
+                    @onclick="() => SetTab(TabState.Unacknowledged.ToString().ToLower())">
+                <i class="bi bi-exclamation-circle me-1 @(activeTab == "unacknowledged" ? "" : "text-danger")"></i>
+                Unacknowledged
+                @if (unacknowledgedAlerts.Count > 0)
+                {
+                    <span class="badge bg-white text-danger ms-1 rounded-pill">@unacknowledgedAlerts.Count</span>
+                }
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "active" ? "active" : "text-secondary")"
+                @onclick="() => SetTab(TabState.Active.ToString().ToLower())">
+                <i class="bi bi-clock-history me-1 @(activeTab == "active" ? "" : "text-warning")"></i>
+                Active
+            </button> 
+        </li>
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "resolved" ? "active" : "text-secondary")"
+                    @onclick="() => SetTab(TabState.Resolved.ToString().ToLower())">
+                <i class="bi bi-check-circle me-1 @(activeTab == "resolved" ? "" : "text-success")"></i>
+                Resolved
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link rounded-pill px-3 @(activeTab == "metrics" ? "active" : "text-secondary")"
+                    @onclick="() => SetTab(TabState.Metrics.ToString().ToLower())">
+                <i class="bi bi-graph-up me-1 @(activeTab == "metrics" ? "" : "text-info")"></i>
+                Metrics
+            </button>
+        </li>
+    </ul>
+</div>
 
 @if (isLoading)
 {
@@ -134,61 +126,55 @@ else
         <!-- Response Metrics View -->
         <div class="row g-4">
             <div class="col-md-6">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white">
-                        <h6 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Response Time Distribution</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="response-time-chart">
-                            @{
-                                var bins = new[] { ("< 5 min", 40), ("5-10 min", 25), ("10-15 min", 15), ("15-30 min", 12), ("> 30 min", 8) };
-                                var maxVal = bins.Max(b => b.Item2);
-                            }
-                            @foreach (var (label, value) in bins)
-                            {
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="response-label">@label</span>
-                                    <div class="progress flex-grow-1 mx-2" style="height: 20px;">
-                                        <div class="progress-bar @GetResponseTimeBarClass(label)"
-                                             style="width: @(value * 100 / maxVal)%">
-                                            @value%
-                                        </div>
+                <div class="glass-panel p-4 h-100">
+                    <h6 class="mb-4 text-secondary text-uppercase fw-bold small ls-1"><i class="bi bi-speedometer2 me-2"></i>Response Time Distribution</h6>
+                    <div class="response-time-chart">
+                        @{
+                            var bins = new[] { ("< 5 min", 40), ("5-10 min", 25), ("10-15 min", 15), ("15-30 min", 12), ("> 30 min", 8) };
+                            var maxVal = bins.Max(b => b.Item2);
+                        }
+                        @foreach (var (label, value) in bins)
+                        {
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="response-label text-muted small">@label</span>
+                                <div class="progress flex-grow-1 mx-2 rounded-pill bg-light" style="height: 12px;">
+                                    <div class="progress-bar rounded-pill @GetResponseTimeBarClass(label)"
+                                         style="width: @(value * 100 / maxVal)%">
                                     </div>
                                 </div>
-                            }
-                        </div>
+                                <span class="fw-bold fs-7" style="width: 35px; text-align: right;">@value%</span>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white">
-                        <h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Response by Severity</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span>Critical Alerts</span>
-                                <span class="fw-bold">@metrics.CriticalAvgResponseTimeMinutes.ToString("F1") min avg</span>
-                            </div>
-                            <div class="progress" style="height: 25px;">
-                                <div class="progress-bar bg-danger" style="width: @metrics.CriticalResponseCompliance%">
-                                    @metrics.CriticalResponseCompliance.ToString("F0")% within target
-                                </div>
-                            </div>
-                            <small class="text-muted">Target: &lsaquo; 5 minutes</small>
+                <div class="glass-panel p-4 h-100">
+                    <h6 class="mb-4 text-secondary text-uppercase fw-bold small ls-1"><i class="bi bi-bar-chart me-2"></i>Response by Severity</h6>
+                    <div class="mb-5">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-medium">Critical Alerts</span>
+                            <span class="badge bg-danger-subtle text-danger rounded-pill">@metrics.CriticalAvgResponseTimeMinutes.ToString("F1") min avg</span>
                         </div>
-                        <div>
-                            <div class="d-flex justify-content-between mb-1">
-                                <span>Warning Alerts</span>
-                                <span class="fw-bold">@metrics.WarningAvgResponseTimeMinutes.ToString("F1") min avg</span>
-                            </div>
-                            <div class="progress" style="height: 25px;">
-                                <div class="progress-bar bg-warning" style="width: @metrics.WarningResponseCompliance%">
-                                    @metrics.WarningResponseCompliance.ToString("F0")% within target
-                                </div>
-                            </div>
-                            <small class="text-muted">Target: &lsaquo; 15 minutes</small>
+                        <div class="progress rounded-pill bg-light" style="height: 10px;">
+                            <div class="progress-bar bg-danger rounded-pill" style="width: @metrics.CriticalResponseCompliance%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                             <small class="text-muted">Target: &lsaquo; 5 minutes</small>
+                             <small class="fw-bold text-danger">@metrics.CriticalResponseCompliance.ToString("F0")% compliant</small>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-medium">Warning Alerts</span>
+                            <span class="badge bg-warning-subtle text-warning rounded-pill">@metrics.WarningAvgResponseTimeMinutes.ToString("F1") min avg</span>
+                        </div>
+                        <div class="progress rounded-pill bg-light" style="height: 10px;">
+                            <div class="progress-bar bg-warning rounded-pill" style="width: @metrics.WarningResponseCompliance%"></div>
+                        </div>
+                         <div class="d-flex justify-content-between mt-1">
+                             <small class="text-muted">Target: &lsaquo; 15 minutes</small>
+                             <small class="fw-bold text-warning">@metrics.WarningResponseCompliance.ToString("F0")% compliant</small>
                         </div>
                     </div>
                 </div>
@@ -198,106 +184,93 @@ else
     else
     {
         <!-- Alerts Table -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Severity</th>
-                                <th>Alert</th>
-                                <th>Patient / Facility</th>
-                                <th>Created</th>
-                                <th>Response Time</th>
-                                <th>Status</th>
-                                <th class="text-end">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var alert in currentAlerts)
-                            {
-                                <tr class="@(alert.Severity == "Critical" && !alert.IsAcknowledged ? "table-danger" : "")">
-                                    <td>
-                                        <span class="badge @GetSeverityBadgeClass(alert.Severity)">
-                                            @alert.Severity
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="fw-semibold">@alert.Title</div>
-                                        <small class="text-muted">@alert.Message</small>
-                                    </td>
-                                    <td>
-                                        <div>@alert.PatientName</div>
-                                        <small class="text-muted">@alert.FacilityName</small>
-                                    </td>
-                                    <td>
-                                        <div>@alert.CreatedAt.ToString("HH:mm")</div>
-                                        <small class="text-muted">@GetTimeAgo(alert.CreatedAt)</small>
-                                    </td>
-                                    <td>
-                                        @if (alert.ResponseTimeMinutes.HasValue)
-                                        {
-                                            <span class="@(alert.ResponseTimeMinutes < 5 ? "text-success" : alert.ResponseTimeMinutes < 15 ? "text-warning" : "text-danger")">
+        <div class="glass-panel overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary small text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3 border-0">Severity</th>
+                            <th class="py-3 border-0">Alert Details</th>
+                            <th class="py-3 border-0">Patient / Facility</th>
+                            <th class="py-3 border-0">Timing</th>
+                            <th class="py-3 border-0">Status</th>
+                            <th class="text-end pe-4 py-3 border-0">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var alert in currentAlerts)
+                        {
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4">
+                                    <span class="badge rounded-pill @GetSeverityBadgeClass(alert.Severity)">
+                                        @alert.Severity
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">@alert.Title</div>
+                                    <small class="text-muted">@alert.Message</small>
+                                </td>
+                                <td>
+                                    <div class="fw-medium">@alert.PatientName</div>
+                                    <small class="text-muted">@alert.FacilityName</small>
+                                </td>
+                                <td>
+                                    <div class="badge bg-light text-dark border">@alert.CreatedAt.ToString("HH:mm")</div>
+                                    <div class="text-xs text-muted mt-1">@GetTimeAgo(alert.CreatedAt)</div>
+                                </td>
+                                <td>
+                                     @if (alert.ResponseTimeMinutes.HasValue)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-stopwatch me-1 text-muted"></i>
+                                            <span class="@(alert.ResponseTimeMinutes < 5 ? "text-success" : alert.ResponseTimeMinutes < 15 ? "text-warning" : "text-danger") fw-bold">
                                                 @alert.ResponseTimeMinutes.Value.ToString("F1") min
                                             </span>
-                                        }
-                                        else if (!alert.IsAcknowledged)
-                                        {
-                                            <span class="text-danger">
-                                                <i class="bi bi-clock me-1"></i>Waiting...
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">-</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (alert.IsResolved)
-                                        {
-                                            <span class="badge bg-success">Resolved</span>
-                                        }
-                                        else if (alert.IsAcknowledged)
-                                        {
-                                            <span class="badge bg-info">Acknowledged</span>
-                                        }
-                                        else if (alert.IsEscalated)
-                                        {
-                                            <span class="badge bg-danger">Escalated</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-warning text-dark">Pending</span>
-                                        }
-                                    </td>
-                                    <td class="text-end">
+                                        </div>
+                                    }
+                                    else if (!alert.IsAcknowledged)
+                                    {
+                                        <span class="text-danger fw-medium animate-pulse">
+                                            <i class="bi bi-clock-history me-1"></i>Waiting...
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">In Progress</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
                                         @if (!alert.IsAcknowledged)
                                         {
-                                            <button class="btn btn-sm btn-success me-1" @onclick="() => AcknowledgeAlert(alert)">
-                                                <i class="bi bi-check me-1"></i>Ack
+                                            <button class="btn btn-sm btn-success" @onclick="() => AcknowledgeAlert(alert)" title="Acknowledge">
+                                                <i class="bi bi-check-lg"></i>
                                             </button>
                                         }
                                         @if (alert.IsAcknowledged && !alert.IsResolved)
                                         {
-                                            <button class="btn btn-sm btn-primary me-1" @onclick="() => ShowResolveModal(alert)">
-                                                <i class="bi bi-check-all me-1"></i>Resolve
+                                            <button class="btn btn-sm btn-primary" @onclick="() => ShowResolveModal(alert)" title="Resolve">
+                                                <i class="bi bi-check-all"></i>
                                             </button>
                                         }
-                                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => ViewAlert(alert)">
+                                        <button class="btn btn-sm btn-light border" @onclick="() => ViewAlert(alert)" title="View Details">
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
             @if (!currentAlerts.Any())
             {
-                <div class="card-body text-center py-5">
-                    <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
-                    <p class="mt-3 text-muted">No alerts in this category</p>
+                <div class="text-center py-5">
+                    <div class="bg-success-subtle rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                        <i class="bi bi-check-lg text-success fs-2"></i>
+                    </div>
+                    <h5 class="text-muted mb-1">All Clear</h5>
+                    <p class="text-muted small">No alerts in this category</p>
                 </div>
             }
         </div>

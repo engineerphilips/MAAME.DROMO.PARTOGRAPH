@@ -204,24 +204,6 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Models
         public int Limit { get; set; }
         public string? IPAddress { get; set; }
     }
-
-    // =============================================
-    // Audit Log Models
-    // =============================================
-
-    public class AuditLogEntry
-    {
-        public Guid ID { get; set; }
-        public string Action { get; set; } = string.Empty; // Created, Updated, Deleted, Accessed
-        public string EntityType { get; set; } = string.Empty; // User, Facility, FeatureFlag, etc.
-        public Guid? EntityID { get; set; }
-        public string? EntityName { get; set; }
-        public Guid PerformedByUserID { get; set; }
-        public string PerformedByUserName { get; set; } = string.Empty;
-        public DateTime Timestamp { get; set; }
-        public string? OldValues { get; set; } // JSON
-        public string? NewValues { get; set; } // JSON
-        public string? IPAddress { get; set; }
-        public string? AdditionalInfo { get; set; }
-    }
 }
+
+

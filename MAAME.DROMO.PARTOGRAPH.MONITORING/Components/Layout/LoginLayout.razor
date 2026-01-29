@@ -1,57 +1,139 @@
 @inherits LayoutComponentBase
 
-<div class="login-page">
-    @Body
+<div class="login-wrapper">
+    <div class="login-intro">
+        <div class="intro-content">
+            <div class="brand-logo mb-4">
+                <i class="bi bi-heart-pulse-fill text-white fs-1"></i>
+            </div>
+            <h1 class="display-4 fw-bold text-white mb-3">MAAME.DROMO</h1>
+            <p class="lead text-white-50 mb-5">Advanced Maternal Health Monitoring & Insight System</p>
+            
+            <div class="quote-card glass-effect">
+                <p class="mb-0 text-white">"Empowering healthcare professionals with real-time insights for safer deliveries."</p>
+            </div>
+        </div>
+        
+        <div class="intro-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+    </div>
+    
+    <div class="login-form-container">
+        <div class="form-wrapper">
+             @Body
+        </div>
+        <div class="login-footer text-center mt-4">
+            <small class="text-muted">&copy; 2024 MAAME DROMO. All rights reserved.</small>
+        </div>
+    </div>
 </div>
 
 <style>
-    .login-page {
-        min-height: 100vh;
+    .login-wrapper {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 20px;
-    }
-
-    .login-container {
+        min-height: 100vh;
         width: 100%;
-        max-width: 420px;
-    }
-
-    .login-card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        background: #f8fafc;
         overflow: hidden;
     }
 
-    .login-header {
-        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-        padding: 30px;
-        text-align: center;
-        border-bottom: 1px solid #eee;
-    }
-
-    .logo-container {
-        width: 80px;
-        height: 80px;
-        background: white;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
+    .login-intro {
+        display: none;
+        width: 50%; /* Increased for better split */
+        background: radial-gradient(circle at bottom left, #0e7490, #0f172a); /* Cyan to Slate */
+        position: relative;
+        overflow: hidden;
+        flex-direction: column;
         justify-content: center;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 4rem;
+        z-index: 1;
     }
 
-    .login-body {
-        padding: 30px;
+    /* Add a subtle pattern overlay */
+    .login-intro::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        z-index: -1;
     }
 
-    .login-footer {
-        background: #f8f9fa;
-        padding: 15px;
-        text-align: center;
-        border-top: 1px solid #eee;
+    @@media (min-width: 992px) { 
+        .login-intro {
+            display: flex;
+        }
+    } 
+
+    .intro-content {
+        position: relative;
+        z-index: 2;
+        max-width: 540px;
+    }
+
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        padding: 2rem;
+        border-radius: 1.5rem;
+    }
+
+    .intro-bg-shapes .shape {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.5;
+        filter: blur(80px);
+        z-index: 0;
+    }
+
+    .shape-1 {
+        width: 500px;
+        height: 500px;
+        background: #06b6d4; /* Cyan-500 */
+        top: -100px;
+        right: -100px;
+        animation: float 20s infinite ease-in-out;
+    }
+
+    .shape-2 {
+        width: 400px;
+        height: 400px;
+        background: #3b82f6; /* Blue-500 */
+        bottom: -50px;
+        left: -50px;
+        animation: float 15s infinite ease-in-out reverse;
+    }
+
+    @@keyframes float {
+        0% { transform: translate(0, 0); }
+        50% { transform: translate(30px, 50px); }
+        100% { transform: translate(0, 0); }
+    }
+
+    .login-form-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem;
+        background: #ffffff;
+        position: relative;
+    }
+
+    .form-wrapper {
+        width: 100%;
+        max-width: 440px;
+        padding: 2rem;
+        animation: slideIn 0.5s ease-out;
+    }
+
+    @@keyframes slideIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
