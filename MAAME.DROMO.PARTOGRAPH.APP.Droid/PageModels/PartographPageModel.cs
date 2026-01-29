@@ -1425,10 +1425,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 //    //CurrentDilation = latestEntry.CervicalDilation;
                 //}
 
-                if (Patient.Dilatations.Any())
-                    CurrentDilation = Patient.Dilatations?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.DilatationCm ?? 0;
+                if (Patient?.Dilatations?.Any() == true)
+                    CurrentDilation = Patient?.Dilatations?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.DilatationCm ?? 0;
                 else
-                    CurrentDilation = Patient.CervicalDilationOnAdmission ?? 0;
+                    CurrentDilation = (Patient?.CurrentDilatation ?? 0) > (Patient?.CervicalDilationOnAdmission ?? 0) ? Patient?.CervicalDilationOnAdmission ?? 0 : (Patient?.CurrentDilatation ?? 0);
 
                 //if (_patient.Companions.Any())
                 //    CompanionDescription = _patient.Companions?.OrderByDescending(e => e.Time)?.FirstOrDefault()?.CompanionDisplay ?? string.Empty;

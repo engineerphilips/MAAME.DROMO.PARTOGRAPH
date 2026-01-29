@@ -142,7 +142,7 @@
                                 <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
                                     <Label Text="{Binding Name}"
                                                FontAttributes="Bold"
-                                               FontSize="17"
+                                               FontSize="20"
                                                TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"
                                                LineBreakMode="TailTruncation" />
                                     <HorizontalStackLayout Spacing="6">
@@ -152,7 +152,6 @@
                                                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                                    VerticalOptions="Center" />-->
                                         <Label Text="{Binding HospitalNumber}"
-                                                   FontSize="13"
                                                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                                    FontFamily="monospace" />
                                     </HorizontalStackLayout>
@@ -167,8 +166,8 @@
                                         <RoundRectangle CornerRadius="8" />
                                     </Border.StrokeShape>
                                     <Label Text="{Binding StatusDisplay, Mode=OneWay}" 
-                                               FontAttributes="Bold"
-                                               TextColor="{Binding StatusColorString, Mode=OneWay}" />
+                                           FontAttributes="Bold"
+                                           TextColor="{Binding StatusColorString, Mode=OneWay}" />
                                 </Border>
 
                                 <Grid Grid.Row="1" Grid.RowSpan="2" WidthRequest="60" HeightRequest="60" Margin="0,0,8,0">
@@ -245,10 +244,8 @@
                                            VerticalOptions="Center" />-->
                                     <VerticalStackLayout Grid.Column="1" Spacing="2">
                                         <Label Text="{Binding LaborStartTime, StringFormat='{0:dddd, dd MMM, HH:mm}'}"
-                                               FontSize="12"
                                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
                                         <Label Text="{Binding LaborStartTimeFormat}"
-                                               FontSize="12"
                                                FontAttributes="Bold"
                                                TextColor="{AppThemeBinding Light=#2563EB, Dark=#93C5FD}" />
                                     </VerticalStackLayout>
@@ -261,7 +258,6 @@
                                         CommandParameter="{Binding .}"
                                         BackgroundColor="#3B82F6"
                                         TextColor="White"
-                                        FontSize="14"
                                         FontAttributes="Bold"
                                         HeightRequest="46"
                                         CornerRadius="12"

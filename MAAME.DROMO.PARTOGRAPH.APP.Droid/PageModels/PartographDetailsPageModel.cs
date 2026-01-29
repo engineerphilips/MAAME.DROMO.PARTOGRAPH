@@ -89,6 +89,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly ModalErrorHandler _errorHandler;
 
         private Partograph? _partograph;
+        
         private BirthOutcome? _birthOutcome;
         private Guid? _partographId;
 

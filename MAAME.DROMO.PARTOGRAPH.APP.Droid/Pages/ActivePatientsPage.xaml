@@ -78,11 +78,8 @@
                                     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
                                         <Label Text="{Binding CervicalDilationOnAdmission, StringFormat='{0}'}"
                                                FontSize="20"
-                                               FontAttributes="Bold"
-                                               TextColor="White" />
-                                        <Label Text="cm"
-                                               FontSize="12"
-                                               TextColor="White" />
+                                               FontAttributes="Bold" />
+                                        <Label Text="cm" />
                                     </VerticalStackLayout>
                                 </Border>
 

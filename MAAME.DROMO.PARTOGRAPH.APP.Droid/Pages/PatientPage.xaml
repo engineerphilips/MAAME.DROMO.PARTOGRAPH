@@ -350,8 +350,7 @@
                                    FontSize="18"
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
-                            <Label Text="Physical measurements for BMI calculation"
-                                   FontSize="12"
+                            <Label Text="Physical measurements for BMI calculation" 
                                    TextColor="{StaticResource TextSecondary}" />
                         </StackLayout>
                     </Grid>
@@ -400,8 +399,7 @@
                                 <Label Text="{Binding FormattedBmi}"
                                        FontSize="18"
                                        FontAttributes="Bold" HorizontalOptions="Center" />
-                                <Label Text="{Binding BmiCategory}"
-                                       FontSize="14"
+                                <Label Text="{Binding BmiCategory}" 
                                        Opacity="0.9" HorizontalOptions="Center" />
                             </StackLayout>
                         </Grid>
@@ -431,8 +429,7 @@
                                    FontSize="18"
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
-                            <Label Text="Pregnancy history and expected delivery information"
-                                   FontSize="12"
+                            <Label Text="Pregnancy history and expected delivery information" 
                                    TextColor="{StaticResource TextSecondary}" />
                         </StackLayout>
                     </Grid>
@@ -482,8 +479,7 @@
                             StrokeShape="RoundRectangle 8"
                             IsVisible="{Binding HasPreviousPregnancies}">
                         <StackLayout Spacing="8">
-                            <Label Text="Previous Pregnancy Outcomes"
-                                   FontSize="14"
+                            <Label Text="Previous Pregnancy Outcomes" 
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
 
@@ -535,12 +531,10 @@
                                       Color="{StaticResource ErrorRed}"
                                       VerticalOptions="Center" />
                             <StackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Label Text="Previous Cesarean Section"
-                                       FontSize="14"
+                                <Label Text="Previous Cesarean Section" 
                                        TextColor="{StaticResource ErrorRed}"
                                        FontAttributes="Bold" />
-                                <Label Text="VBAC Risk - Requires close monitoring"
-                                       FontSize="12"
+                                <Label Text="VBAC Risk - Requires close monitoring" 
                                        TextColor="{StaticResource TextSecondary}" />
                             </StackLayout>
                         </Grid>
@@ -664,8 +658,7 @@
                                    FontSize="18"
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
-                            <Label Text="Risk factors and clinical conditions"
-                                   FontSize="12"
+                            <Label Text="Risk factors and clinical conditions" 
                                    TextColor="{StaticResource TextSecondary}" />
                         </StackLayout>
                     </Grid>
@@ -709,15 +702,13 @@
                                    FontSize="18"
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
-                            <Label Text="Labour onset and cervical assessment details"
-                                   FontSize="12"
+                            <Label Text="Labour onset and cervical assessment details" 
                                    TextColor="{StaticResource TextSecondary}" />
                         </StackLayout>
                     </Grid>
 
                     <!-- Labour Onset -->
-                    <Label Text="Labour Onset Date and Time"
-                           FontSize="14"
+                    <Label Text="Labour Onset Date and Time" 
                            FontAttributes="Bold"
                            TextColor="{StaticResource TextPrimary}"
                            Margin="0,4,0,4" />
@@ -791,8 +782,7 @@
                             Margin="0,8,0,0"
                             StrokeShape="RoundRectangle 8">
                         <StackLayout Spacing="8">
-                            <Label Text="Active Labour Diagnosis"
-                                   FontSize="14"
+                            <Label Text="Active Labour Diagnosis" 
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
 
@@ -825,12 +815,10 @@
                                           Color="{StaticResource PrimaryBlue}"
                                           VerticalOptions="Center" />
                                 <StackLayout Grid.Column="1" VerticalOptions="Center">
-                                    <Label Text="Membrane has ruptured"
-                                           FontSize="14"
+                                    <Label Text="Membrane has ruptured" 
                                            FontAttributes="Bold"
                                            TextColor="{StaticResource TextPrimary}" />
-                                    <Label Text="Record date and time of rupture"
-                                           FontSize="12"
+                                    <Label Text="Record date and time of rupture" 
                                            TextColor="{StaticResource TextSecondary}" />
                                 </StackLayout>
                             </Grid>
@@ -903,8 +891,7 @@
                     </Border>
 
                     <!-- Cervical Dilatation on Admission -->
-                    <Label Text="Cervical Dilatation Assessment"
-                           FontSize="14"
+                    <Label Text="Cervical Dilatation Assessment" 
                            FontAttributes="Bold"
                            TextColor="{StaticResource TextPrimary}"
                            Margin="0,12,0,4" />
@@ -941,8 +928,7 @@
                                        VerticalOptions="Center" />
                             </Border>-->
                             <Label Grid.Column="1"
-                                   Text="{Binding LaborStatusIndicator}"
-                                   FontSize="14"
+                                   Text="{Binding LaborStatusIndicator}" 
                                    FontAttributes="Bold"
                                    VerticalOptions="Center" />
                         </Grid>
@@ -972,8 +958,7 @@
                                    FontSize="18"
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
-                            <Label Text="Induction assessment and cervical readiness"
-                                   FontSize="12"
+                            <Label Text="Induction assessment and cervical readiness" 
                                    TextColor="{StaticResource TextSecondary}" />
                         </StackLayout>
                     </Grid>
@@ -989,12 +974,10 @@
                                       Color="#3F51B5"
                                       VerticalOptions="Center" />
                             <StackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Label Text="Patient scheduled for labour induction"
-                                       FontSize="14"
+                                <Label Text="Patient scheduled for labour induction" 
                                        FontAttributes="Bold"
                                        TextColor="{StaticResource TextPrimary}" />
-                                <Label Text="Enable to calculate Bishop Score"
-                                       FontSize="12"
+                                <Label Text="Enable to calculate Bishop Score" 
                                        TextColor="{StaticResource TextSecondary}" />
                             </StackLayout>
                         </Grid>
@@ -1076,11 +1059,9 @@
                                        VerticalOptions="Center" />
                             </Border>
                             <StackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Label Text="Bishop Score"
-                                       FontSize="16"
+                                <Label Text="Bishop Score" 
                                        FontAttributes="Bold" />
-                                <Label Text="{Binding BishopScoreInterpretation}"
-                                       FontSize="13"
+                                <Label Text="{Binding BishopScoreInterpretation}" 
                                        Opacity="0.9" />
                             </StackLayout>
                         </Grid>
@@ -1109,8 +1090,7 @@
                                    FontSize="18"
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
-                            <Label Text="Calculated risk level and recommended actions"
-                                   FontSize="12"
+                            <Label Text="Calculated risk level and recommended actions" 
                                    TextColor="{StaticResource TextSecondary}" />
                         </StackLayout>
                     </Grid>
@@ -1136,8 +1116,7 @@
                                 <Label Text="{Binding RiskLevel}"
                                        FontSize="18"
                                        FontAttributes="Bold" />
-                                <Label Text="Based on clinical assessment"
-                                       FontSize="12"
+                                <Label Text="Based on clinical assessment" 
                                        Opacity="0.9" />
                             </StackLayout>
                         </Grid>
@@ -1148,8 +1127,7 @@
                             Padding="12"
                             StrokeShape="RoundRectangle 8">
                         <StackLayout Spacing="8">
-                            <Label Text="Risk Factors Identified"
-                                   FontSize="14"
+                            <Label Text="Risk Factors Identified" 
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
 
@@ -1158,13 +1136,11 @@
                                     <DataTemplate>
                                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="0,2">
                                             <Label Grid.Column="0"
-                                                   Text="•"
-                                                   FontSize="12"
+                                                   Text="•" 
                                                    TextColor="{StaticResource WarningOrange}"
                                                    VerticalOptions="Start" />
                                             <Label Grid.Column="1"
-                                                   Text="{Binding .}"
-                                                   FontSize="12"
+                                                   Text="{Binding .}" 
                                                    TextColor="{StaticResource TextSecondary}" />
                                         </Grid>
                                     </DataTemplate>
@@ -1179,8 +1155,7 @@
                             Margin="0,8,0,0"
                             StrokeShape="RoundRectangle 8">
                         <StackLayout Spacing="8">
-                            <Label Text="Recommended Actions"
-                                   FontSize="14"
+                            <Label Text="Recommended Actions" 
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
 
@@ -1190,13 +1165,11 @@
                                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="0,2">
                                             <Label Grid.Column="0"
                                                    Text="&#xE5CA;" 
-                                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                                   FontSize="14"
+                                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
                                                    TextColor="{StaticResource SecondaryGreen}"
                                                    VerticalOptions="Start" />
                                             <Label Grid.Column="1"
-                                                   Text="{Binding .}"
-                                                   FontSize="12"
+                                                   Text="{Binding .}" 
                                                    TextColor="{StaticResource TextSecondary}"
                                                    FontAttributes="Bold" />
                                         </Grid>
@@ -1227,8 +1200,7 @@
                                    VerticalOptions="Start" />-->
                             <Label Grid.Column="1"
                                    Text="{Binding ErrorMessage}"
-                                   Style="{StaticResource ErrorText}"
-                                   FontSize="13" />
+                                   Style="{StaticResource ErrorText}" />
                         </Grid>
                     </Border>
 

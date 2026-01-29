@@ -157,7 +157,7 @@
                                         <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
                                             <Label Text="{Binding Name}"
                                                    FontAttributes="Bold"
-                                                   FontSize="17"
+                                                   FontSize="20"
                                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"
                                                    LineBreakMode="TailTruncation" />
                                             <HorizontalStackLayout Spacing="6">
@@ -167,7 +167,6 @@
                                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                                        VerticalOptions="Center" />-->
                                                 <Label Text="{Binding HospitalNumber}"
-                                                       FontSize="13"
                                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                                        FontFamily="monospace" />
                                             </HorizontalStackLayout>
@@ -182,7 +181,6 @@
                                                 <RoundRectangle CornerRadius="8" />
                                             </Border.StrokeShape>
                                             <Label Text="PENDING"
-                                                   FontSize="11"
                                                    FontAttributes="Bold"
                                                    TextColor="{AppThemeBinding Light=#B45309, Dark=#FCD34D}" />
                                         </Border>
@@ -198,7 +196,6 @@
                                             <RoundRectangle CornerRadius="8" />
                                         </Border.StrokeShape>
                                         <Label Text="{Binding DisplayInfo}"
-                                               FontSize="12"
                                                TextColor="{AppThemeBinding Light=#4B5563, Dark=#D1D5DB}" />
                                     </Border>
 
@@ -214,7 +211,6 @@
                                                    FontSize="11"
                                                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />-->
                                             <Label Text="{Binding AdmissionDate, StringFormat='{0:dddd, dd MMM yyyy HH:mm}'}"
-                                                   FontSize="12"
                                                    FontAttributes="Bold"
                                                    TextColor="{AppThemeBinding Light=#7C3AED, Dark=#A78BFA}" />
                                         </VerticalStackLayout>
@@ -227,7 +223,6 @@
                                             CommandParameter="{Binding .}"
                                             BackgroundColor="#10B981"
                                             TextColor="White"
-                                            FontSize="14"
                                             FontAttributes="Bold"
                                             HeightRequest="46"
                                             CornerRadius="12"

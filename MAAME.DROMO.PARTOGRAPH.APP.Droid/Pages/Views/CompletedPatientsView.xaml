@@ -73,7 +73,6 @@
                                TextColor="{AppThemeBinding Light=#374151, Dark=#F3F4F6}"
                                HorizontalOptions="Center" />
                         <Label Text="Completed labour cases will appear here"
-                               FontSize="14"
                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                HorizontalOptions="Center"
                                HorizontalTextAlignment="Center" />
@@ -138,7 +137,6 @@
                                                TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"
                                                LineBreakMode="TailTruncation" />
                                         <Label Text="{Binding PatientInfo}"
-                                               FontSize="13"
                                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
                                     </VerticalStackLayout>
 
@@ -151,7 +149,6 @@
                                             <RoundRectangle CornerRadius="8" />
                                         </Border.StrokeShape>
                                         <Label Text="COMPLETED"
-                                               FontSize="11"
                                                FontAttributes="Bold"
                                                TextColor="{AppThemeBinding Light=#059669, Dark=#34D399}" />
                                     </Border>
@@ -174,12 +171,10 @@
                                                        TextColor="{AppThemeBinding Light=#10B981, Dark=#34D399}"
                                                        VerticalOptions="Center" />
                                                 <Label Text="Delivered"
-                                                       FontSize="11"
                                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                                        VerticalOptions="Center" />
                                             </HorizontalStackLayout>
                                             <Label Text="{Binding DeliveryTimeDisplay}"
-                                                   FontSize="12"
                                                    FontAttributes="Bold"
                                                    TextColor="{AppThemeBinding Light=#059669, Dark=#34D399}"
                                                    Margin="20,0,0,0" />
@@ -202,12 +197,10 @@
                                                        TextColor="{AppThemeBinding Light=#3B82F6, Dark=#60A5FA}"
                                                        VerticalOptions="Center" />
                                                 <Label Text="Mode"
-                                                       FontSize="11"
                                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                                        VerticalOptions="Center" />
                                             </HorizontalStackLayout>
                                             <Label Text="{Binding DeliveryModeDisplay}"
-                                                   FontSize="12"
                                                    FontAttributes="Bold"
                                                    TextColor="{AppThemeBinding Light=#2563EB, Dark=#93C5FD}"
                                                    Margin="20,0,0,0" />
@@ -228,7 +221,6 @@
                                         CommandParameter="{Binding .}"
                                         BackgroundColor="#10B981"
                                         TextColor="White"
-                                        FontSize="14"
                                         FontAttributes="Bold"
                                         HeightRequest="46"
                                         CornerRadius="12"

@@ -29,7 +29,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     datahash TEXT
                 );
             
-                CREATE INDEX IF NOT EXISTS idx_painrelief_partographid ON Tbl_PainReliefEntry(partographid);
+                CREATE INDEX IF NOT EXISTS idx_painrelief_partographid ON Tbl_PainRelief(partographid);
                 CREATE INDEX IF NOT EXISTS idx_painrelief_sync ON Tbl_PainRelief(updatedtime, syncstatus);
                 CREATE INDEX IF NOT EXISTS idx_painrelief_server_version ON Tbl_PainRelief(serverversion);
 
