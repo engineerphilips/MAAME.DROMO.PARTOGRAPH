@@ -49,17 +49,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             try
             {
+                // Reset fields to default values when opening the modal
+                ResetFields();
+
                 // This would typically load from PatientRepository
                 // For now, we'll use the patient ID directly
                 PatientName = $"Patient ID: {patientId}";
 
-                // Load last temperature entry to prefill some values
-                var lastEntry = await _oxytocinRepository.GetLatestByPatientAsync(patientId);
-                if (lastEntry != null)
-                {
-                    DoseMUnitsPerMin = lastEntry.DoseMUnitsPerMin;
-                    TotalVolumeInfused = lastEntry.TotalVolumeInfused;
-                }
+                // Note: We no longer prefill values so users start with fresh inputs
             }
             catch (Exception e)
             {

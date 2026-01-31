@@ -359,24 +359,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
 
         public async Task LoadPatient(Guid? patientId)
         {
-
             try
             {
+                // Reset fields to default values when opening the modal
+                ResetFields();
+
                 // This would typically load from PatientRepository
                 // For now, we'll use the patient ID directly
                 PatientName = $"Patient ID: {patientId}";
 
                 // Load measurement history
                 await LoadMeasurementHistory(patientId);
-
-                // Load last pain relief entry to prefill some values
-                var lastEntry = await _bPPulseRepository.GetLatestByPatientAsync(patientId);
-                if (lastEntry != null)
-                {
-                    Pulse = lastEntry.Pulse != 0 ? lastEntry.Pulse : null;
-                    Systolic = lastEntry.Pulse != 0 ? lastEntry.Systolic : null;
-                    Systolic = lastEntry.Pulse != 0 ? lastEntry.Diastolic : null;
-                }
             }
             catch (Exception e)
             {
