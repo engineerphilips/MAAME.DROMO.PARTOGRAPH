@@ -135,16 +135,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             try
             {
+                // Reset fields to default values when opening the modal
+                ResetFields();
+
                 // This would typically load from PatientRepository
                 // For now, we'll use the patient ID directly
                 PatientName = $"Patient ID: {patientId}";
 
-                // Load last pain relief entry to prefill some values
-                var lastEntry = await _painReliefRepository.GetLatestByPatientAsync(patientId);
-                if (lastEntry != null)
-                {
-                    PainReliefDisplay = lastEntry.PainReliefDisplay;
-                }
+                // Note: We no longer prefill values so users start with fresh inputs
             }
             catch (Exception e)
             {

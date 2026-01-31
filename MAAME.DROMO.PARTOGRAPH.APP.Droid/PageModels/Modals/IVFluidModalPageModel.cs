@@ -110,14 +110,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         {
             try
             {
+                // Reset fields to default values when opening the modal
+                ResetFields();
+
                 PatientName = $"Patient ID: {patientId}";
-                var lastEntry = await _ivFluidRepository.GetLatestByPatientAsync(patientId);
-                if (lastEntry != null)
-                {
-                    RateMlPerHour = lastEntry.RateMlPerHour;
-                    FluidType = lastEntry.FluidType;
-                    VolumeInfused = lastEntry.VolumeInfused;
-                }
+
+                // Note: We no longer prefill values so users start with fresh inputs
             }
             catch (Exception e)
             {

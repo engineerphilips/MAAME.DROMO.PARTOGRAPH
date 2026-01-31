@@ -476,6 +476,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                         {
                             EstimatedBloodLoss = $"{latestAssessment.EstimatedBloodLossMl} mL";
                         }
+                        else
+                        {
+                            // Show recording time when no specific blood loss value
+                            EstimatedBloodLoss = $"Recorded at {latestAssessment.Time:HH:mm}";
+                        }
 
                         // Bladder
                         BladderStatus = GetBladderDisplayText(latestAssessment.BladderStatus);
@@ -897,6 +902,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 };
 
                 BleedingStatusColor = GetBleedingColor(status);
+
+                // Update EstimatedBloodLoss to show recording time
+                EstimatedBloodLoss = $"Recorded at {DateTime.Now:HH:mm}";
 
                 if (result.Contains("Heavy") || result.Contains("PPH") || result.Contains("Excessive"))
                 {
