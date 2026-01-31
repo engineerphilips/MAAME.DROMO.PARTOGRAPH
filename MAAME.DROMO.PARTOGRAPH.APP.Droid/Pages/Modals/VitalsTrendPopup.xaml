@@ -137,7 +137,7 @@
 
                     <!-- Close Button -->
                     <Button Text="Close"
-                            Command="{Binding CloseCommand}"
+                            Command="{Binding CloseTrendCommand}"
                             BackgroundColor="{StaticResource PrimaryBlue}"
                             TextColor="White"
                             HeightRequest="50"

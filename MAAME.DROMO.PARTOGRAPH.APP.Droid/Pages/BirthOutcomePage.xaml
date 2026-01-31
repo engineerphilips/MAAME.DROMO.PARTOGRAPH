@@ -280,8 +280,7 @@
                     <editors:SfNumericEntry Value="{Binding EstimatedBloodLoss, Mode=TwoWay}"
                                            Minimum="0"
                                            Maximum="5000"
-                                           CustomFormat="0"
-                                           ValueChangeMode="OnKeyFocus" />
+                                           CustomFormat="0" />
                 </core:SfTextInputLayout>
             </StackLayout>
 
