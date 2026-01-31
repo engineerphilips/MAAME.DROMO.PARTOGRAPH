@@ -68,7 +68,7 @@
             <core:SfTextInputLayout Hint="Temperature"
                                             Style="{StaticResource PatientInput}"
                                             HelperText="Recording temperature">
-                <editors:SfNumericEntry Value="{Binding Temperature}" />
+                <editors:SfNumericEntry Value="{Binding TemperatureCelsius, Mode=TwoWay}" />
             </core:SfTextInputLayout>
 
 
