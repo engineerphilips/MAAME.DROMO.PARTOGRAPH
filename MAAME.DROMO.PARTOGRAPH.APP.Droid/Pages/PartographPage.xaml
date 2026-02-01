@@ -274,163 +274,76 @@
                 </buttons:SfButton.Content>
             </buttons:SfButton>
 
-            <!-- Clinical Alerts Panel -->
-            <!---->
-            <Border Grid.Row="2"
-                    StrokeThickness="2"
+            <!-- Clinical Alerts Button - Opens Popup -->
+            <buttons:SfButton Grid.Row="2"
+                    BackgroundColor="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#FFEBEE', FalseObject='#FFF3E0', ComparingValue={x:Int32 0}}}"
                     Stroke="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#EF5350', FalseObject='#FF9800', ComparingValue={x:Int32 0}}}"
-                    BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3E2723}"
+                    StrokeThickness="2"
                     Padding="15"
                     Margin="0,0,0,10"
-                    IsVisible="{Binding HasAlerts}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout Spacing="10">
-                    <!-- Alert Header -->
-                    <Grid ColumnDefinitions="Auto,*,Auto">
-                        <HorizontalStackLayout Grid.Column="0" Spacing="10">
-                            <!--<Label Text="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='🚨', FalseObject='⚠️', ComparingValue={x:Int32 0}}}"
-                                   FontSize="20" />-->
-
-                            <!--<Label Text="Clinical Alerts"
-                                   FontSize="16"
-                                   FontAttributes="Bold"
-                                   TextColor="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#EF5350', FalseObject='#FF9800', ComparingValue={x:Int32 0}}}"
-                                   VerticalOptions="Center" />-->
-                        </HorizontalStackLayout>
-
-                        <Label Grid.Column="1"
-                               Text="{Binding AlertSummary}"
-                               FontSize="12"
-                               VerticalOptions="Center"
-                               Margin="10,0,0,0" />
-
-                        <Button Grid.Column="2"
-                                Text="Clear Acknowledged"
-                                Command="{Binding ClearAcknowledgedAlertsCommand}"
-                                BackgroundColor="LightGray"
-                                TextColor="Black"
-                                FontSize="10"
-                                Padding="8,4"
-                                CornerRadius="5" />
-                    </Grid>
-
-                    <!-- Alert List -->
-                    <CollectionView ItemsSource="{Binding ActiveAlerts}"
-                                    MaximumHeightRequest="300">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="Services:ClinicalAlert">
-                                <Border StrokeThickness="1"
-                                        Stroke="{Binding SeverityColor}"
-                                        Padding="15"
-                                        Margin="0,6">
-                                    <Border.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#2A2A2A}" />
-                                            <Style.Triggers>
-                                                <DataTrigger TargetType="Border" Binding="{Binding Severity}" Value="Critical">
-                                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFEBEE, Dark=#450A0A}" />
-                                                    <Setter Property="StrokeThickness" Value="2" />
-                                                </DataTrigger>
-                                                <DataTrigger TargetType="Border" Binding="{Binding Severity}" Value="Warning">
-                                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFF8E1, Dark=#3E2723}" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Resources>
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="12" />
-                                    </Border.StrokeShape>
-                                    <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*,Auto">
-                                        <!-- Icon and Title -->
-                                        <Label Grid.Row="0" Grid.Column="0"
-                                               Text="{Binding CategoryIcon}"
-                                               FontSize="24"
-                                               VerticalOptions="Start"
-                                               Margin="0,0,12,0" />
-
-                                        <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="2">
-                                            <Label Text="{Binding Title}"
-                                                   FontSize="16"
-                                                   FontAttributes="Bold"
-                                                   TextColor="{Binding SeverityColor}" />
-                                            <Label Text="{Binding Message}"
-                                                   FontSize="13"
-                                                   TextColor="{AppThemeBinding Light=#424242, Dark=#EEEEEE}"
-                                                   LineBreakMode="WordWrap" />
-                                        </VerticalStackLayout>
-
-                                        <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
-                                                Text="ACKNOWLEDGE"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:PartographPageModel}}, Path=AcknowledgeAlertCommand}"
-                                                CommandParameter="{Binding .}"
-                                                BackgroundColor="{Binding SeverityColor}"
-                                                TextColor="White"
-                                                FontSize="11"
-                                                FontAttributes="Bold"
-                                                Padding="12,6"
-                                                CornerRadius="8"
-                                                VerticalOptions="Start"
-                                                IsVisible="{Binding IsAcknowledged, Converter={toolkit:InvertedBoolConverter}}">
-                                            <Button.Shadow>
-                                                <Shadow Brush="Black" Offset="0,2" Radius="3" Opacity="0.2" />
-                                            </Button.Shadow>
-                                        </Button>
-
-                                        <!-- Measurement Info -->
-                                        <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                                                BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#333333}"
-                                                StrokeThickness="0"
-                                                Padding="8,4"
-                                                Margin="0,8,0,0"
-                                                StrokeShape="RoundRectangle 6"
-                                                HorizontalOptions="Start"
-                                                IsVisible="{Binding MeasurementType, Converter={toolkit:IsNotNullConverter}}">
-                                            <HorizontalStackLayout Spacing="8">
-                                                <Label Text="{Binding MeasurementType}"
-                                                       FontSize="11"
-                                                       FontAttributes="Bold"
-                                                       TextColor="{AppThemeBinding Light=#616161, Dark=#BDBDBD}" />
-                                                <BoxView Color="Gray" WidthRequest="1" HeightRequest="10" VerticalOptions="Center" />
-                                                <Label Text="{Binding CurrentValue}"
-                                                       FontSize="11"
-                                                       FontAttributes="Bold" />
-                                                <Label Text="{Binding ExpectedRange, StringFormat='(Target: {0})'}"
-                                                       FontSize="11"
-                                                       Opacity="0.8" />
-                                            </HorizontalStackLayout>
-                                        </Border>
-
-                                        <!-- Recommended Actions -->
-                                        <VerticalStackLayout Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
-                                                             Margin="0,12,0,0"
-                                                             IsVisible="{Binding RecommendedActions.Count, Converter={toolkit:CompareConverter ComparisonOperator=Greater, ComparingValue={x:Int32 0}}}">
-                                            <Label Text="Recommended Actions:"
-                                                   FontSize="11"
-                                                   FontAttributes="Bold"
-                                                   TextColor="{Binding SeverityColor}"
-                                                   Margin="0,0,0,4" />
-                                            <CollectionView ItemsSource="{Binding RecommendedActions}">
-                                                <CollectionView.ItemTemplate>
-                                                    <DataTemplate x:DataType="x:String">
-                                                        <HorizontalStackLayout Spacing="6" Margin="0,2">
-                                                            <Label Text="•" TextColor="{AppThemeBinding Light=#616161, Dark=#9E9E9E}" FontSize="12" />
-                                                            <Label Text="{Binding .}"
-                                                                   FontSize="12"
-                                                                   TextColor="{AppThemeBinding Light=#212121, Dark=#F5F5F5}" />
-                                                        </HorizontalStackLayout>
-                                                    </DataTemplate>
-                                                </CollectionView.ItemTemplate>
-                                            </CollectionView>
-                                        </VerticalStackLayout>
-                                    </Grid>
+                    CornerRadius="10"
+                    IsVisible="{Binding HasAlerts}"
+                    Command="{Binding OpenAlertsPopupCommand}">
+                <buttons:SfButton.Content>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <!-- Alert Icon with Count Badge -->
+                            <Grid Grid.Column="0">
+                                <Border BackgroundColor="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#EF5350', FalseObject='#FF9800', ComparingValue={x:Int32 0}}}"
+                                        WidthRequest="44"
+                                        HeightRequest="44"
+                                        StrokeShape="RoundRectangle 22">
+                                    <Label Text="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='!', FalseObject='!', ComparingValue={x:Int32 0}}}"
+                                           FontSize="24"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
                                 </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
-            </Border>
+                                <!-- Count Badge -->
+                                <Border BackgroundColor="#1E293B"
+                                        WidthRequest="22"
+                                        HeightRequest="22"
+                                        StrokeShape="RoundRectangle 11"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Start"
+                                        Margin="0,-4,-4,0">
+                                    <Label Text="{Binding ActiveAlerts.Count}"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                            </Grid>
+
+                            <!-- Alert Summary Text -->
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="Clinical Alerts"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#C62828', FalseObject='#E65100', ComparingValue={x:Int32 0}}}" />
+                                <Label Text="{Binding AlertSummary}"
+                                       FontSize="12"
+                                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            </VerticalStackLayout>
+
+                            <!-- Tap to View Indicator -->
+                            <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
+                                <Label Text="Tap to View"
+                                       FontSize="10"
+                                       TextColor="{AppThemeBinding Light=#888, Dark=#AAA}"
+                                       HorizontalOptions="End" />
+                                <Label Text=">"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#EF5350', FalseObject='#FF9800', ComparingValue={x:Int32 0}}}"
+                                       HorizontalOptions="End" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </buttons:SfButton.Content>
+            </buttons:SfButton>
 
             <!-- Risk Factors Panel -->
             <!--<Border Grid.Row="3"
@@ -1705,6 +1618,16 @@
                              WidthRequest="312"
                              HeightRequest="500"
                              HeaderHeight="50"
+                             Grid.Row="0"
+                             Grid.RowSpan="5" />
+
+            <modals:AlertsPopup x:Name="sfPopupAlerts"
+                             BindingContext="{Binding .}"
+                             StaysOpen="True"
+                             ShowCloseButton="True"
+                             WidthRequest="380"
+                             HeightRequest="600"
+                             HeaderHeight="70"
                              Grid.Row="0"
                              Grid.RowSpan="5" />
 

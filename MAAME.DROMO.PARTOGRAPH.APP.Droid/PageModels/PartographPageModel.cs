@@ -1947,8 +1947,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public Action? ClosePlanModalPopup { get; set; }
         public Action? OpenBishopScoreModalPopup { get; set; }
         public Action? CloseBishopScoreModalPopup { get; set; }
+        public Action? OpenAlertsModalPopup { get; set; }
+        public Action? CloseAlertsModalPopup { get; set; }
 
         // Popup Open Commands
+        [RelayCommand]
+        private void OpenAlertsPopup()
+        {
+            OpenAlertsModalPopup?.Invoke();
+        }
         [RelayCommand]
         public void OpenBishopScorePopup()
         {
