@@ -461,9 +461,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                ActiveAlerts.Add(alert);
-                UpdateAlertSummary();
-                UpdateRiskStatus();
+                // Check for duplicates before adding to prevent stacking
+                if (!ActiveAlerts.Any(a => a.Id == alert.Id ||
+                    (a.Type == alert.Type && a.PatientId == alert.PatientId)))
+                {
+                    ActiveAlerts.Add(alert);
+                    UpdateAlertSummary();
+                    UpdateRiskStatus();
+                }
             });
         }
 

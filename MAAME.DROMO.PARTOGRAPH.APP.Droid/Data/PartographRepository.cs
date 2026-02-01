@@ -865,8 +865,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 // Get counts by status
                 var countCmd = connection.CreateCommand();
                 countCmd.CommandText = @"
-                SELECT status, COUNT(*) FROM Tbl_Partograph WHERE deleted = 0 GROUP BY status;
-                SELECT COUNT(*) FROM Tbl_BirthOutcome WHERE DATE(deliveryTime) = DATE('now') AND deleted = 0;";
+                SELECT status, COUNT(*) FROM Tbl_Partograph WHERE deleted = 0 GROUP BY status";
 
                 await using var reader = await countCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -898,15 +897,57 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         case LaborStatus.Emergency:
                             stats.EmergencyCases = count;
                             break;
+                        case LaborStatus.Completed:
+                            // Count completed but don't add to active labor
+                            break;
                     }
                     stats.TotalPatients += count;
                 }
 
-                if (await reader.NextResultAsync() && await reader.ReadAsync())
-                {
-                    stats.CompletedToday = reader.GetInt32(0);
-                    stats.TotalDeliveriesToday = stats.CompletedToday;
-                }
+                // Get completed deliveries today - check Partograph table with multiple date format comparisons
+                var todayStr = DateTime.Today.ToString("yyyy-MM-dd");
+                var todayStrAlt = DateTime.Today.ToString("M/d/yyyy"); // Alternative format
+                var todayStrAlt2 = DateTime.Today.ToString("d/M/yyyy"); // Another alternative
+
+                var completedCmd = connection.CreateCommand();
+                completedCmd.CommandText = @"
+                SELECT COUNT(DISTINCT p.ID) FROM Tbl_Partograph p
+                LEFT JOIN Tbl_BirthOutcome b ON b.partographid = p.ID AND b.deleted = 0
+                WHERE p.deleted = 0
+                  AND p.status = @completed
+                  AND (
+                    -- Check Partograph deliveryTime
+                    (p.deliveryTime IS NOT NULL AND (
+                        DATE(p.deliveryTime) = DATE('now')
+                        OR SUBSTR(p.deliveryTime, 1, 10) = @today
+                        OR p.deliveryTime LIKE @todayPattern
+                        OR p.deliveryTime LIKE @todayPatternAlt
+                        OR p.deliveryTime LIKE @todayPatternAlt2
+                    ))
+                    -- Or check BirthOutcome deliveryTime
+                    OR (b.deliverytime IS NOT NULL AND (
+                        DATE(b.deliverytime) = DATE('now')
+                        OR SUBSTR(b.deliverytime, 1, 10) = @today
+                        OR b.deliverytime LIKE @todayPattern
+                        OR b.deliverytime LIKE @todayPatternAlt
+                        OR b.deliverytime LIKE @todayPatternAlt2
+                    ))
+                    -- Or check completedTime
+                    OR (p.completedTime IS NOT NULL AND (
+                        DATE(p.completedTime) = DATE('now')
+                        OR SUBSTR(p.completedTime, 1, 10) = @today
+                        OR p.completedTime LIKE @todayPattern
+                    ))
+                  )";
+                completedCmd.Parameters.AddWithValue("@completed", (int)LaborStatus.Completed);
+                completedCmd.Parameters.AddWithValue("@today", todayStr);
+                completedCmd.Parameters.AddWithValue("@todayPattern", todayStr + "%");
+                completedCmd.Parameters.AddWithValue("@todayPatternAlt", todayStrAlt + "%");
+                completedCmd.Parameters.AddWithValue("@todayPatternAlt2", todayStrAlt2 + "%");
+
+                var completedResult = await completedCmd.ExecuteScalarAsync();
+                stats.CompletedToday = completedResult != null ? Convert.ToInt32(completedResult) : 0;
+                stats.TotalDeliveriesToday = stats.CompletedToday;
 
                 // Get phase breakdown for first stage patients
                 var phaseCmd = connection.CreateCommand();
@@ -919,26 +960,46 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await using var phaseReader = await phaseCmd.ExecuteReaderAsync();
                 while (await phaseReader.ReadAsync())
                 {
-                    var phaseStr = phaseReader.IsDBNull(0) ? "NotDetermined" : phaseReader.GetString(0);
                     var phaseCount = phaseReader.GetInt32(1);
+                    FirstStagePhase phase = FirstStagePhase.NotDetermined;
 
-                    if (Enum.TryParse<FirstStagePhase>(phaseStr, out var phase))
+                    if (!phaseReader.IsDBNull(0))
                     {
-                        switch (phase)
+                        // Try to read as integer first (enum stored as int)
+                        var phaseValue = phaseReader.GetValue(0);
+                        if (phaseValue is long phaseInt)
                         {
-                            case FirstStagePhase.Latent:
-                                stats.LatentPhaseCount = phaseCount;
-                                break;
-                            case FirstStagePhase.ActiveEarly:
-                                stats.ActiveEarlyPhaseCount = phaseCount;
-                                break;
-                            case FirstStagePhase.ActiveAdvanced:
-                                stats.ActiveAdvancedPhaseCount = phaseCount;
-                                break;
-                            case FirstStagePhase.Transition:
-                                stats.TransitionPhaseCount = phaseCount;
-                                break;
+                            phase = (FirstStagePhase)(int)phaseInt;
                         }
+                        else if (phaseValue is int phaseIntDirect)
+                        {
+                            phase = (FirstStagePhase)phaseIntDirect;
+                        }
+                        else
+                        {
+                            // Fallback: try to parse as string
+                            var phaseStr = phaseValue.ToString();
+                            if (!string.IsNullOrEmpty(phaseStr))
+                            {
+                                Enum.TryParse<FirstStagePhase>(phaseStr, out phase);
+                            }
+                        }
+                    }
+
+                    switch (phase)
+                    {
+                        case FirstStagePhase.Latent:
+                            stats.LatentPhaseCount = phaseCount;
+                            break;
+                        case FirstStagePhase.ActiveEarly:
+                            stats.ActiveEarlyPhaseCount = phaseCount;
+                            break;
+                        case FirstStagePhase.ActiveAdvanced:
+                            stats.ActiveAdvancedPhaseCount = phaseCount;
+                            break;
+                        case FirstStagePhase.Transition:
+                            stats.TransitionPhaseCount = phaseCount;
+                            break;
                     }
                 }
 
@@ -1099,21 +1160,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     p.cervicalDilationOnAdmission,
                     p.status,
                     MAX(fhr.time) as LastFHRTime,
-                    (SELECT f.value FROM Tbl_FHR f WHERE f.partographID = p.ID ORDER BY f.time DESC LIMIT 1) as LastFHR
+                    (SELECT f.value FROM Tbl_FHR f WHERE f.partographID = p.ID ORDER BY f.time DESC LIMIT 1) as LastFHR,
+                    p.riskLevel,
+                    p.riskScore
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
                 LEFT JOIN Tbl_FHR fhr ON fhr.partographID = p.ID
-                WHERE p.status IN (@firststage, @secondstage, @emergency)
+                WHERE p.status IN (@firststage, @secondstage, @thirdstage, @fourthstage, @emergency)
                   AND p.deleted = 0
                   AND pt.deleted = 0
-                GROUP BY p.ID, pt.firstName, pt.lastName, pt.hospitalNumber, p.laborStartTime, p.cervicalDilationOnAdmission, p.status
+                GROUP BY p.ID, pt.firstName, pt.lastName, pt.hospitalNumber, p.laborStartTime, p.cervicalDilationOnAdmission, p.status, p.riskLevel, p.riskScore
                 ORDER BY
                     CASE WHEN p.status = @emergency THEN 0 ELSE 1 END,
+                    CASE WHEN p.riskLevel = 'High Risk' THEN 0 WHEN p.riskLevel = 'Medium Risk' THEN 1 ELSE 2 END,
                     JULIANDAY(DATETIME('now')) - JULIANDAY(p.laborStartTime) DESC
-                LIMIT 5";
+                LIMIT 10";
 
                 cmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 cmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
+                cmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
+                cmd.Parameters.AddWithValue("@fourthstage", (int)LaborStatus.FourthStage);
                 cmd.Parameters.AddWithValue("@emergency", (int)LaborStatus.Emergency);
 
                 await using var reader = await cmd.ExecuteReaderAsync();

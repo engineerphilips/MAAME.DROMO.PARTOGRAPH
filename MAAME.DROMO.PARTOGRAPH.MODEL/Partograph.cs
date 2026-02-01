@@ -25,12 +25,31 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public DateOnly? ExpectedDeliveryDate { get; set; }
         public DateOnly? LastMenstrualDate { get; set; }
 
-        public string GestationalAge => ExpectedDeliveryDate != null ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(ExpectedDeliveryDate.Value.Year, ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day), DateTime.Now, true) : LastMenstrualDate != null ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(LastMenstrualDate.Value.Year, LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day), DateTime.Now, false) : string.Empty;
+        /// <summary>
+        /// Gestational Age calculation - uses DeliveryTime for completed cases to stop the counter
+        /// </summary>
+        public string GestationalAge
+        {
+            get
+            {
+                // For completed cases, use DeliveryTime or LaborStartTime to freeze EGA
+                var referenceDate = (Status == LaborStatus.Completed && (DeliveryTime.HasValue || CompletedTime.HasValue))
+                    ? (DeliveryTime ?? CompletedTime ?? DateTime.Now)
+                    : DateTime.Now;
+
+                return ExpectedDeliveryDate != null
+                    ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(ExpectedDeliveryDate.Value.Year, ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day), referenceDate, true)
+                    : LastMenstrualDate != null
+                        ? new EMPEROR.COMMON.GestationalAge().Age(new DateTime(LastMenstrualDate.Value.Year, LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day), referenceDate, false)
+                        : string.Empty;
+            }
+        }
 
         /// <summary>
         /// Calculates gestational age in weeks and days for precise assessment.
         /// Uses EDD-based calculation: 280 days (40 weeks) minus days until EDD.
         /// Example: If EDD was yesterday, gestational age = 40W1D (281 days).
+        /// For completed cases, uses DeliveryTime to freeze the calculation.
         /// </summary>
         [JsonIgnore]
         public (int weeks, int days) GestationalWeeksAndDays
@@ -38,7 +57,11 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
             get
             {
                 int totalDays = 0;
-                var today = DateTime.Today;
+
+                // For completed cases, use DeliveryTime to freeze EGA
+                var referenceDate = (Status == LaborStatus.Completed && (DeliveryTime.HasValue || CompletedTime.HasValue))
+                    ? (DeliveryTime?.Date ?? CompletedTime?.Date ?? DateTime.Today)
+                    : DateTime.Today;
 
                 if (ExpectedDeliveryDate != null)
                 {
@@ -46,13 +69,13 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
                         ExpectedDeliveryDate.Value.Month, ExpectedDeliveryDate.Value.Day);
                     // 280 days = 40 weeks (full term)
                     // Subtract days remaining until EDD to get current gestational age
-                    totalDays = 280 - (edd - today).Days;
+                    totalDays = 280 - (edd - referenceDate).Days;
                 }
                 else if (LastMenstrualDate != null)
                 {
                     var lmp = new DateTime(LastMenstrualDate.Value.Year,
                         LastMenstrualDate.Value.Month, LastMenstrualDate.Value.Day);
-                    totalDays = (today - lmp).Days;
+                    totalDays = (referenceDate - lmp).Days;
                 }
 
                 if (totalDays < 0) totalDays = 0;

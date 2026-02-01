@@ -57,7 +57,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 selectCmd.CommandText = $@"SELECT m.*, s.name as staffname
                     FROM {TableName} m
                     LEFT JOIN Tbl_Staff s ON m.handler = s.ID
-                    WHERE m.partographid = @partographid
+                    WHERE m.partographid = @partographid AND m.deleted = 0
                     ORDER BY m.time DESC";
                 selectCmd.Parameters.AddWithValue("@partographid", id.ToString());
 
@@ -92,7 +92,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 selectCmd.CommandText = $@"SELECT m.*, s.name as staffname
                     FROM {TableName} m
                     LEFT JOIN Tbl_Staff s ON m.handler = s.ID
-                    WHERE m.partographid = @partographid
+                    WHERE m.partographid = @partographid AND m.deleted = 0
                     ORDER BY m.time DESC LIMIT 1";
                 selectCmd.Parameters.AddWithValue("@partographid", id.ToString());
 
@@ -150,7 +150,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     selectCmd.CommandText = $@"SELECT m.*, s.name as staffname
                         FROM {TableName} m
                         LEFT JOIN Tbl_Staff s ON m.handler = s.ID
-                        WHERE m.partographid IN ({string.Join(",", parameters)})
+                        WHERE m.partographid IN ({string.Join(",", parameters)}) AND m.deleted = 0
                         ORDER BY m.partographid, m.time DESC";
 
                     for (int i = 0; i < chunk.Count; i++)

@@ -54,7 +54,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             }
         }
 
-        private int? _systolic = 120;
+        private int? _systolic;
         public int? Systolic
         {
             get => _systolic;
