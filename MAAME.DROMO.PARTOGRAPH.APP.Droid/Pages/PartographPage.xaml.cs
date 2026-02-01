@@ -79,6 +79,8 @@ public partial class PartographPage : ContentPage
                 pageModel.OpenPlanModalPopup += () => sfPopupPlan.IsOpen = true;
                 pageModel.CloseBishopScoreModalPopup += async () => { sfPopupBishopScore.IsOpen = false; await pageModel.RefreshCommand.ExecuteAsync(null); };
                 pageModel.OpenBishopScoreModalPopup += () => sfPopupBishopScore.IsOpen = true;
+                pageModel.CloseAlertsModalPopup += () => sfPopupAlerts.IsOpen = false;
+                pageModel.OpenAlertsModalPopup += () => sfPopupAlerts.IsOpen = true;
             }
         };
     }
