@@ -166,7 +166,7 @@
                 </Border>
 
                 <!-- Embedded Progress Chart -->
-                <Border StrokeThickness="1"
+                <!--<Border StrokeThickness="1"
                         Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
                         BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
                         Padding="5"
@@ -190,21 +190,21 @@
                             <chart:NumericalAxis Minimum="0" Maximum="10" Interval="1" ShowMajorGridLines="True"/>
                         </chart:SfCartesianChart.YAxes>
                         <chart:SfCartesianChart.Series>
-                            <!-- Alert Line -->
+                            --><!-- Alert Line --><!--
                             <chart:LineSeries ItemsSource="{Binding AlertLineData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Fill="#FFA726"
                                            StrokeWidth="2"
                                            StrokeDashArray="5,2"/>
-                            <!-- Action Line -->
+                            --><!-- Action Line --><!--
                             <chart:LineSeries ItemsSource="{Binding ActionLineData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
                                            Fill="#EF5350"
                                            StrokeWidth="2"
                                            StrokeDashArray="5,2"/>
-                            <!-- Actual Progress -->
+                            --><!-- Actual Progress --><!--
                             <chart:LineSeries ItemsSource="{Binding CervicalDilationData}"
                                            XBindingPath="Time"
                                            YBindingPath="Value"
@@ -218,7 +218,7 @@
                             </chart:LineSeries>
                         </chart:SfCartesianChart.Series>
                     </chart:SfCartesianChart>
-                </Border>
+                </Border>-->
             </VerticalStackLayout>
 
             <!-- Bishop Score Panel -->
