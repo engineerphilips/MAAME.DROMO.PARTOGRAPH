@@ -138,12 +138,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 SetProperty(ref _maternalStatus, value);
                 IsDeathFieldsVisible = _maternalStatus == MaternalOutcomeStatus.Died;
-                //OnPropertyChanged(nameof(AbortionVisibility));
+
+                // Update delivery mode options based on maternal status
+                UpdateDeliveryModeOptions();
+
                 if (_maternalStatus == MaternalOutcomeStatus.Survived)
                 {
                     MaternalDeathTime = null;
                     MaternalDeathCause = string.Empty;
                     MaternalDeathCircumstances = string.Empty;
+
+                    // Reset delivery mode if it was set to NoDelivery
+                    if (DeliveryMode == DeliveryMode.NoDelivery)
+                    {
+                        DeliveryMode = DeliveryMode.SpontaneousVaginal;
+                    }
                 }
             }
         }
@@ -163,6 +172,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         // Delivery Information
         [ObservableProperty]
         private DeliveryMode _deliveryMode = DeliveryMode.SpontaneousVaginal;
+
+        /// <summary>
+        /// Called when DeliveryMode changes. Auto-sets NumberOfBabies to 0 when NoDelivery is selected.
+        /// </summary>
+        partial void OnDeliveryModeChanged(DeliveryMode value)
+        {
+            if (value == DeliveryMode.NoDelivery)
+            {
+                NumberOfBabies = 0;
+            }
+            else if (NumberOfBabies == 0)
+            {
+                // Reset to 1 if changing from NoDelivery to another mode
+                NumberOfBabies = 1;
+            }
+        }
 
         [ObservableProperty]
         private string _deliveryModeDetails = string.Empty;
@@ -234,8 +259,37 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         // Lists for pickers
         public List<MaternalOutcomeStatus> MaternalOutcomeOptions => Enum.GetValues(typeof(MaternalOutcomeStatus)).Cast<MaternalOutcomeStatus>().ToList();
-        public List<DeliveryMode> DeliveryModeOptions => Enum.GetValues(typeof(DeliveryMode)).Cast<DeliveryMode>().ToList();
+
+        [ObservableProperty]
+        private List<DeliveryMode> _deliveryModeOptions = Enum.GetValues(typeof(DeliveryMode))
+            .Cast<DeliveryMode>()
+            .Where(d => d != DeliveryMode.NoDelivery) // Exclude NoDelivery by default
+            .ToList();
+
         public List<PerinealStatus> PerinealStatusOptions => Enum.GetValues(typeof(PerinealStatus)).Cast<PerinealStatus>().ToList();
+
+        /// <summary>
+        /// Updates the delivery mode options based on maternal status.
+        /// Shows "No Delivery" option only when maternal status is "Died".
+        /// </summary>
+        private void UpdateDeliveryModeOptions()
+        {
+            if (MaternalStatus == MaternalOutcomeStatus.Died)
+            {
+                // Include NoDelivery option when mother died
+                DeliveryModeOptions = Enum.GetValues(typeof(DeliveryMode))
+                    .Cast<DeliveryMode>()
+                    .ToList();
+            }
+            else
+            {
+                // Exclude NoDelivery option for normal cases
+                DeliveryModeOptions = Enum.GetValues(typeof(DeliveryMode))
+                    .Cast<DeliveryMode>()
+                    .Where(d => d != DeliveryMode.NoDelivery)
+                    .ToList();
+            }
+        }
 
         public async Task LoadPartographAsync(Guid? partographId)
         {
@@ -547,7 +601,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 return false;
             }
 
-            if (NumberOfBabies < 1)
+            // Validate NoDelivery is only used when mother died
+            if (DeliveryMode == DeliveryMode.NoDelivery && MaternalStatus != MaternalOutcomeStatus.Died)
+            {
+                Application.Current.MainPage.DisplayAlert("Validation Error", "No Delivery can only be selected when maternal status is Died", "OK");
+                return false;
+            }
+
+            // Allow 0 babies only when NoDelivery is selected
+            if (DeliveryMode == DeliveryMode.NoDelivery)
+            {
+                if (NumberOfBabies < 0)
+                {
+                    Application.Current.MainPage.DisplayAlert("Validation Error", "Number of babies cannot be negative", "OK");
+                    return false;
+                }
+            }
+            else if (NumberOfBabies < 1)
             {
                 Application.Current.MainPage.DisplayAlert("Validation Error", "Number of babies must be at least 1", "OK");
                 return false;

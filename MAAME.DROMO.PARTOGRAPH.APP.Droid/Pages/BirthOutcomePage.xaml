@@ -219,9 +219,10 @@
                                        Format="HH:mm" />
                     </core:SfTextInputLayout>
 
-                    <core:SfTextInputLayout Hint="Number of Babies" Style="{StaticResource PatientInput}" Grid.Row="1" Grid.Column="0">
+                    <core:SfTextInputLayout Hint="Number of Babies" Style="{StaticResource PatientInput}" Grid.Row="1" Grid.Column="0"
+                                            HelperText="Enter 0 if no delivery occurred">
                         <editors:SfNumericEntry Value="{Binding NumberOfBabies, Mode=TwoWay}"
-                                           Minimum="1"
+                                           Minimum="0"
                                            Maximum="5"
                                            CustomFormat="0"
                                            ValueChangeMode="OnKeyFocus" />

@@ -109,7 +109,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         SpontaneousVaginal,
         AssistedVaginal, // Vacuum, Forceps
         CaesareanSection,
-        BreechDelivery
+        BreechDelivery,
+        NoDelivery // For cases where maternal death occurred before delivery
     }
 
     public enum PerinealStatus
