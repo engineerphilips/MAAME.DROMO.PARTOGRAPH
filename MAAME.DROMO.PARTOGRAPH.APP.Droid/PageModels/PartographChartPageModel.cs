@@ -374,6 +374,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             await AppShell.DisplayToastAsync("Chart export feature coming soon");
         }
 
+        [RelayCommand]
+        private async Task GoBack()
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             if (query.ContainsKey("patientId"))
