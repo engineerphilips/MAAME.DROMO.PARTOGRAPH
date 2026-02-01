@@ -184,7 +184,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 // Metadata
                 Time = DateTime.Now,
                 Notes = Notes,
-                RecordedBy = Constants.Staff?.Name ?? Preferences.Get("StaffName", "Staff")
+                Handler =new Guid(Constants.Staff?.StaffID ?? Preferences.Get("StaffId", Guid.NewGuid().ToString())),
+                HandlerName = Constants.Staff?.Name ?? Preferences.Get("StaffName", "Staff")
             };
 
             OnScoreSaved?.Invoke(score);

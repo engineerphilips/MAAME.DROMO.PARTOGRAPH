@@ -31,7 +31,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
 
         // Clinical Notes
         public string Notes { get; set; } = string.Empty; // Additional clinical observations
-        public string RecordedBy { get; set; } = string.Empty; // Staff member who recorded the score
+        //public string RecordedBy { get; set; } = string.Empty; // Staff member who recorded the score
     }
 
     /// <summary>

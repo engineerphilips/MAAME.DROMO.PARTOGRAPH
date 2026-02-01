@@ -51,7 +51,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             //{
             //    var dropTableCmd = connection.CreateCommand();
             //    dropTableCmd.CommandText = @"
-            //    DROP TABLE Tbl_Urine;";
+            //    DROP TABLE Tbl_BishopScore;";
             //    await dropTableCmd.ExecuteNonQueryAsync();
             //}
             //catch (Exception e)
