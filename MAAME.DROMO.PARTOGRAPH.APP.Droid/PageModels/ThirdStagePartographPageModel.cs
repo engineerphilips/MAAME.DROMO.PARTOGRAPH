@@ -1092,7 +1092,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     { "PartographId", Patient.ID.ToString() },
                     { "BirthOutcomeId", birthOutcome.ID.ToString() },
-                    { "BabyId", baby.ID.ToString() }
+                    { "AddNewBaby", "false" } // Signal that we're viewing/editing an existing baby
                 };
 
                 await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
@@ -1189,7 +1189,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 {
                     { "PartographId", Patient.ID.ToString() },
                     { "BirthOutcomeId", birthOutcome.ID.ToString() },
-                    { "NumberOfBabies", (Babies.Count + 1).ToString() }
+                    { "AddNewBaby", "true" } // Signal that we're adding a new baby
                 };
 
                 await Shell.Current.GoToAsync("BabyDetailsPage", parameters);

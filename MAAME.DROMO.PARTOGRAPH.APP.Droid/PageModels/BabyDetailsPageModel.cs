@@ -67,6 +67,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [ObservableProperty]
         private bool _isMultipleBirth;
 
+        [ObservableProperty]
+        private bool _isAddingNewBaby;
+
         // Baby Identification
         [ObservableProperty]
         private int _babyNumber = 1;
@@ -302,7 +305,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private bool _showDeathFields = false;
-        public string BabyCountDisplay => $"Baby {CurrentBabyIndex} of {NumberOfBabies}";
+
+        public string BabyCountDisplay => $"Baby {BabyNumber} of {NumberOfBabies}";
 
         // Lists for pickers
         public List<BabySex> SexOptions => Enum.GetValues(typeof(BabySex)).Cast<BabySex>().ToList();
@@ -316,6 +320,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 Task.Run(() => LoadDataAsync());
             }
+        }
+
+        partial void OnBabyNumberChanged(int value)
+        {
+            OnPropertyChanged(nameof(BabyCountDisplay));
+        }
+
+        partial void OnNumberOfBabiesChanged(int value)
+        {
+            OnPropertyChanged(nameof(BabyCountDisplay));
         }
 
         private async Task LoadDataAsync()
@@ -335,23 +349,75 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 // Load existing baby details if any
                 var existingBabies = await _babyDetailsRepository.GetByPartographIdAsync(PartographId);
-                Babies = new ObservableCollection<BabyDetails>(existingBabies);
+                Babies = new ObservableCollection<BabyDetails>(existingBabies.OrderBy(b => b.BabyNumber));
 
-                if (Babies.Count > 0)
+                // Determine if we're adding a new baby or editing existing ones
+                if (IsAddingNewBaby || Babies.Count == 0)
                 {
-                    LoadBabyDetails(Babies[BabyNumber - 1]);
-                }
-                else
-                {
-                    // Initialize first baby
-                    BabyNumber = 1;
-                    BabyTag = NumberOfBabies > 1 ? "Baby 1" : "Baby";
+                    // Adding a new baby - find the next available baby number
+                    int nextBabyNumber = Babies.Count > 0 ? Babies.Max(b => b.BabyNumber) + 1 : 1;
+
+                    // Reset the index to reflect we're adding a new baby
+                    CurrentBabyIndex = nextBabyNumber - 1;
+                    BabyNumber = nextBabyNumber;
+                    BabyTag = GetBabyTag(nextBabyNumber);
+
+                    // Reset all fields for new baby entry
+                    ResetFields();
+
+                    // Set the baby number and tag after reset (reset clears CurrentBaby)
+                    BabyNumber = nextBabyNumber;
+                    BabyTag = GetBabyTag(nextBabyNumber);
+
+                    // Pre-fill birth time from delivery time
                     if (BirthOutcome?.DeliveryTime.HasValue == true)
                     {
                         BirthDate = DateOnly.FromDateTime(BirthOutcome.DeliveryTime.Value);
                         BirthTime = BirthOutcome.DeliveryTime.Value.TimeOfDay;
                     }
+
+                    _logger.LogInformation($"Initialized form for new baby #{nextBabyNumber}");
                 }
+                else
+                {
+                    // Not explicitly adding new - check if we have all babies recorded
+                    if (Babies.Count < NumberOfBabies)
+                    {
+                        // There are unrecorded babies - start with the next one
+                        int nextBabyNumber = Babies.Count + 1;
+                        CurrentBabyIndex = nextBabyNumber - 1;
+                        BabyNumber = nextBabyNumber;
+                        BabyTag = GetBabyTag(nextBabyNumber);
+
+                        // Reset fields for new baby
+                        ResetFields();
+                        BabyNumber = nextBabyNumber;
+                        BabyTag = GetBabyTag(nextBabyNumber);
+
+                        if (BirthOutcome?.DeliveryTime.HasValue == true)
+                        {
+                            BirthDate = DateOnly.FromDateTime(BirthOutcome.DeliveryTime.Value);
+                            BirthTime = BirthOutcome.DeliveryTime.Value.TimeOfDay;
+                        }
+
+                        _logger.LogInformation($"Continuing with unrecorded baby #{nextBabyNumber}");
+                    }
+                    else
+                    {
+                        // All babies recorded - load the first one for viewing/editing
+                        CurrentBabyIndex = 0;
+                        var firstBaby = Babies.FirstOrDefault();
+                        if (firstBaby != null)
+                        {
+                            CurrentBaby = firstBaby;
+                            LoadBabyDetails(firstBaby);
+                            _logger.LogInformation($"Loaded existing baby #{firstBaby.BabyNumber} for editing");
+                        }
+                    }
+                }
+
+                // Update the display
+                OnPropertyChanged(nameof(BabyCountDisplay));
             }
             catch (Exception ex)
             {
@@ -382,26 +448,39 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (result != null)
                 {
                     await AppShell.DisplayToastAsync($"{BabyTag} details saved successfully");
+                    _logger.LogInformation($"Saved baby #{BabyNumber} (ID: {result.ID})");
 
-                    // Add to collection if not already there
+                    // Update the collection with the saved baby
                     var existingBaby = Babies.FirstOrDefault(b => b.BabyNumber == BabyNumber);
                     if (existingBaby != null)
                     {
-                        Babies.Remove(existingBaby);
+                        var index = Babies.IndexOf(existingBaby);
+                        Babies[index] = result;
                     }
-                    Babies.Add(baby);
+                    else
+                    {
+                        Babies.Add(result);
+                    }
 
-                    // Move to next baby or complete
-                    if (CurrentBabyIndex < NumberOfBabies - 1)
+                    // Update CurrentBaby to the saved result (with ID populated)
+                    CurrentBaby = result;
+
+                    // Calculate how many babies are left to record
+                    int recordedBabiesCount = Babies.Count;
+                    int babiesRemaining = NumberOfBabies - recordedBabiesCount;
+
+                    // Check if there are more babies to record
+                    if (babiesRemaining > 0)
                     {
                         var shouldContinue = await Application.Current.MainPage.DisplayAlert(
                             "Next Baby",
-                            $"Do you want to record details for the next baby?",
+                            $"{babiesRemaining} more {(babiesRemaining == 1 ? "baby" : "babies")} to record. Do you want to continue?",
                             "Yes", "Done");
 
                         if (shouldContinue)
                         {
-                            CurrentBabyIndex++;
+                            // Move to next baby
+                            CurrentBabyIndex = recordedBabiesCount; // Next index (0-based)
                             LoadNextBaby();
                         }
                         else
@@ -411,6 +490,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     }
                     else
                     {
+                        // All babies recorded
                         await CompleteEntryAsync();
                     }
                 }
@@ -432,6 +512,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private void LoadNextBaby()
         {
+            // Calculate the next baby number (CurrentBabyIndex is 0-based, BabyNumber is 1-based)
             BabyNumber = CurrentBabyIndex + 1;
             BabyTag = GetBabyTag(BabyNumber);
 
@@ -439,16 +520,39 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             var existingBaby = Babies.FirstOrDefault(b => b.BabyNumber == BabyNumber);
             if (existingBaby != null)
             {
+                // Loading an existing baby for editing
+                CurrentBaby = existingBaby;
                 LoadBabyDetails(existingBaby);
+                _logger.LogInformation($"Loaded existing baby #{BabyNumber} for editing");
             }
             else
             {
+                // New baby - reset all fields completely
                 ResetFields();
+
+                // Restore the baby number and tag after reset
+                BabyNumber = CurrentBabyIndex + 1;
+                BabyTag = GetBabyTag(BabyNumber);
+
+                // Pre-fill birth time from delivery time
+                if (BirthOutcome?.DeliveryTime.HasValue == true)
+                {
+                    BirthDate = DateOnly.FromDateTime(BirthOutcome.DeliveryTime.Value);
+                    BirthTime = BirthOutcome.DeliveryTime.Value.TimeOfDay;
+                }
+
+                _logger.LogInformation($"Initialized form for new baby #{BabyNumber}");
             }
+
+            // Update display
+            OnPropertyChanged(nameof(BabyCountDisplay));
         }
 
         private void LoadBabyDetails(BabyDetails baby)
         {
+            // Set CurrentBaby so we know we're editing an existing baby
+            CurrentBaby = baby;
+
             BabyNumber = baby.BabyNumber;
             BabyTag = baby.BabyTag;
             BirthDate = baby.BirthTime != null ? DateOnly.FromDateTime(baby.BirthTime) : DateOnly.FromDateTime(DateTime.Now);
@@ -513,9 +617,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private BabyDetails CreateBabyDetailsFromForm()
         {
+            // Check if we're editing an existing baby by looking for a baby with the same BabyNumber
+            // CurrentBaby is only set when we're explicitly editing an existing baby
+            var existingBabyId = CurrentBaby?.ID;
+
+            // If CurrentBaby is null, check if there's an existing baby with this BabyNumber in our collection
+            // This handles cases where we navigate back to edit an already-saved baby
+            if (existingBabyId == null)
+            {
+                var existingInCollection = Babies.FirstOrDefault(b => b.BabyNumber == BabyNumber);
+                existingBabyId = existingInCollection?.ID;
+            }
+
             var baby = new BabyDetails
             {
-                ID = CurrentBaby?.ID,
+                ID = existingBabyId, // Will be null for new babies, causing a new record to be created
                 PartographID = PartographId,
                 BirthOutcomeID = BirthOutcomeId,
                 BabyNumber = BabyNumber,
@@ -532,7 +648,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 ChestCircumference = ChestCircumference,
                 Apgar1Min = Apgar1Min,
                 Apgar5Min = Apgar5Min,
-                //Apgar10Min = Apgar10Min,
                 Apgar1HeartRate = Apgar1HeartRate,
                 Apgar1RespiratoryEffort = Apgar1RespiratoryEffort,
                 Apgar1MuscleTone = Apgar1MuscleTone,
@@ -551,7 +666,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 ChestCompressionsGiven = ChestCompressionsGiven,
                 MedicationsGiven = MedicationsGiven,
                 MedicationDetails = MedicationDetails,
-                //SkinToSkinContact = SkinToSkinContact,
                 EarlyBreastfeedingInitiated = EarlyBreastfeedingInitiated,
                 DelayedCordClamping = DelayedCordClamping,
                 CordClampingTime = CordClampingTime,
@@ -566,10 +680,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 CongenitalAbnormalitiesDescription = CongenitalAbnormalitiesDescription,
                 BirthInjuriesPresent = BirthInjuriesPresent,
                 BirthInjuriesDescription = BirthInjuriesDescription,
-                //Breathing = Breathing,
-                //Crying = Crying,
-                //GoodMuscleTone = GoodMuscleTone,
-                //SkinColor = SkinColor,
                 RequiresSpecialCare = RequiresSpecialCare,
                 SpecialCareReason = SpecialCareReason,
                 AdmittedToNICU = AdmittedToNICU,
@@ -632,27 +742,83 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private void ResetFields()
         {
+            // Clear the current baby reference - we're starting fresh
+            CurrentBaby = null;
+
+            // Basic identification
             BirthDate = DateOnly.FromDateTime((BirthOutcome?.DeliveryTime ?? DateTime.Now));
             BirthTime = (BirthOutcome?.DeliveryTime ?? DateTime.Now).TimeOfDay;
             Sex = BabySex.Unknown;
+
+            // Vital status
             VitalStatus = BabyVitalStatus.LiveBirth;
+            ShowDeathFields = false;
             DeathTime = null;
             DeathCause = string.Empty;
             StillbirthMacerated = false;
+
+            // Anthropometric measurements
             BirthWeight = 0;
             Length = 0;
             HeadCircumference = 0;
             ChestCircumference = 0;
+
+            // APGAR total scores
             Apgar1Min = null;
             Apgar5Min = null;
-            //Apgar10Min = null;
+
+            // APGAR 1-minute component scores
+            Apgar1HeartRate = null;
+            Apgar1RespiratoryEffort = null;
+            Apgar1MuscleTone = null;
+            Apgar1ReflexIrritability = null;
+            Apgar1Color = null;
+
+            // APGAR 5-minute component scores
+            Apgar5HeartRate = null;
+            Apgar5RespiratoryEffort = null;
+            Apgar5MuscleTone = null;
+            Apgar5ReflexIrritability = null;
+            Apgar5Color = null;
+
+            // Reset APGAR display
+            UpdateApgar1Display();
+            UpdateApgar5Display();
+
+            // Resuscitation
             ResuscitationRequired = false;
             ResuscitationSteps = string.Empty;
-            //SkinToSkinContact = true;
+            ResuscitationDuration = null;
+            OxygenGiven = false;
+            IntubationPerformed = false;
+            ChestCompressionsGiven = false;
+            MedicationsGiven = false;
+            MedicationDetails = string.Empty;
+
+            // Immediate newborn care
             EarlyBreastfeedingInitiated = true;
             DelayedCordClamping = true;
+            CordClampingTime = null;
             VitaminKGiven = true;
             EyeProphylaxisGiven = true;
+            HepatitisBVaccineGiven = false;
+            FirstTemperature = null;
+            KangarooMotherCare = false;
+
+            // Clinical assessment
+            CongenitalAbnormalitiesPresent = false;
+            CongenitalAbnormalitiesDescription = string.Empty;
+            BirthInjuriesPresent = false;
+            BirthInjuriesDescription = string.Empty;
+
+            // Special care
+            RequiresSpecialCare = false;
+            SpecialCareReason = string.Empty;
+            AdmittedToNICU = false;
+            NicuAdmissionTime = null;
+            FeedingMethod = FeedingMethod.Breastfeeding;
+
+            // Notes
             Notes = string.Empty;
         }
 
@@ -874,20 +1040,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
+            // Check if we're explicitly adding a new baby
+            if (query.ContainsKey("AddNewBaby"))
+            {
+                IsAddingNewBaby = bool.TryParse(query["AddNewBaby"].ToString(), out var addNew) && addNew;
+            }
+            else
+            {
+                // Default to adding new baby if coming from navigation
+                IsAddingNewBaby = true;
+            }
+
+            if (query.ContainsKey("BirthOutcomeId"))
+            {
+                BirthOutcomeId = Guid.Parse(query["BirthOutcomeId"].ToString());
+            }
+
             if (query.ContainsKey("PartographId"))
             {
                 PartographId = Guid.Parse(query["PartographId"].ToString());
                 LoadDataAsync().FireAndForgetSafeAsync(_errorHandler);
             }
-
-            if (query.ContainsKey("BirthOutcomeId"))
-            {
-                BirthOutcomeId = Guid.Parse(query["BirthOutcomeId"].ToString());            }
-
-            //if (query.ContainsKey("NumberOfBabies"))
-            //{
-            //    NumberOfBabies = Int32.Parse(query["NumberOfBabies"].ToString());
-            //}
         }
     }
 }
