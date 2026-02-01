@@ -1185,14 +1185,44 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     return;
                 }
 
-                var parameters = new Dictionary<string, object>
-                {
-                    { "PartographId", Patient.ID.ToString() },
-                    { "BirthOutcomeId", birthOutcome.ID.ToString() },
-                    { "AddNewBaby", "true" } // Signal that we're adding a new baby
-                };
+                // Check if all babies have already been recorded
+                int expectedBabies = birthOutcome.NumberOfBabies;
+                int recordedBabies = Babies.Count;
 
-                await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
+                if (recordedBabies >= expectedBabies)
+                {
+                    // All babies recorded - ask if user wants to edit existing babies
+                    var editExisting = await Application.Current.MainPage.DisplayAlert(
+                        "All Babies Recorded",
+                        $"All {expectedBabies} {(expectedBabies == 1 ? "baby has" : "babies have")} been recorded. Do you want to view/edit existing baby details?",
+                        "Yes, View/Edit",
+                        "Cancel");
+
+                    if (!editExisting)
+                        return;
+
+                    // Navigate to view/edit mode
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "PartographId", Patient.ID.ToString() },
+                        { "BirthOutcomeId", birthOutcome.ID.ToString() },
+                        { "AddNewBaby", "false" } // Signal that we're viewing/editing existing babies
+                    };
+
+                    await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
+                }
+                else
+                {
+                    // Can add more babies
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "PartographId", Patient.ID.ToString() },
+                        { "BirthOutcomeId", birthOutcome.ID.ToString() },
+                        { "AddNewBaby", "true" } // Signal that we're adding a new baby
+                    };
+
+                    await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
+                }
             }
             catch (Exception ex)
             {

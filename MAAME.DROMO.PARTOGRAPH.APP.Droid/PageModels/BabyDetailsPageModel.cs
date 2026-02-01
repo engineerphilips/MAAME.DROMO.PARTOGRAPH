@@ -351,32 +351,76 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 var existingBabies = await _babyDetailsRepository.GetByPartographIdAsync(PartographId);
                 Babies = new ObservableCollection<BabyDetails>(existingBabies.OrderBy(b => b.BabyNumber));
 
+                // Check if all babies have been recorded
+                bool allBabiesRecorded = Babies.Count >= NumberOfBabies;
+
                 // Determine if we're adding a new baby or editing existing ones
-                if (IsAddingNewBaby || Babies.Count == 0)
+                if (IsAddingNewBaby)
                 {
-                    // Adding a new baby - find the next available baby number
-                    int nextBabyNumber = Babies.Count > 0 ? Babies.Max(b => b.BabyNumber) + 1 : 1;
+                    // Check if we can add more babies
+                    if (allBabiesRecorded)
+                    {
+                        // Cannot add more babies - show message and load first baby for editing
+                        await AppShell.DisplayToastAsync($"All {NumberOfBabies} {(NumberOfBabies == 1 ? "baby" : "babies")} already recorded");
+                        _logger.LogInformation($"All {NumberOfBabies} babies already recorded - loading first for editing");
 
-                    // Reset the index to reflect we're adding a new baby
-                    CurrentBabyIndex = nextBabyNumber - 1;
-                    BabyNumber = nextBabyNumber;
-                    BabyTag = GetBabyTag(nextBabyNumber);
+                        CurrentBabyIndex = 0;
+                        var firstBaby = Babies.FirstOrDefault();
+                        if (firstBaby != null)
+                        {
+                            CurrentBaby = firstBaby;
+                            LoadBabyDetails(firstBaby);
+                        }
+                    }
+                    else
+                    {
+                        // Can add new baby - find the next available baby number
+                        int nextBabyNumber = Babies.Count > 0 ? Babies.Max(b => b.BabyNumber) + 1 : 1;
 
-                    // Reset all fields for new baby entry
+                        // Ensure we don't exceed the allowed number
+                        if (nextBabyNumber > NumberOfBabies)
+                        {
+                            nextBabyNumber = NumberOfBabies;
+                        }
+
+                        // Reset the index to reflect we're adding a new baby
+                        CurrentBabyIndex = nextBabyNumber - 1;
+                        BabyNumber = nextBabyNumber;
+                        BabyTag = GetBabyTag(nextBabyNumber);
+
+                        // Reset all fields for new baby entry
+                        ResetFields();
+
+                        // Set the baby number and tag after reset (reset clears CurrentBaby)
+                        BabyNumber = nextBabyNumber;
+                        BabyTag = GetBabyTag(nextBabyNumber);
+
+                        // Pre-fill birth time from delivery time
+                        if (BirthOutcome?.DeliveryTime.HasValue == true)
+                        {
+                            BirthDate = DateOnly.FromDateTime(BirthOutcome.DeliveryTime.Value);
+                            BirthTime = BirthOutcome.DeliveryTime.Value.TimeOfDay;
+                        }
+
+                        _logger.LogInformation($"Initialized form for new baby #{nextBabyNumber} of {NumberOfBabies}");
+                    }
+                }
+                else if (Babies.Count == 0)
+                {
+                    // No babies recorded yet - initialize for first baby
+                    BabyNumber = 1;
+                    BabyTag = GetBabyTag(1);
                     ResetFields();
+                    BabyNumber = 1;
+                    BabyTag = GetBabyTag(1);
 
-                    // Set the baby number and tag after reset (reset clears CurrentBaby)
-                    BabyNumber = nextBabyNumber;
-                    BabyTag = GetBabyTag(nextBabyNumber);
-
-                    // Pre-fill birth time from delivery time
                     if (BirthOutcome?.DeliveryTime.HasValue == true)
                     {
                         BirthDate = DateOnly.FromDateTime(BirthOutcome.DeliveryTime.Value);
                         BirthTime = BirthOutcome.DeliveryTime.Value.TimeOfDay;
                     }
 
-                    _logger.LogInformation($"Initialized form for new baby #{nextBabyNumber}");
+                    _logger.LogInformation($"Initialized form for first baby of {NumberOfBabies}");
                 }
                 else
                 {
@@ -400,7 +444,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                             BirthTime = BirthOutcome.DeliveryTime.Value.TimeOfDay;
                         }
 
-                        _logger.LogInformation($"Continuing with unrecorded baby #{nextBabyNumber}");
+                        _logger.LogInformation($"Continuing with unrecorded baby #{nextBabyNumber} of {NumberOfBabies}");
                     }
                     else
                     {
