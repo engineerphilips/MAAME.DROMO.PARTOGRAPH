@@ -1643,8 +1643,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         [RelayCommand]
-        private Task ViewCharts()
-            => Shell.Current.GoToAsync($"///partographchart?patientId={Patient?.ID}");
+        private async Task ViewCharts()
+        {
+            // Navigate to birth outcome page
+            var parameters = new Dictionary<string, object>
+                {
+                    { "patientId", Patient.ID.ToString() }
+                };
+
+            await Shell.Current.GoToAsync("partographchart", parameters);
+            //return Shell.Current.GoToAsync($"///partographchart?patientId={Patient?.ID}");
+        }
 
         //public Task NavigateToPartograph(Partograph patient) => Shell.Current.GoToAsync($"partograph?patientId={patient.ID}");
         /// <summary>

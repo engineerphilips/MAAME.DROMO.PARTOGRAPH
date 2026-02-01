@@ -109,13 +109,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             if (targetRoute.Contains("partograph") ||
                 targetRoute.Contains("patient") ||
                 targetRoute.Contains("birthoutcome") ||
-                targetRoute.Contains("babydetails"))
+                targetRoute.Contains("babydetails") ||
+                targetRoute.Contains("partographchart"))
             {
                 var message = GetLoadingMessage(targetRoute);
                 _loadingService?.Show(message);
             }
         }
-
+        
         private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
         {
             // Hide loading after navigation completes with a small delay for smooth transition
@@ -136,6 +137,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             if (route.Contains("birthoutcome")) return "Loading Birth Outcome...";
             if (route.Contains("babydetails")) return "Loading Baby Details...";
             if (route.Contains("patient")) return "Loading Patient Data...";
+            if (route.Contains("partographchart")) return "Loading Partograph Chart...";
+            
             return "Loading...";
         }
 
@@ -161,6 +164,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             Routing.RegisterRoute("thirdpartograph", typeof(ThirdStagePartographPage));
             Routing.RegisterRoute("fourthpartograph", typeof(FourthStagePartographPage));
             Routing.RegisterRoute("partographentry", typeof(PartographEntryPage));
+            Routing.RegisterRoute("partographchart", typeof(PartographChartPage));
             //Routing.RegisterRoute("vitalsigns", typeof(VitalSignsPage));
             //Routing.RegisterRoute("medicalnote", typeof(MedicalNotePage));
 

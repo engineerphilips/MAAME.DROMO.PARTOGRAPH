@@ -19,13 +19,9 @@
     </sfPopup:SfPopup.Resources>
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
-            <Grid BackgroundColor="{StaticResource PrimaryBlue}" Padding="15,12">
-                <Label Text="Moulding"
-                       VerticalOptions="Center"
-                       FontAttributes="Bold"
-                       FontSize="18"
-                       TextColor="White" />
-            </Grid>
+            <StackLayout>
+                <Label Text="Moulding" VerticalOptions="Center" Margin="15,15,0,0" />
+            </StackLayout>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>
     <sfPopup:SfPopup.ContentTemplate>
