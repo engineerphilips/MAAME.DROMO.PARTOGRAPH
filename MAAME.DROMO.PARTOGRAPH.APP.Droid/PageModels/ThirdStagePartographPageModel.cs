@@ -987,12 +987,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 else
                     apgarOptions.Add($"Update APGAR 5 (Current: {baby.Apgar5Min})");
 
-                // Add APGAR 10 if APGAR 5 < 7
-                //if (baby.Apgar5Min.HasValue && baby.Apgar5Min.Value < 7)
-                //{
-                //    apgarOptions.Add("APGAR 10-Minute");
-                //}
-
                 var choice = await Application.Current.MainPage.DisplayActionSheet(
                     $"Record APGAR - {baby.BabyTag}",
                     "Cancel",
@@ -1002,15 +996,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (choice == "Cancel" || string.IsNullOrEmpty(choice))
                     return;
 
-                // Determine which APGAR type
-                int apgarType = 1;
-                if (choice.Contains("5"))
-                    apgarType = 5;
-                else if (choice.Contains("10"))
-                    apgarType = 10;
-
-                // Record APGAR with component scoring
-                await RecordApgarWithComponents(baby, apgarType);
+                // Determine which APGAR type and show appropriate popup
+                if (choice.Contains("1"))
+                {
+                    await ShowApgar1Popup(baby);
+                }
+                else if (choice.Contains("5"))
+                {
+                    await ShowApgar5Popup(baby);
+                }
             }
             catch (Exception ex)
             {
@@ -1018,58 +1012,126 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private async Task RecordApgarWithComponents(BabyDetails baby, int apgarType)
+        private async Task ShowApgar1Popup(BabyDetails baby)
         {
             try
             {
-                // For simplicity, use quick entry. In full implementation, open APGAR popup
-                var scoreResult = await Application.Current.MainPage.DisplayPromptAsync(
-                    $"APGAR {apgarType}-Minute Score",
-                    "Enter total APGAR score (0-10):",
-                    keyboard: Keyboard.Numeric);
-
-                if (string.IsNullOrEmpty(scoreResult) || !int.TryParse(scoreResult, out int score))
-                    return;
-
-                if (score < 0 || score > 10)
+                var popup = new Pages.Modals.Apgar1Popup()
                 {
-                    await AppShell.DisplayToastAsync("APGAR score must be between 0 and 10");
-                    return;
-                }
+                    WidthRequest = 312,
+                    HeightRequest = 600,
+                    HeaderHeight = 50
+                };
+                var viewModel = new Apgar1PopupPageModel();
 
-                // Update baby record
-                switch (apgarType)
+                // Load existing scores if available
+                viewModel.LoadExistingScores(
+                    baby.Apgar1HeartRate,
+                    baby.Apgar1RespiratoryEffort,
+                    baby.Apgar1MuscleTone,
+                    baby.Apgar1ReflexIrritability,
+                    baby.Apgar1Color);
+
+                // Set up callbacks
+                viewModel.ClosePopup = () =>
                 {
-                    case 1:
-                        baby.Apgar1Min = score;
-                        break;
-                    case 5:
-                        baby.Apgar5Min = score;
-                        break;
-                }
+                    popup.IsOpen = false;
+                };
 
-                baby.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                await _babyDetailsRepository.SaveItemAsync(baby);
-
-                // Reload data
-                await LoadBabiesAsync();
-                await LoadApgarScores();
-
-                var interpretation = score >= 7 ? "Normal" : score >= 4 ? "Moderately Abnormal" : "Severely Abnormal";
-                await AppShell.DisplayToastAsync($"APGAR {apgarType}-min: {score} ({interpretation})");
-
-                // If APGAR 5 < 7, remind about APGAR 10
-                if (apgarType == 5 && score < 7)
+                viewModel.OnScoreSaved = async (totalScore, heartRate, respiratory, muscleTone, reflex, color) =>
                 {
-                    await Application.Current.MainPage.DisplayAlert(
-                        "APGAR 10 Recommended",
-                        $"APGAR 5-minute score is {score}. WHO recommends recording APGAR at 10 minutes.",
-                        "OK");
-                }
+                    // Update baby record with component scores
+                    baby.Apgar1Min = totalScore;
+                    baby.Apgar1HeartRate = heartRate;
+                    baby.Apgar1RespiratoryEffort = respiratory;
+                    baby.Apgar1MuscleTone = muscleTone;
+                    baby.Apgar1ReflexIrritability = reflex;
+                    baby.Apgar1Color = color;
+                    baby.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+                    await _babyDetailsRepository.SaveItemAsync(baby);
+
+                    // Reload data
+                    await LoadBabiesAsync();
+                    await LoadApgarScores();
+
+                    var interpretation = totalScore >= 7 ? "Normal" : totalScore >= 4 ? "Moderately Abnormal" : "Severely Abnormal";
+                    await AppShell.DisplayToastAsync($"APGAR 1-min: {totalScore} ({interpretation})");
+                };
+
+                popup.BindingContext = viewModel;
+                popup.IsOpen = true;
             }
             catch (Exception ex)
             {
                 _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Error opening APGAR 1 score form");
+            }
+        }
+
+        private async Task ShowApgar5Popup(BabyDetails baby)
+        {
+            try
+            {
+                var popup = new Pages.Modals.Apgar5Popup()
+                {
+                    WidthRequest = 312,
+                    HeightRequest = 600,
+                    HeaderHeight = 50
+                };
+                var viewModel = new Apgar5PopupPageModel();
+
+                // Load existing scores if available
+                viewModel.LoadExistingScores(
+                    baby.Apgar5HeartRate,
+                    baby.Apgar5RespiratoryEffort,
+                    baby.Apgar5MuscleTone,
+                    baby.Apgar5ReflexIrritability,
+                    baby.Apgar5Color);
+
+                // Set up callbacks
+                viewModel.ClosePopup = () =>
+                {
+                    popup.IsOpen = false;
+                };
+
+                viewModel.OnScoreSaved = async (totalScore, heartRate, respiratory, muscleTone, reflex, color) =>
+                {
+                    // Update baby record with component scores
+                    baby.Apgar5Min = totalScore;
+                    baby.Apgar5HeartRate = heartRate;
+                    baby.Apgar5RespiratoryEffort = respiratory;
+                    baby.Apgar5MuscleTone = muscleTone;
+                    baby.Apgar5ReflexIrritability = reflex;
+                    baby.Apgar5Color = color;
+                    baby.UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+                    await _babyDetailsRepository.SaveItemAsync(baby);
+
+                    // Reload data
+                    await LoadBabiesAsync();
+                    await LoadApgarScores();
+
+                    var interpretation = totalScore >= 7 ? "Normal" : totalScore >= 4 ? "Moderately Abnormal" : "Severely Abnormal";
+                    await AppShell.DisplayToastAsync($"APGAR 5-min: {totalScore} ({interpretation})");
+
+                    // If APGAR 5 < 7, remind about APGAR 10
+                    if (totalScore < 7)
+                    {
+                        await Application.Current.MainPage.DisplayAlert(
+                            "APGAR 10 Recommended",
+                            $"APGAR 5-minute score is {totalScore}. WHO recommends recording APGAR at 10 minutes.",
+                            "OK");
+                    }
+                };
+
+                popup.BindingContext = viewModel;
+                popup.IsOpen = true;
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+                await AppShell.DisplayToastAsync("Error opening APGAR 5 score form");
             }
         }
 
