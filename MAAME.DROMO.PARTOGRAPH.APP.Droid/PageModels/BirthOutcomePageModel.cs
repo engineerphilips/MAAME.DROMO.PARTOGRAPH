@@ -651,7 +651,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 { "BirthOutcomeId", BirthOutcome.ID.ToString() },
                 { "PartographId", Partograph.ID.ToString() },
-                { "NumberOfBabies", NumberOfBabies.ToString() }
+                { "AddNewBaby", "true" } // Signal that we're adding a new baby
             };
 
             await Shell.Current.GoToAsync("BabyDetailsPage", parameters);
