@@ -492,22 +492,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 if (result != null)
                 {
                     await AppShell.DisplayToastAsync($"{BabyTag} details saved successfully");
-                    _logger.LogInformation($"Saved baby #{BabyNumber} (ID: {result.ID})");
+                    _logger.LogInformation($"Saved baby #{BabyNumber} (ID: {baby.ID})");
 
                     // Update the collection with the saved baby
                     var existingBaby = Babies.FirstOrDefault(b => b.BabyNumber == BabyNumber);
                     if (existingBaby != null)
                     {
                         var index = Babies.IndexOf(existingBaby);
-                        Babies[index] = result;
+                        Babies[index] = baby;
                     }
                     else
                     {
-                        Babies.Add(result);
+                        Babies.Add(baby);
                     }
 
                     // Update CurrentBaby to the saved result (with ID populated)
-                    CurrentBaby = result;
+                    CurrentBaby = baby;
 
                     // Calculate how many babies are left to record
                     int recordedBabiesCount = Babies.Count;

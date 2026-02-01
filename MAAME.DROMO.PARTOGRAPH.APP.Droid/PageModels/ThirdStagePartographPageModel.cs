@@ -988,10 +988,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     apgarOptions.Add($"Update APGAR 5 (Current: {baby.Apgar5Min})");
 
                 // Add APGAR 10 if APGAR 5 < 7
-                if (baby.Apgar5Min.HasValue && baby.Apgar5Min.Value < 7)
-                {
-                    apgarOptions.Add("APGAR 10-Minute");
-                }
+                //if (baby.Apgar5Min.HasValue && baby.Apgar5Min.Value < 7)
+                //{
+                //    apgarOptions.Add("APGAR 10-Minute");
+                //}
 
                 var choice = await Application.Current.MainPage.DisplayActionSheet(
                     $"Record APGAR - {baby.BabyTag}",
