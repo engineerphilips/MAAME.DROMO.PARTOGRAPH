@@ -281,24 +281,16 @@
                     StrokeThickness="2"
                     Padding="15"
                     Margin="0,0,0,10"
-                    CornerRadius="10"
+                    CornerRadius="5"
                     IsVisible="{Binding HasAlerts}"
                     Command="{Binding OpenAlertsPopupCommand}">
                 <buttons:SfButton.Content>
                     <DataTemplate>
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" VerticalOptions="Center" Padding="20,0">
                             <!-- Alert Icon with Count Badge -->
                             <Grid Grid.Column="0">
-                                <Border BackgroundColor="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#EF5350', FalseObject='#FF9800', ComparingValue={x:Int32 0}}}"
-                                        WidthRequest="44"
-                                        HeightRequest="44"
-                                        StrokeShape="RoundRectangle 22">
-                                    <Label Text="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='!', FalseObject='!', ComparingValue={x:Int32 0}}}"
-                                           FontSize="24"
-                                           FontAttributes="Bold"
-                                           TextColor="White"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
+                                <Border BackgroundColor="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#EF5350', FalseObject='#FF9800', ComparingValue={x:Int32 0}}}" WidthRequest="44" HeightRequest="44" StrokeShape="RoundRectangle 22">
+                                    <Label Text="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='!', FalseObject='!', ComparingValue={x:Int32 0}}}" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center" />
                                 </Border>
                                 <!-- Count Badge -->
                                 <Border BackgroundColor="#1E293B"
@@ -330,12 +322,12 @@
 
                             <!-- Tap to View Indicator -->
                             <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
-                                <Label Text="Tap to View"
+                                <!--<Label Text="Tap to View"
                                        FontSize="10"
                                        TextColor="{AppThemeBinding Light=#888, Dark=#AAA}"
-                                       HorizontalOptions="End" />
+                                       HorizontalOptions="End" />-->
                                 <Label Text=">"
-                                       FontSize="20"
+                                       FontSize="28"
                                        FontAttributes="Bold"
                                        TextColor="{Binding CriticalAlertCount, Converter={toolkit:CompareConverter ComparisonOperator=Greater, TrueObject='#EF5350', FalseObject='#FF9800', ComparingValue={x:Int32 0}}}"
                                        HorizontalOptions="End" />

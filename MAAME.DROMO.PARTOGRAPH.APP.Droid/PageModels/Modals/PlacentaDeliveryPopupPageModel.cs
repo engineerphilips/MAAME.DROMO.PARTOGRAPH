@@ -36,14 +36,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private string _placentaAppearance = "Normal";
 
         // Blood loss estimation (WHO categories)
-        [ObservableProperty]
-        private int _bloodLossIndex;
+        //[ObservableProperty]
+        //private int _bloodLossIndex;
 
-        [ObservableProperty]
-        private string _bloodLossDisplay = "< 250 mL (Normal)";
+        //[ObservableProperty]
+        //private string _bloodLossDisplay = "< 250 mL (Normal)";
 
-        [ObservableProperty]
+        //[ObservableProperty]
         private int _estimatedBloodLossMl;
+        public int EstimatedBloodLossMl
+        {
+            get => _estimatedBloodLossMl;
+            set
+            {
+                SetProperty(ref _estimatedBloodLossMl, value);
+                EstimatedBloodLossMIChanged();
+            }
+        }
+
 
         [ObservableProperty]
         private bool _isPPHWarning;
@@ -88,13 +98,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         private bool _hasValidationError;
 
         // Blood loss categories (WHO)
-        public List<string> BloodLossCategories { get; } = new()
-        {
-            "< 250 mL (Normal)",
-            "250-500 mL (Watch)",
-            "500-1000 mL (PPH)",
-            "> 1000 mL (Severe PPH)"
-        };
+        //public List<string> BloodLossCategories { get; } = new()
+        //{
+        //    "< 250 mL (Normal)",
+        //    "250-500 mL (Watch)",
+        //    "500-1000 mL (PPH)",
+        //    "> 1000 mL (Severe PPH)"
+        //};
+        public string BloodLossCategories(int value) => value < 250 ? "< 250 mL (Normal)" : (value >= 250 && value <= 500) ? "250-500 mL (Watch)" : (value >= 500 && value <= 1000) ? "500-1000 mL (PPH)" : value > 1000 ? "> 1000 mL (Severe PPH)" : "";
 
         // Perineal status options
         public List<string> PerinealStatusOptions { get; } = new()
@@ -157,32 +168,33 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             OxytocinGiven = true;
             ControlledCordTraction = true;
             UterineMassagePerformed = true;
-            BloodLossIndex = 0;
+            //BloodLossIndex = 0;
+            EstimatedBloodLossMl = 0;
             PerinealStatusIndex = 0;
             HasValidationError = false;
             ValidationMessage = string.Empty;
         }
 
-        partial void OnBloodLossIndexChanged(int value)
+        private void EstimatedBloodLossMIChanged()
         {
-            if (value >= 0 && value < BloodLossCategories.Count)
-            {
-                BloodLossDisplay = BloodLossCategories[value];
+            //if (value >= 0 && value < BloodLossCategories.Count)
+            //{
+            //    BloodLossDisplay = BloodLossCategories[value];
 
-                // Set estimated blood loss
-                EstimatedBloodLossMl = value switch
-                {
-                    0 => 200,
-                    1 => 375,
-                    2 => 750,
-                    3 => 1200,
-                    _ => 0
-                };
+            //    // Set estimated blood loss
+            //    EstimatedBloodLossMl = value switch
+            //    {
+            //        0 => 200,
+            //        1 => 375,
+            //        2 => 750,
+            //        3 => 1200,
+            //        _ => 0
+            //    };
 
-                // Set PPH warnings
-                IsPPHWarning = value >= 2; // 500+ mL
-                IsPPHCritical = value >= 3; // 1000+ mL
-            }
+            // Set PPH warnings
+            IsPPHWarning = EstimatedBloodLossMl >= 500; // 500+ mL
+            IsPPHCritical = EstimatedBloodLossMl >= 1000; // 1000+ mL
+            //}
         }
 
         partial void OnPerinealStatusIndexChanged(int value)
@@ -256,7 +268,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 MembranesComplete = MembranesComplete,
                 PlacentaAppearance = PlacentaAppearance,
                 EstimatedBloodLossMl = EstimatedBloodLossMl,
-                BloodLossCategory = BloodLossDisplay,
+                BloodLossCategory = BloodLossCategories(EstimatedBloodLossMl),
                 IsPPH = IsPPHWarning,
                 IsSeverePPH = IsPPHCritical,
                 UterusFirm = UterusFirm,

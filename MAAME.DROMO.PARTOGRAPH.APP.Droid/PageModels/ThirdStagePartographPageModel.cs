@@ -354,6 +354,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private async Task LoadBabiesAsync()
         {
+            Babies = new ObservableCollection<BabyDetails>();
+
             if (Patient?.ID == null)
                 return;
 
@@ -866,23 +868,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     return;
                 }
 
-                // Show action sheet for quick add vs full details
-                var choice = await Application.Current.MainPage.DisplayActionSheet(
-                    "Add Baby",
-                    "Cancel",
-                    null,
-                    "Quick Entry (Essential Info)",
-                    "Full Details Page");
+                //// Show action sheet for quick add vs full details
+                //var choice = await Application.Current.MainPage.DisplayActionSheet(
+                //    "Add Baby",
+                //    "Cancel",
+                //    null,
+                //    "Quick Entry (Essential Info)",
+                //    "Full Details Page");
 
-                switch (choice)
-                {
-                    case "Quick Entry (Essential Info)":
-                        await QuickAddBaby(birthOutcome);
-                        break;
-                    case "Full Details Page":
-                        await NavigateToBabyDetails();
-                        break;
-                }
+                //switch (choice)
+                //{
+                //    case "Quick Entry (Essential Info)":
+                //        await QuickAddBaby(birthOutcome);
+                //        break;
+                //    case "Full Details Page":
+                //        await NavigateToBabyDetails();
+                //        break;
+                //}
+
+                await NavigateToBabyDetails();
             }
             catch (Exception ex)
             {
@@ -890,77 +894,77 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private async Task QuickAddBaby(BirthOutcome birthOutcome)
-        {
-            try
-            {
-                // Get baby sex
-                var sex = await Application.Current.MainPage.DisplayActionSheet(
-                    "Baby Sex",
-                    "Cancel",
-                    null,
-                    "Male", "Female", "Unknown");
+        //private async Task QuickAddBaby(BirthOutcome birthOutcome)
+        //{
+        //    try
+        //    {
+        //        // Get baby sex
+        //        var sex = await Application.Current.MainPage.DisplayActionSheet(
+        //            "Baby Sex",
+        //            "Cancel",
+        //            null,
+        //            "Male", "Female", "Unknown");
 
-                if (sex == "Cancel" || string.IsNullOrEmpty(sex))
-                    return;
+        //        if (sex == "Cancel" || string.IsNullOrEmpty(sex))
+        //            return;
 
-                // Get baby tag
-                var babyNumber = Babies.Count + 1;
-                var babyTag = babyNumber == 1 ? "Baby" : $"Baby {(char)('A' + babyNumber - 1)}";
+        //        // Get baby tag
+        //        var babyNumber = Babies.Count + 1;
+        //        var babyTag = babyNumber == 1 ? "Baby" : $"Baby {(char)('A' + babyNumber - 1)}";
 
-                var tagResult = await Application.Current.MainPage.DisplayPromptAsync(
-                    "Baby Tag",
-                    "Enter baby identifier (e.g., Baby A, Twin 1)",
-                    initialValue: babyTag);
+        //        var tagResult = await Application.Current.MainPage.DisplayPromptAsync(
+        //            "Baby Tag",
+        //            "Enter baby identifier (e.g., Baby A, Twin 1)",
+        //            initialValue: babyTag);
 
-                if (string.IsNullOrEmpty(tagResult))
-                    return;
+        //        if (string.IsNullOrEmpty(tagResult))
+        //            return;
 
-                // Create new baby
-                var baby = new BabyDetails
-                {
-                    ID = Guid.NewGuid(),
-                    PartographID = Patient.ID.Value,
-                    BirthOutcomeID = birthOutcome.ID,
-                    Sex = sex switch
-                    {
-                        "Male" => BabySex.Male,
-                        "Female" => BabySex.Female,
-                        _ => BabySex.Unknown
-                    },
-                    BirthTime = Patient.DeliveryTime ?? DateTime.Now,
-                    BabyTag = tagResult,
-                    BabyNumber = babyNumber,
-                    VitalStatus = BabyVitalStatus.LiveBirth,
-                    HandlerName = Constants.Staff?.Name ?? string.Empty,
-                    Handler = Constants.Staff?.ID,
-                    CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-                };
+        //        // Create new baby
+        //        var baby = new BabyDetails
+        //        {
+        //            ID = Guid.NewGuid(),
+        //            PartographID = Patient.ID.Value,
+        //            BirthOutcomeID = birthOutcome.ID,
+        //            Sex = sex switch
+        //            {
+        //                "Male" => BabySex.Male,
+        //                "Female" => BabySex.Female,
+        //                _ => BabySex.Unknown
+        //            },
+        //            BirthTime = Patient.DeliveryTime ?? DateTime.Now,
+        //            BabyTag = tagResult,
+        //            BabyNumber = babyNumber,
+        //            VitalStatus = BabyVitalStatus.LiveBirth,
+        //            HandlerName = Constants.Staff?.Name ?? string.Empty,
+        //            Handler = Constants.Staff?.ID,
+        //            CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+        //            UpdatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+        //        };
 
-                await _babyDetailsRepository.SaveItemAsync(baby);
-                await LoadBabiesAsync();
+        //        await _babyDetailsRepository.SaveItemAsync(baby);
+        //        await LoadBabiesAsync();
 
-                await AppShell.DisplayToastAsync($"{tagResult} added successfully");
+        //        await AppShell.DisplayToastAsync($"{tagResult} added successfully");
 
-                // Offer to record APGAR
-                var recordApgar = await Application.Current.MainPage.DisplayAlert(
-                    "Record APGAR?",
-                    $"Would you like to record APGAR scores for {tagResult}?",
-                    "Yes",
-                    "Later");
+        //        // Offer to record APGAR
+        //        var recordApgar = await Application.Current.MainPage.DisplayAlert(
+        //            "Record APGAR?",
+        //            $"Would you like to record APGAR scores for {tagResult}?",
+        //            "Yes",
+        //            "Later");
 
-                if (recordApgar)
-                {
-                    await RecordBabyApgar(baby);
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorHandler.HandleError(ex);
-                await AppShell.DisplayToastAsync("Failed to add baby");
-            }
-        }
+        //        if (recordApgar)
+        //        {
+        //            await RecordBabyApgar(baby);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorHandler.HandleError(ex);
+        //        await AppShell.DisplayToastAsync("Failed to add baby");
+        //    }
+        //}
 
         [RelayCommand]
         private async Task RecordBabyApgar(BabyDetails baby)

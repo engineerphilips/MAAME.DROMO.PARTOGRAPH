@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.PlacentaDeliveryPopup"
              xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              xmlns:sys="clr-namespace:System;assembly=netstandard">
@@ -18,30 +19,27 @@
             <converters:PercentageToDecimalConverter x:Key="PercentageToDecimalConverter" />
 
             <Style x:Key="SectionTitle" TargetType="Label">
-                <Setter Property="FontSize" Value="14" />
+                <!--<Setter Property="FontSize" Value="14" />-->
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="Margin" Value="0,10,0,5" />
             </Style>
             <Style x:Key="CheckboxLabel" TargetType="Label">
-                <Setter Property="FontSize" Value="14" />
+                <!--<Setter Property="FontSize" Value="14" />-->
                 <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <!-- Input Styles -->
+            <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Outlined" />
+                <Setter Property="OutlineCornerRadius" Value="8" />
             </Style>
         </ResourceDictionary>
     </sfPopup:SfPopup.Resources>
 
     <sfPopup:SfPopup.HeaderTemplate>
         <DataTemplate>
-            <StackLayout BackgroundColor="#FF9800" Padding="15">
-                <Label Text="Placenta Delivery"
-                       VerticalOptions="Center"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       TextColor="White" />
-                <Label Text="Record placenta delivery to transition to Fourth Stage"
-                       VerticalOptions="Center"
-                       FontSize="12"
-                       TextColor="White"
-                       Opacity="0.9" />
+            <StackLayout>
+                <Label Text="Placenta Delivery" VerticalOptions="Center" Margin="15,15,0,0" />
             </StackLayout>
         </DataTemplate>
     </sfPopup:SfPopup.HeaderTemplate>
@@ -59,17 +57,27 @@
                             <RoundRectangle CornerRadius="8"/>
                         </Border.StrokeShape>
                         <VerticalStackLayout Spacing="3">
-                            <Label Text="{Binding ThirdStageSummary}"
-                                   FontSize="13"
+                            <Label Text="{Binding ThirdStageSummary}" 
                                    TextColor="#1565C0" />
-                            <Label Text="{Binding TimeSinceDelivery}"
-                                   FontSize="12"
+                            <Label Text="{Binding TimeSinceDelivery}" 
                                    TextColor="#1976D2" />
                         </VerticalStackLayout>
                     </Border>
 
                     <!-- Placenta Delivery Time -->
-                    <VerticalStackLayout Spacing="5">
+                    <core:SfTextInputLayout Hint="Placenta Delivery Date"
+                     Style="{StaticResource PatientInput}"
+                     HelperText="Recording Date">
+                        <DatePicker Date="{Binding PlacentaDeliveryTime}" />
+                    </core:SfTextInputLayout>
+
+                    <core:SfTextInputLayout Hint="Placenta Delivery Time"
+                     Style="{StaticResource PatientInput}"
+                     HelperText="Recording time">
+                        <TimePicker Time="{Binding PlacentaDeliveryTimeOfDay}" />
+                    </core:SfTextInputLayout>
+                    
+                    <!--<VerticalStackLayout Spacing="5">
                         <Label Text="Placenta Delivery Time" Style="{StaticResource SectionTitle}" />
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                             <DatePicker Grid.Column="0"
@@ -80,7 +88,7 @@
                                         Time="{Binding PlacentaDeliveryTimeOfDay}"
                                         Format="HH:mm" />
                         </Grid>
-                    </VerticalStackLayout>
+                    </VerticalStackLayout>-->
 
                     <!-- Placenta Completeness -->
                     <VerticalStackLayout Spacing="5">
@@ -113,11 +121,23 @@
                     </VerticalStackLayout>
 
                     <!-- Blood Loss Estimation -->
+                    <core:SfTextInputLayout Hint="Estimated Blood Loss"
+                     Style="{StaticResource PatientInput}"
+                     HelperText="Enter estimated Blood Loss">
+                        <editors:SfNumericEntry Value="{Binding EstimatedBloodLossMl, Mode=TwoWay}"
+                                           Minimum="0"
+                                           Maximum="5000"
+                                           CustomFormat="0" />
+                        <!--<Picker ItemsSource="{Binding BloodLossCategories}"
+        SelectedIndex="{Binding BloodLossIndex}"
+        Title="Select blood loss category" />-->
+                    </core:SfTextInputLayout>
+
                     <VerticalStackLayout Spacing="5">
-                        <Label Text="Estimated Blood Loss" Style="{StaticResource SectionTitle}" />
+                        <!--<Label Text="Estimated Blood Loss" Style="{StaticResource SectionTitle}" />
                         <Picker ItemsSource="{Binding BloodLossCategories}"
                                 SelectedIndex="{Binding BloodLossIndex}"
-                                Title="Select blood loss category" />
+                                Title="Select blood loss category" />-->
 
                         <!-- PPH Warning -->
                         <Border BackgroundColor="#FFEBEE"
@@ -215,12 +235,20 @@
                     </VerticalStackLayout>
 
                     <!-- Perineal Status -->
-                    <VerticalStackLayout Spacing="5">
+
+                    <core:SfTextInputLayout Hint="Perineal Status"
+                     Style="{StaticResource PatientInput}"
+                     HelperText="Select perineal status">
+                        <Picker ItemsSource="{Binding PerinealStatusOptions}"
+        SelectedIndex="{Binding PerinealStatusIndex}" />
+                    </core:SfTextInputLayout>
+
+                    <!--<VerticalStackLayout Spacing="5">
                         <Label Text="Perineal Status" Style="{StaticResource SectionTitle}" />
                         <Picker ItemsSource="{Binding PerinealStatusOptions}"
                                 SelectedIndex="{Binding PerinealStatusIndex}"
                                 Title="Select perineal status" />
-                    </VerticalStackLayout>
+                    </VerticalStackLayout>-->
 
                     <!-- Validation/Warning Message -->
                     <Label Text="{Binding ValidationMessage}"
@@ -240,10 +268,8 @@
                         <VerticalStackLayout Spacing="5">
                             <Label Text="Fourth Stage Monitoring"
                                    FontAttributes="Bold"
-                                   TextColor="#1565C0"
-                                   FontSize="13" />
+                                   TextColor="#1565C0" />
                             <Label Text="After confirmation, begin 2-hour postpartum monitoring with vital signs every 15 minutes."
-                                   FontSize="12"
                                    TextColor="#1976D2" />
                         </VerticalStackLayout>
                     </Border>
@@ -259,7 +285,7 @@
                             CornerRadius="10" />
 
                         <Button Grid.Column="1"
-                            Text="Confirm &amp; Continue"
+                            Text="Confirm"
                             Command="{Binding ConfirmPlacentaDeliveryCommand}"
                             BackgroundColor="#FF9800"
                             TextColor="White"

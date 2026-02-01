@@ -323,12 +323,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 IsBusy = true;
+                Babies = new ObservableCollection<BabyDetails>();
 
                 BirthOutcome = await _birthOutcomeRepository.GetByPartographIdAsync(PartographId);
                 Partograph = await _partographRepository.GetAsync(PartographId);
 
-                //if (BirthOutcome != null)
-                //    NumberOfBabies = BirthOutcome.NumberOfBabies;
+                if (BirthOutcome != null)
+                    NumberOfBabies = BirthOutcome.NumberOfBabies;
 
                 IsMultipleBirth = NumberOfBabies > 1;
 
@@ -338,13 +339,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
                 if (Babies.Count > 0)
                 {
-                    LoadBabyDetails(Babies[0]);
+                    LoadBabyDetails(Babies[BabyNumber - 1]);
                 }
                 else
                 {
                     // Initialize first baby
                     BabyNumber = 1;
-                    BabyTag = NumberOfBabies > 1 ? "Baby A" : "Baby";
+                    BabyTag = NumberOfBabies > 1 ? "Baby 1" : "Baby";
                     if (BirthOutcome?.DeliveryTime.HasValue == true)
                     {
                         BirthDate = DateOnly.FromDateTime(BirthOutcome.DeliveryTime.Value);
@@ -596,7 +597,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string GetBabyTag(int number)
         {
             if (NumberOfBabies == 1) return "Baby";
-            string[] tags = { "Baby A", "Baby B", "Baby C", "Baby D", "Baby E" };
+            string[] tags = { "Baby 1", "Baby 2", "Baby 3", "Baby 4", "Baby 5" };
             return number > 0 && number <= tags.Length ? tags[number - 1] : $"Baby {number}";
         }
 
