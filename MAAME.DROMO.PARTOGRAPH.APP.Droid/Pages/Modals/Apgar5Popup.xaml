@@ -53,18 +53,13 @@
                             <RoundRectangle CornerRadius="10"/>
                         </Border.StrokeShape>
                         <VerticalStackLayout Spacing="5">
-                            <Label Text="Total APGAR Score"
-                                   FontSize="14"
-                                   TextColor="White"
+                            <Label Text="Total APGAR Score" 
                                    HorizontalOptions="Center" />
                             <Label Text="{Binding TotalScore}"
                                    FontSize="32"
                                    FontAttributes="Bold"
-                                   TextColor="White"
                                    HorizontalOptions="Center" />
                             <Label Text="{Binding ScoreInterpretation}"
-                                   FontSize="12"
-                                   TextColor="White"
                                    HorizontalOptions="Center" />
                         </VerticalStackLayout>
                     </Border>
