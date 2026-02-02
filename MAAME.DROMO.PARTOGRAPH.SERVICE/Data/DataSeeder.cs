@@ -735,7 +735,15 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 Code = code,
                 Type = type,
                 RegionID = regionId,
-                RegionName = regionName,
+                Region = new Region
+                {
+                    ID = regionId,
+                    Name = regionName,
+                    Code = regionId.ToString().Substring(0, 8).ToUpper(),
+                    CreatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    UpdatedTime = new DateTimeOffset(now).ToUnixTimeMilliseconds(),
+                    Deleted = 0
+                }, 
                 Capital = capital,
                 Population = population,
                 ExpectedAnnualDeliveries = expectedDeliveries,
@@ -765,10 +773,10 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             var korleKlotteyDistrictId = Guid.Parse("22222222-2222-2222-2222-222222220017");
 
             // Update Korle Bu Teaching Hospital
-            var korleBu = await _context.Facilities.FirstOrDefaultAsync(f => f.ID == korleBuId);
+            var korleBu = await _context.Facilities.Include(d => d.District).FirstOrDefaultAsync(f => f.ID == korleBuId);
             if (korleBu != null)
             {
-                korleBu.RegionID = greaterAccraRegionId;
+                korleBu.District.RegionID = greaterAccraRegionId;
                 korleBu.DistrictID = accraMetropolitanDistrictId;
                 korleBu.Name = "Accra Metropolitan";
                 korleBu.Level = "Tertiary";
@@ -777,10 +785,10 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             }
 
             // Update Ridge Hospital (by code)
-            var ridgeHospital = await _context.Facilities.FirstOrDefaultAsync(f => f.Code == "RH");
+            var ridgeHospital = await _context.Facilities.Include(d => d.District).FirstOrDefaultAsync(f => f.Code == "RH");
             if (ridgeHospital != null)
             {
-                ridgeHospital.RegionID = greaterAccraRegionId;
+                ridgeHospital.District.RegionID = greaterAccraRegionId;
                 ridgeHospital.DistrictID = korleKlotteyDistrictId;
                 ridgeHospital.Name = "Korle Klottey Municipal";
                 ridgeHospital.Level = "Tertiary";
@@ -789,10 +797,10 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             }
 
             // Update 37 Military Hospital (by code)
-            var militaryHospital = await _context.Facilities.FirstOrDefaultAsync(f => f.Code == "37MH");
+            var militaryHospital = await _context.Facilities.Include(d => d.District).FirstOrDefaultAsync(f => f.Code == "37MH");
             if (militaryHospital != null)
             {
-                militaryHospital.RegionID = greaterAccraRegionId;
+                militaryHospital.District.RegionID = greaterAccraRegionId;
                 militaryHospital.DistrictID = accraMetropolitanDistrictId;
                 militaryHospital.Name = "Accra Metropolitan";
                 militaryHospital.Level = "Tertiary";

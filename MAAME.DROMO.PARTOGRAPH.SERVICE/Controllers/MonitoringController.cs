@@ -187,13 +187,13 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 var monthStartUnix = new DateTimeOffset(monthStart).ToUnixTimeSeconds();
 
                 // Build facility query based on filter
-                IQueryable<Facility> facilityQuery = _context.Facilities.Where(f => f.Deleted == 0);
+                IQueryable<Facility> facilityQuery = _context.Facilities.Include(d => d.District).Where(f => f.Deleted == 0);
                 if (facilityId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.ID == facilityId);
                 else if (districtId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.DistrictID == districtId);
                 else if (regionId.HasValue)
-                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
+                    facilityQuery = facilityQuery.Where(f => f.District.RegionID == regionId);
 
                 var facilityIds = await facilityQuery.Select(f => f.ID).ToListAsync();
 
@@ -269,13 +269,13 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 var today = DateTime.UtcNow.Date;
 
-                IQueryable<Facility> facilityQuery = _context.Facilities.Where(f => f.Deleted == 0);
+                IQueryable<Facility> facilityQuery = _context.Facilities.Include(d => d.District).Where(f => f.Deleted == 0);
                 if (facilityId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.ID == facilityId);
                 else if (districtId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.DistrictID == districtId);
                 else if (regionId.HasValue)
-                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
+                    facilityQuery = facilityQuery.Where(f => f.District.RegionID == regionId);
 
                 var facilityIds = await facilityQuery.Select(f => f.ID).ToListAsync();
 
@@ -310,13 +310,13 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         {
             try
             {
-                IQueryable<Facility> facilityQuery = _context.Facilities.Where(f => f.Deleted == 0);
+                IQueryable<Facility> facilityQuery = _context.Facilities.Include(d => d.District).Where(f => f.Deleted == 0);
                 if (facilityId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.ID == facilityId);
                 else if (districtId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.DistrictID == districtId);
                 else if (regionId.HasValue)
-                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
+                    facilityQuery = facilityQuery.Where(f => f.District.RegionID == regionId);
 
                 var facilityIds = await facilityQuery.Select(f => f.ID).ToListAsync();
 
@@ -362,13 +362,13 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 var endDate = DateTime.UtcNow.Date;
                 var startDate = endDate.AddDays(-days);
 
-                IQueryable<Facility> facilityQuery = _context.Facilities.Where(f => f.Deleted == 0);
+                IQueryable<Facility> facilityQuery = _context.Facilities.Include(d => d.District).Where(f => f.Deleted == 0);
                 if (facilityId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.ID == facilityId);
                 else if (districtId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.DistrictID == districtId);
                 else if (regionId.HasValue)
-                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
+                    facilityQuery = facilityQuery.Where(f => f.District.RegionID == regionId);
 
                 var facilityIds = await facilityQuery.Select(f => f.ID).ToListAsync();
 
@@ -417,8 +417,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     var districtCount = await _context.Districts
                         .CountAsync(d => d.RegionID == region.ID && d.Deleted == 0);
 
-                    var facilityIds = await _context.Facilities
-                        .Where(f => f.RegionID == region.ID && f.Deleted == 0)
+                    var facilityIds = await _context.Facilities.Include(d => d.District)
+                        .Where(f => f.District.RegionID == region.ID && f.Deleted == 0)
                         .Select(f => f.ID)
                         .ToListAsync();
 
@@ -481,8 +481,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 var districtCount = await _context.Districts
                     .CountAsync(d => d.RegionID == regionId && d.Deleted == 0);
 
-                var facilityIds = await _context.Facilities
-                    .Where(f => f.RegionID == regionId && f.Deleted == 0)
+                var facilityIds = await _context.Facilities.Include(d => d.District)
+                    .Where(f => f.District.RegionID == regionId && f.Deleted == 0)
                     .Select(f => f.ID)
                     .ToListAsync();
 

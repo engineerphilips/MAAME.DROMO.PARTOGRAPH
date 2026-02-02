@@ -240,7 +240,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     Type = Type,
                     Address = Address?.Trim() ?? string.Empty,
                     City = City.Trim(),
-                    Region = Region,
+                    District = new MODEL.District
+                    {
+                        Region = new MODEL.Region()
+                        {
+                            Name = Region.Trim()
+                        }, 
+                    },                    
                     Country = Country.Trim(),
                     Phone = Phone?.Trim() ?? string.Empty,
                     Email = Email?.Trim() ?? string.Empty,

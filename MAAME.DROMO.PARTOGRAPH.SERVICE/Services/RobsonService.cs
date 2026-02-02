@@ -610,7 +610,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
                         x => x.Staff.Facility,
                         f => f.ID,
                         (x, f) => new { x.Classification, Facility = f })
-                    .Where(x => x.Facility.RegionID == regionId)
+                    .Where(x => x.Facility.District.RegionID == regionId)
                     .Select(x => x.Classification);
             }
 
