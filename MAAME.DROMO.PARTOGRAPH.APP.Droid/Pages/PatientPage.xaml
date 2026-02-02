@@ -14,8 +14,8 @@
              xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:fonts="clr-namespace:Fonts"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             Title="Patient Registration"
-             BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}">
+             Title="Patient Registration">
+    <!--BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}"-->
     <!--<ContentPage.ToolbarItems>
         <ToolbarItem Text="Edit" 
                      Command="{Binding ToggleEditModeCommand}"/>
@@ -1106,12 +1106,12 @@
                                       Style="{StaticResource PrimaryActionStyle}"
                                       Command="{Binding SaveCommand}"
                                       HeightRequest="56">
-                        <buttons:SfButton.ImageSource>
+                        <!--<buttons:SfButton.ImageSource>
                             <FontImageSource FontFamily="MaterialIcons"
                                              Glyph="&#xe161;"
                                              Size="22"
                                              Color="{StaticResource SurfaceWhite}" />
-                        </buttons:SfButton.ImageSource>
+                        </buttons:SfButton.ImageSource>-->
                     </buttons:SfButton>
 
                     <!-- Save Draft Button -->
