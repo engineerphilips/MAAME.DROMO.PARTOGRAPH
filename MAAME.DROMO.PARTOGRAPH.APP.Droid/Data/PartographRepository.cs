@@ -92,6 +92,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     emergencyContactRelationship TEXT,
                     emergencyContactPhone TEXT,
                     handler TEXT,
+                    facilityid TEXT,
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
                     deletedtime INTEGER,
@@ -107,6 +108,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 CREATE INDEX IF NOT EXISTS idx_patient_sync ON Tbl_Patient(updatedtime, syncstatus);
                 CREATE INDEX IF NOT EXISTS idx_patient_server_version ON Tbl_Patient(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_patient_facilityid ON Tbl_Patient(facilityid);
 
                 DROP TRIGGER IF EXISTS trg_patient_insert;
                 CREATE TRIGGER trg_patient_insert
@@ -136,6 +138,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 _logger.LogError(e, "Error creating Patient table");
                 throw;
+            }
+
+            // Migration: Add facilityid column to Tbl_Patient if it doesn't exist (for existing databases)
+            try
+            {
+                var alterCmd = connection.CreateCommand();
+                alterCmd.CommandText = @"ALTER TABLE Tbl_Patient ADD COLUMN facilityid TEXT;";
+                await alterCmd.ExecuteNonQueryAsync();
+                _logger.LogInformation("Added facilityid column to Tbl_Patient");
+            }
+            catch (SqliteException ex) when (ex.Message.Contains("duplicate column"))
+            {
+                // Column already exists, ignore
+            }
+            catch (SqliteException)
+            {
+                // Ignore other SQLite errors (column may already exist with different error message)
             }
 
             try
