@@ -1014,6 +1014,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _patient.Weight = Weight;
             _patient.Height = Height;
 
+            // Set handler and facility from logged-in user
+            _patient.Handler = Constants.Staff?.ID;
+            _patient.HandlerName = Constants.Staff?.Name ?? string.Empty;
+            _patient.FacilityID = Constants.Staff?.Facility;
+
             // Save previous pregnancy outcomes
             _patient.HasPreviousCSection = HasPreviousCSection;
             _patient.NumberOfPreviousCsections = NumberOfPreviousCsections;
@@ -1042,7 +1047,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     ExpectedDeliveryDate = ExpectedDeliveryDate != null ? DateOnly.FromDateTime(ExpectedDeliveryDate.Value) : null,
                     LastMenstrualDate = LastMenstrualDate != null ? DateOnly.FromDateTime(LastMenstrualDate.Value) : null,
                     RupturedMembraneTime = RupturedMembraneDate != null && RupturedMembraneTime != null ? new DateTime(RupturedMembraneDate.Value.Year, RupturedMembraneDate.Value.Month, RupturedMembraneDate.Value.Day).Add(RupturedMembraneTime.Value) : null,
-                    Status = CervicalDilationOnAdmission > 4 ? LaborStatus.FirstStage : LaborStatus.Pending, 
+                    Status = CervicalDilationOnAdmission > 4 ? LaborStatus.FirstStage : LaborStatus.Pending,
+                    // Set handler and facility from logged-in user
+                    Handler = Constants.Staff?.ID,
+                    HandlerName = Constants.Staff?.Name ?? string.Empty,
+                    FacilityID = Constants.Staff?.Facility,
                     // Risk Assessment Summary
                     RiskScore = RiskScore,
                     RiskLevel = RiskLevel,
