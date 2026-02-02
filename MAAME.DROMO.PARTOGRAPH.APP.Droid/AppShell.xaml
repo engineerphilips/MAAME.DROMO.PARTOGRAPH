@@ -285,13 +285,13 @@
                       Route="users" />
     </FlyoutItem>
 
-    <!--<ShellContent
+    <ShellContent
     x:Name="partograph"
     Route="partograph"
     Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False"
-    ContentTemplate="{DataTemplate pages:PartographPage}" />-->
+    ContentTemplate="{DataTemplate pages:PartographPage}" />
 
     <!--<ShellContent
     x:Name="partographchart"
