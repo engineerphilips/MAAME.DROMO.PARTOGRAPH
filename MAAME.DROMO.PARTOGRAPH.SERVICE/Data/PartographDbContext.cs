@@ -153,6 +153,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 // Configure indexes
                 entity.HasIndex(e => e.Email).IsUnique();
                 entity.HasIndex(e => e.StaffID);
+                entity.HasIndex(e => e.Facility);  // Index for facility filtering
                 entity.HasIndex(e => e.UpdatedTime);
                 entity.HasIndex(e => e.SyncStatus);
             });
@@ -225,6 +226,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.AccessLevel);
                 entity.HasIndex(e => e.RegionID);
                 entity.HasIndex(e => e.DistrictID);
+                entity.HasIndex(e => e.FacilityID);  // Index for facility filtering
             });
 
             // Configure measurement types with proper navigation property references

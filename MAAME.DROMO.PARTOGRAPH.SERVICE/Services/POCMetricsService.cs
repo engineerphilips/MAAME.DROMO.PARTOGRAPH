@@ -144,16 +144,26 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
 
             try
             {
-                // Get total healthcare workers (staff who are active)
+                // Get total healthcare workers (staff who are active) - filter by facility if specified
                 var staffQuery = _context.Staff.Where(s => s.Deleted == 0);
+                if (facilityId.HasValue)
+                {
+                    staffQuery = staffQuery.Where(s => s.Facility == facilityId);
+                }
                 metrics.TotalHealthcareWorkers = await staffQuery.CountAsync();
 
                 // Get active partograph users (staff who have completed partographs in last 30 days)
                 var thirtyDaysAgo = DateTimeOffset.UtcNow.AddDays(-30).ToUnixTimeMilliseconds();
 
-                // Count unique handlers who created partographs in last 30 days
-                var activeUserIds = await _context.Partographs
-                    .Where(p => p.Deleted == 0 && p.CreatedTime >= thirtyDaysAgo && p.Handler != null)
+                // Count unique handlers who created partographs in last 30 days - filter by facility if specified
+                var partographQuery = _context.Partographs
+                    .Where(p => p.Deleted == 0 && p.CreatedTime >= thirtyDaysAgo && p.Handler != null);
+                if (facilityId.HasValue)
+                {
+                    partographQuery = partographQuery.Where(p => p.FacilityID == facilityId);
+                }
+
+                var activeUserIds = await partographQuery
                     .Select(p => p.Handler)
                     .Distinct()
                     .CountAsync();
@@ -167,9 +177,14 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
 
                 metrics.Target = ADOPTION_TARGET;
 
-                // Get breakdown by role
-                var roleBreakdown = await _context.Staff
-                    .Where(s => s.Deleted == 0)
+                // Get breakdown by role - filter by facility if specified
+                var roleQuery = _context.Staff.Where(s => s.Deleted == 0);
+                if (facilityId.HasValue)
+                {
+                    roleQuery = roleQuery.Where(s => s.Facility == facilityId);
+                }
+
+                var roleBreakdown = await roleQuery
                     .GroupBy(s => s.Role)
                     .Select(g => new RoleAdoption
                     {
@@ -180,16 +195,27 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
 
                 metrics.RoleBreakdown = roleBreakdown;
 
-                // Calculate usage patterns
+                // Calculate usage patterns - filter by facility if specified
+                var usageQuery = _context.Partographs
+                    .Where(p => p.Deleted == 0 && p.CreatedTime >= thirtyDaysAgo);
+                if (facilityId.HasValue)
+                {
+                    usageQuery = usageQuery.Where(p => p.FacilityID == facilityId);
+                }
+
                 metrics.AveragePartographsPerUser = activeUserIds > 0
-                    ? await _context.Partographs
-                        .Where(p => p.Deleted == 0 && p.CreatedTime >= thirtyDaysAgo)
-                        .CountAsync() / (decimal)activeUserIds
+                    ? await usageQuery.CountAsync() / (decimal)activeUserIds
                     : 0;
 
-                // Users who completed 5+ partographs (regular users)
-                var regularUsers = await _context.Partographs
-                    .Where(p => p.Deleted == 0 && p.CreatedTime >= thirtyDaysAgo && p.Handler != null)
+                // Users who completed 5+ partographs (regular users) - filter by facility if specified
+                var regularUsersQuery = _context.Partographs
+                    .Where(p => p.Deleted == 0 && p.CreatedTime >= thirtyDaysAgo && p.Handler != null);
+                if (facilityId.HasValue)
+                {
+                    regularUsersQuery = regularUsersQuery.Where(p => p.FacilityID == facilityId);
+                }
+
+                var regularUsers = await regularUsersQuery
                     .GroupBy(p => p.Handler)
                     .Where(g => g.Count() >= 5)
                     .CountAsync();

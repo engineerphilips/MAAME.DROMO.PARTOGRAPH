@@ -26,13 +26,20 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
             [FromQuery] string? role = null,
-            [FromQuery] bool? isActive = null)
+            [FromQuery] bool? isActive = null,
+            [FromQuery] Guid? facilityId = null)
         {
             try
             {
                 var query = _context.Staff
                     .Where(s => s.Deleted == 0)
                     .AsQueryable();
+
+                // Filter by facility if specified
+                if (facilityId.HasValue)
+                {
+                    query = query.Where(s => s.Facility == facilityId);
+                }
 
                 if (!string.IsNullOrWhiteSpace(role))
                 {
