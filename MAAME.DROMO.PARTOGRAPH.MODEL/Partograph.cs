@@ -334,9 +334,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string HandlerName { get; set; } = string.Empty;
         public Guid? Handler { get; set; }
 
-        // Facility - directly links partograph to facility for reporting
+        // Facility - directly links partograph to facility for reporting (join to get name)
         public Guid? FacilityID { get; set; }
-        public string FacilityName { get; set; } = string.Empty;
 
         [JsonIgnore]
         public string StatusDisplay => Status switch

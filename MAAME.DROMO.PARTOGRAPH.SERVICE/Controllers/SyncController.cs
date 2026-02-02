@@ -432,8 +432,16 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 {
                     try
                     {
-                        //var x = await _context.Patients.ToListAsync();
-                        
+                        // If FacilityID is not set but Handler is, get the facility from the handler (staff)
+                        if (!patient.FacilityID.HasValue && patient.Handler.HasValue)
+                        {
+                            var handler = await _context.Staff.FirstOrDefaultAsync(s => s.ID == patient.Handler);
+                            if (handler != null && handler.Facility.HasValue)
+                            {
+                                patient.FacilityID = handler.Facility;
+                            }
+                        }
+
                         var existing = await _context.Patients
                             .FirstOrDefaultAsync(p => p.ID == patient.ID);
 
@@ -510,11 +518,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                             if (handler != null && handler.Facility.HasValue)
                             {
                                 partograph.FacilityID = handler.Facility;
-                                var facility = await _context.Facilities.FirstOrDefaultAsync(f => f.ID == handler.Facility);
-                                if (facility != null)
-                                {
-                                    partograph.FacilityName = facility.Name;
-                                }
                             }
                         }
 
@@ -540,7 +543,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                             if (!existing.FacilityID.HasValue && partograph.FacilityID.HasValue)
                             {
                                 existing.FacilityID = partograph.FacilityID;
-                                existing.FacilityName = partograph.FacilityName;
                             }
 
                             _context.Entry(existing).CurrentValues.SetValues(partograph);

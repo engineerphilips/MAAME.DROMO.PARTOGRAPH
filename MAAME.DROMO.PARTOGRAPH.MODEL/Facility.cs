@@ -21,10 +21,9 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
-        // Hierarchical references for monitoring
+        // Hierarchical references for monitoring (join to get names)
         public Guid? RegionID { get; set; }
         public Guid? DistrictID { get; set; }
-        public string DistrictName { get; set; } = string.Empty;
 
         // GPS Location fields
         public double? Latitude { get; set; }

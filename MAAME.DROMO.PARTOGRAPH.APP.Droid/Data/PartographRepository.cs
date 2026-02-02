@@ -167,7 +167,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     complications TEXT,
                     handler TEXT,
                     facilityid TEXT,
-                    facilityname TEXT,
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
                     deletedtime INTEGER,
@@ -276,19 +275,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 // Migration: Add currentPhase column if it doesn't exist (for existing databases)
 
-                // Migration: Add facilityid and facilityname columns if they don't exist
+                // Migration: Add facilityid column if it doesn't exist
                 try
                 {
                     var alterCmd = connection.CreateCommand();
                     alterCmd.CommandText = @"ALTER TABLE Tbl_Partograph ADD COLUMN facilityid TEXT;";
-                    await alterCmd.ExecuteNonQueryAsync();
-                }
-                catch (SqliteException) { /* Column already exists, ignore */ }
-
-                try
-                {
-                    var alterCmd = connection.CreateCommand();
-                    alterCmd.CommandText = @"ALTER TABLE Tbl_Partograph ADD COLUMN facilityname TEXT;";
                     await alterCmd.ExecuteNonQueryAsync();
                 }
                 catch (SqliteException) { /* Column already exists, ignore */ }
@@ -556,7 +547,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
                 HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
                 FacilityID = reader["facilityid"] is DBNull ? null : Guid.Parse(reader["facilityid"].ToString()),
-                FacilityName = reader["facilityname"] is DBNull ? string.Empty : reader["facilityname"].ToString(),
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                 DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
@@ -675,7 +665,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         expectedDeliveryDate, lastMenstrualDate, laborStartTime, secondStageStartTime,
                         thirdStageStartTime, fourthStageStartTime, deliveryTime, completedTime,
                         rupturedMembraneTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus,
-                        complications, handler, facilityid, facilityname, createdtime, updatedtime, deletedtime, deviceid,
+                        complications, handler, facilityid, createdtime, updatedtime, deletedtime, deviceid,
                         origindeviceid, syncstatus, version, serverversion, deleted
                     )
                     VALUES (
@@ -683,7 +673,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         @expectedDeliveryDate, @lastMenstrualDate, @laborStartTime, @secondStageStartTime,
                         @thirdStageStartTime, @fourthStageStartTime, @deliveryTime, @completedTime,
                         @rupturedMembraneTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus,
-                        @complications, @handler, @facilityid, @facilityname, @createdtime, @updatedtime, @deletedtime, @deviceid,
+                        @complications, @handler, @facilityid, @createdtime, @updatedtime, @deletedtime, @deviceid,
                         @origindeviceid, @syncstatus, @version, @serverversion, @deleted
                     )";
                 }
@@ -713,7 +703,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         complications = @complications,
                         handler = @handler,
                         facilityid = @facilityid,
-                        facilityname = @facilityname,
                         updatedtime = @updatedtime,
                         deviceid = @deviceid,
                         syncstatus = @syncstatus,
@@ -745,7 +734,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 saveCmd.Parameters.AddWithValue("@complications", item.Complications ?? "");
                 saveCmd.Parameters.AddWithValue("@handler", item.Handler != null ? item.Handler?.ToString() : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@facilityid", item.FacilityID != null ? item.FacilityID?.ToString() : DBNull.Value);
-                saveCmd.Parameters.AddWithValue("@facilityname", item.FacilityName ?? string.Empty);
                 saveCmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
                 saveCmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
                 saveCmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
@@ -1819,7 +1807,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
                 HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
                 FacilityID = reader["facilityid"] is DBNull ? null : Guid.Parse(reader["facilityid"].ToString()),
-                FacilityName = reader["facilityname"] is DBNull ? string.Empty : reader["facilityname"].ToString(),
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                 DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),

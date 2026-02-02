@@ -63,7 +63,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     emergencyContactName TEXT, 
                     emergencyContactRelationship TEXT, 
                     emergencyContactPhone TEXT, 
-                    handler TEXT,                
+                    handler TEXT,
+                    facilityid TEXT,
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
                     deletedtime INTEGER, 
@@ -103,6 +104,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     WHERE ID = NEW.ID;
                 END;";
                 await createTableCmd.ExecuteNonQueryAsync();
+
+                // Migration: Add facilityid column if it doesn't exist
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"ALTER TABLE Tbl_Patient ADD COLUMN facilityid TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException) { /* Column already exists, ignore */ }
             }
             catch (Exception e)
             {
@@ -147,6 +157,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         EmergencyContactPhone = reader["emergencyContactPhone"] is DBNull ? "" : reader["emergencyContactPhone"].ToString(),
                         Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
                         HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
+                        FacilityID = reader["facilityid"] is DBNull ? null : Guid.Parse(reader["facilityid"].ToString()),
                         CreatedTime = Convert.ToInt64(reader["createdtime"]),
                         UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                         DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
@@ -207,6 +218,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         EmergencyContactPhone = reader["emergencyContactPhone"] is DBNull ? "" : reader["emergencyContactPhone"].ToString(),
                         Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
                         HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
+                        FacilityID = reader["facilityid"] is DBNull ? null : Guid.Parse(reader["facilityid"].ToString()),
                         CreatedTime = Convert.ToInt64(reader["createdtime"]),
                         UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                         DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
@@ -264,8 +276,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 if (isNewPatient)
                 {
                     saveCmd.CommandText = @"
-                INSERT INTO Tbl_Patient (ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-                VALUES (@ID, @time, @firstName, @lastName, @hospitalNumber, @dateofbirth, @age, @bloodGroup, @phoneNumber, @emergencyContactName, @emergencyContactRelationship, @emergencyContactPhone, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted)";
+                INSERT INTO Tbl_Patient (ID, time, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, facilityid, createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
+                VALUES (@ID, @time, @firstName, @lastName, @hospitalNumber, @dateofbirth, @age, @bloodGroup, @phoneNumber, @emergencyContactName, @emergencyContactRelationship, @emergencyContactPhone, @handler, @facilityid, @createdtime, @updatedtime, @deletedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted)";
                 }
                 else
                 {
@@ -282,6 +294,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     emergencyContactRelationship = @emergencyContactRelationship,
                     emergencyContactPhone = @emergencyContactPhone,
                     handler = @handler,
+                    facilityid = @facilityid,
                     updatedtime = @updatedtime,
                     deviceid = @deviceid,
                     syncstatus = @syncstatus,
@@ -305,6 +318,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 saveCmd.Parameters.AddWithValue("@emergencyContactRelationship", item.EmergencyContactRelationship ?? "");
                 saveCmd.Parameters.AddWithValue("@emergencyContactPhone", item.EmergencyContactPhone ?? "");
                 saveCmd.Parameters.AddWithValue("@handler", item.Handler != null ? item.Handler?.ToString() : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@facilityid", item.FacilityID != null ? item.FacilityID?.ToString() : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
                 saveCmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
                 saveCmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
