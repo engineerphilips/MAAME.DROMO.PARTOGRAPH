@@ -7,8 +7,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
 {
     public interface IAnalyticsService
     {
-        Task<object> GetDashboardStatsAsync(DateTime startDate, DateTime endDate);
-        Task<object> GetRealtimeStatsAsync();
+        Task<object> GetDashboardStatsAsync(DateTime startDate, DateTime endDate, Guid? facilityId = null);
+        Task<object> GetRealtimeStatsAsync(Guid? facilityId = null);
         Task ComputeDailyStatsAsync(DateTime date, Guid? facilityId = null);
         Task ComputeMonthlyStatsAsync(int year, int month, Guid? facilityId = null);
         Task ComputeFacilityPerformanceAsync(Guid? facilityId = null);
@@ -28,36 +28,61 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             _logger = logger;
         }
 
-        public async Task<object> GetDashboardStatsAsync(DateTime startDate, DateTime endDate)
+        public async Task<object> GetDashboardStatsAsync(DateTime startDate, DateTime endDate, Guid? facilityId = null)
         {
             var startTimestamp = new DateTimeOffset(startDate).ToUnixTimeMilliseconds();
             var endTimestamp = new DateTimeOffset(endDate).ToUnixTimeMilliseconds();
 
-            // Core counts
-            var patientCount = await _context.Patients.CountAsync(p => p.Deleted == 0);
-            var partographCount = await _context.Partographs.CountAsync(p => p.Deleted == 0);
-            var staffCount = await _context.Staff.CountAsync(s => s.Deleted == 0);
-            var facilityCount = await _context.Facilities.CountAsync(f => f.Deleted == 0);
+            // Core counts - filter by facility if specified
+            var patientQuery = _context.Patients.Where(p => p.Deleted == 0);
+            var partographQuery = _context.Partographs.Where(p => p.Deleted == 0);
+            var staffQuery = _context.Staff.Where(s => s.Deleted == 0);
 
-            // Active labors (partographs not completed within date range)
-            var activeLabors = await _context.Partographs
-                .Where(p => p.Deleted == 0 && p.Status != LaborStatus.Completed)
+            if (facilityId.HasValue)
+            {
+                patientQuery = patientQuery.Where(p => p.FacilityID == facilityId);
+                partographQuery = partographQuery.Where(p => p.FacilityID == facilityId);
+                staffQuery = staffQuery.Where(s => s.Facility == facilityId);
+            }
+
+            var patientCount = await patientQuery.CountAsync();
+            var partographCount = await partographQuery.CountAsync();
+            var staffCount = await staffQuery.CountAsync();
+            var facilityCount = facilityId.HasValue ? 1 : await _context.Facilities.CountAsync(f => f.Deleted == 0);
+
+            // Active labors (partographs not completed within date range) - filter by facility
+            var activeLabors = await partographQuery
+                .Where(p => p.Status != LaborStatus.Completed)
                 .CountAsync();
 
-            // Birth outcomes in date range
-            var birthOutcomes = await _context.BirthOutcomes
-                .Where(b => b.Deleted == 0 && b.CreatedTime >= startTimestamp && b.CreatedTime <= endTimestamp)
-                .ToListAsync();
+            // Birth outcomes in date range - join through Partograph to filter by facility
+            var birthOutcomesQuery = _context.BirthOutcomes
+                .Include(b => b.Partograph)
+                .Where(b => b.Deleted == 0 && b.CreatedTime >= startTimestamp && b.CreatedTime <= endTimestamp);
+
+            if (facilityId.HasValue)
+            {
+                birthOutcomesQuery = birthOutcomesQuery.Where(b => b.Partograph != null && b.Partograph.FacilityID == facilityId);
+            }
+
+            var birthOutcomes = await birthOutcomesQuery.ToListAsync();
 
             var totalDeliveries = birthOutcomes.Count;
             var svdCount = birthOutcomes.Count(b => b.DeliveryMode == DeliveryMode.SpontaneousVaginal);
             var csCount = birthOutcomes.Count(b => b.DeliveryMode == DeliveryMode.CaesareanSection);
             var assistedCount = birthOutcomes.Count(b => b.DeliveryMode == DeliveryMode.AssistedVaginal);
 
-            // Baby details
-            var babyDetails = await _context.BabyDetails
-                .Where(b => b.Deleted == 0 && b.CreatedTime >= startTimestamp && b.CreatedTime <= endTimestamp)
-                .ToListAsync();
+            // Baby details - join through Partograph to filter by facility
+            var babyDetailsQuery = _context.BabyDetails
+                .Include(b => b.Partograph)
+                .Where(b => b.Deleted == 0 && b.CreatedTime >= startTimestamp && b.CreatedTime <= endTimestamp);
+
+            if (facilityId.HasValue)
+            {
+                babyDetailsQuery = babyDetailsQuery.Where(b => b.Partograph != null && b.Partograph.FacilityID == facilityId);
+            }
+
+            var babyDetails = await babyDetailsQuery.ToListAsync();
 
             var liveBirths = babyDetails.Count(b => b.VitalStatus == BabyVitalStatus.LiveBirth || b.VitalStatus == BabyVitalStatus.Survived);
             var stillbirths = babyDetails.Count(b => b.VitalStatus == BabyVitalStatus.FreshStillbirth || b.VitalStatus == BabyVitalStatus.MaceratedStillbirth);
@@ -70,15 +95,29 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             var pphCases = birthOutcomes.Count(b => b.PostpartumHemorrhage);
             var eclampsiaCases = birthOutcomes.Count(b => b.Eclampsia);
 
-            // Referrals
-            var referrals = await _context.Referrals
-                .Where(r => r.Deleted == 0 && r.CreatedTime >= startTimestamp && r.CreatedTime <= endTimestamp)
-                .CountAsync();
+            // Referrals - join through Partograph to filter by facility
+            var referralsQuery = _context.Referrals
+                .Include(r => r.Partograph)
+                .Where(r => r.Deleted == 0 && r.CreatedTime >= startTimestamp && r.CreatedTime <= endTimestamp);
 
-            var emergencyReferrals = await _context.Referrals
+            if (facilityId.HasValue)
+            {
+                referralsQuery = referralsQuery.Where(r => r.Partograph != null && r.Partograph.FacilityID == facilityId);
+            }
+
+            var referrals = await referralsQuery.CountAsync();
+
+            var emergencyReferralsQuery = _context.Referrals
+                .Include(r => r.Partograph)
                 .Where(r => r.Deleted == 0 && r.CreatedTime >= startTimestamp && r.CreatedTime <= endTimestamp
-                    && r.Urgency == ReferralUrgency.Emergency)
-                .CountAsync();
+                    && r.Urgency == ReferralUrgency.Emergency);
+
+            if (facilityId.HasValue)
+            {
+                emergencyReferralsQuery = emergencyReferralsQuery.Where(r => r.Partograph != null && r.Partograph.FacilityID == facilityId);
+            }
+
+            var emergencyReferrals = await emergencyReferralsQuery.CountAsync();
 
             return new
             {
@@ -126,12 +165,18 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             };
         }
 
-        public async Task<object> GetRealtimeStatsAsync()
+        public async Task<object> GetRealtimeStatsAsync(Guid? facilityId = null)
         {
-            // Active labors by stage
-            var activePartographs = await _context.Partographs
-                .Where(p => p.Deleted == 0 && p.Status != LaborStatus.Completed)
-                .ToListAsync();
+            // Active labors by stage - filter by facility
+            var activePartographsQuery = _context.Partographs
+                .Where(p => p.Deleted == 0 && p.Status != LaborStatus.Completed);
+
+            if (facilityId.HasValue)
+            {
+                activePartographsQuery = activePartographsQuery.Where(p => p.FacilityID == facilityId);
+            }
+
+            var activePartographs = await activePartographsQuery.ToListAsync();
 
             var byStage = activePartographs.GroupBy(p => p.Status)
                 .Select(g => new { stage = g.Key.ToString(), count = g.Count() });
@@ -141,24 +186,56 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             var todayStart = new DateTimeOffset(today).ToUnixTimeMilliseconds();
             var todayEnd = new DateTimeOffset(today.AddDays(1)).ToUnixTimeMilliseconds();
 
-            var todayDeliveries = await _context.BirthOutcomes
-                .CountAsync(b => b.Deleted == 0 && b.CreatedTime >= todayStart && b.CreatedTime < todayEnd);
+            // Today's deliveries - join through Partograph to filter by facility
+            var todayDeliveriesQuery = _context.BirthOutcomes
+                .Include(b => b.Partograph)
+                .Where(b => b.Deleted == 0 && b.CreatedTime >= todayStart && b.CreatedTime < todayEnd);
 
-            var todayAdmissions = await _context.Partographs
-                .CountAsync(p => p.Deleted == 0 && p.CreatedTime >= todayStart && p.CreatedTime < todayEnd);
+            if (facilityId.HasValue)
+            {
+                todayDeliveriesQuery = todayDeliveriesQuery.Where(b => b.Partograph != null && b.Partograph.FacilityID == facilityId);
+            }
 
-            // Recent alerts (last 24 hours)
+            var todayDeliveries = await todayDeliveriesQuery.CountAsync();
+
+            // Today's admissions - filter by facility
+            var todayAdmissionsQuery = _context.Partographs
+                .Where(p => p.Deleted == 0 && p.CreatedTime >= todayStart && p.CreatedTime < todayEnd);
+
+            if (facilityId.HasValue)
+            {
+                todayAdmissionsQuery = todayAdmissionsQuery.Where(p => p.FacilityID == facilityId);
+            }
+
+            var todayAdmissions = await todayAdmissionsQuery.CountAsync();
+
+            // Recent alerts (last 24 hours) - filter by facility
             var last24Hours = DateTime.UtcNow.AddHours(-24);
-            var recentAlerts = await _context.AlertSummaries
-                .Where(a => a.AlertDateTime >= last24Hours && !a.Resolved)
+            var recentAlertsQuery = _context.AlertSummaries
+                .Where(a => a.AlertDateTime >= last24Hours && !a.Resolved);
+
+            if (facilityId.HasValue)
+            {
+                recentAlertsQuery = recentAlertsQuery.Where(a => a.FacilityID == facilityId);
+            }
+
+            var recentAlerts = await recentAlertsQuery
                 .OrderByDescending(a => a.AlertSeverity == "Critical")
                 .ThenByDescending(a => a.AlertDateTime)
                 .Take(10)
                 .ToListAsync();
 
-            // Pending referrals
-            var pendingReferrals = await _context.Referrals
-                .CountAsync(r => r.Deleted == 0 && r.Status == ReferralStatus.Pending);
+            // Pending referrals - join through Partograph to filter by facility
+            var pendingReferralsQuery = _context.Referrals
+                .Include(r => r.Partograph)
+                .Where(r => r.Deleted == 0 && r.Status == ReferralStatus.Pending);
+
+            if (facilityId.HasValue)
+            {
+                pendingReferralsQuery = pendingReferralsQuery.Where(r => r.Partograph != null && r.Partograph.FacilityID == facilityId);
+            }
+
+            var pendingReferrals = await pendingReferralsQuery.CountAsync();
 
             return new
             {
@@ -222,22 +299,33 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
                         CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
                     };
 
-                    // Get partographs for this facility and date
-                    // Note: This is a simplified version - in production, you'd link partographs to facilities
+                    // Get partographs for this facility and date - filter by Partograph.FacilityID
                     var partographs = await _context.Partographs
-                        .Where(p => p.Deleted == 0 && p.CreatedTime >= startTimestamp && p.CreatedTime < endTimestamp)
+                        .Where(p => p.Deleted == 0 && p.FacilityID == facility.ID && p.CreatedTime >= startTimestamp && p.CreatedTime < endTimestamp)
                         .ToListAsync();
 
+                    // Get partograph IDs for this facility to filter related data
+                    var facilityPartographIds = partographs.Select(p => p.ID).ToList();
+
+                    // BirthOutcomes - join through Partograph to filter by facility
                     var birthOutcomes = await _context.BirthOutcomes
-                        .Where(b => b.Deleted == 0 && b.CreatedTime >= startTimestamp && b.CreatedTime < endTimestamp)
+                        .Include(b => b.Partograph)
+                        .Where(b => b.Deleted == 0 && b.CreatedTime >= startTimestamp && b.CreatedTime < endTimestamp
+                            && b.Partograph != null && b.Partograph.FacilityID == facility.ID)
                         .ToListAsync();
 
+                    // BabyDetails - join through Partograph to filter by facility
                     var babyDetails = await _context.BabyDetails
-                        .Where(b => b.Deleted == 0 && b.CreatedTime >= startTimestamp && b.CreatedTime < endTimestamp)
+                        .Include(b => b.Partograph)
+                        .Where(b => b.Deleted == 0 && b.CreatedTime >= startTimestamp && b.CreatedTime < endTimestamp
+                            && b.Partograph != null && b.Partograph.FacilityID == facility.ID)
                         .ToListAsync();
 
+                    // Referrals - join through Partograph to filter by facility
                     var referrals = await _context.Referrals
-                        .Where(r => r.Deleted == 0 && r.CreatedTime >= startTimestamp && r.CreatedTime < endTimestamp)
+                        .Include(r => r.Partograph)
+                        .Where(r => r.Deleted == 0 && r.CreatedTime >= startTimestamp && r.CreatedTime < endTimestamp
+                            && r.Partograph != null && r.Partograph.FacilityID == facility.ID)
                         .ToListAsync();
 
                     // Populate stats

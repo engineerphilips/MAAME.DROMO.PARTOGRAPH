@@ -532,9 +532,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
                 .Where(p => p.DeliveryTime >= startDate && p.DeliveryTime <= endDate);
 
             if (facilityId.HasValue)
-                query = query
-                    .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
-                    .Where(p => p.s.Facility == facilityId).Select(p => p.p);
+                query = query.Where(p => p.FacilityID == facilityId);
 
             var partographs = await query.ToListAsync();
 
@@ -583,51 +581,35 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
                 .Include(r => r.Partograph)
                 .Where(r => r.ClassifiedAt >= startDate && r.ClassifiedAt <= endDate);
 
-            // Filter by facility - join through Partograph.Handler to Staff.Facility
+            // Filter by facility - use direct Partograph.FacilityID
             if (facilityId.HasValue)
             {
                 query = query
-                    .Where(r => r.Partograph != null && r.Partograph.Handler != null)
-                    .Join(_context.Staff,
-                        r => r.Partograph!.Handler,
-                        s => s.ID,
-                        (r, s) => new { Classification = r, Staff = s })
-                    .Where(x => x.Staff.Facility == facilityId)
-                    .Select(x => x.Classification);
+                    .Where(r => r.Partograph != null && r.Partograph.FacilityID == facilityId);
             }
 
-            // Filter by region - join through Staff to Facility to get RegionID
+            // Filter by region - join through Partograph.FacilityID to Facility to get RegionID
             if (regionId.HasValue)
             {
                 query = query
-                    .Where(r => r.Partograph != null && r.Partograph.Handler != null)
-                    .Join(_context.Staff,
-                        r => r.Partograph!.Handler,
-                        s => s.ID,
-                        (r, s) => new { Classification = r, Staff = s })
-                    .Where(x => x.Staff.Facility != null)
-                    .Join(_context.Facilities,
-                        x => x.Staff.Facility,
+                    .Where(r => r.Partograph != null && r.Partograph.FacilityID != null)
+                    .Join(_context.Facilities.Include(f => f.District),
+                        r => r.Partograph!.FacilityID,
                         f => f.ID,
-                        (x, f) => new { x.Classification, Facility = f })
-                    .Where(x => x.Facility.District.RegionID == regionId)
+                        (r, f) => new { Classification = r, Facility = f })
+                    .Where(x => x.Facility.District != null && x.Facility.District.RegionID == regionId)
                     .Select(x => x.Classification);
             }
 
-            // Filter by district - join through Staff to Facility to get DistrictID
+            // Filter by district - join through Partograph.FacilityID to Facility to get DistrictID
             if (districtId.HasValue)
             {
                 query = query
-                    .Where(r => r.Partograph != null && r.Partograph.Handler != null)
-                    .Join(_context.Staff,
-                        r => r.Partograph!.Handler,
-                        s => s.ID,
-                        (r, s) => new { Classification = r, Staff = s })
-                    .Where(x => x.Staff.Facility != null)
+                    .Where(r => r.Partograph != null && r.Partograph.FacilityID != null)
                     .Join(_context.Facilities,
-                        x => x.Staff.Facility,
+                        r => r.Partograph!.FacilityID,
                         f => f.ID,
-                        (x, f) => new { x.Classification, Facility = f })
+                        (r, f) => new { Classification = r, Facility = f })
                     .Where(x => x.Facility.DistrictID == districtId)
                     .Select(x => x.Classification);
             }
