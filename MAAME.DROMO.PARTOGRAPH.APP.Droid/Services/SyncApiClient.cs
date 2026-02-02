@@ -532,6 +532,46 @@ public class SyncApiClient : ISyncApiClient
     }
 
     /// <inheritdoc/>
+    public async Task<SyncPullResponse<Region>> PullRegionsAsync(SyncPullRequest request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/pull/regions", request)
+            );
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Region>>();
+            return result ?? new SyncPullResponse<Region> { Records = new List<Region>() };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pulling regions data");
+            throw new SyncException("Failed to pull regions data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<SyncPullResponse<District>> PullDistrictsAsync(SyncPullRequest request)
+    {
+        try
+        {
+            var response = await ExecuteWithRetryAsync(async () =>
+                await _httpClient.PostAsJsonAsync("api/sync/pull/districts", request)
+            );
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<District>>();
+            return result ?? new SyncPullResponse<District> { Records = new List<District>() };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pulling districts data");
+            throw new SyncException("Failed to pull districts data", ex);
+        }
+    }
+
+    /// <inheritdoc/>
     public async Task<bool> TestConnectionAsync()
     {
         try
