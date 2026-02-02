@@ -782,7 +782,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
                     P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications,
-                    P.handler, S.name as staffname, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
+                    P.handler, S.name as staffname, P.facilityid, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
                     P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted,
                     PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age,
                     PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone,
@@ -851,7 +851,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
                     P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications,
-                    P.handler, S.name as staffname, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
+                    P.handler, S.name as staffname, P.facilityid, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
                     P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted,
                     PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age,
                     PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone,
@@ -1222,9 +1222,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     p.cervicalDilationOnAdmission,
                     p.status,
                     MAX(fhr.time) as LastFHRTime,
-                    (SELECT f.value FROM Tbl_FHR f WHERE f.partographID = p.ID ORDER BY f.time DESC LIMIT 1) as LastFHR,
-                    p.riskLevel,
-                    p.riskScore
+                    (SELECT f.value FROM Tbl_FHR f WHERE f.partographID = p.ID ORDER BY f.time DESC LIMIT 1) as LastFHR
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
                 LEFT JOIN Tbl_FHR fhr ON fhr.partographID = p.ID
@@ -1232,13 +1230,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                   AND p.deleted = 0
                   AND pt.deleted = 0
                   {facilityFilter}
-                GROUP BY p.ID, pt.firstName, pt.lastName, pt.hospitalNumber, p.laborStartTime, p.cervicalDilationOnAdmission, p.status, p.riskLevel, p.riskScore
+                GROUP BY p.ID, pt.firstName, pt.lastName, pt.hospitalNumber, p.laborStartTime, p.cervicalDilationOnAdmission, p.status
                 ORDER BY
                     CASE WHEN p.status = @emergency THEN 0 ELSE 1 END,
-                    CASE WHEN p.riskLevel = 'High Risk' THEN 0 WHEN p.riskLevel = 'Medium Risk' THEN 1 ELSE 2 END,
                     JULIANDAY(DATETIME('now')) - JULIANDAY(p.laborStartTime) DESC
                 LIMIT 10";
 
+                //CASE WHEN p.riskLevel = 'High Risk' THEN 0 WHEN p.riskLevel = 'Medium Risk' THEN 1 ELSE 2 END,
+                //,
+                //    p.riskLevel,
+                //    p.riskScore
                 cmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 cmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 cmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
