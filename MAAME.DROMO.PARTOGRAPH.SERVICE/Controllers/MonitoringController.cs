@@ -82,9 +82,10 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 user.RefreshTokenExpiryTime = DateTimeOffset.UtcNow.AddDays(7).ToUnixTimeSeconds();
                 await _context.SaveChangesAsync();
 
-                // Get region and district names
+                // Get region, district, and facility names
                 string? regionName = null;
                 string? districtName = null;
+                string? facilityName = null;
 
                 if (user.RegionID.HasValue)
                 {
@@ -96,6 +97,12 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 {
                     var district = await _context.Districts.FindAsync(user.DistrictID.Value);
                     districtName = district?.Name;
+                }
+
+                if (user.FacilityID.HasValue)
+                {
+                    var facility = await _context.Facilities.FindAsync(user.FacilityID.Value);
+                    facilityName = facility?.Name;
                 }
 
                 return Ok(new
@@ -113,7 +120,9 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                         regionId = user.RegionID,
                         regionName,
                         districtId = user.DistrictID,
-                        districtName
+                        districtName,
+                        facilityId = user.FacilityID,
+                        facilityName
                     }
                 });
             }
@@ -167,7 +176,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         [HttpGet("dashboard/summary")]
         public async Task<IActionResult> GetDashboardSummary(
             [FromQuery] Guid? regionId = null,
-            [FromQuery] Guid? districtId = null)
+            [FromQuery] Guid? districtId = null,
+            [FromQuery] Guid? facilityId = null)
         {
             try
             {
@@ -178,10 +188,12 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                 // Build facility query based on filter
                 IQueryable<Facility> facilityQuery = _context.Facilities.Where(f => f.Deleted == 0);
-                if (regionId.HasValue)
-                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
-                if (districtId.HasValue)
+                if (facilityId.HasValue)
+                    facilityQuery = facilityQuery.Where(f => f.ID == facilityId);
+                else if (districtId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.DistrictID == districtId);
+                else if (regionId.HasValue)
+                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
 
                 var facilityIds = await facilityQuery.Select(f => f.ID).ToListAsync();
 
@@ -250,17 +262,20 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         [HttpGet("dashboard/delivery-modes")]
         public async Task<IActionResult> GetDeliveryModeDistribution(
             [FromQuery] Guid? regionId = null,
-            [FromQuery] Guid? districtId = null)
+            [FromQuery] Guid? districtId = null,
+            [FromQuery] Guid? facilityId = null)
         {
             try
             {
                 var today = DateTime.UtcNow.Date;
 
                 IQueryable<Facility> facilityQuery = _context.Facilities.Where(f => f.Deleted == 0);
-                if (regionId.HasValue)
-                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
-                if (districtId.HasValue)
+                if (facilityId.HasValue)
+                    facilityQuery = facilityQuery.Where(f => f.ID == facilityId);
+                else if (districtId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.DistrictID == districtId);
+                else if (regionId.HasValue)
+                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
 
                 var facilityIds = await facilityQuery.Select(f => f.ID).ToListAsync();
 
@@ -290,15 +305,18 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         public async Task<IActionResult> GetActiveAlerts(
             [FromQuery] Guid? regionId = null,
             [FromQuery] Guid? districtId = null,
+            [FromQuery] Guid? facilityId = null,
             [FromQuery] int limit = 50)
         {
             try
             {
                 IQueryable<Facility> facilityQuery = _context.Facilities.Where(f => f.Deleted == 0);
-                if (regionId.HasValue)
-                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
-                if (districtId.HasValue)
+                if (facilityId.HasValue)
+                    facilityQuery = facilityQuery.Where(f => f.ID == facilityId);
+                else if (districtId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.DistrictID == districtId);
+                else if (regionId.HasValue)
+                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
 
                 var facilityIds = await facilityQuery.Select(f => f.ID).ToListAsync();
 
@@ -336,6 +354,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         public async Task<IActionResult> GetDeliveryTrend(
             [FromQuery] Guid? regionId = null,
             [FromQuery] Guid? districtId = null,
+            [FromQuery] Guid? facilityId = null,
             [FromQuery] int days = 30)
         {
             try
@@ -344,10 +363,12 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 var startDate = endDate.AddDays(-days);
 
                 IQueryable<Facility> facilityQuery = _context.Facilities.Where(f => f.Deleted == 0);
-                if (regionId.HasValue)
-                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
-                if (districtId.HasValue)
+                if (facilityId.HasValue)
+                    facilityQuery = facilityQuery.Where(f => f.ID == facilityId);
+                else if (districtId.HasValue)
                     facilityQuery = facilityQuery.Where(f => f.DistrictID == districtId);
+                else if (regionId.HasValue)
+                    facilityQuery = facilityQuery.Where(f => f.RegionID == regionId);
 
                 var facilityIds = await facilityQuery.Select(f => f.ID).ToListAsync();
 
@@ -784,6 +805,9 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
             if (user.DistrictID.HasValue)
                 claims.Add(new Claim("DistrictID", user.DistrictID.Value.ToString()));
+
+            if (user.FacilityID.HasValue)
+                claims.Add(new Claim("FacilityID", user.FacilityID.Value.ToString()));
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

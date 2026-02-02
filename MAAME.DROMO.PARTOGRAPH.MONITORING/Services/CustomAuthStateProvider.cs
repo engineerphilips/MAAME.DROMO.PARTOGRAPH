@@ -48,6 +48,12 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Services
                 if (!string.IsNullOrEmpty(session.User.DistrictName))
                     claims.Add(new Claim("DistrictName", session.User.DistrictName));
 
+                if (session.User.FacilityID.HasValue)
+                    claims.Add(new Claim("FacilityID", session.User.FacilityID.Value.ToString()));
+
+                if (!string.IsNullOrEmpty(session.User.FacilityName))
+                    claims.Add(new Claim("FacilityName", session.User.FacilityName));
+
                 var identity = new ClaimsIdentity(claims, "jwt");
                 var principal = new ClaimsPrincipal(identity);
 
