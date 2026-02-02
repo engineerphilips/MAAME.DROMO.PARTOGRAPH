@@ -165,7 +165,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public async Task InitializeAsync()
         {
+            ResetForm();
             await LoadFacilitiesAsync();
+        }
+
+        /// <summary>
+        /// Resets all form fields to their default values for new user onboarding
+        /// </summary>
+        public void ResetForm()
+        {
+            Name = string.Empty;
+            StaffId = string.Empty;
+            Email = string.Empty;
+            Password = string.Empty;
+            ConfirmPassword = string.Empty;
+            Role = "MIDWIFE";
+            Department = "Labour Ward";
+            SelectedFacility = null;
+            IsBusy = false;
         }
 
         private void InitializeAvailableRoles()

@@ -334,6 +334,9 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string HandlerName { get; set; } = string.Empty;
         public Guid? Handler { get; set; }
 
+        // Facility - directly links partograph to facility for reporting (join to get name)
+        public Guid? FacilityID { get; set; }
+
         [JsonIgnore]
         public string StatusDisplay => Status switch
         {
@@ -452,6 +455,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
             dataBuilder.Append($"{RiskLevel}|");
             dataBuilder.Append($"{Complications}|");
             dataBuilder.Append($"{Handler}|");
+            dataBuilder.Append($"{FacilityID}|");
             dataBuilder.Append($"{UpdatedTime}");
 
             using var sha256 = System.Security.Cryptography.SHA256.Create();

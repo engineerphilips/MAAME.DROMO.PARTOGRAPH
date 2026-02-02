@@ -41,6 +41,9 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string HandlerName { get; set; } = string.Empty;
         public Guid? Handler { get; set; }
 
+        // Facility - links patient to facility for reporting (join to get name)
+        public Guid? FacilityID { get; set; }
+
         // Sync columns
         public long CreatedTime { get; set; }
         public long UpdatedTime { get; set; }
@@ -91,6 +94,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
             dataBuilder.Append($"{Stillbirths}|");
             dataBuilder.Append($"{NeonatalDeaths}|");
             dataBuilder.Append($"{Handler}|");
+            dataBuilder.Append($"{FacilityID}|");
             dataBuilder.Append($"{UpdatedTime}");
 
             using var sha256 = System.Security.Cryptography.SHA256.Create();

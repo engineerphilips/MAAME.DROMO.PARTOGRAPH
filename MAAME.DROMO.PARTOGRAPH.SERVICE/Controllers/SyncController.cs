@@ -57,6 +57,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                         partographs = await _context.Partographs.CountAsync(),
                         staff = await _context.Staff.CountAsync(),
                         facilities = await _context.Facilities.CountAsync(),
+                        regions = await _context.Regions.CountAsync(),
+                        districts = await _context.Districts.CountAsync(),
                         birthOutcomes = await _context.BirthOutcomes.CountAsync(),
                         babyDetails = await _context.BabyDetails.CountAsync(),
                         referrals = await _context.Referrals.CountAsync(),
@@ -90,16 +92,31 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
 
-                var records = await _context.Patients
-                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0)
+                // Filter by facility if provided - users only get data from their facility
+                var query = _context.Patients
+                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0);
+
+                if (request.FacilityID.HasValue)
+                {
+                    query = query.Where(p => p.FacilityID == request.FacilityID.Value);
+                }
+
+                var records = await query
                     .OrderBy(p => p.UpdatedTime)
                     .Take(maxRecords)
                     .Include(p => p.PartographEntries)
                     .Include(p => p.MedicalNotes)
                     .ToListAsync();
 
-                var hasMore = await _context.Patients
-                    .CountAsync(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0) > maxRecords;
+                var countQuery = _context.Patients
+                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0);
+
+                if (request.FacilityID.HasValue)
+                {
+                    countQuery = countQuery.Where(p => p.FacilityID == request.FacilityID.Value);
+                }
+
+                var hasMore = await countQuery.CountAsync() > maxRecords;
 
                 return Ok(new SyncPullResponse<Patient>
                 {
@@ -122,14 +139,29 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
 
-                var records = await _context.Partographs
-                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0)
+                // Filter by facility if provided - users only get data from their facility
+                var query = _context.Partographs
+                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0);
+
+                if (request.FacilityID.HasValue)
+                {
+                    query = query.Where(p => p.FacilityID == request.FacilityID.Value);
+                }
+
+                var records = await query
                     .OrderBy(p => p.UpdatedTime)
                     .Take(maxRecords)
                     .ToListAsync();
 
-                var hasMore = await _context.Partographs
-                    .CountAsync(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0) > maxRecords;
+                var countQuery = _context.Partographs
+                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0);
+
+                if (request.FacilityID.HasValue)
+                {
+                    countQuery = countQuery.Where(p => p.FacilityID == request.FacilityID.Value);
+                }
+
+                var hasMore = await countQuery.CountAsync() > maxRecords;
 
                 return Ok(new SyncPullResponse<Partograph>
                 {
@@ -202,6 +234,66 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 _logger.LogError(ex, "Error pulling facilities for device {DeviceId}", request.DeviceId);
                 return StatusCode(500, new { error = "Failed to pull facilities", message = ex.Message });
+            }
+        }
+
+        [HttpPost("pull/regions")]
+        public async Task<ActionResult<SyncPullResponse<Region>>> PullRegions([FromBody] SyncPullRequest request)
+        {
+            try
+            {
+                var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
+
+                var records = await _context.Regions
+                    .Where(r => r.UpdatedTime > request.LastSyncTimestamp && r.Deleted == 0)
+                    .OrderBy(r => r.UpdatedTime)
+                    .Take(maxRecords)
+                    .ToListAsync();
+
+                var hasMore = await _context.Regions
+                    .CountAsync(r => r.UpdatedTime > request.LastSyncTimestamp && r.Deleted == 0) > maxRecords;
+
+                return Ok(new SyncPullResponse<Region>
+                {
+                    Records = records,
+                    ServerTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    HasMore = hasMore
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pulling regions for device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to pull regions", message = ex.Message });
+            }
+        }
+
+        [HttpPost("pull/districts")]
+        public async Task<ActionResult<SyncPullResponse<District>>> PullDistricts([FromBody] SyncPullRequest request)
+        {
+            try
+            {
+                var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
+
+                var records = await _context.Districts
+                    .Where(d => d.UpdatedTime > request.LastSyncTimestamp && d.Deleted == 0)
+                    .OrderBy(d => d.UpdatedTime)
+                    .Take(maxRecords)
+                    .ToListAsync();
+
+                var hasMore = await _context.Districts
+                    .CountAsync(d => d.UpdatedTime > request.LastSyncTimestamp && d.Deleted == 0) > maxRecords;
+
+                return Ok(new SyncPullResponse<District>
+                {
+                    Records = records,
+                    ServerTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    HasMore = hasMore
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error pulling districts for device {DeviceId}", request.DeviceId);
+                return StatusCode(500, new { error = "Failed to pull districts", message = ex.Message });
             }
         }
 
@@ -370,8 +462,16 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 {
                     try
                     {
-                        //var x = await _context.Patients.ToListAsync();
-                        
+                        // If FacilityID is not set but Handler is, get the facility from the handler (staff)
+                        if (!patient.FacilityID.HasValue && patient.Handler.HasValue)
+                        {
+                            var handler = await _context.Staff.FirstOrDefaultAsync(s => s.ID == patient.Handler);
+                            if (handler != null && handler.Facility.HasValue)
+                            {
+                                patient.FacilityID = handler.Facility;
+                            }
+                        }
+
                         var existing = await _context.Patients
                             .FirstOrDefaultAsync(p => p.ID == patient.ID);
 
@@ -441,6 +541,16 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 {
                     try
                     {
+                        // If FacilityID is not set but Handler is, get the facility from the handler (staff)
+                        if (!partograph.FacilityID.HasValue && partograph.Handler.HasValue)
+                        {
+                            var handler = await _context.Staff.FirstOrDefaultAsync(s => s.ID == partograph.Handler);
+                            if (handler != null && handler.Facility.HasValue)
+                            {
+                                partograph.FacilityID = handler.Facility;
+                            }
+                        }
+
                         var existing = await _context.Partographs
                             .FirstOrDefaultAsync(p => p.ID == partograph.ID);
 
@@ -457,6 +567,12 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                                     ConflictReason = "Server version is newer"
                                 });
                                 continue;
+                            }
+
+                            // Update FacilityID if existing record doesn't have one but new record does
+                            if (!existing.FacilityID.HasValue && partograph.FacilityID.HasValue)
+                            {
+                                existing.FacilityID = partograph.FacilityID;
                             }
 
                             _context.Entry(existing).CurrentValues.SetValues(partograph);

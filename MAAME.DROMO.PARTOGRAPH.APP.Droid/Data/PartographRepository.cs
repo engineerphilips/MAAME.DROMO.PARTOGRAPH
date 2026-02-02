@@ -166,6 +166,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     liquorStatus TEXT,
                     complications TEXT,
                     handler TEXT,
+                    facilityid TEXT,
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
                     deletedtime INTEGER,
@@ -273,7 +274,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 //}
 
                 // Migration: Add currentPhase column if it doesn't exist (for existing databases)
-                
+
+                // Migration: Add facilityid column if it doesn't exist
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"ALTER TABLE Tbl_Partograph ADD COLUMN facilityid TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException) { /* Column already exists, ignore */ }
             }
             catch (Exception e)
             {
@@ -537,6 +546,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Complications = reader["complications"] is DBNull ? "" : reader["complications"].ToString(),
                 Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
                 HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
+                FacilityID = reader["facilityid"] is DBNull ? null : Guid.Parse(reader["facilityid"].ToString()),
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                 DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),
@@ -655,7 +665,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         expectedDeliveryDate, lastMenstrualDate, laborStartTime, secondStageStartTime,
                         thirdStageStartTime, fourthStageStartTime, deliveryTime, completedTime,
                         rupturedMembraneTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus,
-                        complications, handler, createdtime, updatedtime, deletedtime, deviceid,
+                        complications, handler, facilityid, createdtime, updatedtime, deletedtime, deviceid,
                         origindeviceid, syncstatus, version, serverversion, deleted
                     )
                     VALUES (
@@ -663,7 +673,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         @expectedDeliveryDate, @lastMenstrualDate, @laborStartTime, @secondStageStartTime,
                         @thirdStageStartTime, @fourthStageStartTime, @deliveryTime, @completedTime,
                         @rupturedMembraneTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus,
-                        @complications, @handler, @createdtime, @updatedtime, @deletedtime, @deviceid,
+                        @complications, @handler, @facilityid, @createdtime, @updatedtime, @deletedtime, @deviceid,
                         @origindeviceid, @syncstatus, @version, @serverversion, @deleted
                     )";
                 }
@@ -692,6 +702,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         liquorStatus = @liquorStatus,
                         complications = @complications,
                         handler = @handler,
+                        facilityid = @facilityid,
                         updatedtime = @updatedtime,
                         deviceid = @deviceid,
                         syncstatus = @syncstatus,
@@ -722,6 +733,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 saveCmd.Parameters.AddWithValue("@liquorStatus", item.LiquorStatus ?? "Clear");
                 saveCmd.Parameters.AddWithValue("@complications", item.Complications ?? "");
                 saveCmd.Parameters.AddWithValue("@handler", item.Handler != null ? item.Handler?.ToString() : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@facilityid", item.FacilityID != null ? item.FacilityID?.ToString() : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
                 saveCmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
                 saveCmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
@@ -777,14 +789,30 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID
                     LEFT JOIN Tbl_Staff S ON P.handler = S.ID";
 
+                // Filter by logged-in user's facility
+                var facilityId = Constants.Staff?.Facility;
+                string whereClause = facilityId.HasValue ? " WHERE P.facilityid = @facilityId" : "";
+
+                if (facilityId.HasValue)
+                {
+                    selectCmd.Parameters.AddWithValue("@facilityId", facilityId.ToString());
+                }
+
                 if (status.HasValue)
                 {
-                    selectCmd.CommandText = baseQuery + " WHERE P.status = @status ORDER BY P.admissionDate DESC";
+                    if (facilityId.HasValue)
+                    {
+                        selectCmd.CommandText = baseQuery + whereClause + " AND P.status = @status ORDER BY P.admissionDate DESC";
+                    }
+                    else
+                    {
+                        selectCmd.CommandText = baseQuery + " WHERE P.status = @status ORDER BY P.admissionDate DESC";
+                    }
                     selectCmd.Parameters.AddWithValue("@status", (int)status.Value);
                 }
                 else
                 {
-                    selectCmd.CommandText = baseQuery + " ORDER BY P.status, P.admissionDate DESC";
+                    selectCmd.CommandText = baseQuery + whereClause + " ORDER BY P.status, P.admissionDate DESC";
                 }
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -1794,6 +1822,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Complications = reader["complications"] is DBNull ? "" : reader["complications"].ToString(),
                 Handler = reader["handler"] is DBNull ? null : Guid.Parse(reader["handler"].ToString()),
                 HandlerName = reader["staffname"] is DBNull ? string.Empty : reader["staffname"].ToString(),
+                FacilityID = reader["facilityid"] is DBNull ? null : Guid.Parse(reader["facilityid"].ToString()),
                 CreatedTime = Convert.ToInt64(reader["createdtime"]),
                 UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
                 DeletedTime = reader["deletedtime"] is DBNull ? null : Convert.ToInt64(reader["deletedtime"]),

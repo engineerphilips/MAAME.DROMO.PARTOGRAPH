@@ -58,6 +58,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             //builder.Services.AddSingleton<MedicalNoteRepository>();
             builder.Services.AddSingleton<StaffRepository>();
             builder.Services.AddSingleton<FacilityRepository>();
+            builder.Services.AddSingleton<RegionRepository>();
+            builder.Services.AddSingleton<DistrictRepository>();
             builder.Services.AddSingleton<CompanionRepository>();
             builder.Services.AddSingleton<PainReliefRepository>();
             //builder.Services.AddSingleton<PainReliefEntryRepository>();

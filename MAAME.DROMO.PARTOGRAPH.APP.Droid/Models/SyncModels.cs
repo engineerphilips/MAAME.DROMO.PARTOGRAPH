@@ -8,6 +8,7 @@ public class SyncPullRequest
     public string DeviceId { get; set; } = string.Empty;
     public long LastSyncTimestamp { get; set; }
     public string TableName { get; set; } = string.Empty;
+    public Guid? FacilityID { get; set; }
 }
 
 /// <summary>

@@ -43,12 +43,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     name TEXT NOT NULL,
                     code TEXT NOT NULL UNIQUE,
                     type TEXT NOT NULL,
+                    level TEXT DEFAULT 'Primary',
                     address TEXT,
                     city TEXT,
                     region TEXT,
                     country TEXT,
                     phone TEXT,
                     email TEXT,
+                    regionid TEXT,
+                    districtid TEXT,
                     latitude REAL,
                     longitude REAL,
                     ghpostgps TEXT,
@@ -93,6 +96,31 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 END;";
 
                 await createTableCmd.ExecuteNonQueryAsync();
+
+                // Migration: Add new columns for existing databases
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"ALTER TABLE Tbl_Facility ADD COLUMN level TEXT DEFAULT 'Primary';";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException) { /* Column already exists, ignore */ }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"ALTER TABLE Tbl_Facility ADD COLUMN regionid TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException) { /* Column already exists, ignore */ }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"ALTER TABLE Tbl_Facility ADD COLUMN districtid TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException) { /* Column already exists, ignore */ }
             }
             catch (SqliteException e)
             {
@@ -231,12 +259,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Name = reader["name"].ToString(),
                     Code = reader["code"].ToString(),
                     Type = reader["type"].ToString(),
+                    Level = reader["level"]?.ToString() ?? "Primary",
                     Address = reader["address"]?.ToString() ?? string.Empty,
                     City = reader["city"]?.ToString() ?? string.Empty,
                     Region = reader["region"]?.ToString() ?? string.Empty,
                     Country = reader["country"]?.ToString() ?? string.Empty,
                     Phone = reader["phone"]?.ToString() ?? string.Empty,
                     Email = reader["email"]?.ToString() ?? string.Empty,
+                    RegionID = reader["regionid"] != DBNull.Value && !string.IsNullOrEmpty(reader["regionid"]?.ToString()) ? Guid.Parse(reader["regionid"].ToString()) : null,
+                    DistrictID = reader["districtid"] != DBNull.Value && !string.IsNullOrEmpty(reader["districtid"]?.ToString()) ? Guid.Parse(reader["districtid"].ToString()) : null,
                     Latitude = reader["latitude"] != DBNull.Value ? Convert.ToDouble(reader["latitude"]) : null,
                     Longitude = reader["longitude"] != DBNull.Value ? Convert.ToDouble(reader["longitude"]) : null,
                     GHPostGPS = reader["ghpostgps"]?.ToString() ?? string.Empty,
@@ -275,12 +306,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Name = reader["name"].ToString(),
                     Code = reader["code"].ToString(),
                     Type = reader["type"].ToString(),
+                    Level = reader["level"]?.ToString() ?? "Primary",
                     Address = reader["address"]?.ToString() ?? string.Empty,
                     City = reader["city"]?.ToString() ?? string.Empty,
                     Region = reader["region"]?.ToString() ?? string.Empty,
                     Country = reader["country"]?.ToString() ?? string.Empty,
                     Phone = reader["phone"]?.ToString() ?? string.Empty,
                     Email = reader["email"]?.ToString() ?? string.Empty,
+                    RegionID = reader["regionid"] != DBNull.Value && !string.IsNullOrEmpty(reader["regionid"]?.ToString()) ? Guid.Parse(reader["regionid"].ToString()) : null,
+                    DistrictID = reader["districtid"] != DBNull.Value && !string.IsNullOrEmpty(reader["districtid"]?.ToString()) ? Guid.Parse(reader["districtid"].ToString()) : null,
                     Latitude = reader["latitude"] != DBNull.Value ? Convert.ToDouble(reader["latitude"]) : null,
                     Longitude = reader["longitude"] != DBNull.Value ? Convert.ToDouble(reader["longitude"]) : null,
                     GHPostGPS = reader["ghpostgps"]?.ToString() ?? string.Empty,
@@ -308,21 +342,24 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             var insertCmd = connection.CreateCommand();
             insertCmd.CommandText = @"INSERT INTO Tbl_Facility
-                (ID, name, code, type, address, city, region, country, phone, email, latitude, longitude, ghpostgps, active,
-                 createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-                VALUES (@id, @name, @code, @type, @address, @city, @region, @country, @phone, @email, @latitude, @longitude, @ghpostgps, @active,
-                        @createdtime, @updatedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
+                (ID, name, code, type, level, address, city, region, country, phone, email, regionid, districtid,
+                 latitude, longitude, ghpostgps, active, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
+                VALUES (@id, @name, @code, @type, @level, @address, @city, @region, @country, @phone, @email, @regionid, @districtid,
+                        @latitude, @longitude, @ghpostgps, @active, @createdtime, @updatedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
 
             insertCmd.Parameters.AddWithValue("@id", facility.ID.ToString());
             insertCmd.Parameters.AddWithValue("@name", facility.Name);
             insertCmd.Parameters.AddWithValue("@code", facility.Code);
             insertCmd.Parameters.AddWithValue("@type", facility.Type);
+            insertCmd.Parameters.AddWithValue("@level", facility.Level ?? "Primary");
             insertCmd.Parameters.AddWithValue("@address", facility.Address ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@city", facility.City ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@region", facility.Region ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@country", facility.Country ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@phone", facility.Phone ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@email", facility.Email ?? string.Empty);
+            insertCmd.Parameters.AddWithValue("@regionid", facility.RegionID.HasValue ? (object)facility.RegionID.Value.ToString() : DBNull.Value);
+            insertCmd.Parameters.AddWithValue("@districtid", facility.DistrictID.HasValue ? (object)facility.DistrictID.Value.ToString() : DBNull.Value);
             insertCmd.Parameters.AddWithValue("@latitude", facility.Latitude.HasValue ? (object)facility.Latitude.Value : DBNull.Value);
             insertCmd.Parameters.AddWithValue("@longitude", facility.Longitude.HasValue ? (object)facility.Longitude.Value : DBNull.Value);
             insertCmd.Parameters.AddWithValue("@ghpostgps", facility.GHPostGPS ?? string.Empty);

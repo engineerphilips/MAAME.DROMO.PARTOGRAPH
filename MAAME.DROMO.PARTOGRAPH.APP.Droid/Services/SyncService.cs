@@ -45,6 +45,8 @@ public class SyncService : ISyncService
     private readonly BabyDetailsRepository _babyDetailsRepository;
     private readonly ReferralRepository _referralRepository;
     private readonly FacilityRepository _facilityRepository;
+    private readonly RegionRepository _regionRepository;
+    private readonly DistrictRepository _districtRepository;
     private readonly ILogger<SyncService> _logger;
 
     private SyncStatus _currentStatus = SyncStatus.Idle;
@@ -85,6 +87,8 @@ public class SyncService : ISyncService
         BabyDetailsRepository babyDetailsRepository,
         ReferralRepository referralRepository,
         FacilityRepository facilityRepository,
+        RegionRepository regionRepository,
+        DistrictRepository districtRepository,
         ILogger<SyncService> logger)
     {
         //MedicalNoteRepository medicalNoteRepository,
@@ -122,6 +126,8 @@ public class SyncService : ISyncService
         _babyDetailsRepository = babyDetailsRepository;
         _referralRepository = referralRepository;
         _facilityRepository = facilityRepository;
+        _regionRepository = regionRepository;
+        _districtRepository = districtRepository;
         _logger = logger;
 
         // Load last sync time from preferences
@@ -1103,6 +1109,44 @@ public class SyncService : ISyncService
                 latestServerTimestamp = facilitiesPulled.serverTimestamp;
             }
 
+            // Pull regions with pagination (reference data - pull only)
+            var regionProgress = new SyncProgress { TableName = "Tbl_Region", CurrentOperation = "Pulling regions" };
+            ProgressChanged?.Invoke(this, regionProgress);
+
+            var regionsPulled = await PullWithPaginationAsync<Region>(
+                deviceId,
+                lastPullTimestamp,
+                "Tbl_Region",
+                async (request) => await _apiClient.PullRegionsAsync(request),
+                async (records) => await MergeRegions(records),
+                regionProgress,
+                cancellationToken);
+
+            result.TotalPulled += regionsPulled.recordCount;
+            if (regionsPulled.serverTimestamp > latestServerTimestamp)
+            {
+                latestServerTimestamp = regionsPulled.serverTimestamp;
+            }
+
+            // Pull districts with pagination (reference data - pull only)
+            var districtProgress = new SyncProgress { TableName = "Tbl_District", CurrentOperation = "Pulling districts" };
+            ProgressChanged?.Invoke(this, districtProgress);
+
+            var districtsPulled = await PullWithPaginationAsync<District>(
+                deviceId,
+                lastPullTimestamp,
+                "Tbl_District",
+                async (request) => await _apiClient.PullDistrictsAsync(request),
+                async (records) => await MergeDistricts(records),
+                districtProgress,
+                cancellationToken);
+
+            result.TotalPulled += districtsPulled.recordCount;
+            if (districtsPulled.serverTimestamp > latestServerTimestamp)
+            {
+                latestServerTimestamp = districtsPulled.serverTimestamp;
+            }
+
             // Update last pull timestamp using SERVER timestamp (not device time)
             // This prevents clock skew issues between device and server
             if (latestServerTimestamp > lastPullTimestamp)
@@ -1149,7 +1193,8 @@ public class SyncService : ISyncService
             {
                 DeviceId = deviceId,
                 LastSyncTimestamp = currentTimestamp,
-                TableName = tableName
+                TableName = tableName,
+                FacilityID = Constants.Staff?.Facility
             };
 
             var pullResponse = await pullFunc(pullRequest);
@@ -1204,7 +1249,8 @@ public class SyncService : ISyncService
             {
                 DeviceId = deviceId,
                 LastSyncTimestamp = currentTimestamp,
-                TableName = tableName
+                TableName = tableName,
+                FacilityID = Constants.Staff?.Facility
             };
 
             var pullResponse = await _apiClient.PullStaffAsync(pullRequest);
@@ -2081,6 +2127,22 @@ public class SyncService : ISyncService
         foreach (var item in items)
         {
             await _facilityRepository.AddAsync(item);
+        }
+    }
+
+    private async Task MergeRegions(List<Region> items)
+    {
+        foreach (var item in items)
+        {
+            await _regionRepository.AddOrUpdateAsync(item);
+        }
+    }
+
+    private async Task MergeDistricts(List<District> items)
+    {
+        foreach (var item in items)
+        {
+            await _districtRepository.AddOrUpdateAsync(item);
         }
     }
 }

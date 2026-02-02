@@ -83,6 +83,16 @@ public interface ISyncApiClient
     Task<SyncPullResponse<Facility>> PullFacilitiesAsync(SyncPullRequest request);
 
     /// <summary>
+    /// Pulls region data from server (reference data - pull only)
+    /// </summary>
+    Task<SyncPullResponse<Region>> PullRegionsAsync(SyncPullRequest request);
+
+    /// <summary>
+    /// Pulls district data from server (reference data - pull only)
+    /// </summary>
+    Task<SyncPullResponse<District>> PullDistrictsAsync(SyncPullRequest request);
+
+    /// <summary>
     /// Gets the configured API base URL
     /// </summary>
     string BaseUrl { get; }
