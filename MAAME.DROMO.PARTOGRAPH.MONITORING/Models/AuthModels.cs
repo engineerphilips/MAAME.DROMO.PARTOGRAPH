@@ -29,6 +29,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MONITORING.Models
         public string? RegionName { get; set; }
         public Guid? DistrictID { get; set; }
         public string? DistrictName { get; set; }
+        public Guid? FacilityID { get; set; }
+        public string? FacilityName { get; set; }
     }
 
     public class UserSession

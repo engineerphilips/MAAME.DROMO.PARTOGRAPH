@@ -800,6 +800,7 @@ else if (summary != null)
     // User context
     private Guid? userRegionId;
     private Guid? userDistrictId;
+    private Guid? userFacilityId;
 
     private List<FacilityPerformanceSummary>? currentFacilities => facilityView == "top" ? topFacilities : bottomFacilities;
 
@@ -824,11 +825,13 @@ else if (summary != null)
 
         accessLevel = user.Claims.FirstOrDefault(c => c.Type == "AccessLevel")?.Value ?? "District";
 
-        // Get user's region and district IDs
+        // Get user's region, district, and facility IDs
         var regionIdClaim = user.Claims.FirstOrDefault(c => c.Type == "RegionID")?.Value;
         var districtIdClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictID")?.Value;
+        var facilityIdClaim = user.Claims.FirstOrDefault(c => c.Type == "FacilityID")?.Value;
         var regionNameClaim = user.Claims.FirstOrDefault(c => c.Type == "RegionName")?.Value;
         var districtNameClaim = user.Claims.FirstOrDefault(c => c.Type == "DistrictName")?.Value;
+        var facilityNameClaim = user.Claims.FirstOrDefault(c => c.Type == "FacilityName")?.Value;
 
         if (Guid.TryParse(regionIdClaim, out var regionId))
             userRegionId = regionId;
@@ -836,11 +839,15 @@ else if (summary != null)
         if (Guid.TryParse(districtIdClaim, out var districtId))
             userDistrictId = districtId;
 
+        if (Guid.TryParse(facilityIdClaim, out var facilityId))
+            userFacilityId = facilityId;
+
         accessLevelText = accessLevel switch
         {
             "National" => "National Overview",
             "Regional" => "Regional View",
             "District" => "District View",
+            "Facility" => "Facility View",
             _ => "Dashboard"
         };
 
@@ -849,6 +856,7 @@ else if (summary != null)
             "National" => "All Regions",
             "Regional" => regionNameClaim ?? "Region",
             "District" => districtNameClaim ?? "District",
+            "Facility" => facilityNameClaim ?? "Facility",
             _ => ""
         };
     }
@@ -868,6 +876,10 @@ else if (summary != null)
         else if (accessLevel == "District" && userDistrictId.HasValue)
         {
             filter.DistrictID = userDistrictId;
+        }
+        else if (accessLevel == "Facility" && userFacilityId.HasValue)
+        {
+            filter.FacilityID = userFacilityId;
         }
 
         return filter;

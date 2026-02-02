@@ -24,7 +24,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         // National: All regions and districts
         // Regional: All districts within their assigned region
         // District: All facilities within their assigned district
-        public string AccessLevel { get; set; } = "District"; // National, Regional, District
+        // Facility: Only data within their assigned facility
+        public string AccessLevel { get; set; } = "District"; // National, Regional, District, Facility
 
         // Role within their access level
         public string Role { get; set; } = "Viewer"; // Admin, Manager, Analyst, Viewer
@@ -40,6 +41,10 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         // Assigned district (for District users only)
         public Guid? DistrictID { get; set; }
         public string DistrictName { get; set; } = string.Empty;
+
+        // Assigned facility (for Facility users only)
+        public Guid? FacilityID { get; set; }
+        public string FacilityName { get; set; } = string.Empty;
 
         // Session tracking
         public DateTime? LastLogin { get; set; }
@@ -81,9 +86,12 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [IgnoreDataMember]
         public bool IsDistrictUser => AccessLevel == "District";
 
+        [IgnoreDataMember]
+        public bool IsFacilityUser => AccessLevel == "Facility";
+
         public string CalculateHash()
         {
-            var data = $"{ID}|{Email}|{AccessLevel}|{Role}|{RegionID}|{DistrictID}|{IsActive}";
+            var data = $"{ID}|{Email}|{AccessLevel}|{Role}|{RegionID}|{DistrictID}|{FacilityID}|{IsActive}";
             using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
