@@ -627,7 +627,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         #region Facility Endpoints
 
         /// <summary>
-        /// Get facilities (optionally filtered by district)
+        /// Get facilities (optionally filtered by district or region)
         /// </summary>
         [HttpGet("facilities")]
         public async Task<IActionResult> GetFacilities([FromQuery] Guid? districtId = null, [FromQuery] Guid? regionId = null)
@@ -639,12 +639,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 var query = _context.Facilities
                     .Include(f => f.District)
                         .ThenInclude(d => d!.Region)
-                    .Include(f => f.Region)
                     .Where(f => f.Deleted == 0);
                 if (districtId.HasValue)
                     query = query.Where(f => f.DistrictID == districtId);
                 if (regionId.HasValue)
-                    query = query.Where(f => f.RegionID == regionId);
+                    query = query.Where(f => f.District != null && f.District.RegionID == regionId);
 
                 var facilities = await query.ToListAsync();
                 var summaries = new List<object>();
@@ -684,8 +683,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                         level = facility.Level,
                         districtId = facility.DistrictID,
                         districtName = facility.District?.Name,
-                        regionId = facility.RegionID,
-                        regionName = facility.Region?.Name ?? facility.District?.Region?.Name,
+                        regionId = facility.District?.RegionID,
+                        regionName = facility.District?.Region?.Name,
                         isActive = facility.IsActive,
                         deliveriesToday = todayStats?.TotalDeliveries ?? 0,
                         deliveriesThisMonth = monthlyStats?.TotalDeliveries ?? 0,
@@ -716,7 +715,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 var facility = await _context.Facilities
                     .Include(f => f.District)
                         .ThenInclude(d => d!.Region)
-                    .Include(f => f.Region)
                     .FirstOrDefaultAsync(f => f.ID == facilityId && f.Deleted == 0);
 
                 if (facility == null)
@@ -738,8 +736,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                     level = facility.Level,
                     address = facility.Address,
                     city = facility.City,
-                    regionId = facility.RegionID,
-                    regionName = facility.Region?.Name ?? facility.District?.Region?.Name,
+                    regionId = facility.District?.RegionID,
+                    regionName = facility.District?.Region?.Name,
                     districtId = facility.DistrictID,
                     districtName = facility.District?.Name,
                     phone = facility.Phone,

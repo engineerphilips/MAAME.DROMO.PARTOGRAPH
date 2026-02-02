@@ -162,18 +162,11 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.UpdatedTime);
                 entity.HasIndex(e => e.SyncStatus);
                 entity.HasIndex(e => e.DistrictID);
-                entity.HasIndex(e => e.RegionID);
 
-                // Foreign key to District
+                // Foreign key to District (Region derived through District.Region)
                 entity.HasOne(f => f.District)
                     .WithMany(d => d.Facilities)
                     .HasForeignKey(f => f.DistrictID)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                // Foreign key to Region
-                entity.HasOne(f => f.Region)
-                    .WithMany()
-                    .HasForeignKey(f => f.RegionID)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 

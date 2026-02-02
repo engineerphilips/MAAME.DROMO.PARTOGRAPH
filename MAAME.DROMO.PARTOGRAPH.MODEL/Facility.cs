@@ -20,8 +20,7 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
-        // Hierarchical references for monitoring (use navigation properties to get names)
-        public Guid? RegionID { get; set; }
+        // Hierarchical reference for monitoring (region derived through District.Region)
         public Guid? DistrictID { get; set; }
 
         // GPS Location fields
@@ -53,16 +52,13 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [IgnoreDataMember]
         public bool NeedsSync => SyncStatus == 0;
 
-        // Navigation properties for monitoring hierarchy
+        // Navigation property for monitoring hierarchy (Region accessed via District.Region)
         [IgnoreDataMember]
         public District? District { get; set; }
 
-        [IgnoreDataMember]
-        public Region? Region { get; set; }
-
         public string CalculateHash()
         {
-            var data = $"{ID}|{Name}|{Code}|{Type}|{Address}|{City}|{RegionID}|{DistrictID}|{Country}|{IsActive}";
+            var data = $"{ID}|{Name}|{Code}|{Type}|{Address}|{City}|{DistrictID}|{Country}|{IsActive}";
             using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));

@@ -49,7 +49,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     country TEXT,
                     phone TEXT,
                     email TEXT,
-                    regionid TEXT,
                     districtid TEXT,
                     latitude REAL,
                     longitude REAL,
@@ -261,7 +260,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Country = reader["country"]?.ToString() ?? string.Empty,
                     Phone = reader["phone"]?.ToString() ?? string.Empty,
                     Email = reader["email"]?.ToString() ?? string.Empty,
-                    RegionID = reader["regionid"] != DBNull.Value && !string.IsNullOrEmpty(reader["regionid"]?.ToString()) ? Guid.Parse(reader["regionid"].ToString()) : null,
                     DistrictID = reader["districtid"] != DBNull.Value && !string.IsNullOrEmpty(reader["districtid"]?.ToString()) ? Guid.Parse(reader["districtid"].ToString()) : null,
                     Latitude = reader["latitude"] != DBNull.Value ? Convert.ToDouble(reader["latitude"]) : null,
                     Longitude = reader["longitude"] != DBNull.Value ? Convert.ToDouble(reader["longitude"]) : null,
@@ -307,7 +305,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Country = reader["country"]?.ToString() ?? string.Empty,
                     Phone = reader["phone"]?.ToString() ?? string.Empty,
                     Email = reader["email"]?.ToString() ?? string.Empty,
-                    RegionID = reader["regionid"] != DBNull.Value && !string.IsNullOrEmpty(reader["regionid"]?.ToString()) ? Guid.Parse(reader["regionid"].ToString()) : null,
                     DistrictID = reader["districtid"] != DBNull.Value && !string.IsNullOrEmpty(reader["districtid"]?.ToString()) ? Guid.Parse(reader["districtid"].ToString()) : null,
                     Latitude = reader["latitude"] != DBNull.Value ? Convert.ToDouble(reader["latitude"]) : null,
                     Longitude = reader["longitude"] != DBNull.Value ? Convert.ToDouble(reader["longitude"]) : null,
@@ -336,9 +333,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             var insertCmd = connection.CreateCommand();
             insertCmd.CommandText = @"INSERT INTO Tbl_Facility
-                (ID, name, code, type, level, address, city, country, phone, email, regionid, districtid,
+                (ID, name, code, type, level, address, city, country, phone, email, districtid,
                  latitude, longitude, ghpostgps, active, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-                VALUES (@id, @name, @code, @type, @level, @address, @city, @country, @phone, @email, @regionid, @districtid,
+                VALUES (@id, @name, @code, @type, @level, @address, @city, @country, @phone, @email, @districtid,
                         @latitude, @longitude, @ghpostgps, @active, @createdtime, @updatedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
 
             insertCmd.Parameters.AddWithValue("@id", facility.ID.ToString());
@@ -351,7 +348,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             insertCmd.Parameters.AddWithValue("@country", facility.Country ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@phone", facility.Phone ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@email", facility.Email ?? string.Empty);
-            insertCmd.Parameters.AddWithValue("@regionid", facility.RegionID.HasValue ? (object)facility.RegionID.Value.ToString() : DBNull.Value);
             insertCmd.Parameters.AddWithValue("@districtid", facility.DistrictID.HasValue ? (object)facility.DistrictID.Value.ToString() : DBNull.Value);
             insertCmd.Parameters.AddWithValue("@latitude", facility.Latitude.HasValue ? (object)facility.Latitude.Value : DBNull.Value);
             insertCmd.Parameters.AddWithValue("@longitude", facility.Longitude.HasValue ? (object)facility.Longitude.Value : DBNull.Value);
