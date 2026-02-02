@@ -130,7 +130,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [RelayCommand]
         private Task AddNewPatient()
-            => Shell.Current.GoToAsync("newpatient");
+            => Shell.Current.GoToAsync("patient");
 
         [RelayCommand]
         private async Task StartActiveLabor(Partograph partograph)

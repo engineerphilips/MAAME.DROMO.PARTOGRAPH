@@ -203,6 +203,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 
             // Register Pages and PageModels with routes
             builder.Services.AddTransientWithShellRoute<PatientPage, PatientPageModel>("patient");
+            //builder.Services.AddTransientWithShellRoute<PatientPage, PatientPageModel>("newpatient");
             builder.Services.AddTransientWithShellRoute<PartographPage, PartographPageModel>("partograph");
             builder.Services.AddTransientWithShellRoute<SecondStagePartographPage, SecondStagePartographPageModel>("secondpartograph");
             builder.Services.AddTransientWithShellRoute<ThirdStagePartographPage, ThirdStagePartographPageModel>("thirdpartograph");

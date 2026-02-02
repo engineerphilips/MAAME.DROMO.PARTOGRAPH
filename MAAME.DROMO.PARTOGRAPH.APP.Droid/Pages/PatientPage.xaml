@@ -94,8 +94,7 @@
                     <!-- Date of Birth / Age -->
                     <Grid ColumnDefinitions="2*,*" ColumnSpacing="12">
                         <core:SfTextInputLayout Grid.Column="0"
-                                                Hint="Date of Birth *"
-                                                >
+                                                Hint="Date of Birth *">
                             <DatePicker Date="{Binding DateOfBirth, Mode=TwoWay}"
                                         Format="dd-MM-yyyy"
                                         MinimumDate="01/01/1950"
@@ -691,8 +690,9 @@
                             <core:SfTextInputLayout Hint="Add Diagnosis"
                                                     
                                                     HelperText="Clinical assessment of active labour">
-                                <Entry Text="{Binding ActiveLabourDiagnosis}"
-                                       Completed="Entry_Completed"
+                                <!--Text="{Binding ActiveLabourDiagnosis}"-->
+
+                                <Entry Completed="Entry_Completed"
                                        Unfocused="Entry_Completed"
                                        ReturnType="Next"
                                        Placeholder="Type and press Enter to add" />
@@ -1102,7 +1102,7 @@
                     </Border>
 
                     <!-- Save and Continue Button -->
-                    <buttons:SfButton Text="Save Patient and Start Partograph"
+                    <Button Text="Save Patient and Start Partograph"
                                       Style="{StaticResource PrimaryActionStyle}"
                                       Command="{Binding SaveCommand}"
                                       HeightRequest="56">
@@ -1112,7 +1112,7 @@
                                              Size="22"
                                              Color="{StaticResource SurfaceWhite}" />
                         </buttons:SfButton.ImageSource>-->
-                    </buttons:SfButton>
+                    </Button>
 
                     <!-- Save Draft Button -->
                     <!--<buttons:SfButton Text="Save as Draft"

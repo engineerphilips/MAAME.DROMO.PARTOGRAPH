@@ -168,7 +168,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task AddNewPatient()
         {
-            await Shell.Current.GoToAsync("newpatient");
+            try
+            {
+                await Shell.Current.GoToAsync("patient");
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.HandleError(ex);
+            }
         }
 
         [RelayCommand]

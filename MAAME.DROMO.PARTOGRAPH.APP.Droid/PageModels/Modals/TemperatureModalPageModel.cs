@@ -48,8 +48,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
         // WHO 2020 Enhanced Temperature Assessment Fields
 
         // Original fields
-        private float _temperatureCelsius;
-        public float TemperatureCelsius
+        private double _temperatureCelsius;
+        public double TemperatureCelsius
         {
             get => _temperatureCelsius;
             set
@@ -234,7 +234,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 {
                     PartographID = _patient.ID,
                     Time = new DateTime(RecordingDate.Year, RecordingDate.Month, RecordingDate.Day).Add(RecordingTime),
-                    TemperatureCelsius = TemperatureCelsius,
+                    TemperatureCelsius = (float)TemperatureCelsius,
                     AntibioticsStarted = AntibioticsStarted,
                     AntibioticsStartTime = AntibioticsStartTime,
                     AntipyreticGivenTime = AntipyreticGivenTime,
@@ -329,7 +329,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 // Auto-set peak temperature if current is higher
                 if (PeakTemperature == null || TemperatureCelsius > PeakTemperature)
                 {
-                    PeakTemperature = TemperatureCelsius;
+                    PeakTemperature = (float)TemperatureCelsius;
                     PeakTemperatureTime = DateTime.Now;
                 }
 

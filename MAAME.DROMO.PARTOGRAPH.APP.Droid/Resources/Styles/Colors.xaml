@@ -64,6 +64,11 @@
     <Color x:Key="ActiveColor">#66BB6A</Color>
     <Color x:Key="CompletedColor">#42A5F5</Color>
     <Color x:Key="EmergencyColor">#EF5350</Color>
+    <Color x:Key="ErrorRed">#D32F2F</Color>
+    <Color x:Key="AccentTeal">#009688</Color>
+    <Color x:Key="WarningOrange">#FFA000</Color>
+    <Color x:Key="SecondaryGreen">#2E7D32</Color>
+    <Color x:Key="SurfaceWhite">#FFFFFF</Color>
 
     <!-- Medical Indicators -->
     <Color x:Key="NormalFHR">#66BB6A</Color>
