@@ -52,12 +52,15 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             // Get facility info if specific facility
             if (facilityId.HasValue)
             {
-                var facility = await _context.Facilities.FindAsync(facilityId.Value);
+                var facility = await _context.Facilities
+                    .Include(f => f.District)
+                        .ThenInclude(d => d!.Region)
+                    .FirstOrDefaultAsync(f => f.ID == facilityId.Value);
                 if (facility != null)
                 {
                     report.FacilityName = facility.Name;
                     report.FacilityCode = facility.Code;
-                    report.Region = facility.Region;
+                    report.Region = facility.District?.Region?.Name ?? string.Empty;
                 }
             }
 
@@ -194,9 +197,12 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
             };
 
             // Get all facilities (filtered by region if specified)
-            var facilitiesQuery = _context.Facilities.AsQueryable();
+            var facilitiesQuery = _context.Facilities
+                .Include(f => f.District)
+                    .ThenInclude(d => d!.Region)
+                .AsQueryable();
             if (regionId.HasValue)
-                facilitiesQuery = facilitiesQuery.Where(f => f.RegionID == regionId);
+                facilitiesQuery = facilitiesQuery.Where(f => f.District != null && f.District.RegionID == regionId);
 
             var facilities = await facilitiesQuery.ToListAsync();
 
@@ -223,7 +229,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
                     FacilityName = facility.Name,
                     FacilityCode = facility.Code,
                     FacilityType = facility.Type,
-                    Region = facility.Region,
+                    Region = facility.District?.Region?.Name ?? string.Empty,
                     TotalDeliveries = totalDeliveries,
                     TotalCS = totalCS,
                     Group1CSRate = group1.Count > 0 ? Math.Round((decimal)group1.Count(c => c.IsCesareanSection) / group1.Count * 100, 2) : 0,

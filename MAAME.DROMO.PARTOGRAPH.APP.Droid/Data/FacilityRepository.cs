@@ -46,11 +46,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     level TEXT DEFAULT 'Primary',
                     address TEXT,
                     city TEXT,
-                    region TEXT,
                     country TEXT,
                     phone TEXT,
                     email TEXT,
-                    regionid TEXT,
                     districtid TEXT,
                     latitude REAL,
                     longitude REAL,
@@ -164,7 +162,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Type = "Teaching Hospital",
                     Address = "Korle Bu",
                     City = "Accra",
-                    Region = "Greater Accra",
                     Country = "Ghana",
                     Phone = "+233-302-674-191",
                     Email = "info@kbth.gov.gh",
@@ -189,7 +186,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Type = "Hospital",
                     Address = "Castle Road, Ridge",
                     City = "Accra",
-                    Region = "Greater Accra",
                     Country = "Ghana",
                     Phone = "+233-302-776-111",
                     Email = "info@ridgehospital.gov.gh",
@@ -214,7 +210,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Type = "Military Hospital",
                     Address = "Liberation Road",
                     City = "Accra",
-                    Region = "Greater Accra",
                     Country = "Ghana",
                     Phone = "+233-302-776-111",
                     Email = "info@37mh.gov.gh",
@@ -262,11 +257,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Level = reader["level"]?.ToString() ?? "Primary",
                     Address = reader["address"]?.ToString() ?? string.Empty,
                     City = reader["city"]?.ToString() ?? string.Empty,
-                    Region = reader["region"]?.ToString() ?? string.Empty,
                     Country = reader["country"]?.ToString() ?? string.Empty,
                     Phone = reader["phone"]?.ToString() ?? string.Empty,
                     Email = reader["email"]?.ToString() ?? string.Empty,
-                    RegionID = reader["regionid"] != DBNull.Value && !string.IsNullOrEmpty(reader["regionid"]?.ToString()) ? Guid.Parse(reader["regionid"].ToString()) : null,
                     DistrictID = reader["districtid"] != DBNull.Value && !string.IsNullOrEmpty(reader["districtid"]?.ToString()) ? Guid.Parse(reader["districtid"].ToString()) : null,
                     Latitude = reader["latitude"] != DBNull.Value ? Convert.ToDouble(reader["latitude"]) : null,
                     Longitude = reader["longitude"] != DBNull.Value ? Convert.ToDouble(reader["longitude"]) : null,
@@ -309,11 +302,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     Level = reader["level"]?.ToString() ?? "Primary",
                     Address = reader["address"]?.ToString() ?? string.Empty,
                     City = reader["city"]?.ToString() ?? string.Empty,
-                    Region = reader["region"]?.ToString() ?? string.Empty,
                     Country = reader["country"]?.ToString() ?? string.Empty,
                     Phone = reader["phone"]?.ToString() ?? string.Empty,
                     Email = reader["email"]?.ToString() ?? string.Empty,
-                    RegionID = reader["regionid"] != DBNull.Value && !string.IsNullOrEmpty(reader["regionid"]?.ToString()) ? Guid.Parse(reader["regionid"].ToString()) : null,
                     DistrictID = reader["districtid"] != DBNull.Value && !string.IsNullOrEmpty(reader["districtid"]?.ToString()) ? Guid.Parse(reader["districtid"].ToString()) : null,
                     Latitude = reader["latitude"] != DBNull.Value ? Convert.ToDouble(reader["latitude"]) : null,
                     Longitude = reader["longitude"] != DBNull.Value ? Convert.ToDouble(reader["longitude"]) : null,
@@ -342,9 +333,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             var insertCmd = connection.CreateCommand();
             insertCmd.CommandText = @"INSERT INTO Tbl_Facility
-                (ID, name, code, type, level, address, city, region, country, phone, email, regionid, districtid,
+                (ID, name, code, type, level, address, city, country, phone, email, districtid,
                  latitude, longitude, ghpostgps, active, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted)
-                VALUES (@id, @name, @code, @type, @level, @address, @city, @region, @country, @phone, @email, @regionid, @districtid,
+                VALUES (@id, @name, @code, @type, @level, @address, @city, @country, @phone, @email, @districtid,
                         @latitude, @longitude, @ghpostgps, @active, @createdtime, @updatedtime, @deviceid, @origindeviceid, @syncstatus, @version, @serverversion, @deleted);";
 
             insertCmd.Parameters.AddWithValue("@id", facility.ID.ToString());
@@ -354,11 +345,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             insertCmd.Parameters.AddWithValue("@level", facility.Level ?? "Primary");
             insertCmd.Parameters.AddWithValue("@address", facility.Address ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@city", facility.City ?? string.Empty);
-            insertCmd.Parameters.AddWithValue("@region", facility.Region ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@country", facility.Country ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@phone", facility.Phone ?? string.Empty);
             insertCmd.Parameters.AddWithValue("@email", facility.Email ?? string.Empty);
-            insertCmd.Parameters.AddWithValue("@regionid", facility.RegionID.HasValue ? (object)facility.RegionID.Value.ToString() : DBNull.Value);
             insertCmd.Parameters.AddWithValue("@districtid", facility.DistrictID.HasValue ? (object)facility.DistrictID.Value.ToString() : DBNull.Value);
             insertCmd.Parameters.AddWithValue("@latitude", facility.Latitude.HasValue ? (object)facility.Latitude.Value : DBNull.Value);
             insertCmd.Parameters.AddWithValue("@longitude", facility.Longitude.HasValue ? (object)facility.Longitude.Value : DBNull.Value);

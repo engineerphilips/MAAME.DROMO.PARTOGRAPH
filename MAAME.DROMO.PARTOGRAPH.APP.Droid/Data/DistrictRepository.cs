@@ -35,7 +35,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     code TEXT NOT NULL UNIQUE,
                     type TEXT NOT NULL DEFAULT 'District',
                     regionid TEXT NOT NULL,
-                    regionname TEXT,
                     capital TEXT,
                     population INTEGER DEFAULT 0,
                     expectedannualdeliveries INTEGER DEFAULT 0,
@@ -174,10 +173,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             var insertCmd = connection.CreateCommand();
             insertCmd.CommandText = @"INSERT INTO Tbl_District
-                (ID, name, code, type, regionid, regionname, capital, population, expectedannualdeliveries,
+                (ID, name, code, type, regionid, capital, population, expectedannualdeliveries,
                  directorname, phone, email, latitude, longitude, active,
                  createdtime, updatedtime, deletedtime, deleted)
-                VALUES (@id, @name, @code, @type, @regionid, @regionname, @capital, @population, @expectedannualdeliveries,
+                VALUES (@id, @name, @code, @type, @regionid, @capital, @population, @expectedannualdeliveries,
                         @directorname, @phone, @email, @latitude, @longitude, @active,
                         @createdtime, @updatedtime, @deletedtime, @deleted);";
 
@@ -189,7 +188,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             var updateCmd = connection.CreateCommand();
             updateCmd.CommandText = @"UPDATE Tbl_District SET
-                name = @name, code = @code, type = @type, regionid = @regionid, regionname = @regionname,
+                name = @name, code = @code, type = @type, regionid = @regionid,
                 capital = @capital, population = @population, expectedannualdeliveries = @expectedannualdeliveries,
                 directorname = @directorname, phone = @phone, email = @email,
                 latitude = @latitude, longitude = @longitude, active = @active,
@@ -207,7 +206,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@code", district.Code);
             cmd.Parameters.AddWithValue("@type", district.Type);
             cmd.Parameters.AddWithValue("@regionid", district.RegionID.ToString());
-            cmd.Parameters.AddWithValue("@regionname", district.RegionName ?? string.Empty);
             cmd.Parameters.AddWithValue("@capital", district.Capital ?? string.Empty);
             cmd.Parameters.AddWithValue("@population", district.Population);
             cmd.Parameters.AddWithValue("@expectedannualdeliveries", district.ExpectedAnnualDeliveries);
@@ -232,7 +230,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 Code = reader["code"].ToString()!,
                 Type = reader["type"]?.ToString() ?? "District",
                 RegionID = Guid.Parse(reader["regionid"].ToString()!),
-                RegionName = reader["regionname"]?.ToString() ?? string.Empty,
                 Capital = reader["capital"]?.ToString() ?? string.Empty,
                 Population = Convert.ToInt64(reader["population"]),
                 ExpectedAnnualDeliveries = Convert.ToInt32(reader["expectedannualdeliveries"]),
