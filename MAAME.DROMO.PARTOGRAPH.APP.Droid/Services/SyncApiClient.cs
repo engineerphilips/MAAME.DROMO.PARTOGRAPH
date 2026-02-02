@@ -532,7 +532,7 @@ public class SyncApiClient : ISyncApiClient
     }
 
     /// <inheritdoc/>
-    public async Task<SyncPullResponse<Region>> PullRegionsAsync(SyncPullRequest request)
+    public async Task<SyncPullResponse<MODEL.Region>> PullRegionsAsync(SyncPullRequest request)
     {
         try
         {
@@ -541,8 +541,8 @@ public class SyncApiClient : ISyncApiClient
             );
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<Region>>();
-            return result ?? new SyncPullResponse<Region> { Records = new List<Region>() };
+            var result = await response.Content.ReadFromJsonAsync<SyncPullResponse<MODEL.Region>>();
+            return result ?? new SyncPullResponse<MODEL.Region> { Records = new List<MODEL.Region>() };
         }
         catch (Exception ex)
         {

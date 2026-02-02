@@ -633,57 +633,58 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 var today = DateTime.UtcNow.Date;
 
-                var query = _context.Facilities.Where(f => f.Deleted == 0);
+                var query = _context.Facilities.Join(_context.Districts, f => f.DistrictID, d => d.ID, (f, d) => new { f, d })
+                    .Where(fd => fd.f.Deleted == 0);
                 if (districtId.HasValue)
-                    query = query.Where(f => f.DistrictID == districtId);
+                    query = query.Where(f => f.f.DistrictID == districtId);
                 if (regionId.HasValue)
-                    query = query.Where(f => f.RegionID == regionId);
+                    query = query.Where(f => f.f.RegionID == regionId);
 
                 var facilities = await query.ToListAsync();
                 var summaries = new List<object>();
 
                 foreach (var facility in facilities)
                 {
-                    if (!facility.ID.HasValue) continue;
+                    if (!facility.f.ID.HasValue) continue;
 
                     var todayStats = await _context.DailyFacilityStats
-                        .FirstOrDefaultAsync(s => s.Date >= today && s.FacilityID == facility.ID.Value);
+                        .FirstOrDefaultAsync(s => s.Date >= today && s.FacilityID == facility.f.ID.Value);
 
                     var monthlyStats = await _context.MonthlyFacilityStats
-                        .FirstOrDefaultAsync(s => s.Year == today.Year && s.Month == today.Month && s.FacilityID == facility.ID.Value);
+                        .FirstOrDefaultAsync(s => s.Year == today.Year && s.Month == today.Month && s.FacilityID == facility.f.ID.Value);
 
                     var activeLabors = await _context.Partographs
                         .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
-                        .CountAsync(ps => ps.s.Facility == facility.ID.Value &&
+                        .CountAsync(ps => ps.s.Facility == facility.f.ID.Value &&
                                         (ps.p.Status == LaborStatus.FirstStage || ps.p.Status == LaborStatus.SecondStage || ps.p.Status == LaborStatus.ThirdStage || ps.p.Status == LaborStatus.FourthStage) &&
                                         ps.p.Deleted == 0);
 
                     var staffCount = await _context.Staff
-                        .CountAsync(s => s.Facility == facility.ID.Value && s.Deleted == 0);
+                        .CountAsync(s => s.Facility == facility.f.ID.Value && s.Deleted == 0);
 
                     var lastActivity = await _context.Partographs
                         .Join(_context.Staff, p => p.Handler, s => s.ID, (p, s) => new { p, s })
-                        .Where(ps => ps.s.Facility == facility.ID.Value && ps.p.Deleted == 0)
+                        .Where(ps => ps.s.Facility == facility.f.ID.Value && ps.p.Deleted == 0)
                         .OrderByDescending(ps => ps.p.UpdatedTime)
                         .Select(ps => ps.p.UpdatedTime)
                         .FirstOrDefaultAsync();
 
                     summaries.Add(new
                     {
-                        id = facility.ID.Value,
-                        name = facility.Name,
-                        code = facility.Code,
-                        type = facility.Type,
-                        level = facility.Level,
-                        districtId = facility.DistrictID,
-                        districtName = facility.DistrictName,
-                        isActive = facility.IsActive,
+                        id = facility.f.ID.Value,
+                        name = facility.f.Name,
+                        code = facility.f.Code,
+                        type = facility.f.Type,
+                        level = facility.f.Level,
+                        districtId = facility.f.DistrictID,
+                        districtName = facility.d.Name,
+                        isActive = facility.f.IsActive,
                         deliveriesToday = todayStats?.TotalDeliveries ?? 0,
                         deliveriesThisMonth = monthlyStats?.TotalDeliveries ?? 0,
                         activeLabors,
                         staffCount,
                         lastActivityTime = lastActivity > 0 ? DateTimeOffset.FromUnixTimeSeconds(lastActivity).DateTime : (DateTime?)null,
-                        performanceStatus = facility.IsActive ? "Normal" : "Inactive"
+                        performanceStatus = facility.f.IsActive ? "Normal" : "Inactive"
                     });
                 }
 
@@ -705,7 +706,8 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             try
             {
                 var facility = await _context.Facilities
-                    .FirstOrDefaultAsync(f => f.ID == facilityId && f.Deleted == 0);
+                    .Join(_context.Districts, f => f.DistrictID, d => d.ID, (f, d) => new { f, d }) 
+                    .FirstOrDefaultAsync(f => f.f.ID == facilityId && f.f.Deleted == 0);
 
                 if (facility == null)
                     return NotFound(new { error = "Facility not found" });
@@ -719,21 +721,21 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
                 return Ok(new
                 {
-                    id = facility.ID,
-                    name = facility.Name,
-                    code = facility.Code,
-                    type = facility.Type,
-                    level = facility.Level,
-                    address = facility.Address,
-                    city = facility.City,
-                    region = facility.Region,
-                    districtId = facility.DistrictID,
-                    districtName = facility.DistrictName,
-                    phone = facility.Phone,
-                    email = facility.Email,
-                    latitude = facility.Latitude,
-                    longitude = facility.Longitude,
-                    isActive = facility.IsActive,
+                    id = facility.f.ID,
+                    name = facility.f.Name,
+                    code = facility.f.Code,
+                    type = facility.f.Type,
+                    level = facility.f.Level,
+                    address = facility.f.Address,
+                    city = facility.f.City,
+                    region = facility.f.Region,
+                    districtId = facility.f.DistrictID,
+                    districtName = facility.d.Name,
+                    phone = facility.f.Phone,
+                    email = facility.f.Email,
+                    latitude = facility.f.Latitude,
+                    longitude = facility.f.Longitude,
+                    isActive = facility.f.IsActive,
                     deliveriesToday = todayStats?.TotalDeliveries ?? 0,
                     deliveriesThisMonth = monthlyStats?.TotalDeliveries ?? 0
                 });

@@ -1113,7 +1113,7 @@ public class SyncService : ISyncService
             var regionProgress = new SyncProgress { TableName = "Tbl_Region", CurrentOperation = "Pulling regions" };
             ProgressChanged?.Invoke(this, regionProgress);
 
-            var regionsPulled = await PullWithPaginationAsync<Region>(
+            var regionsPulled = await PullWithPaginationAsync<MODEL.Region>(
                 deviceId,
                 lastPullTimestamp,
                 "Tbl_Region",
@@ -2130,7 +2130,7 @@ public class SyncService : ISyncService
         }
     }
 
-    private async Task MergeRegions(List<Region> items)
+    private async Task MergeRegions(List<MODEL.Region> items)
     {
         foreach (var item in items)
         {

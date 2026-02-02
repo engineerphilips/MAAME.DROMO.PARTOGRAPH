@@ -85,7 +85,7 @@ public interface ISyncApiClient
     /// <summary>
     /// Pulls region data from server (reference data - pull only)
     /// </summary>
-    Task<SyncPullResponse<Region>> PullRegionsAsync(SyncPullRequest request);
+    Task<SyncPullResponse<MODEL.Region>> PullRegionsAsync(SyncPullRequest request);
 
     /// <summary>
     /// Pulls district data from server (reference data - pull only)

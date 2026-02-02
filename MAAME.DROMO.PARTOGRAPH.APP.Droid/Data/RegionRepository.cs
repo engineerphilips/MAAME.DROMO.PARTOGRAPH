@@ -63,11 +63,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             _hasBeenInitialized = true;
         }
 
-        public async Task<List<Region>> GetAllAsync()
+        public async Task<List<MODEL.Region>> GetAllAsync()
         {
             await Init();
 
-            var regions = new List<Region>();
+            var regions = new List<MODEL.Region>();
             await using var connection = new SqliteConnection(Constants.DatabasePath);
             await connection.OpenAsync();
 
@@ -83,7 +83,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return regions;
         }
 
-        public async Task<Region?> GetByIdAsync(Guid id)
+        public async Task<MODEL.Region?> GetByIdAsync(Guid id)
         {
             await Init();
 
@@ -103,7 +103,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return null;
         }
 
-        public async Task<Region?> GetByCodeAsync(string code)
+        public async Task<MODEL.Region?> GetByCodeAsync(string code)
         {
             await Init();
 
@@ -123,7 +123,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return null;
         }
 
-        public async Task AddOrUpdateAsync(Region region)
+        public async Task AddOrUpdateAsync(MODEL.Region region)
         {
             await Init();
 
@@ -146,7 +146,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
         }
 
-        private async Task InsertAsync(Region region, SqliteConnection connection)
+        private async Task InsertAsync(MODEL.Region region, SqliteConnection connection)
         {
             var insertCmd = connection.CreateCommand();
             insertCmd.CommandText = @"INSERT INTO Tbl_Region
@@ -161,7 +161,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await insertCmd.ExecuteNonQueryAsync();
         }
 
-        private async Task UpdateAsync(Region region, SqliteConnection connection)
+        private async Task UpdateAsync(MODEL.Region region, SqliteConnection connection)
         {
             var updateCmd = connection.CreateCommand();
             updateCmd.CommandText = @"UPDATE Tbl_Region SET
@@ -176,7 +176,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             await updateCmd.ExecuteNonQueryAsync();
         }
 
-        private void AddParameters(SqliteCommand cmd, Region region)
+        private void AddParameters(SqliteCommand cmd, MODEL.Region region)
         {
             cmd.Parameters.AddWithValue("@id", region.ID.ToString());
             cmd.Parameters.AddWithValue("@name", region.Name);
@@ -197,9 +197,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             cmd.Parameters.AddWithValue("@deleted", region.Deleted);
         }
 
-        private Region MapFromReader(SqliteDataReader reader)
+        private MODEL.Region MapFromReader(SqliteDataReader reader)
         {
-            return new Region
+            return new MODEL.Region
             {
                 ID = Guid.Parse(reader["ID"].ToString()!),
                 Name = reader["name"].ToString()!,
