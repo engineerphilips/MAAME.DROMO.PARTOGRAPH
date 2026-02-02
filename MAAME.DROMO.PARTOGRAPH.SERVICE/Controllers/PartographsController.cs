@@ -26,13 +26,20 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         public async Task<ActionResult<IEnumerable<Partograph>>> GetPartographs(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
-            [FromQuery] LaborStatus? status = null)
+            [FromQuery] LaborStatus? status = null,
+            [FromQuery] Guid? facilityId = null)
         {
             try
             {
                 var query = _context.Partographs
                     .Where(p => p.Deleted == 0)
                     .AsQueryable();
+
+                // Filter by facility if specified
+                if (facilityId.HasValue)
+                {
+                    query = query.Where(p => p.FacilityID == facilityId);
+                }
 
                 if (status.HasValue)
                 {
@@ -230,12 +237,20 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
         // GET: api/Partographs/active
         [HttpGet("active")]
-        public async Task<ActionResult<IEnumerable<Partograph>>> GetActiveLabor()
+        public async Task<ActionResult<IEnumerable<Partograph>>> GetActiveLabor([FromQuery] Guid? facilityId = null)
         {
             try
             {
-                var activePartographs = await _context.Partographs
-                    .Where(p => p.Deleted == 0 && p.Status == LaborStatus.FirstStage)
+                var query = _context.Partographs
+                    .Where(p => p.Deleted == 0 && p.Status == LaborStatus.FirstStage);
+
+                // Filter by facility if specified
+                if (facilityId.HasValue)
+                {
+                    query = query.Where(p => p.FacilityID == facilityId);
+                }
+
+                var activePartographs = await query
                     .OrderByDescending(p => p.AdmissionDate)
                     .ToListAsync();
 
@@ -250,18 +265,25 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
         // GET: api/Partographs/stats
         [HttpGet("stats")]
-        public async Task<ActionResult<object>> GetPartographStats()
+        public async Task<ActionResult<object>> GetPartographStats([FromQuery] Guid? facilityId = null)
         {
             try
             {
-                var total = await _context.Partographs.CountAsync(p => p.Deleted == 0);
-                var active = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.FirstStage);
-                var pending = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.Pending);
-                var completed = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.Completed);
-                var emergency = await _context.Partographs.CountAsync(p => p.Deleted == 0 && p.Status == LaborStatus.Emergency);
+                var query = _context.Partographs.Where(p => p.Deleted == 0);
 
-                var completedToday = await _context.Partographs.CountAsync(p =>
-                    p.Deleted == 0 &&
+                // Filter by facility if specified
+                if (facilityId.HasValue)
+                {
+                    query = query.Where(p => p.FacilityID == facilityId);
+                }
+
+                var total = await query.CountAsync();
+                var active = await query.CountAsync(p => p.Status == LaborStatus.FirstStage);
+                var pending = await query.CountAsync(p => p.Status == LaborStatus.Pending);
+                var completed = await query.CountAsync(p => p.Status == LaborStatus.Completed);
+                var emergency = await query.CountAsync(p => p.Status == LaborStatus.Emergency);
+
+                var completedToday = await query.CountAsync(p =>
                     p.Status == LaborStatus.Completed &&
                     p.DeliveryTime.HasValue &&
                     p.DeliveryTime.Value.Date == DateTime.Today);

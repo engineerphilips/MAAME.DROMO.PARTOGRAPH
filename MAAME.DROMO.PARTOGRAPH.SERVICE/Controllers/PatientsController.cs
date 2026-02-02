@@ -23,13 +23,20 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
         public async Task<ActionResult<IEnumerable<Patient>>> GetPatients(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
-            [FromQuery] string? search = null)
+            [FromQuery] string? search = null,
+            [FromQuery] Guid? facilityId = null)
         {
             try
             {
                 var query = _context.Patients
                     .Where(p => p.Deleted == 0)
                     .AsQueryable();
+
+                // Filter by facility if specified
+                if (facilityId.HasValue)
+                {
+                    query = query.Where(p => p.FacilityID == facilityId);
+                }
 
                 if (!string.IsNullOrWhiteSpace(search))
                 {
@@ -222,7 +229,9 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
         // GET: api/Patients/search
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<Patient>>> SearchPatients([FromQuery] string query)
+        public async Task<ActionResult<IEnumerable<Patient>>> SearchPatients(
+            [FromQuery] string query,
+            [FromQuery] Guid? facilityId = null)
         {
             try
             {
@@ -232,14 +241,20 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
                 }
 
                 query = query.ToLower();
-                var patients = await _context.Patients
+                var patientQuery = _context.Patients
                     .Where(p => p.Deleted == 0 &&
                         (p.FirstName.ToLower().Contains(query) ||
                          p.LastName.ToLower().Contains(query) ||
                          p.HospitalNumber.ToLower().Contains(query) ||
-                         p.PhoneNumber.Contains(query)))
-                    .Take(50)
-                    .ToListAsync();
+                         p.PhoneNumber.Contains(query)));
+
+                // Filter by facility if specified
+                if (facilityId.HasValue)
+                {
+                    patientQuery = patientQuery.Where(p => p.FacilityID == facilityId);
+                }
+
+                var patients = await patientQuery.Take(50).ToListAsync();
 
                 return Ok(patients);
             }
@@ -252,14 +267,23 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
 
         // GET: api/Patients/stats
         [HttpGet("stats")]
-        public async Task<ActionResult<object>> GetPatientStats()
+        public async Task<ActionResult<object>> GetPatientStats([FromQuery] Guid? facilityId = null)
         {
             try
             {
-                var totalPatients = await _context.Patients.CountAsync(p => p.Deleted == 0);
-                var activeLabor = await _context.Partographs.CountAsync(p => p.Deleted == 0 && (p.Status == LaborStatus.FirstStage || p.Status == LaborStatus.SecondStage || p.Status == LaborStatus.ThirdStage || p.Status == LaborStatus.FourthStage));
-                var completedToday = await _context.Partographs.CountAsync(p =>
-                    p.Deleted == 0 &&
+                var patientsQuery = _context.Patients.Where(p => p.Deleted == 0);
+                var partographsQuery = _context.Partographs.Where(p => p.Deleted == 0);
+
+                // Filter by facility if specified
+                if (facilityId.HasValue)
+                {
+                    patientsQuery = patientsQuery.Where(p => p.FacilityID == facilityId);
+                    partographsQuery = partographsQuery.Where(p => p.FacilityID == facilityId);
+                }
+
+                var totalPatients = await patientsQuery.CountAsync();
+                var activeLabor = await partographsQuery.CountAsync(p => p.Status == LaborStatus.FirstStage || p.Status == LaborStatus.SecondStage || p.Status == LaborStatus.ThirdStage || p.Status == LaborStatus.FourthStage);
+                var completedToday = await partographsQuery.CountAsync(p =>
                     p.Status == LaborStatus.Completed &&
                     p.DeliveryTime.HasValue &&
                     p.DeliveryTime.Value.Date == DateTime.Today);
