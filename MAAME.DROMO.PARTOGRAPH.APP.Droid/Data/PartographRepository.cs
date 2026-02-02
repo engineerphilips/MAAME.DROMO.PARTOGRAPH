@@ -182,6 +182,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             
                 CREATE INDEX IF NOT EXISTS idx_partograph_sync ON Tbl_Partograph(updatedtime, syncstatus);
                 CREATE INDEX IF NOT EXISTS idx_partograph_server_version ON Tbl_Partograph(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_partograph_facilityid ON Tbl_Partograph(facilityid);
+                CREATE INDEX IF NOT EXISTS idx_partograph_patientid ON Tbl_Partograph(patientID);
 
                 DROP TRIGGER IF EXISTS trg_partograph_insert;
                 CREATE TRIGGER trg_partograph_insert 
@@ -492,7 +494,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     P.laborStartTime, P.secondStageStartTime, P.thirdStageStartTime,
                     P.fourthStageStartTime, P.deliveryTime, P.completedTime, P.rupturedMembraneTime,
                     P.cervicalDilationOnAdmission, P.membraneStatus, P.liquorStatus, P.complications,
-                    P.handler, S.name as staffname, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
+                    P.handler, S.name as staffname, P.facilityid, P.createdtime, P.updatedtime, P.deletedtime, P.deviceid,
                     P.origindeviceid, P.syncstatus, P.version, P.serverversion, P.deleted,
                     PA.firstName, PA.lastName, PA.hospitalNumber, PA.dateofbirth, PA.age,
                     PA.bloodGroup, PA.phoneNumber, PA.emergencyContactName, PA.emergencyContactPhone,
@@ -500,7 +502,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     FROM Tbl_Partograph P
                     INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID
                     LEFT JOIN Tbl_Staff S ON P.handler = S.ID
-                    WHERE P.ID = @Id
+                    WHERE P.patientID = @Id
                     ORDER BY P.time DESC";
 
                 selectCmd.Parameters.AddWithValue("@Id", patientId);

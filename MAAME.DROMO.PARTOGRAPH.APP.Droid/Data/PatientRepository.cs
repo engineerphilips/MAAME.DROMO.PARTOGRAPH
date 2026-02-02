@@ -80,6 +80,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             
                 CREATE INDEX IF NOT EXISTS idx_patient_sync ON Tbl_Patient(updatedtime, syncstatus);
                 CREATE INDEX IF NOT EXISTS idx_patient_server_version ON Tbl_Patient(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_patient_facilityid ON Tbl_Patient(facilityid);
 
                 DROP TRIGGER IF EXISTS trg_patient_insert;
                 CREATE TRIGGER trg_patient_insert 
@@ -209,7 +210,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = @"SELECT p.ID, p.time, p.firstName, p.lastName, p.hospitalNumber, p.dateofbirth, p.age, p.bloodGroup, p.phoneNumber, p.emergencyContactName, p.emergencyContactRelationship, p.emergencyContactPhone, p.handler, s.name as staffname, p.createdtime, p.updatedtime, p.deletedtime, p.deviceid, p.origindeviceid, p.syncstatus, p.version, p.serverversion, p.deleted
+                selectCmd.CommandText = @"SELECT p.ID, p.time, p.firstName, p.lastName, p.hospitalNumber, p.dateofbirth, p.age, p.bloodGroup, p.phoneNumber, p.emergencyContactName, p.emergencyContactRelationship, p.emergencyContactPhone, p.handler, s.name as staffname, p.facilityid, p.createdtime, p.updatedtime, p.deletedtime, p.deviceid, p.origindeviceid, p.syncstatus, p.version, p.serverversion, p.deleted
                     FROM Tbl_Patient p
                     LEFT JOIN Tbl_Staff s ON p.handler = s.ID
                     WHERE p.ID = @id";
@@ -467,6 +468,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         emergencyContactRelationship = @emergencyContactRelationship,
                         emergencyContactPhone = @emergencyContactPhone,
                         handler = @handler,
+                        facilityid = @facilityid,
                         updatedtime = @updatedtime,
                         version = @version,
                         serverversion = @serverversion,
@@ -478,9 +480,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     // Insert new record
                     cmd.CommandText = @"
-                    INSERT INTO Tbl_Patient (ID, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash) VALUES (@ID, @firstName, @lastName, @hospitalNumber, @dateofbirth, @age, @bloodGroup, @phoneNumber, @emergencyContactName, @emergencyContactRelationship, @emergencyContactPhone, @createdtime, @updatedtime, @deviceid, @origindeviceid, 1, @version, @serverversion, @deleted, @datahash)";
-                    
-                    cmd.Parameters.AddWithValue("@handler", patient.Handler?.ToString() ?? "");
+                    INSERT INTO Tbl_Patient (ID, firstName, lastName, hospitalNumber, dateofbirth, age, bloodGroup, phoneNumber, emergencyContactName, emergencyContactRelationship, emergencyContactPhone, handler, facilityid, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash) VALUES (@ID, @firstName, @lastName, @hospitalNumber, @dateofbirth, @age, @bloodGroup, @phoneNumber, @emergencyContactName, @emergencyContactRelationship, @emergencyContactPhone, @handler, @facilityid, @createdtime, @updatedtime, @deviceid, @origindeviceid, 1, @version, @serverversion, @deleted, @datahash)";
+
                     cmd.Parameters.AddWithValue("@deviceid", patient.DeviceId ?? "");
                     cmd.Parameters.AddWithValue("@origindeviceid", patient.OriginDeviceId ?? "");
                     cmd.Parameters.AddWithValue("@deleted", patient.Deleted);
@@ -497,6 +498,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 cmd.Parameters.AddWithValue("@emergencyContactName", patient.EmergencyContactName ?? "");
                 cmd.Parameters.AddWithValue("@emergencyContactRelationship", patient.EmergencyContactRelationship ?? "");
                 cmd.Parameters.AddWithValue("@emergencyContactPhone", patient.EmergencyContactPhone ?? "");
+                cmd.Parameters.AddWithValue("@handler", patient.Handler?.ToString() ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@facilityid", patient.FacilityID?.ToString() ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@createdtime", patient.CreatedTime);
                 cmd.Parameters.AddWithValue("@updatedtime", patient.UpdatedTime);
                 cmd.Parameters.AddWithValue("@version", patient.Version);
