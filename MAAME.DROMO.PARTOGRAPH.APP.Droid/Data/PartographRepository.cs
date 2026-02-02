@@ -880,20 +880,26 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return null;
         }
 
-        public async Task<DashboardStats> GetDashboardStatsAsync()
+        public async Task<DashboardStats> GetDashboardStatsAsync(Guid? facilityId = null)
         {
             await Init();
             var stats = new DashboardStats();
+
+            // Use facility from Constants if not explicitly provided
+            facilityId ??= Constants.GetFacilityForFiltering();
 
             try
             {
                 await using var connection = new SqliteConnection(Constants.DatabasePath);
                 await connection.OpenAsync();
 
-                // Get counts by status
+                // Get counts by status (filtered by facility)
                 var countCmd = connection.CreateCommand();
-                countCmd.CommandText = @"
-                SELECT status, COUNT(*) FROM Tbl_Partograph WHERE deleted = 0 GROUP BY status";
+                countCmd.CommandText = facilityId.HasValue
+                    ? @"SELECT status, COUNT(*) FROM Tbl_Partograph WHERE deleted = 0 AND facilityID = @facilityId GROUP BY status"
+                    : @"SELECT status, COUNT(*) FROM Tbl_Partograph WHERE deleted = 0 GROUP BY status";
+                if (facilityId.HasValue)
+                    countCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
 
                 await using var reader = await countCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -938,11 +944,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 var todayStrAlt2 = DateTime.Today.ToString("d/M/yyyy"); // Another alternative
 
                 var completedCmd = connection.CreateCommand();
-                completedCmd.CommandText = @"
+                var facilityFilter = facilityId.HasValue ? "AND p.facilityID = @facilityId" : "";
+                completedCmd.CommandText = $@"
                 SELECT COUNT(DISTINCT p.ID) FROM Tbl_Partograph p
                 LEFT JOIN Tbl_BirthOutcome b ON b.partographid = p.ID AND b.deleted = 0
                 WHERE p.deleted = 0
                   AND p.status = @completed
+                  {facilityFilter}
                   AND (
                     -- Check Partograph deliveryTime
                     (p.deliveryTime IS NOT NULL AND (
@@ -972,6 +980,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 completedCmd.Parameters.AddWithValue("@todayPattern", todayStr + "%");
                 completedCmd.Parameters.AddWithValue("@todayPatternAlt", todayStrAlt + "%");
                 completedCmd.Parameters.AddWithValue("@todayPatternAlt2", todayStrAlt2 + "%");
+                if (facilityId.HasValue)
+                    completedCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
 
                 var completedResult = await completedCmd.ExecuteScalarAsync();
                 stats.CompletedToday = completedResult != null ? Convert.ToInt32(completedResult) : 0;
@@ -979,11 +989,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 // Get phase breakdown for first stage patients
                 var phaseCmd = connection.CreateCommand();
-                phaseCmd.CommandText = @"
+                var facilityFilterSimple = facilityId.HasValue ? "AND facilityID = @facilityId" : "";
+                phaseCmd.CommandText = $@"
                 SELECT currentPhase, COUNT(*) FROM Tbl_Partograph
-                WHERE status = @firststage AND deleted = 0
+                WHERE status = @firststage AND deleted = 0 {facilityFilterSimple}
                 GROUP BY currentPhase";
                 phaseCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
+                if (facilityId.HasValue)
+                    phaseCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
 
                 await using var phaseReader = await phaseCmd.ExecuteReaderAsync();
                 while (await phaseReader.ReadAsync())
@@ -1033,65 +1046,79 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 // Get abnormal FHR count
                 var fhrCmd = connection.CreateCommand();
-                fhrCmd.CommandText = @"
+                fhrCmd.CommandText = $@"
                 SELECT COUNT(DISTINCT p.ID) FROM Tbl_Partograph p
                 INNER JOIN Tbl_FHR f ON f.partographID = p.ID
                 WHERE p.status IN (@firststage, @secondstage, @thirdstage)
                   AND p.deleted = 0
+                  {facilityFilter}
                   AND (f.value < 110 OR f.value > 160)
                   AND f.time = (SELECT MAX(f2.time) FROM Tbl_FHR f2 WHERE f2.partographID = p.ID)";
                 fhrCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 fhrCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 fhrCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
+                if (facilityId.HasValue)
+                    fhrCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 var abnormalFhr = await fhrCmd.ExecuteScalarAsync();
                 stats.AbnormalFHRCount = abnormalFhr != null ? Convert.ToInt32(abnormalFhr) : 0;
 
                 // Get meconium stained liquor count
                 var meconiumCmd = connection.CreateCommand();
-                meconiumCmd.CommandText = @"
+                meconiumCmd.CommandText = $@"
                 SELECT COUNT(*) FROM Tbl_Partograph
                 WHERE status IN (@firststage, @secondstage, @thirdstage)
                   AND deleted = 0
+                  {facilityFilterSimple}
                   AND (liquorStatus LIKE '%meconium%' OR liquorStatus LIKE '%stained%' OR liquorStatus = 'Thick')";
                 meconiumCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 meconiumCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 meconiumCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
+                if (facilityId.HasValue)
+                    meconiumCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 var meconium = await meconiumCmd.ExecuteScalarAsync();
                 stats.MeconiumStainedCount = meconium != null ? Convert.ToInt32(meconium) : 0;
 
                 // Get average delivery time for completed cases today
                 var avgDeliveryCmd = connection.CreateCommand();
-                avgDeliveryCmd.CommandText = @"
+                avgDeliveryCmd.CommandText = $@"
                 SELECT AVG(JULIANDAY(deliveryTime) - JULIANDAY(laborStartTime)) * 24
                 FROM Tbl_Partograph
                 WHERE deliveryTime IS NOT NULL
                   AND laborStartTime IS NOT NULL
                   AND DATE(deliveryTime) = DATE('now')
-                  AND deleted = 0";
+                  AND deleted = 0
+                  {facilityFilterSimple}";
+                if (facilityId.HasValue)
+                    avgDeliveryCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 var avgDelivery = await avgDeliveryCmd.ExecuteScalarAsync();
                 stats.AvgDeliveryTime = avgDelivery != DBNull.Value && avgDelivery != null
                     ? Math.Round(Convert.ToDouble(avgDelivery), 1) : 0;
 
                 // Get average active labor time
                 var avgActiveCmd = connection.CreateCommand();
-                avgActiveCmd.CommandText = @"
+                avgActiveCmd.CommandText = $@"
                 SELECT AVG(JULIANDAY(COALESCE(deliveryTime, DATETIME('now'))) - JULIANDAY(laborStartTime)) * 24
                 FROM Tbl_Partograph
                 WHERE laborStartTime IS NOT NULL
                   AND status IN (@firststage, @secondstage, @completed)
-                  AND deleted = 0";
+                  AND deleted = 0
+                  {facilityFilterSimple}";
                 avgActiveCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 avgActiveCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 avgActiveCmd.Parameters.AddWithValue("@completed", (int)LaborStatus.Completed);
+                if (facilityId.HasValue)
+                    avgActiveCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 var avgActive = await avgActiveCmd.ExecuteScalarAsync();
                 stats.AvgActiveLaborTime = avgActive != DBNull.Value && avgActive != null
                     ? Math.Round(Convert.ToDouble(avgActive), 1) : 0;
 
                 // Get admissions count
                 var admissionsCmd = connection.CreateCommand();
-                admissionsCmd.CommandText = @"
+                admissionsCmd.CommandText = $@"
                 SELECT COUNT(*) FROM Tbl_Partograph
-                WHERE DATE(admissionDate) = DATE('now') AND deleted = 0";
+                WHERE DATE(admissionDate) = DATE('now') AND deleted = 0 {facilityFilterSimple}";
+                if (facilityId.HasValue)
+                    admissionsCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 var admToday = await admissionsCmd.ExecuteScalarAsync();
                 stats.AdmissionsToday = admToday != null ? Convert.ToInt32(admToday) : 0;
 
@@ -1117,31 +1144,35 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 var shiftAdmCmd = connection.CreateCommand();
                 if (currentHour >= 23 || currentHour < 7) // Night shift crosses midnight
                 {
-                    shiftAdmCmd.CommandText = @"
+                    shiftAdmCmd.CommandText = $@"
                     SELECT COUNT(*) FROM Tbl_Partograph
                     WHERE deleted = 0
+                      {facilityFilterSimple}
                       AND ((DATE(admissionDate) = DATE('now', '-1 day') AND TIME(admissionDate) >= @shiftStart)
                            OR (DATE(admissionDate) = DATE('now') AND TIME(admissionDate) < @shiftEnd))";
                 }
                 else
                 {
-                    shiftAdmCmd.CommandText = @"
+                    shiftAdmCmd.CommandText = $@"
                     SELECT COUNT(*) FROM Tbl_Partograph
                     WHERE DATE(admissionDate) = DATE('now')
                       AND TIME(admissionDate) >= @shiftStart
                       AND TIME(admissionDate) < @shiftEnd
-                      AND deleted = 0";
+                      AND deleted = 0
+                      {facilityFilterSimple}";
                 }
                 shiftAdmCmd.Parameters.AddWithValue("@shiftStart", shiftStart);
                 shiftAdmCmd.Parameters.AddWithValue("@shiftEnd", shiftEnd);
+                if (facilityId.HasValue)
+                    shiftAdmCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 var shiftAdm = await shiftAdmCmd.ExecuteScalarAsync();
                 stats.AdmissionsThisShift = shiftAdm != null ? Convert.ToInt32(shiftAdm) : 0;
 
                 // Get critical patients
-                stats.CriticalPatients = await GetCriticalPatientsAsync(connection);
+                stats.CriticalPatients = await GetCriticalPatientsAsync(connection, facilityId);
 
                 // Get active alerts
-                stats.ActiveAlerts = await GetActiveAlertsAsync(connection);
+                stats.ActiveAlerts = await GetActiveAlertsAsync(connection, facilityId);
 
                 // Count special categories
                 stats.ProlongedLaborCount = stats.CriticalPatients.Count(c => c.HoursInLabor > 12);
@@ -1149,19 +1180,19 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 stats.OverdueChecksCount = stats.CriticalPatients.Count(c => c.IsOverdueCheck);
 
                 // Get shift handover items
-                stats.ShiftHandoverItems = await GetShiftHandoverItemsAsync(connection);
+                stats.ShiftHandoverItems = await GetShiftHandoverItemsAsync(connection, facilityId);
 
                 // Get WHO compliance metrics
-                stats.ComplianceMetrics = await GetWHOComplianceMetricsAsync(connection);
+                stats.ComplianceMetrics = await GetWHOComplianceMetricsAsync(connection, facilityId);
 
                 // Get recent activities
-                stats.RecentActivities = await GetRecentActivitiesAsync(connection);
+                stats.RecentActivities = await GetRecentActivitiesAsync(connection, facilityId);
 
                 //// Get resource utilization
                 //stats.Resources = await GetResourceUtilizationAsync(connection, stats);
 
                 // Get hourly admission trends
-                stats.AdmissionTrends = await GetAdmissionTrendsAsync(connection);
+                stats.AdmissionTrends = await GetAdmissionTrendsAsync(connection, facilityId);
             }
             catch (Exception e)
             {
@@ -1171,15 +1202,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return stats;
         }
 
-        private async Task<List<CriticalPatientInfo>> GetCriticalPatientsAsync(SqliteConnection connection)
+        private async Task<List<CriticalPatientInfo>> GetCriticalPatientsAsync(SqliteConnection connection, Guid? facilityId = null)
         {
             await Init();
             var criticalPatients = new List<CriticalPatientInfo>();
 
             try
             {
+                var facilityFilter = facilityId.HasValue ? "AND p.facilityID = @facilityId" : "";
                 var cmd = connection.CreateCommand();
-                cmd.CommandText = @"
+                cmd.CommandText = $@"
                 SELECT
                     p.ID,
                     pt.firstName || ' ' || pt.lastName as PatientName,
@@ -1197,6 +1229,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE p.status IN (@firststage, @secondstage, @thirdstage, @fourthstage, @emergency)
                   AND p.deleted = 0
                   AND pt.deleted = 0
+                  {facilityFilter}
                 GROUP BY p.ID, pt.firstName, pt.lastName, pt.hospitalNumber, p.laborStartTime, p.cervicalDilationOnAdmission, p.status, p.riskLevel, p.riskScore
                 ORDER BY
                     CASE WHEN p.status = @emergency THEN 0 ELSE 1 END,
@@ -1209,6 +1242,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 cmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
                 cmd.Parameters.AddWithValue("@fourthstage", (int)LaborStatus.FourthStage);
                 cmd.Parameters.AddWithValue("@emergency", (int)LaborStatus.Emergency);
+                if (facilityId.HasValue)
+                    cmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
 
                 await using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -1289,16 +1324,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return criticalPatients;
         }
 
-        private async Task<List<PatientAlert>> GetActiveAlertsAsync(SqliteConnection connection)
+        private async Task<List<PatientAlert>> GetActiveAlertsAsync(SqliteConnection connection, Guid? facilityId = null)
         {
             await Init();
             var alerts = new List<PatientAlert>();
 
             try
             {
+                var facilityFilter = facilityId.HasValue ? "AND p.facilityID = @facilityId" : "";
+
                 // Get patients with abnormal FHR
                 var fhrCmd = connection.CreateCommand();
-                fhrCmd.CommandText = @"
+                fhrCmd.CommandText = $@"
                 SELECT
                     p.ID,
                     pt.firstName || ' ' || pt.lastName as PatientName,
@@ -1310,6 +1347,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE p.status IN (@firststage, @secondstage, @thirdstage, @emergency)
                   AND p.deleted = 0
                   AND pt.deleted = 0
+                  {facilityFilter}
                   AND (fhr.value < 110 OR fhr.value > 160)
                   AND fhr.time IN (
                       SELECT MAX(f2.time)
@@ -1323,6 +1361,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 fhrCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 fhrCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
                 fhrCmd.Parameters.AddWithValue("@emergency", (int)LaborStatus.Emergency);
+                if (facilityId.HasValue)
+                    fhrCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
 
                 await using var fhrReader = await fhrCmd.ExecuteReaderAsync();
                 while (await fhrReader.ReadAsync())
@@ -1351,7 +1391,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 // Get prolonged labor alerts
                 var prolongedCmd = connection.CreateCommand();
-                prolongedCmd.CommandText = @"
+                prolongedCmd.CommandText = $@"
                 SELECT
                     p.ID,
                     pt.firstName || ' ' || pt.lastName as PatientName,
@@ -1361,12 +1401,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE p.status IN (@firststage, @secondstage, @thirdstage)
                   AND p.deleted = 0
                   AND pt.deleted = 0
+                  {facilityFilter}
                   AND p.laborStartTime IS NOT NULL
                   AND JULIANDAY(DATETIME('now')) - JULIANDAY(p.laborStartTime) > 0.5
                 ORDER BY p.laborStartTime ASC
                 LIMIT 10";
 
                 prolongedCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
+                if (facilityId.HasValue)
+                    prolongedCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 prolongedCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 prolongedCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
 
@@ -1412,13 +1455,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return alerts;
         }
 
-        private async Task<List<ShiftHandoverItem>> GetShiftHandoverItemsAsync(SqliteConnection connection)
+        private async Task<List<ShiftHandoverItem>> GetShiftHandoverItemsAsync(SqliteConnection connection, Guid? facilityId = null)
         {
             await Init();
             var handoverItems = new List<ShiftHandoverItem>();
 
             try
             {
+                var facilityFilter = facilityId.HasValue ? "AND p.facilityID = @facilityId" : "";
+
                 // Get patients admitted during current shift or requiring handover
                 var currentHour = DateTime.Now.Hour;
                 string shiftStart;
@@ -1431,7 +1476,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     shiftStart = "23:00:00";
 
                 var cmd = connection.CreateCommand();
-                cmd.CommandText = @"
+                cmd.CommandText = $@"
                 SELECT
                     p.ID,
                     pt.firstName || ' ' || pt.lastName as PatientName,
@@ -1443,6 +1488,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
                 WHERE p.deleted = 0
                   AND pt.deleted = 0
+                  {facilityFilter}
                   AND p.status IN (@firststage, @secondstage, @pending)
                   AND (
                       (DATE(p.admissionDate) = DATE('now') AND TIME(p.admissionDate) >= @shiftStart)
@@ -1456,6 +1502,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 cmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 cmd.Parameters.AddWithValue("@pending", (int)LaborStatus.Pending);
                 cmd.Parameters.AddWithValue("@shiftStart", shiftStart);
+                if (facilityId.HasValue)
+                    cmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
 
                 await using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -1498,32 +1546,39 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return handoverItems;
         }
 
-        private async Task<WHOComplianceMetrics> GetWHOComplianceMetricsAsync(SqliteConnection connection)
+        private async Task<WHOComplianceMetrics> GetWHOComplianceMetricsAsync(SqliteConnection connection, Guid? facilityId = null)
         {
             await Init();
             var metrics = new WHOComplianceMetrics();
 
             try
             {
+                var facilityFilter = facilityId.HasValue ? "AND facilityID = @facilityId" : "";
+
                 // Get total active labors
                 var activeCmd = connection.CreateCommand();
-                activeCmd.CommandText = @"
+                activeCmd.CommandText = $@"
                 SELECT COUNT(*) FROM Tbl_Partograph
-                WHERE status IN (@firststage, @secondstage, @thirdstage) AND deleted = 0";
+                WHERE status IN (@firststage, @secondstage, @thirdstage) AND deleted = 0 {facilityFilter}";
                 activeCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 activeCmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 activeCmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);
+                if (facilityId.HasValue)
+                    activeCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 var activeCount = await activeCmd.ExecuteScalarAsync();
                 metrics.TotalActiveLabors = activeCount != null ? Convert.ToInt32(activeCount) : 0;
 
                 // Get completed partographs today
                 var completedCmd = connection.CreateCommand();
-                completedCmd.CommandText = @"
+                completedCmd.CommandText = $@"
                 SELECT COUNT(*) FROM Tbl_Partograph
                 WHERE status = @completed
                   AND DATE(deliveryTime) = DATE('now')
-                  AND deleted = 0";
+                  AND deleted = 0
+                  {facilityFilter}";
                 completedCmd.Parameters.AddWithValue("@completed", (int)LaborStatus.Completed);
+                if (facilityId.HasValue)
+                    completedCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 var completed = await completedCmd.ExecuteScalarAsync();
                 metrics.PartographsCompleted = completed != null ? Convert.ToInt32(completed) : 0;
 
@@ -1538,13 +1593,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 // Alert/Action line crossings would require analyzing cervical dilation progression
                 // Simplified version: check for prolonged labors as proxy
                 var prolongedCmd = connection.CreateCommand();
-                prolongedCmd.CommandText = @"
+                prolongedCmd.CommandText = $@"
                 SELECT COUNT(*) FROM Tbl_Partograph
                 WHERE status = @firststage
                   AND laborStartTime IS NOT NULL
                   AND JULIANDAY(DATETIME('now')) - JULIANDAY(laborStartTime) > 0.5
-                  AND deleted = 0";
-                prolongedCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage); 
+                  AND deleted = 0
+                  {facilityFilter}";
+                prolongedCmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
+                if (facilityId.HasValue)
+                    prolongedCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
                 var prolonged = await prolongedCmd.ExecuteScalarAsync();
                 metrics.AlertLineCrossings = prolonged != null ? Convert.ToInt32(prolonged) : 0;
                 metrics.ActionLineCrossings = (int)(metrics.AlertLineCrossings * 0.3); // Estimate 30% reach action line
@@ -1557,28 +1615,33 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return metrics;
         }
 
-        private async Task<List<RecentActivityItem>> GetRecentActivitiesAsync(SqliteConnection connection)
+        private async Task<List<RecentActivityItem>> GetRecentActivitiesAsync(SqliteConnection connection, Guid? facilityId = null)
         {
             await Init();
             var activities = new List<RecentActivityItem>();
 
             try
             {
+                var facilityFilter = facilityId.HasValue ? "AND p.facilityID = @facilityId" : "";
+
                 // Get recent deliveries
                 var deliveryCmd = connection.CreateCommand();
-                deliveryCmd.CommandText = @"
+                deliveryCmd.CommandText = $@"
                 SELECT
                     p.ID,
                     pt.firstName || ' ' || pt.lastName as PatientName,
                     p.deliveryTime
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
-                WHERE p.deliveryTime IS NOT NULL 
+                WHERE p.deliveryTime IS NOT NULL
                   AND DATE(p.deliveryTime) BETWEEN DATE('now', '-7 days') AND DATE('now')
                   AND p.deleted = 0
                   AND pt.deleted = 0
+                  {facilityFilter}
                 ORDER BY p.deliveryTime DESC
                 LIMIT 3";
+                if (facilityId.HasValue)
+                    deliveryCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
 
                 await using var deliveryReader = await deliveryCmd.ExecuteReaderAsync();
                 while (await deliveryReader.ReadAsync())
@@ -1601,7 +1664,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 // Get recent admissions
                 var admissionCmd = connection.CreateCommand();
-                admissionCmd.CommandText = @"
+                admissionCmd.CommandText = $@"
                 SELECT
                     p.ID,
                     pt.firstName || ' ' || pt.lastName as PatientName,
@@ -1611,8 +1674,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 WHERE DATE(p.admissionDate) BETWEEN DATE('now', '-7 days') AND DATE('now')
                   AND p.deleted = 0
                   AND pt.deleted = 0
+                  {facilityFilter}
                 ORDER BY p.admissionDate DESC
                 LIMIT 3";
+                if (facilityId.HasValue)
+                    admissionCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
 
                 await using var admissionReader = await admissionCmd.ExecuteReaderAsync();
                 while (await admissionReader.ReadAsync())
@@ -1681,23 +1747,27 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         //    return resources;
         //}
 
-        private async Task<List<HourlyAdmission>> GetAdmissionTrendsAsync(SqliteConnection connection)
+        private async Task<List<HourlyAdmission>> GetAdmissionTrendsAsync(SqliteConnection connection, Guid? facilityId = null)
         {
             await Init();
             var trends = new List<HourlyAdmission>();
 
             try
             {
+                var facilityFilter = facilityId.HasValue ? "AND facilityID = @facilityId" : "";
                 var cmd = connection.CreateCommand();
-                cmd.CommandText = @"
+                cmd.CommandText = $@"
                 SELECT
                     CAST(strftime('%H', admissionDate) AS INTEGER) as Hour,
                     COUNT(*) as AdmissionCount
                 FROM Tbl_Partograph
                 WHERE DATE(admissionDate) = DATE('now')
                   AND deleted = 0
+                  {facilityFilter}
                 GROUP BY CAST(strftime('%H', admissionDate) AS INTEGER)
                 ORDER BY Hour";
+                if (facilityId.HasValue)
+                    cmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
 
                 await using var reader = await cmd.ExecuteReaderAsync();
 

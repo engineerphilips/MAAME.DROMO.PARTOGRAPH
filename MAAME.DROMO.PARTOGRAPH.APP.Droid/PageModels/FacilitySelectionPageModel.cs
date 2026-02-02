@@ -122,8 +122,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     }),
                     ("Loading patient data...", async () =>
                     {
-                        // Preload dashboard stats and cache them
-                        var stats = await _partographRepository.GetDashboardStatsAsync();
+                        // Preload dashboard stats filtered by selected facility and cache them
+                        var stats = await _partographRepository.GetDashboardStatsAsync(SelectedFacility?.ID);
                         Constants.CachedDashboardStats = stats;
                     }),
                     ($"Setting up {facilityName}...", async () =>
