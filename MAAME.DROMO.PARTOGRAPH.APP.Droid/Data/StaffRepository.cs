@@ -52,6 +52,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
                 CREATE INDEX IF NOT EXISTS idx_staff_sync ON Tbl_Staff(updatedtime, syncstatus);
                 CREATE INDEX IF NOT EXISTS idx_staff_server_version ON Tbl_Staff(serverversion);
+                CREATE INDEX IF NOT EXISTS idx_staff_facility ON Tbl_Staff(facility);
 
                 DROP TRIGGER IF EXISTS trg_staff_insert;
                 CREATE TRIGGER trg_staff_insert 
