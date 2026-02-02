@@ -337,6 +337,10 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         // Facility - directly links partograph to facility for reporting (join to get name)
         public Guid? FacilityID { get; set; }
 
+        // Navigation property to Facility
+        [JsonIgnore]
+        public Facility? Facility { get; set; }
+
         [JsonIgnore]
         public string StatusDisplay => Status switch
         {

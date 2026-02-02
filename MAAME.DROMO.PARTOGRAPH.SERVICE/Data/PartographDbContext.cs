@@ -99,8 +99,13 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.SyncStatus);
                 entity.HasIndex(e => e.ServerVersion);
                 entity.HasIndex(e => e.DeviceId);
+                entity.HasIndex(e => e.FacilityID);
 
-                // Note: Relationship configured from Partograph side to avoid duplicate configuration
+                // Foreign key to Facility
+                entity.HasOne(p => p.Facility)
+                    .WithMany(f => f.Patients)
+                    .HasForeignKey(p => p.FacilityID)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Configure Partograph
@@ -117,12 +122,19 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.SyncStatus);
                 entity.HasIndex(e => e.ServerVersion);
                 entity.HasIndex(e => e.PatientID);
+                entity.HasIndex(e => e.FacilityID);
 
                 // Foreign key to Patient - explicit principal key to avoid shadow property
                 entity.HasOne(p => p.Patient)
                     .WithMany(p => p.PartographEntries)
                     .HasForeignKey(p => p.PatientID)
                     .HasPrincipalKey(p => p.ID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Foreign key to Facility
+                entity.HasOne(p => p.Facility)
+                    .WithMany(f => f.Partographs)
+                    .HasForeignKey(p => p.FacilityID)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 

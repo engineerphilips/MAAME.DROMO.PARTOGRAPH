@@ -44,6 +44,10 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         // Facility - links patient to facility for reporting (join to get name)
         public Guid? FacilityID { get; set; }
 
+        // Navigation property to Facility
+        [IgnoreDataMember]
+        public Facility? Facility { get; set; }
+
         // Sync columns
         public long CreatedTime { get; set; }
         public long UpdatedTime { get; set; }

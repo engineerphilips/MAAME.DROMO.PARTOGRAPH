@@ -56,6 +56,13 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [IgnoreDataMember]
         public District? District { get; set; }
 
+        // Navigation properties for facility-based data (Patients and Partographs belonging to this facility)
+        [IgnoreDataMember]
+        public List<Patient> Patients { get; set; } = [];
+
+        [IgnoreDataMember]
+        public List<Partograph> Partographs { get; set; } = [];
+
         public string CalculateHash()
         {
             var data = $"{ID}|{Name}|{Code}|{Type}|{Address}|{City}|{DistrictID}|{Country}|{IsActive}";
