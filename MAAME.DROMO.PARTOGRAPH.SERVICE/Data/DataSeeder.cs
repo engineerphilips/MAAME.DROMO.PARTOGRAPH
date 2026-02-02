@@ -771,7 +771,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 korleBu.RegionID = greaterAccraRegionId;
                 korleBu.DistrictID = accraMetropolitanDistrictId;
                 korleBu.Name = "Accra Metropolitan";
-                korleBu.Region = "Greater Accra";
                 korleBu.Level = "Tertiary";
                 korleBu.UpdatedTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                 _logger.LogInformation("Updated Korle Bu Teaching Hospital with region and district.");
@@ -784,7 +783,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 ridgeHospital.RegionID = greaterAccraRegionId;
                 ridgeHospital.DistrictID = korleKlotteyDistrictId;
                 ridgeHospital.Name = "Korle Klottey Municipal";
-                ridgeHospital.Region = "Greater Accra";
                 ridgeHospital.Level = "Tertiary";
                 ridgeHospital.UpdatedTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                 _logger.LogInformation("Updated Ridge Hospital with region and district.");
@@ -797,7 +795,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 militaryHospital.RegionID = greaterAccraRegionId;
                 militaryHospital.DistrictID = accraMetropolitanDistrictId;
                 militaryHospital.Name = "Accra Metropolitan";
-                militaryHospital.Region = "Greater Accra";
                 militaryHospital.Level = "Tertiary";
                 militaryHospital.UpdatedTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                 _logger.LogInformation("Updated 37 Military Hospital with region and district.");

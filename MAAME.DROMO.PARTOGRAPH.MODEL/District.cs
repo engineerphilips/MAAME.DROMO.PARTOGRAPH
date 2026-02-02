@@ -17,9 +17,8 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         // Type of district (Metropolitan, Municipal, District)
         public string Type { get; set; } = "District"; // Metropolitan, Municipal, District
 
-        // Parent region reference
+        // Parent region reference (join Region table to get name)
         public Guid RegionID { get; set; }
-        public string RegionName { get; set; } = string.Empty;
 
         // District capital
         public string Capital { get; set; } = string.Empty;
