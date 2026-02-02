@@ -789,14 +789,30 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID
                     LEFT JOIN Tbl_Staff S ON P.handler = S.ID";
 
+                // Filter by logged-in user's facility
+                var facilityId = Constants.Staff?.Facility;
+                string whereClause = facilityId.HasValue ? " WHERE P.facilityid = @facilityId" : "";
+
+                if (facilityId.HasValue)
+                {
+                    selectCmd.Parameters.AddWithValue("@facilityId", facilityId.ToString());
+                }
+
                 if (status.HasValue)
                 {
-                    selectCmd.CommandText = baseQuery + " WHERE P.status = @status ORDER BY P.admissionDate DESC";
+                    if (facilityId.HasValue)
+                    {
+                        selectCmd.CommandText = baseQuery + whereClause + " AND P.status = @status ORDER BY P.admissionDate DESC";
+                    }
+                    else
+                    {
+                        selectCmd.CommandText = baseQuery + " WHERE P.status = @status ORDER BY P.admissionDate DESC";
+                    }
                     selectCmd.Parameters.AddWithValue("@status", (int)status.Value);
                 }
                 else
                 {
-                    selectCmd.CommandText = baseQuery + " ORDER BY P.status, P.admissionDate DESC";
+                    selectCmd.CommandText = baseQuery + whereClause + " ORDER BY P.status, P.admissionDate DESC";
                 }
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();

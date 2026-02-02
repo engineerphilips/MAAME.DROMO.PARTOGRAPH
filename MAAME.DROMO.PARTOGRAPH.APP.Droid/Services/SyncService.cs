@@ -1193,7 +1193,8 @@ public class SyncService : ISyncService
             {
                 DeviceId = deviceId,
                 LastSyncTimestamp = currentTimestamp,
-                TableName = tableName
+                TableName = tableName,
+                FacilityID = Constants.Staff?.Facility
             };
 
             var pullResponse = await pullFunc(pullRequest);
@@ -1248,7 +1249,8 @@ public class SyncService : ISyncService
             {
                 DeviceId = deviceId,
                 LastSyncTimestamp = currentTimestamp,
-                TableName = tableName
+                TableName = tableName,
+                FacilityID = Constants.Staff?.Facility
             };
 
             var pullResponse = await _apiClient.PullStaffAsync(pullRequest);

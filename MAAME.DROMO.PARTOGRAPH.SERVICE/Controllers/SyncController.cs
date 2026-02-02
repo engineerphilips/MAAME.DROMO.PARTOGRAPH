@@ -92,16 +92,31 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
 
-                var records = await _context.Patients
-                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0)
+                // Filter by facility if provided - users only get data from their facility
+                var query = _context.Patients
+                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0);
+
+                if (request.FacilityID.HasValue)
+                {
+                    query = query.Where(p => p.FacilityID == request.FacilityID.Value);
+                }
+
+                var records = await query
                     .OrderBy(p => p.UpdatedTime)
                     .Take(maxRecords)
                     .Include(p => p.PartographEntries)
                     .Include(p => p.MedicalNotes)
                     .ToListAsync();
 
-                var hasMore = await _context.Patients
-                    .CountAsync(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0) > maxRecords;
+                var countQuery = _context.Patients
+                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0);
+
+                if (request.FacilityID.HasValue)
+                {
+                    countQuery = countQuery.Where(p => p.FacilityID == request.FacilityID.Value);
+                }
+
+                var hasMore = await countQuery.CountAsync() > maxRecords;
 
                 return Ok(new SyncPullResponse<Patient>
                 {
@@ -124,14 +139,29 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Controllers
             {
                 var maxRecords = _configuration.GetValue<int>("SyncSettings:MaxRecordsPerPull", 100);
 
-                var records = await _context.Partographs
-                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0)
+                // Filter by facility if provided - users only get data from their facility
+                var query = _context.Partographs
+                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0);
+
+                if (request.FacilityID.HasValue)
+                {
+                    query = query.Where(p => p.FacilityID == request.FacilityID.Value);
+                }
+
+                var records = await query
                     .OrderBy(p => p.UpdatedTime)
                     .Take(maxRecords)
                     .ToListAsync();
 
-                var hasMore = await _context.Partographs
-                    .CountAsync(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0) > maxRecords;
+                var countQuery = _context.Partographs
+                    .Where(p => p.UpdatedTime > request.LastSyncTimestamp && p.Deleted == 0);
+
+                if (request.FacilityID.HasValue)
+                {
+                    countQuery = countQuery.Where(p => p.FacilityID == request.FacilityID.Value);
+                }
+
+                var hasMore = await countQuery.CountAsync() > maxRecords;
 
                 return Ok(new SyncPullResponse<Partograph>
                 {

@@ -134,10 +134,25 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await connection.OpenAsync();
 
                 var selectCmd = connection.CreateCommand();
-                selectCmd.CommandText = @"SELECT p.ID, p.time, p.firstName, p.lastName, p.hospitalNumber, p.dateofbirth, p.age, p.bloodGroup, p.phoneNumber, p.emergencyContactName, p.emergencyContactRelationship, p.emergencyContactPhone, p.handler, s.name as staffname, p.createdtime, p.updatedtime, p.deletedtime, p.deviceid, p.origindeviceid, p.syncstatus, p.version, p.serverversion, p.deleted
-                    FROM Tbl_Patient p
-                    LEFT JOIN Tbl_Staff s ON p.handler = s.ID
-                    ORDER BY p.time DESC";
+
+                // Filter by logged-in user's facility - only show patients from the same facility
+                var facilityId = Constants.Staff?.Facility;
+                if (facilityId.HasValue)
+                {
+                    selectCmd.CommandText = @"SELECT p.ID, p.time, p.firstName, p.lastName, p.hospitalNumber, p.dateofbirth, p.age, p.bloodGroup, p.phoneNumber, p.emergencyContactName, p.emergencyContactRelationship, p.emergencyContactPhone, p.handler, s.name as staffname, p.facilityid, p.createdtime, p.updatedtime, p.deletedtime, p.deviceid, p.origindeviceid, p.syncstatus, p.version, p.serverversion, p.deleted
+                        FROM Tbl_Patient p
+                        LEFT JOIN Tbl_Staff s ON p.handler = s.ID
+                        WHERE p.facilityid = @facilityId
+                        ORDER BY p.time DESC";
+                    selectCmd.Parameters.AddWithValue("@facilityId", facilityId.ToString());
+                }
+                else
+                {
+                    selectCmd.CommandText = @"SELECT p.ID, p.time, p.firstName, p.lastName, p.hospitalNumber, p.dateofbirth, p.age, p.bloodGroup, p.phoneNumber, p.emergencyContactName, p.emergencyContactRelationship, p.emergencyContactPhone, p.handler, s.name as staffname, p.facilityid, p.createdtime, p.updatedtime, p.deletedtime, p.deviceid, p.origindeviceid, p.syncstatus, p.version, p.serverversion, p.deleted
+                        FROM Tbl_Patient p
+                        LEFT JOIN Tbl_Staff s ON p.handler = s.ID
+                        ORDER BY p.time DESC";
+                }
 
                 await using var reader = await selectCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
