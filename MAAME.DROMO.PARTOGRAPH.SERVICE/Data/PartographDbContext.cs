@@ -161,9 +161,20 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.Code).IsUnique();
                 entity.HasIndex(e => e.UpdatedTime);
                 entity.HasIndex(e => e.SyncStatus);
-                entity.HasIndex(e => e.Region);
                 entity.HasIndex(e => e.DistrictID);
                 entity.HasIndex(e => e.RegionID);
+
+                // Foreign key to District
+                entity.HasOne(f => f.District)
+                    .WithMany(d => d.Facilities)
+                    .HasForeignKey(f => f.DistrictID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Foreign key to Region
+                entity.HasOne(f => f.Region)
+                    .WithMany()
+                    .HasForeignKey(f => f.RegionID)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Configure Region
@@ -187,6 +198,12 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 entity.HasIndex(e => e.Code).IsUnique();
                 entity.HasIndex(e => e.RegionID);
                 entity.HasIndex(e => e.Name);
+
+                // Foreign key to Region
+                entity.HasOne(d => d.Region)
+                    .WithMany(r => r.Districts)
+                    .HasForeignKey(d => d.RegionID)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Configure MonitoringUser

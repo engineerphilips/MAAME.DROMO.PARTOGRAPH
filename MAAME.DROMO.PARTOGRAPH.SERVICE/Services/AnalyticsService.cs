@@ -372,6 +372,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
         public async Task ComputeFacilityPerformanceAsync(Guid? facilityId = null)
         {
             var facilities = await _context.Facilities
+                .Include(f => f.Region)
                 .Where(f => f.Deleted == 0 && (!facilityId.HasValue || f.ID == facilityId))
                 .ToListAsync();
 
@@ -396,7 +397,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Services
                         FacilityName = facility.Name,
                         FacilityCode = facility.Code,
                         FacilityType = facility.Type,
-                        Region = facility.Region,
+                        Region = facility.Region?.Name ?? string.Empty,
                         SnapshotDate = DateTime.UtcNow,
                         PeriodType = "Monthly",
                         CreatedTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()

@@ -16,12 +16,11 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         public string Level { get; set; } = "Primary"; // Primary, Secondary, Tertiary
         public string Address { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
-        public string Region { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
-        // Hierarchical references for monitoring (join to get names)
+        // Hierarchical references for monitoring (use navigation properties to get names)
         public Guid? RegionID { get; set; }
         public Guid? DistrictID { get; set; }
 
@@ -58,9 +57,12 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
         [IgnoreDataMember]
         public District? District { get; set; }
 
+        [IgnoreDataMember]
+        public Region? Region { get; set; }
+
         public string CalculateHash()
         {
-            var data = $"{ID}|{Name}|{Code}|{Type}|{Address}|{City}|{Region}|{Country}|{IsActive}";
+            var data = $"{ID}|{Name}|{Code}|{Type}|{Address}|{City}|{RegionID}|{DistrictID}|{Country}|{IsActive}";
             using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
