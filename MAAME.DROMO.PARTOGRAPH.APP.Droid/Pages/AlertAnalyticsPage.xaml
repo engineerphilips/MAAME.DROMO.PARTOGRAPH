@@ -2,11 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:fonts="clr-namespace:Fonts"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.AlertAnalyticsPage"
              Title="Alert Analytics"
              x:DataType="pagemodels:AlertAnalyticsPageModel">
-
+    
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style x:Key="StatCardStyle" TargetType="Border">
@@ -282,7 +283,7 @@
                         <CollectionView ItemsSource="{Binding TopAlertTypes}"
                                         HeightRequest="200">
                             <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="pagemodels:AlertTypeCount">
+                                <DataTemplate x:DataType="models:AlertTypeCount">
                                     <Border BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2D3748}"
                                             Padding="12,8"
                                             Margin="0,4">
@@ -345,7 +346,7 @@
                         <CollectionView ItemsSource="{Binding RecentAlerts}"
                                         HeightRequest="300">
                             <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="pagemodels:AlertHistoryRecord">
+                                <DataTemplate x:DataType="models:AlertHistoryRecord">
                                     <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2D3748}"
                                             Padding="12"
                                             Margin="0,4">

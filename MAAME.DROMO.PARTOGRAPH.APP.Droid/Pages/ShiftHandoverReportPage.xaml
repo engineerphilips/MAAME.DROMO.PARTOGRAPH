@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:fonts="clr-namespace:Fonts"
              xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
-             xmlns:data="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Data"
+             xmlns:models="clr-namespace:MAAME.DROMO.PARTOGRAPH.MODEL;assembly=MAAME.DROMO.PARTOGRAPH.MODEL"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.ShiftHandoverReportPage"
              x:DataType="pagemodels:ShiftHandoverReportPageModel"
              Title="Shift Handover Report"
@@ -231,7 +231,7 @@
                         <CollectionView ItemsSource="{Binding PatientsRequiringAttention}"
                                         SelectionMode="None">
                             <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="data:PatientAttentionItem">
+                                <DataTemplate x:DataType="models:PatientAttentionItem">
                                     <Border BackgroundColor="{AppThemeBinding Light=#FFF8E1, Dark=#3D351B}"
                                             Padding="12"
                                             Margin="0,4">
@@ -239,8 +239,7 @@
                                             <RoundRectangle CornerRadius="8" />
                                         </Border.StrokeShape>
                                         <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:ShiftHandoverReportPageModel}}, Path=NavigateToPatientCommand}"
-                                                                  CommandParameter="{Binding}" />
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:ShiftHandoverReportPageModel}}, Path=NavigateToPatientCommand}" CommandParameter="{Binding}" />
                                         </Border.GestureRecognizers>
 
                                         <Grid ColumnDefinitions="*,Auto">
@@ -287,7 +286,7 @@
                         <CollectionView ItemsSource="{Binding OverdueMeasurements}"
                                         SelectionMode="None">
                             <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="data:OverdueMeasurement">
+                                <DataTemplate x:DataType="models:OverdueMeasurement">
                                     <Border BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#3D1F1F}"
                                             Padding="12"
                                             Margin="0,4">
@@ -356,9 +355,9 @@
               ColumnSpacing="12"
               Padding="16"
               BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
-            <Border.Shadow>
+            <!--<Border.Shadow>
                 <Shadow Brush="#10000000" Offset="0,-2" Radius="4" />
-            </Border.Shadow>
+            </Border.Shadow>-->
 
             <Button Grid.Column="0"
                     Text="Share Report"

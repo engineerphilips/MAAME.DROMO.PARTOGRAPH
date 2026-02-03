@@ -256,7 +256,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         /// </summary>
         public void StartNewShift()
         {
-            CurrentShiftId = $"SHIFT_{DateTime.Now:yyyyMMdd_HHmmss}_{Constants.Staff?.Id}";
+            CurrentShiftId = $"SHIFT_{DateTime.Now:yyyyMMdd_HHmmss}_{Constants.Staff?.ID}";
             ShiftStartTime = DateTime.Now;
             _logger?.LogInformation("New shift started: {ShiftId}", CurrentShiftId);
         }
@@ -371,7 +371,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 ShiftStart = ShiftStartTime,
                 ShiftEnd = DateTime.Now,
                 StaffName = Constants.Staff?.Name ?? "Unknown",
-                FacilityId = Constants.Staff?.FacilityId,
+                FacilityId = Constants.GetFacilityForFiltering(),
                 FacilityName = Constants.SelectedFacility?.Name ?? ""
             };
 
@@ -434,11 +434,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 Guid? facilityId = null;
                 if (!Constants.IsSuperOrAdmin())
                 {
-                    facilityId = Constants.Staff?.FacilityId;
+                    facilityId = Constants.GetFacilityForFiltering();
                 }
                 else if (Constants.SelectedFacility != null)
                 {
-                    facilityId = Constants.SelectedFacility.Id;
+                    facilityId = Constants.GetFacilityForFiltering();
                 }
 
                 // Get all active partographs (FirstStage, SecondStage, ThirdStage)
@@ -447,7 +447,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     .Where(p => p.Status == LaborStatus.FirstStage ||
                                 p.Status == LaborStatus.SecondStage ||
                                 p.Status == LaborStatus.ThirdStage)
-                    .Where(p => facilityId == null || p.FacilityId == facilityId)
+                    .Where(p => facilityId == null || p.FacilityID == facilityId)
                     .ToList();
 
                 if (!activePartographs.Any())
@@ -559,7 +559,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 EscalationLevel = newLevel,
                 EscalatedAt = DateTime.Now,
                 ShiftId = CurrentShiftId,
-                FacilityId = Constants.Staff?.FacilityId
+                FacilityId = Constants.GetFacilityForFiltering()
             };
 
             if (newLevel == 3)
@@ -682,7 +682,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     alerts.Add(CreateMeasurementDueAlert(
                         partograph, "Fetal Heart Rate", "fhrmodal",
                         lastFhr.Time, fhrDueTime, minutesOverdue,
-                        $"FHR measurement is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.PatientName}"));
+                        $"FHR measurement is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.Name}"));
                 }
             }
             else if (partograph.LaborStartTime.HasValue)
@@ -690,7 +690,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 alerts.Add(CreateMeasurementDueAlert(
                     partograph, "Fetal Heart Rate", "fhrmodal",
                     null, partograph.LaborStartTime.Value, 30,
-                    $"Initial FHR measurement needed for {partograph.PatientName}"));
+                    $"Initial FHR measurement needed for {partograph.Name}"));
             }
 
             // Contraction monitoring
@@ -704,7 +704,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     alerts.Add(CreateMeasurementDueAlert(
                         partograph, "Contractions", "contractionmodal",
                         lastContraction.Time, contractionDueTime, minutesOverdue,
-                        $"Contraction assessment is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.PatientName}"));
+                        $"Contraction assessment is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.Name}"));
                 }
             }
 
@@ -719,7 +719,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     alerts.Add(CreateMeasurementDueAlert(
                         partograph, "Cervical Dilatation", "cervixmodal",
                         lastDilatation.Time, dilatationDueTime, minutesOverdue,
-                        $"Vaginal examination is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.PatientName}"));
+                        $"Vaginal examination is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.Name}"));
                 }
             }
 
@@ -734,7 +734,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     alerts.Add(CreateMeasurementDueAlert(
                         partograph, "Blood Pressure", "bpmodal",
                         lastBp.Time, bpDueTime, minutesOverdue,
-                        $"BP measurement is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.PatientName}"));
+                        $"BP measurement is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.Name}"));
                 }
             }
 
@@ -749,7 +749,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     alerts.Add(CreateMeasurementDueAlert(
                         partograph, "Temperature", "temperaturemodal",
                         lastTemp.Time, tempDueTime, minutesOverdue,
-                        $"Temperature measurement is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.PatientName}"));
+                        $"Temperature measurement is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.Name}"));
                 }
             }
 
@@ -764,7 +764,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                     alerts.Add(CreateMeasurementDueAlert(
                         partograph, "Urine", "urinemodal",
                         lastUrine.Time, urineDueTime, minutesOverdue,
-                        $"Urine analysis is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.PatientName}"));
+                        $"Urine analysis is {(minutesOverdue > 0 ? "overdue" : "due")} for {partograph.Name}"));
                 }
             }
 
@@ -785,14 +785,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             else if (minutesOverdue > 0) severity = AlertSeverity.Warning;
             else severity = AlertSeverity.Info;
 
-            var alertKey = $"{partograph.Id}_{measurementType}_MeasurementDue";
+            var alertKey = $"{partograph.ID}_{measurementType}_MeasurementDue";
             var escalationLevel = _alertEscalationLevels.GetValueOrDefault(alertKey, 0);
 
             return new MeasurementDueAlert
             {
-                PartographId = partograph.Id,
-                PatientId = partograph.PatientId,
-                PatientName = partograph.PatientName ?? "Unknown Patient",
+                PartographId = new Guid(partograph.ID.ToString()),
+                PatientId = new Guid(partograph.Patient.ID.ToString()),
+                PatientName = partograph.Name ?? "Unknown Patient",
                 MeasurementType = measurementType,
                 DueTime = dueTime,
                 LastMeasurementTime = lastMeasurementTime,
@@ -882,7 +882,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                         Message = alert.Message,
                         CreatedAt = alert.CreatedAt,
                         ShiftId = CurrentShiftId,
-                        FacilityId = Constants.Staff?.FacilityId
+                        FacilityId = Constants.GetFacilityForFiltering()
                     };
 
                     await _alertHistoryRepository.SaveAlertAsync(record);

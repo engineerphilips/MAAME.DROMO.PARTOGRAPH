@@ -1,163 +1,9 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
+using MAAME.DROMO.PARTOGRAPH.MODEL;
 
 namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 {
-    /// <summary>
-    /// Model for persisted alert history records
-    /// </summary>
-    public class AlertHistoryRecord
-    {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid? PartographId { get; set; }
-        public Guid? PatientId { get; set; }
-        public string PatientName { get; set; } = string.Empty;
-        public string AlertType { get; set; } = string.Empty; // "MeasurementDue" or "ClinicalAlert"
-        public string MeasurementType { get; set; } = string.Empty;
-        public string Severity { get; set; } = string.Empty; // Critical, Warning, Info
-        public string Title { get; set; } = string.Empty;
-        public string Message { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? AcknowledgedAt { get; set; }
-        public string AcknowledgedBy { get; set; } = string.Empty;
-        public DateTime? ResolvedAt { get; set; }
-        public string ResolvedBy { get; set; } = string.Empty;
-        public int EscalationLevel { get; set; } = 0;
-        public DateTime? EscalatedAt { get; set; }
-        public int ResponseTimeMinutes { get; set; }
-        public bool IsMissed { get; set; }
-        public string ShiftId { get; set; } = string.Empty;
-        public Guid? FacilityId { get; set; }
-
-        // Calculated properties
-        public bool IsAcknowledged => AcknowledgedAt.HasValue;
-        public bool IsResolved => ResolvedAt.HasValue;
-        public bool IsEscalated => EscalationLevel > 0;
-
-        public string SeverityColor => Severity switch
-        {
-            "Critical" => "#EF5350",
-            "Warning" => "#FF9800",
-            "Info" => "#2196F3",
-            _ => "#9E9E9E"
-        };
-
-        public string SeverityIcon => Severity switch
-        {
-            "Critical" => "🚨",
-            "Warning" => "⚠️",
-            "Info" => "ℹ️",
-            _ => "🔔"
-        };
-
-        // UI Display properties
-        public bool HasStatus => IsAcknowledged || IsMissed || IsEscalated;
-
-        public string StatusDisplay
-        {
-            get
-            {
-                if (IsMissed) return "MISSED";
-                if (IsAcknowledged) return "✓ ACK";
-                if (IsEscalated) return $"L{EscalationLevel}";
-                return "";
-            }
-        }
-
-        public string StatusColor
-        {
-            get
-            {
-                if (IsMissed) return "#C62828";
-                if (IsAcknowledged) return "#4CAF50";
-                if (IsEscalated) return "#E65100";
-                return "#9E9E9E";
-            }
-        }
-    }
-
-    /// <summary>
-    /// Analytics model for alert compliance tracking
-    /// </summary>
-    public class AlertAnalytics
-    {
-        public int TotalAlerts { get; set; }
-        public int AcknowledgedAlerts { get; set; }
-        public int MissedAlerts { get; set; }
-        public int EscalatedAlerts { get; set; }
-        public double AverageResponseTimeMinutes { get; set; }
-        public double CompliancePercentage { get; set; }
-        public Dictionary<string, int> AlertsByType { get; set; } = new();
-        public Dictionary<string, int> AlertsBySeverity { get; set; } = new();
-        public Dictionary<string, double> ComplianceByMeasurementType { get; set; } = new();
-        public List<HourlyAlertCount> AlertsByHour { get; set; } = new();
-        public List<AlertHistoryRecord> RecentAlerts { get; set; } = new();
-
-        // Alias properties for ViewModel compatibility
-        public int AcknowledgedCount => AcknowledgedAlerts;
-        public int MissedCount => MissedAlerts;
-        public Dictionary<string, int> ByType => AlertsByType;
-        public Dictionary<string, int> BySeverity => AlertsBySeverity;
-        public Dictionary<int, int> ByHour => AlertsByHour.ToDictionary(h => h.Hour, h => h.Count);
-    }
-
-    public class HourlyAlertCount
-    {
-        public int Hour { get; set; }
-        public int Count { get; set; }
-        public int Acknowledged { get; set; }
-        public int Missed { get; set; }
-    }
-
-    /// <summary>
-    /// Shift handover report model
-    /// </summary>
-    public class ShiftHandoverReport
-    {
-        public string ShiftId { get; set; } = string.Empty;
-        public DateTime ShiftStart { get; set; }
-        public DateTime ShiftEnd { get; set; }
-        public string StaffName { get; set; } = string.Empty;
-        public Guid? FacilityId { get; set; }
-        public string FacilityName { get; set; } = string.Empty;
-
-        // Summary stats
-        public int TotalActivePatients { get; set; }
-        public int TotalAlertsGenerated { get; set; }
-        public int AlertsAcknowledged { get; set; }
-        public int AlertsMissed { get; set; }
-        public int MeasurementsCompleted { get; set; }
-        public double CompliancePercentage { get; set; }
-
-        // Pending items for next shift
-        public List<AlertHistoryRecord> PendingAlerts { get; set; } = new();
-        public List<PatientAttentionItem> PatientsRequiringAttention { get; set; } = new();
-        public List<OverdueMeasurement> OverdueMeasurements { get; set; } = new();
-
-        // Completed items this shift
-        public List<AlertHistoryRecord> ResolvedAlerts { get; set; } = new();
-    }
-
-    public class PatientAttentionItem
-    {
-        public Guid PatientId { get; set; }
-        public Guid PartographId { get; set; }
-        public string PatientName { get; set; } = string.Empty;
-        public string Reason { get; set; } = string.Empty;
-        public string Severity { get; set; } = string.Empty;
-        public int OverdueMinutes { get; set; }
-    }
-
-    public class OverdueMeasurement
-    {
-        public Guid PartographId { get; set; }
-        public string PatientName { get; set; } = string.Empty;
-        public string MeasurementType { get; set; } = string.Empty;
-        public DateTime LastMeasurementTime { get; set; }
-        public int MinutesOverdue { get; set; }
-    }
-
     /// <summary>
     /// Repository for persisting alert history to local SQLite database.
     /// Supports analytics, shift handover reports, and compliance tracking.
@@ -168,8 +14,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         private SqliteConnection? _connection;
         private bool _initialized;
         private readonly SemaphoreSlim _initLock = new(1, 1);
-
-        private const string DatabaseName = "alerthistory.db";
 
         private string CreateTableSql => @"
             CREATE TABLE IF NOT EXISTS Tbl_AlertHistory (
@@ -218,16 +62,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 if (_initialized) return;
 
-                var dbPath = Path.Combine(FileSystem.AppDataDirectory, DatabaseName);
-                _connection = new SqliteConnection($"Data Source={dbPath}");
-                await _connection.OpenAsync();
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
 
                 using var cmd = _connection.CreateCommand();
                 cmd.CommandText = CreateTableSql;
                 await cmd.ExecuteNonQueryAsync();
 
                 _initialized = true;
-                _logger?.LogInformation("AlertHistoryRepository initialized at {Path}", dbPath);
+                _logger?.LogInformation("AlertHistoryRepository initialized at {Path}", Constants.DatabasePath);
             }
             finally
             {

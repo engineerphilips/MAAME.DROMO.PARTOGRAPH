@@ -182,11 +182,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 Guid? facilityId = null;
                 if (!Constants.IsSuperOrAdmin())
                 {
-                    facilityId = Constants.Staff?.FacilityId;
+                    facilityId = Constants.GetFacilityForFiltering();
                 }
                 else if (Constants.SelectedFacility != null)
                 {
-                    facilityId = Constants.SelectedFacility.Id;
+                    facilityId = Constants.GetFacilityForFiltering();
                 }
 
                 Analytics = await _alertHistoryRepository.GetAnalyticsAsync(StartDate, EndDate, facilityId);
@@ -350,37 +350,5 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// Helper class for alert type counts
-    /// </summary>
-    public class AlertTypeCount
-    {
-        public string Type { get; set; } = string.Empty;
-        public int Count { get; set; }
-
-        public string Icon => Type switch
-        {
-            "FHR" or "Fetal Heart Rate" => "💓",
-            "Contractions" => "📊",
-            "Cervical Dilatation" or "Vaginal Examination" => "📏",
-            "Blood Pressure" or "BP" => "🩺",
-            "Temperature" => "🌡️",
-            "Urine" => "💧",
-            "ClinicalAlert" => "🏥",
-            _ => "📋"
-        };
-    }
-
-    /// <summary>
-    /// Helper class for hourly alert counts
-    /// </summary>
-    public class AlertHourCount
-    {
-        public int Hour { get; set; }
-        public int Count { get; set; }
-
-        public string TimeDisplay => $"{Hour:00}:00";
     }
 }

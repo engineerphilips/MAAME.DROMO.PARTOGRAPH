@@ -324,7 +324,7 @@
                       Route="help" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Settings">
+    <!--<FlyoutItem Title="Settings">
         <FlyoutItem.Icon>
             <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                              Glyph="&#xE713;"
@@ -334,7 +334,7 @@
         <ShellContent Title="Settings"
                       ContentTemplate="{DataTemplate pages:SettingsPage}"
                       Route="settings" />
-    </FlyoutItem>
+    </FlyoutItem>-->
 
     <!-- Modern Flyout Footer -->
     <Shell.FlyoutFooter>
