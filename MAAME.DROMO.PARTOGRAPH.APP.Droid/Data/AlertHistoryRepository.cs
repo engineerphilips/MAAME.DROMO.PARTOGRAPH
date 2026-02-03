@@ -11,7 +11,6 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
     public class AlertHistoryRepository
     {
         private readonly ILogger<AlertHistoryRepository>? _logger;
-        private SqliteConnection? _connection;
         private bool _initialized;
         private readonly SemaphoreSlim _initLock = new(1, 1);
 
@@ -65,7 +64,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 await using var connection = new SqliteConnection(Constants.DatabasePath);
                 await connection.OpenAsync();
 
-                using var cmd = _connection.CreateCommand();
+                using var cmd = connection.CreateCommand();
                 cmd.CommandText = CreateTableSql;
                 await cmd.ExecuteNonQueryAsync();
 
@@ -85,7 +84,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = @"
                 INSERT OR REPLACE INTO Tbl_AlertHistory
                 (ID, partographid, patientid, patientname, alerttype, measurementtype, severity,
@@ -134,7 +136,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT * FROM Tbl_AlertHistory WHERE ID = @id";
             cmd.Parameters.AddWithValue("@id", id.ToString());
 
@@ -153,7 +158,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             var sql = "SELECT * FROM Tbl_AlertHistory WHERE acknowledgedat IS NULL";
             if (facilityId.HasValue)
             {
@@ -179,7 +187,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT * FROM Tbl_AlertHistory WHERE shiftid = @shiftid ORDER BY createdat DESC";
             cmd.Parameters.AddWithValue("@shiftid", shiftId);
 
@@ -199,7 +210,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT * FROM Tbl_AlertHistory WHERE patientid = @patientid ORDER BY createdat DESC";
             cmd.Parameters.AddWithValue("@patientid", patientId.ToString());
 
@@ -219,7 +233,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT * FROM Tbl_AlertHistory WHERE partographid = @partographid ORDER BY createdat DESC";
             cmd.Parameters.AddWithValue("@partographid", partographId.ToString());
 
@@ -244,7 +261,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             var responseTime = (int)(DateTime.Now - alert.CreatedAt).TotalMinutes;
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = @"
                 UPDATE Tbl_AlertHistory
                 SET acknowledgedat = @acknowledgedat,
@@ -267,7 +287,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = @"
                 UPDATE Tbl_AlertHistory
                 SET resolvedat = @resolvedat, resolvedby = @resolvedby
@@ -287,7 +310,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = @"
                 UPDATE Tbl_AlertHistory
                 SET escalationlevel = @level, escalatedat = @escalatedat
@@ -307,7 +333,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
-            using var cmd = _connection!.CreateCommand();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = "UPDATE Tbl_AlertHistory SET ismissed = 1 WHERE ID = @id";
             cmd.Parameters.AddWithValue("@id", alertId.ToString());
 
@@ -321,12 +350,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
             var analytics = new AlertAnalytics();
             var startMs = new DateTimeOffset(startDate).ToUnixTimeMilliseconds();
             var endMs = new DateTimeOffset(endDate).ToUnixTimeMilliseconds();
 
             // Total alerts
-            using (var cmd = _connection!.CreateCommand())
+            using (var cmd = connection.CreateCommand())
             {
                 var sql = "SELECT COUNT(*) FROM Tbl_AlertHistory WHERE createdat BETWEEN @start AND @end";
                 if (facilityId.HasValue)
@@ -341,7 +373,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
 
             // Acknowledged alerts
-            using (var cmd = _connection!.CreateCommand())
+            using (var cmd = connection.CreateCommand())
             {
                 var sql = "SELECT COUNT(*) FROM Tbl_AlertHistory WHERE createdat BETWEEN @start AND @end AND acknowledgedat IS NOT NULL";
                 if (facilityId.HasValue)
@@ -356,7 +388,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
 
             // Missed alerts
-            using (var cmd = _connection!.CreateCommand())
+            using (var cmd = connection.CreateCommand())
             {
                 var sql = "SELECT COUNT(*) FROM Tbl_AlertHistory WHERE createdat BETWEEN @start AND @end AND ismissed = 1";
                 if (facilityId.HasValue)
@@ -371,7 +403,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
 
             // Escalated alerts
-            using (var cmd = _connection!.CreateCommand())
+            using (var cmd = connection.CreateCommand())
             {
                 var sql = "SELECT COUNT(*) FROM Tbl_AlertHistory WHERE createdat BETWEEN @start AND @end AND escalationlevel > 0";
                 if (facilityId.HasValue)
@@ -386,7 +418,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
 
             // Average response time
-            using (var cmd = _connection!.CreateCommand())
+            using (var cmd = connection.CreateCommand())
             {
                 var sql = "SELECT AVG(responsetimeminutes) FROM Tbl_AlertHistory WHERE createdat BETWEEN @start AND @end AND acknowledgedat IS NOT NULL";
                 if (facilityId.HasValue)
@@ -407,7 +439,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 : 100;
 
             // Alerts by severity
-            using (var cmd = _connection!.CreateCommand())
+            using (var cmd = connection.CreateCommand())
             {
                 var sql = "SELECT severity, COUNT(*) as cnt FROM Tbl_AlertHistory WHERE createdat BETWEEN @start AND @end";
                 if (facilityId.HasValue)
@@ -428,7 +460,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             }
 
             // Alerts by measurement type
-            using (var cmd = _connection!.CreateCommand())
+            using (var cmd = connection.CreateCommand())
             {
                 var sql = "SELECT measurementtype, COUNT(*) as cnt FROM Tbl_AlertHistory WHERE createdat BETWEEN @start AND @end AND measurementtype != ''";
                 if (facilityId.HasValue)
@@ -458,9 +490,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
             var cutoffTime = DateTimeOffset.Now.AddMinutes(-withinMinutes).ToUnixTimeMilliseconds();
 
-            using var cmd = _connection!.CreateCommand();
+            using var cmd = connection.CreateCommand();
             cmd.CommandText = @"
                 SELECT COUNT(*) FROM Tbl_AlertHistory
                 WHERE partographid = @partographid
@@ -482,10 +517,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         {
             await InitAsync();
 
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
             var startMs = new DateTimeOffset(startDate).ToUnixTimeMilliseconds();
             var endMs = new DateTimeOffset(endDate).ToUnixTimeMilliseconds();
 
-            using var cmd = _connection!.CreateCommand();
+            using var cmd = connection.CreateCommand();
             var sql = "SELECT * FROM Tbl_AlertHistory WHERE createdat BETWEEN @start AND @end";
             if (facilityId.HasValue)
             {
@@ -547,8 +585,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         public void Dispose()
         {
-            _connection?.Close();
-            _connection?.Dispose();
+            // No persistent resources to dispose - each operation creates its own connection
         }
     }
 }

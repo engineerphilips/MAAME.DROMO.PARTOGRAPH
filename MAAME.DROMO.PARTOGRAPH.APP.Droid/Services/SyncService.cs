@@ -1332,12 +1332,20 @@ public class SyncService : ISyncService
                 count += Convert.ToInt32(result);
             }
 
-            // Count pending referrals
-            using (var command = connection.CreateCommand())
+            // Count pending referrals (table may not exist yet)
+            try
             {
-                command.CommandText = "SELECT COUNT(*) FROM Tbl_Referral WHERE SyncStatus = 0";
-                var result = await command.ExecuteScalarAsync();
-                count += Convert.ToInt32(result);
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT COUNT(*) FROM Tbl_Referral WHERE SyncStatus = 0";
+                    var result = await command.ExecuteScalarAsync();
+                    count += Convert.ToInt32(result);
+                }
+            }
+            catch (SqliteException ex) when (ex.SqliteErrorCode == 1) // Table doesn't exist
+            {
+                // Table not created yet, skip
+                _logger.LogDebug("Tbl_Referral not yet created, skipping pending count");
             }
 
             return count;

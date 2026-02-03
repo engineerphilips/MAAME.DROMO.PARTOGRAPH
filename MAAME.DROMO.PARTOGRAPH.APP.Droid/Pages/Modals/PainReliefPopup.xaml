@@ -34,7 +34,7 @@
                     <core:SfTextInputLayout Hint="Date"
                                         Style="{StaticResource PatientInput}"
                                         HelperText="Recording time">
-                        <DatePicker Date="{Binding RecordingDate}" />
+                        <DatePicker Date="{Binding RecordingDate, Converter={StaticResource DateOnlyToDateTimeConverter}}" />
                     </core:SfTextInputLayout>
 
                     <core:SfTextInputLayout Hint="Time"
