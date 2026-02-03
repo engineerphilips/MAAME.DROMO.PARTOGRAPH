@@ -1,6 +1,7 @@
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
+using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -12,6 +13,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     {
         private readonly PartographMonitoringService _monitoringService;
         private readonly AlertHistoryRepository _alertHistoryRepository;
+        private readonly PartographRepository _partographRepository;
         private bool _isRefreshing;
         private string _selectedFilter = "All";
         private int _totalCount;
@@ -22,10 +24,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public NotificationsPageModel(
             PartographMonitoringService monitoringService,
-            AlertHistoryRepository alertHistoryRepository)
+            AlertHistoryRepository alertHistoryRepository,
+            PartographRepository partographRepository)
         {
             _monitoringService = monitoringService;
             _alertHistoryRepository = alertHistoryRepository;
+            _partographRepository = partographRepository;
 
             // Initialize commands
             RefreshCommand = new Command(async () => await RefreshAsync());
@@ -211,7 +215,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             try
             {
-                await Shell.Current.GoToAsync($"partograph?id={notification.PartographId}");
+                //await Shell.Current.GoToAsync($"partograph?id={notification.PartographId}");
+
+                var patient = await _partographRepository.GetCurrentPartographAsync(notification?.PartographId);
+
+                // Navigate based on labor stage
+                var route = patient.Status switch
+                {
+                    LaborStatus.SecondStage => "secondpartograph",
+                    LaborStatus.ThirdStage => "thirdpartograph",
+                    LaborStatus.FourthStage => "fourthpartograph",
+                    _ => "partograph" // FirstStage, Pending, or any other status defaults to first stage partograph
+                };
+
+                await Shell.Current.GoToAsync($"{route}?patientId={patient.ID.ToString()}");
             }
             catch (Exception ex)
             {

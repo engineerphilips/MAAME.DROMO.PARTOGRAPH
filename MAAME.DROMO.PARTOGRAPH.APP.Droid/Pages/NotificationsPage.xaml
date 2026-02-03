@@ -29,16 +29,15 @@
                                FontSize="24"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
-                        <Label Text="{Binding SummaryText}"
-                               FontSize="14"
+                        <Label Text="{Binding SummaryText}" 
                                TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
                         <Label Text="{Binding CurrentShiftInfo}"
-                               FontSize="12"
+                               FontSize="14"
                                TextColor="{AppThemeBinding Light=#999, Dark=#666}" />
                     </VerticalStackLayout>
 
                     <!-- Shift Report Button -->
-                    <Button Grid.Column="1"
+                    <!--<Button Grid.Column="1"
                             Text="Shift Report"
                             Command="{Binding ViewShiftReportCommand}"
                             BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B3D26}"
@@ -46,15 +45,14 @@
                             FontSize="11"
                             Padding="10,6"
                             CornerRadius="8"
-                            Margin="0,0,6,0" />
+                            Margin="0,0,6,0" />-->
 
                     <!-- Acknowledge All Button -->
                     <Button Grid.Column="2"
                             Text="Ack All"
                             Command="{Binding AcknowledgeAllCommand}"
                             BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1E3A5F}"
-                            TextColor="#2196F3"
-                            FontSize="11"
+                            TextColor="#2196F3" 
                             Padding="10,6"
                             CornerRadius="8"
                             IsVisible="{Binding HasNotifications}"
@@ -65,8 +63,7 @@
                             Text="Clear"
                             Command="{Binding ClearAcknowledgedCommand}"
                             BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#3D1F1F}"
-                            TextColor="#EF5350"
-                            FontSize="11"
+                            TextColor="#EF5350" 
                             Padding="10,6"
                             CornerRadius="8" />
                 </Grid>
@@ -90,8 +87,7 @@
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
                                    HorizontalOptions="Center" />
-                            <Label Text="Total"
-                                   FontSize="10"
+                            <Label Text="Total" 
                                    TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
                                    HorizontalOptions="Center" />
                         </VerticalStackLayout>
@@ -113,8 +109,7 @@
                                    FontAttributes="Bold"
                                    TextColor="#EF5350"
                                    HorizontalOptions="Center" />
-                            <Label Text="Critical"
-                                   FontSize="10"
+                            <Label Text="Critical" 
                                    TextColor="#EF5350"
                                    HorizontalOptions="Center" />
                         </VerticalStackLayout>
@@ -136,8 +131,7 @@
                                    FontAttributes="Bold"
                                    TextColor="#FF9800"
                                    HorizontalOptions="Center" />
-                            <Label Text="Warning"
-                                   FontSize="10"
+                            <Label Text="Warning" 
                                    TextColor="#FF9800"
                                    HorizontalOptions="Center" />
                         </VerticalStackLayout>
@@ -159,8 +153,7 @@
                                    FontAttributes="Bold"
                                    TextColor="#9C27B0"
                                    HorizontalOptions="Center" />
-                            <Label Text="Escalated"
-                                   FontSize="10"
+                            <Label Text="Escalated" 
                                    TextColor="#9C27B0"
                                    HorizontalOptions="Center" />
                         </VerticalStackLayout>
@@ -182,8 +175,7 @@
                                    FontAttributes="Bold"
                                    TextColor="#2196F3"
                                    HorizontalOptions="Center" />
-                            <Label Text="Due Soon"
-                                   FontSize="10"
+                            <Label Text="Due Soon" 
                                    TextColor="#2196F3"
                                    HorizontalOptions="Center" />
                         </VerticalStackLayout>
@@ -202,8 +194,7 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="All" />
                             </Border.GestureRecognizers>
-                            <Label Text="All"
-                                   FontSize="13"
+                            <Label Text="All" 
                                    TextColor="{Binding FilterAllSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
                         </Border>
 
@@ -215,8 +206,7 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Critical" />
                             </Border.GestureRecognizers>
-                            <Label Text="Critical"
-                                   FontSize="13"
+                            <Label Text="Critical" 
                                    TextColor="{Binding FilterCriticalSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
                         </Border>
 
@@ -228,8 +218,7 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Warning" />
                             </Border.GestureRecognizers>
-                            <Label Text="Warning"
-                                   FontSize="13"
+                            <Label Text="Warning" 
                                    TextColor="{Binding FilterWarningSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
                         </Border>
 
@@ -241,8 +230,7 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Escalated" />
                             </Border.GestureRecognizers>
-                            <Label Text="Escalated"
-                                   FontSize="13"
+                            <Label Text="Escalated" 
                                    TextColor="{Binding FilterEscalatedSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
                         </Border>
 
@@ -254,8 +242,7 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Due" />
                             </Border.GestureRecognizers>
-                            <Label Text="Measurements Due"
-                                   FontSize="13"
+                            <Label Text="Measurements Due" 
                                    TextColor="{Binding FilterDueSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
                         </Border>
                     </HorizontalStackLayout>
@@ -388,12 +375,14 @@
                                     <!-- Actions Column -->
                                     <VerticalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
                                         <!-- Acknowledge Button -->
+                                        <!--Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:ActivePatientsPageModel}}, Path=NavigateToPartographCommand, x:DataType=pagemodels:ActivePatientsPageModel}"-->
+
                                         <Button WidthRequest="36"
                                                 HeightRequest="36"
                                                 CornerRadius="18"
                                                 BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B3D26}"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:NotificationsPageModel}}, Path=AcknowledgeCommand}"
-                                                CommandParameter="{Binding}"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:NotificationsPageModel}}, Path=AcknowledgeCommand, x:DataType=pagemodels:NotificationsPageModel}"
+                                                CommandParameter="{Binding .}"
                                                 IsVisible="{Binding IsAcknowledged, Converter={StaticResource InverseBoolConverter}}"
                                                 ToolTipProperties.Text="Acknowledge">
                                             <Button.ImageSource>
@@ -429,8 +418,8 @@
                                             HeightRequest="36"
                                             CornerRadius="8"
                                             Margin="0,0,8,0"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:NotificationsPageModel}}, Path=QuickActionCommand}"
-                                            CommandParameter="{Binding}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:NotificationsPageModel}}, Path=QuickActionCommand, x:DataType=pagemodels:NotificationsPageModel}"
+                                            CommandParameter="{Binding .}"
                                             IsVisible="{Binding IsAcknowledged, Converter={StaticResource InverseBoolConverter}}">
                                         <Button.ImageSource>
                                             <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
@@ -449,8 +438,8 @@
                                             HeightRequest="36"
                                             WidthRequest="70"
                                             CornerRadius="8"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:NotificationsPageModel}}, Path=NavigateToPartographCommand}"
-                                            CommandParameter="{Binding}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:NotificationsPageModel}}, Path=NavigateToPartographCommand, x:DataType=pagemodels:NotificationsPageModel}"
+                                            CommandParameter="{Binding .}"
                                             IsVisible="{Binding PartographId, Converter={StaticResource NullToBoolConverter}}" />
                                 </Grid>
                             </Grid>

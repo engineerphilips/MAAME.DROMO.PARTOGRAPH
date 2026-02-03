@@ -17,6 +17,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private readonly ISyncApiClient _syncApiClient;
         private string _email = string.Empty;
         private string _password = string.Empty;
+        private string _errorMessage = string.Empty;
         private bool _isBusy = false;
         private bool _rememberMe = false;
         private bool _isPasswordVisible = false;
@@ -37,6 +38,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         }
 
         #region Properties
+
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set => SetProperty(ref _errorMessage, value);
+        }
 
         public string Email
         {

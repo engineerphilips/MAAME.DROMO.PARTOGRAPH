@@ -539,6 +539,145 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 throw;
             }
 
+            try
+            {
+                var createReferralTableCmd = connection.CreateCommand();
+                createReferralTableCmd.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Tbl_Referral (
+                    ID TEXT PRIMARY KEY,
+                    partographid TEXT NOT NULL,
+                    referraltime TEXT NOT NULL,
+                    referraltype INTEGER NOT NULL,
+                    urgency INTEGER NOT NULL,
+                    referringfacilityname TEXT,
+                    referringfacilitylevel TEXT,
+                    referringphysician TEXT,
+                    referringphysiciancontact TEXT,
+                    destinationfacilityname TEXT,
+                    destinationfacilitylevel TEXT,
+                    destinationfacilitycontact TEXT,
+                    destinationaddress TEXT,
+                    destinationnotified INTEGER NOT NULL DEFAULT 0,
+                    destinationnotificationtime TEXT,
+                    destinationcontactperson TEXT,
+                    prolongedlabor INTEGER NOT NULL DEFAULT 0,
+                    obstructedlabor INTEGER NOT NULL DEFAULT 0,
+                    foetaldistress INTEGER NOT NULL DEFAULT 0,
+                    antepartumhemorrhage INTEGER NOT NULL DEFAULT 0,
+                    postpartumhemorrhage INTEGER NOT NULL DEFAULT 0,
+                    severepreeclampsia INTEGER NOT NULL DEFAULT 0,
+                    eclampsia INTEGER NOT NULL DEFAULT 0,
+                    septicshock INTEGER NOT NULL DEFAULT 0,
+                    ruptureduterus INTEGER NOT NULL DEFAULT 0,
+                    abnormalpresentation INTEGER NOT NULL DEFAULT 0,
+                    cordprolapse INTEGER NOT NULL DEFAULT 0,
+                    placentaprevia INTEGER NOT NULL DEFAULT 0,
+                    placentalabruption INTEGER NOT NULL DEFAULT 0,
+                    neonatalasphyxia INTEGER NOT NULL DEFAULT 0,
+                    prematuritycomplications INTEGER NOT NULL DEFAULT 0,
+                    lowbirthweight INTEGER NOT NULL DEFAULT 0,
+                    respiratorydistress INTEGER NOT NULL DEFAULT 0,
+                    congenitalabnormalities INTEGER NOT NULL DEFAULT 0,
+                    neonatalsepsis INTEGER NOT NULL DEFAULT 0,
+                    birthinjuries INTEGER NOT NULL DEFAULT 0,
+                    lackofresources INTEGER NOT NULL DEFAULT 0,
+                    requirescaesareansection INTEGER NOT NULL DEFAULT 0,
+                    requiresbloodtransfusion INTEGER NOT NULL DEFAULT 0,
+                    requiresspecializedcare INTEGER NOT NULL DEFAULT 0,
+                    otherreasons TEXT,
+                    primarydiagnosis TEXT,
+                    clinicalsummary TEXT,
+                    maternalcondition TEXT,
+                    maternalpulse INTEGER,
+                    maternalbpsystolic INTEGER,
+                    maternalbpdiastolic INTEGER,
+                    maternaltemperature REAL,
+                    maternalconsciousness TEXT,
+                    fetalheartrate INTEGER,
+                    fetalcondition TEXT,
+                    numberofbabiesbeingreferred INTEGER,
+                    neonatalcondition TEXT,
+                    cervicaldilationatreferral INTEGER,
+                    membranesruptured INTEGER NOT NULL DEFAULT 0,
+                    membranerupturetime TEXT,
+                    liquorcolor TEXT,
+                    interventionsperformed TEXT,
+                    medicationsgiven TEXT,
+                    ivfluidsgiven TEXT,
+                    bloodsamplestaken INTEGER NOT NULL DEFAULT 0,
+                    investigationsperformed TEXT,
+                    transportmode INTEGER NOT NULL,
+                    transportdetails TEXT,
+                    departuretime TEXT,
+                    arrivaltime TEXT,
+                    skillfulattendantaccompanying INTEGER NOT NULL DEFAULT 1,
+                    accompanyingstaffname TEXT,
+                    accompanyingstaffdesignation TEXT,
+                    partographsent INTEGER NOT NULL DEFAULT 1,
+                    ivlineinsitu INTEGER NOT NULL DEFAULT 0,
+                    catheterinsitu INTEGER NOT NULL DEFAULT 0,
+                    oxygenprovided INTEGER NOT NULL DEFAULT 0,
+                    equipmentsent TEXT,
+                    status INTEGER NOT NULL,
+                    acceptedtime TEXT,
+                    completedtime TEXT,
+                    outcomenotes TEXT,
+                    feedbackreceived INTEGER NOT NULL DEFAULT 0,
+                    feedbackdetails TEXT,
+                    referralletterpath TEXT,
+                    referralformgenerated INTEGER NOT NULL DEFAULT 0,
+                    formgenerationtime TEXT, 
+                    handler TEXT,
+                    notes TEXT,
+                    createdtime INTEGER NOT NULL,
+                    updatedtime INTEGER NOT NULL,
+                    deletedtime INTEGER,
+                    deviceid TEXT NOT NULL,
+                    origindeviceid TEXT NOT NULL,
+                    syncstatus INTEGER DEFAULT 0,
+                    version INTEGER DEFAULT 1,
+                    serverversion INTEGER DEFAULT 0,
+                    deleted INTEGER DEFAULT 0,
+                    conflictdata TEXT,
+                    datahash TEXT,
+                    FOREIGN KEY (partographid) REFERENCES Tbl_Partograph(ID)
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_referral_partographid ON Tbl_Referral(partographid);
+                CREATE INDEX IF NOT EXISTS idx_referral_status ON Tbl_Referral(status);
+                CREATE INDEX IF NOT EXISTS idx_referral_sync ON Tbl_Referral(updatedtime, syncstatus);
+
+                DROP TRIGGER IF EXISTS trg_refferal_insert;
+                CREATE TRIGGER trg_refferal_insert
+                AFTER INSERT ON Tbl_Referral
+                WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
+                BEGIN
+                    UPDATE Tbl_Referral
+                    SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
+                        updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
+                    WHERE ID = NEW.ID;
+                END;
+
+                DROP TRIGGER IF EXISTS trg_refferal_update;
+                CREATE TRIGGER trg_refferal_update
+                AFTER UPDATE ON Tbl_Referral
+                WHEN NEW.updatedtime = OLD.updatedtime
+                BEGIN
+                    UPDATE Tbl_Referral
+                    SET updatedtime = (strftime('%s', 'now') * 1000),
+                        version = OLD.version + 1,
+                        syncstatus = 0
+                    WHERE ID = NEW.ID;
+                END;
+                ";
+                await createReferralTableCmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error creating Referral table");
+                throw;
+            }
+
             _hasBeenInitialized = true;
         }
 

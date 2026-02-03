@@ -654,10 +654,9 @@
                                            FontSize="10"
                                            FontAttributes="Bold"
                                            Position="TopRight"
-                                           Offset="-4,-2"
-                                           CornerRadius="10,10,10,10"
-                                           Animation="Scale"
-                                           BadgeIcon="None" />
+                                           Offset="-8,0"
+                                           CornerRadius="10"
+                                           Animation="Scale" />
                 </sfBadge:SfBadgeView.BadgeSettings>
                 <sfBadge:SfBadgeView.Triggers>
                     <DataTrigger TargetType="sfBadge:SfBadgeView"
@@ -672,7 +671,8 @@
                         WidthRequest="48"
                         HeightRequest="48"
                         CornerRadius="24"
-                        ToolTipProperties.Text="Notifications">
+                        ToolTipProperties.Text="Notifications"
+                        FontSize="18">
                     <Button.ImageSource>
                          <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
                                           Glyph="&#xf115;"

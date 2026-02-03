@@ -129,6 +129,29 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 CREATE INDEX IF NOT EXISTS idx_referral_partographid ON Tbl_Referral(partographid);
                 CREATE INDEX IF NOT EXISTS idx_referral_status ON Tbl_Referral(status);
                 CREATE INDEX IF NOT EXISTS idx_referral_sync ON Tbl_Referral(updatedtime, syncstatus);
+
+                DROP TRIGGER IF EXISTS trg_refferal_insert;
+                CREATE TRIGGER trg_refferal_insert
+                AFTER INSERT ON Tbl_Referral
+                WHEN NEW.createdtime IS NULL OR NEW.updatedtime IS NULL
+                BEGIN
+                    UPDATE Tbl_Referral
+                    SET createdtime = COALESCE(NEW.createdtime, (strftime('%s', 'now') * 1000)),
+                        updatedtime = COALESCE(NEW.updatedtime, (strftime('%s', 'now') * 1000))
+                    WHERE ID = NEW.ID;
+                END;
+
+                DROP TRIGGER IF EXISTS trg_refferal_update;
+                CREATE TRIGGER trg_refferal_update
+                AFTER UPDATE ON Tbl_Referral
+                WHEN NEW.updatedtime = OLD.updatedtime
+                BEGIN
+                    UPDATE Tbl_Referral
+                    SET updatedtime = (strftime('%s', 'now') * 1000),
+                        version = OLD.version + 1,
+                        syncstatus = 0
+                    WHERE ID = NEW.ID;
+                END;
                 ";
                 await createTableCmd.ExecuteNonQueryAsync();
             }
