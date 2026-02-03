@@ -446,12 +446,39 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             _alertEngine.AlertTriggered += OnAlertTriggered;
             _alertEngine.AlertCleared += OnAlertCleared;
 
+            // Subscribe to stage progression event from cervix dilatation modal
+            _cervixDilatationModalPageModel.OnProgressToSecondStage += OnPartographProgressedToSecondStage;
+
             //Chartinghours = new ObservableCollection<TimeSlots>();
             //TimeSlots = new ObservableCollection<EnhancedTimeSlotViewModel>();
 
             //var tasks = new Task[1];
             //tasks[0] = GenerateInitialTimeSlots();
             //Task.WhenAny(tasks);
+        }
+
+        /// <summary>
+        /// Event handler for when partograph automatically progresses to second stage
+        /// This is triggered when cervical dilatation reaches 10cm
+        /// </summary>
+        private async void OnPartographProgressedToSecondStage(object? sender, Guid partographId)
+        {
+            try
+            {
+                // Reload the patient data from database to get the updated status
+                if (Patient?.ID == partographId)
+                {
+                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        await LoadData(partographId);
+                        UpdateLaborStatus();
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error handling stage progression: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -2217,9 +2244,37 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             if (Patient?.ID != null)
             {
                 _cervixDilatationModalPageModel._patient = Patient;
-                _cervixDilatationModalPageModel.ClosePopup = () => CloseCervixDilatationModalPopup?.Invoke();
+                _cervixDilatationModalPageModel.ClosePopup = () =>
+                {
+                    CloseCervixDilatationModalPopup?.Invoke();
+                    // Refresh data after modal closes to get updated dilatation and status
+                    if (Patient?.ID != null)
+                    {
+                        _ = RefreshAfterCervixDilatationModal();
+                    }
+                };
                 await _cervixDilatationModalPageModel.LoadPatient(Patient.ID);
                 OpenCervixDilatationModalPopup?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the partograph data after cervix dilatation modal closes
+        /// Handles the async refresh as fire-and-forget from the sync ClosePopup action
+        /// </summary>
+        private async Task RefreshAfterCervixDilatationModal()
+        {
+            try
+            {
+                if (Patient?.ID != null)
+                {
+                    await LoadData(Patient.ID);
+                    UpdateLaborStatus();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error refreshing after cervix dilatation modal: {ex.Message}");
             }
         }
 
