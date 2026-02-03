@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             xmlns:data="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Data"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.ShiftHandoverReportPage"
+             x:DataType="pagemodels:ShiftHandoverReportPageModel"
+             Title="Shift Handover Report"
+             BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#121212}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="16" Spacing="16">
+
+                <!-- Header Card -->
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="#10000000" Offset="0,2" Radius="4" />
+                    </Border.Shadow>
+
+                    <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
+                        <!-- Title -->
+                        <VerticalStackLayout Grid.Row="0">
+                            <Label Text="📋 Shift Handover Report"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                            <Label Text="{Binding Report.FacilityName}"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        </VerticalStackLayout>
+
+                        <!-- Shift Info -->
+                        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="16">
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Text="Staff"
+                                       FontSize="11"
+                                       TextColor="{AppThemeBinding Light=#999, Dark=#666}" />
+                                <Label Text="{Binding Report.StaffName}"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#333, Dark=#CCC}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1">
+                                <Label Text="Shift Duration"
+                                       FontSize="11"
+                                       TextColor="{AppThemeBinding Light=#999, Dark=#666}" />
+                                <Label Text="{Binding ShiftDuration}"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#333, Dark=#CCC}" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <!-- Time Range -->
+                        <HorizontalStackLayout Grid.Row="2" Spacing="8">
+                            <Label Text="{Binding Report.ShiftStart, StringFormat='{0:HH:mm}'}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="#2196F3" />
+                            <Label Text="→"
+                                   FontSize="16"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Label Text="{Binding Report.ShiftEnd, StringFormat='{0:HH:mm}'}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="#2196F3" />
+                            <Label Text="{Binding Report.ShiftStart, StringFormat='({0:dd MMM yyyy})'}"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Stats Summary Card -->
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+
+                    <Grid RowDefinitions="Auto,Auto" RowSpacing="16">
+                        <Label Grid.Row="0"
+                               Text="Summary Statistics"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+
+                        <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                            <!-- Active Patients -->
+                            <Border Grid.Column="0"
+                                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1E3A5F}"
+                                    Padding="12,8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout HorizontalOptions="Center">
+                                    <Label Text="{Binding Report.TotalActivePatients}"
+                                           FontSize="24"
+                                           FontAttributes="Bold"
+                                           TextColor="#2196F3"
+                                           HorizontalOptions="Center" />
+                                    <Label Text="Patients"
+                                           FontSize="10"
+                                           TextColor="#2196F3"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Alerts Generated -->
+                            <Border Grid.Column="1"
+                                    BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3D2E1B}"
+                                    Padding="12,8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout HorizontalOptions="Center">
+                                    <Label Text="{Binding Report.TotalAlertsGenerated}"
+                                           FontSize="24"
+                                           FontAttributes="Bold"
+                                           TextColor="#FF9800"
+                                           HorizontalOptions="Center" />
+                                    <Label Text="Alerts"
+                                           FontSize="10"
+                                           TextColor="#FF9800"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Acknowledged -->
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B3D26}"
+                                    Padding="12,8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout HorizontalOptions="Center">
+                                    <Label Text="{Binding Report.AlertsAcknowledged}"
+                                           FontSize="24"
+                                           FontAttributes="Bold"
+                                           TextColor="#4CAF50"
+                                           HorizontalOptions="Center" />
+                                    <Label Text="Ack'd"
+                                           FontSize="10"
+                                           TextColor="#4CAF50"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Missed -->
+                            <Border Grid.Column="3"
+                                    BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#3D1F1F}"
+                                    Padding="12,8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout HorizontalOptions="Center">
+                                    <Label Text="{Binding Report.AlertsMissed}"
+                                           FontSize="24"
+                                           FontAttributes="Bold"
+                                           TextColor="#EF5350"
+                                           HorizontalOptions="Center" />
+                                    <Label Text="Missed"
+                                           FontSize="10"
+                                           TextColor="#EF5350"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- Compliance Card -->
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                        <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                            <Label Text="WHO Monitoring Compliance"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                            <Label Text="Alert response rate during this shift"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                        </VerticalStackLayout>
+
+                        <Border Grid.Column="1"
+                                WidthRequest="70"
+                                HeightRequest="70"
+                                BackgroundColor="{Binding ComplianceColor}"
+                                Opacity="0.15">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="35" />
+                            </Border.StrokeShape>
+                        </Border>
+                        <Label Grid.Column="1"
+                               Text="{Binding Report.CompliancePercentage, StringFormat='{0:F0}%'}"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="{Binding ComplianceColor}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               WidthRequest="70" />
+                    </Grid>
+                </Border>
+
+                <!-- Patients Requiring Attention -->
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        Padding="16"
+                        IsVisible="{Binding HasPatientsRequiringAttention}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="⚠️ Patients Requiring Attention"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#FF9800" />
+
+                        <CollectionView ItemsSource="{Binding PatientsRequiringAttention}"
+                                        SelectionMode="None">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="data:PatientAttentionItem">
+                                    <Border BackgroundColor="{AppThemeBinding Light=#FFF8E1, Dark=#3D351B}"
+                                            Padding="12"
+                                            Margin="0,4">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:ShiftHandoverReportPageModel}}, Path=NavigateToPatientCommand}"
+                                                                  CommandParameter="{Binding}" />
+                                        </Border.GestureRecognizers>
+
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <VerticalStackLayout Grid.Column="0">
+                                                <Label Text="{Binding PatientName}"
+                                                       FontSize="14"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                                                <Label Text="{Binding Reason}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                                <Label Text="{Binding OverdueMinutes, StringFormat='{0} min overdue'}"
+                                                       FontSize="11"
+                                                       TextColor="#EF5350" />
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1"
+                                                   Text="&#xE76C;"
+                                                   FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                                   FontSize="18"
+                                                   TextColor="{AppThemeBinding Light=#BDBDBD, Dark=#616161}"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Overdue Measurements -->
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        Padding="16"
+                        IsVisible="{Binding HasOverdueMeasurements}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="⏰ Overdue Measurements"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#EF5350" />
+
+                        <CollectionView ItemsSource="{Binding OverdueMeasurements}"
+                                        SelectionMode="None">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="data:OverdueMeasurement">
+                                    <Border BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#3D1F1F}"
+                                            Padding="12"
+                                            Margin="0,4">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                            <Label Grid.Column="0"
+                                                   Text="🔴"
+                                                   FontSize="16"
+                                                   VerticalOptions="Center" />
+                                            <VerticalStackLayout Grid.Column="1">
+                                                <Label Text="{Binding PatientName}"
+                                                       FontSize="14"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                                                <Label Text="{Binding MeasurementType}"
+                                                       FontSize="12"
+                                                       TextColor="#EF5350" />
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="2"
+                                                   Text="{Binding MinutesOverdue, StringFormat='+{0}m'}"
+                                                   FontSize="14"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#EF5350"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- All Clear Card -->
+                <Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B3D26}"
+                        Padding="20"
+                        IsVisible="{Binding HasPatientsRequiringAttention, Converter={StaticResource InverseBoolConverter}}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="12">
+                        <Label Text="✓"
+                               FontSize="28"
+                               TextColor="#4CAF50"
+                               VerticalOptions="Center" />
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="All Clear!"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="#4CAF50" />
+                            <Label Text="No patients requiring immediate attention"
+                                   FontSize="13"
+                                   TextColor="#388E3C" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bottom Actions -->
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="12"
+              Padding="16"
+              BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
+            <Border.Shadow>
+                <Shadow Brush="#10000000" Offset="0,-2" Radius="4" />
+            </Border.Shadow>
+
+            <Button Grid.Column="0"
+                    Text="Share Report"
+                    Command="{Binding ShareReportCommand}"
+                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1E3A5F}"
+                    TextColor="#2196F3"
+                    FontSize="14"
+                    HeightRequest="48"
+                    CornerRadius="8">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                     Glyph="&#xE72D;"
+                                     Color="#2196F3"
+                                     Size="18" />
+                </Button.ImageSource>
+            </Button>
+
+            <Button Grid.Column="1"
+                    Text="Start New Shift"
+                    Command="{Binding StartNewShiftCommand}"
+                    BackgroundColor="#4CAF50"
+                    TextColor="White"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    HeightRequest="48"
+                    CornerRadius="8">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                     Glyph="&#xE710;"
+                                     Color="White"
+                                     Size="18" />
+                </Button.ImageSource>
+            </Button>
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Border Grid.RowSpan="2"
+                BackgroundColor="#80000000"
+                IsVisible="{Binding IsLoading}">
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               Color="White"
+                               HeightRequest="50"
+                               WidthRequest="50"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+        </Border>
+    </Grid>
+</ContentPage>
