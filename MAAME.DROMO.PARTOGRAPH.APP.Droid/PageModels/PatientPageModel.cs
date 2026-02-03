@@ -1095,6 +1095,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task Save()
         {
+            // Prevent double-click - if already saving, ignore additional clicks
+            if (IsBusy)
+            {
+                return;
+            }
+
             // Validate form first
             if (!ValidateForm())
             {
@@ -1122,8 +1128,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 return;
             }
 
-            // Calculate risk assessment
-            CalculateRiskAssessment();
+            try
+            {
+                // Set busy state to prevent double-clicks
+                IsBusy = true;
+
+                // Calculate risk assessment
+                CalculateRiskAssessment();
 
             if (_patient == null)
             {
@@ -1301,6 +1312,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     IsEditMode = false;
                     await AppShell.DisplayToastAsync("Patient information updated");
                 }
+            }
+            }
+            finally
+            {
+                // Reset busy state to allow future saves
+                IsBusy = false;
             }
         }
 
