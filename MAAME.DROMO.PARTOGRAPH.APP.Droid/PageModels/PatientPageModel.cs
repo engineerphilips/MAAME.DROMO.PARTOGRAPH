@@ -575,10 +575,123 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
             else
             {
-                // New patient
-                _patient = new Patient();
-                IsEditMode = true;
+                // New patient - reset all fields for fresh entry
+                ResetForm();
             }
+        }
+
+        /// <summary>
+        /// Resets all form fields to prepare for a new patient entry.
+        /// This ensures clean state when onboarding a new patient.
+        /// </summary>
+        public void ResetForm()
+        {
+            // Reset patient object
+            _patient = new Patient();
+            IsEditMode = true;
+
+            // Reset patient demographics
+            FirstName = string.Empty;
+            LastName = string.Empty;
+            HospitalNumber = string.Empty;
+            Age = null;
+            _dateOfBirth = null;
+            OnPropertyChanged(nameof(DateOfBirth));
+            OnPropertyChanged(nameof(AgeIsReadOnly));
+            BloodGroup = string.Empty;
+            PhoneNumber = string.Empty;
+            Address = string.Empty;
+
+            // Reset emergency contact
+            EmergencyContactName = string.Empty;
+            EmergencyContactPhone = string.Empty;
+            EmergencyContactRelationship = string.Empty;
+
+            // Reset anthropometric data
+            Weight = null;
+            Height = null;
+
+            // Reset obstetric history
+            _gravidity = 0;
+            OnPropertyChanged(nameof(Gravidity));
+            _parity = 0;
+            OnPropertyChanged(nameof(Parity));
+            Abortion = 0;
+            OnPropertyChanged(nameof(AbortionVisibility));
+            HasPreviousCSection = false;
+            NumberOfPreviousCsections = null;
+            LiveBirths = null;
+            Stillbirths = null;
+            NeonatalDeaths = null;
+
+            // Reset dates
+            _expectedDeliveryDate = null;
+            OnPropertyChanged(nameof(ExpectedDeliveryDate));
+            _lastMenstrualDate = null;
+            OnPropertyChanged(nameof(LastMenstrualDate));
+            OnPropertyChanged(nameof(FormattedGestationalAge));
+            OnPropertyChanged(nameof(GestationalAgeVisibility));
+            OnPropertyChanged(nameof(GestationalStatus));
+            OnPropertyChanged(nameof(IsPostDate));
+            OnPropertyChanged(nameof(IsSVDAllowed));
+            OnPropertyChanged(nameof(RecommendedDeliveryMode));
+
+            // Reset labor information
+            _laborStartDate = DateTime.Now;
+            OnPropertyChanged(nameof(LaborStartDate));
+            _laborStartTime = DateTime.Now.TimeOfDay;
+            OnPropertyChanged(nameof(LaborStartTime));
+            HasRupturedMembrane = false;
+            RupturedMembraneDate = null;
+            RupturedMembraneTime = null;
+            _cervicalDilationOnAdmission = null;
+            OnPropertyChanged(nameof(CervicalDilationOnAdmission));
+            OnPropertyChanged(nameof(HasDilatationValue));
+            OnPropertyChanged(nameof(LaborStatusIndicator));
+            OnPropertyChanged(nameof(LaborStatusColor));
+            Status = LaborStatus.Pending;
+            MembraneStatus = "Intact";
+            LiquorStatus = "Clear";
+
+            // Reset Bishop Score
+            IsInductionPlanned = false;
+            _bishopDilatation = 0;
+            OnPropertyChanged(nameof(BishopDilatation));
+            _bishopEffacement = 0;
+            OnPropertyChanged(nameof(BishopEffacement));
+            _bishopStation = "-3";
+            OnPropertyChanged(nameof(BishopStation));
+            _bishopConsistency = "Firm";
+            OnPropertyChanged(nameof(BishopConsistency));
+            _bishopPosition = "Posterior";
+            OnPropertyChanged(nameof(BishopPosition));
+            OnPropertyChanged(nameof(CalculatedBishopScore));
+            OnPropertyChanged(nameof(BishopScoreInterpretation));
+
+            // Reset collections
+            RiskFactors.Clear();
+            Diagnoses.Clear();
+            PartographEntries = new List<Partograph>();
+            MedicalNotes = new List<MedicalNote>();
+
+            // Reset risk assessment
+            RiskScore = 0;
+            RiskLevel = "Low";
+            RiskColor = "#4CAF50";
+            RiskAssessmentFactors.Clear();
+            RecommendedActions.Clear();
+
+            // Reset validation state
+            _errors.Clear();
+            HasError = false;
+            ErrorMessage = string.Empty;
+
+            // Recalculate risk assessment with clean state
+            CalculateRiskAssessment();
+
+            // Notify new patient state
+            OnPropertyChanged(nameof(IsNewPatient));
+            OnPropertyChanged(nameof(HasPreviousPregnancies));
         }
 
         private async Task LoadData(Guid? id)
@@ -985,6 +1098,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         [RelayCommand]
         private async Task Save()
         {
+            // Prevent double-click - if already saving, ignore additional clicks
+            if (IsBusy)
+            {
+                return;
+            }
+
             // Validate form first
             if (!ValidateForm())
             {
@@ -992,14 +1111,33 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 return;
             }
 
-            if (Saved)
+            // Check for duplicate patient by hospital number (prevent duplicate onboarding)
+            var existingPatient = await _patientRepository.CheckDuplicatePatientAsync(
+                HospitalNumber,
+                _patient?.ID);
+
+            if (existingPatient != null)
             {
-                await AppShell.DisplayToastAsync("Patient already before saving");
+                var duplicateMessage = $"A patient with hospital number '{HospitalNumber}' already exists:\n\n" +
+                    $"Name: {existingPatient.FirstName} {existingPatient.LastName}\n" +
+                    $"MRN: {existingPatient.HospitalNumber}\n\n" +
+                    "Please verify the patient information or use a different hospital number.";
+
+                await Shell.Current.DisplayAlert("Duplicate Patient", duplicateMessage, "OK");
+
+                _errors.Add(nameof(HospitalNumber), "Hospital number already exists");
+                HasError = true;
+                ErrorMessage = "Please correct the following:\n• Hospital number already exists for another patient";
                 return;
             }
 
-            // Calculate risk assessment
-            CalculateRiskAssessment();
+            try
+            {
+                // Set busy state to prevent double-clicks
+                IsBusy = true;
+
+                // Calculate risk assessment
+                CalculateRiskAssessment();
 
             if (_patient == null)
             {
@@ -1179,6 +1317,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     IsEditMode = false;
                     await AppShell.DisplayToastAsync("Patient information updated");
                 }
+            }
+            }
+            finally
+            {
+                // Reset busy state to allow future saves
+                IsBusy = false;
             }
         }
 

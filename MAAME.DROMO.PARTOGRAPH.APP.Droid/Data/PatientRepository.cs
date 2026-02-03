@@ -437,6 +437,70 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         //}
 
         /// <summary>
+        /// Checks if a patient with the same hospital number already exists in the facility.
+        /// Returns the existing patient if found, null otherwise.
+        /// </summary>
+        public async Task<Patient?> CheckDuplicatePatientAsync(string hospitalNumber, Guid? excludePatientId = null)
+        {
+            await Init();
+            try
+            {
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
+
+                var selectCmd = connection.CreateCommand();
+                var facilityId = Constants.GetFacilityForFiltering();
+
+                if (facilityId.HasValue)
+                {
+                    selectCmd.CommandText = @"
+                        SELECT p.ID, p.firstName, p.lastName, p.hospitalNumber
+                        FROM Tbl_Patient p
+                        WHERE LOWER(p.hospitalNumber) = @hospitalNumber
+                        AND LOWER(p.facilityid) = @facilityId
+                        AND p.deleted = 0";
+                    selectCmd.Parameters.AddWithValue("@facilityId", facilityId.ToString().ToLower());
+                }
+                else
+                {
+                    selectCmd.CommandText = @"
+                        SELECT p.ID, p.firstName, p.lastName, p.hospitalNumber
+                        FROM Tbl_Patient p
+                        WHERE LOWER(p.hospitalNumber) = @hospitalNumber
+                        AND p.deleted = 0";
+                }
+
+                selectCmd.Parameters.AddWithValue("@hospitalNumber", hospitalNumber?.Trim().ToLower() ?? "");
+
+                // Exclude the current patient if editing
+                if (excludePatientId.HasValue && excludePatientId != Guid.Empty)
+                {
+                    selectCmd.CommandText += " AND p.ID != @excludeId";
+                    selectCmd.Parameters.AddWithValue("@excludeId", excludePatientId.ToString());
+                }
+
+                await using var reader = await selectCmd.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    return new Patient
+                    {
+                        ID = Guid.Parse(reader["ID"].ToString()),
+                        FirstName = reader["firstName"].ToString(),
+                        LastName = reader["lastName"].ToString(),
+                        HospitalNumber = reader["hospitalNumber"].ToString()
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error checking for duplicate patient");
+                throw;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Upserts a patient record (insert if new, update if exists) - used for sync operations
         /// </summary>
         public async Task UpsertPatientAsync(Patient patient)
