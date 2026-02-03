@@ -31,6 +31,8 @@
             <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
             <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
             <converters:EqualConverter x:Key="EqualConverter" />
+            <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
         </ResourceDictionary>
         <x:Static Member="system:DateTime.Today" x:Key="Today" />
     </ContentPage.Resources>
@@ -1102,9 +1104,10 @@
                     </Border>
 
                     <!-- Save and Continue Button -->
-                    <Button Text="Save Patient and Start Partograph"
+                    <Button Text="{Binding IsBusy, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Saving...|Save Patient and Start Partograph'}"
                                       Style="{StaticResource PrimaryActionStyle}"
                                       Command="{Binding SaveCommand}"
+                                      IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
                                       HeightRequest="56">
                         <!--<buttons:SfButton.ImageSource>
                             <FontImageSource FontFamily="MaterialIcons"

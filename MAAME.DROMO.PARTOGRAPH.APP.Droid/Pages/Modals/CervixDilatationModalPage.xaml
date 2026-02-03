@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.CervixDilatationModalPage"
              Title="Cervix Dilatation"
              BackgroundColor="#F5F5F5">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
@@ -150,8 +158,9 @@
                         BackgroundColor="#9E9E9E"
                         TextColor="White"
                         Grid.Column="0"/>
-                <Button Text="Save" 
+                <Button Text="{Binding IsBusy, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Saving...|Save'}"
                         Command="{Binding SaveCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
                         BackgroundColor="#4CAF50"
                         TextColor="White"
                         Grid.Column="1"/>

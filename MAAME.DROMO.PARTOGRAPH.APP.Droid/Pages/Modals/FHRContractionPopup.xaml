@@ -7,10 +7,13 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:fonts="clr-namespace:Fonts"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup">
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
+            <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <!-- Input Styles -->
             <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
                 <Setter Property="ContainerType" Value="Outlined" />
@@ -188,8 +191,9 @@
                             Style="{StaticResource SecondaryActionStyle}" />
 
                     <Button Grid.Column="1"
-                            Text="Save Assessment"
+                            Text="{Binding IsBusy, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Saving...|Save Assessment'}"
                             Command="{Binding SaveCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
                             Style="{StaticResource PrimaryActionStyle}" />
                 </Grid>
 

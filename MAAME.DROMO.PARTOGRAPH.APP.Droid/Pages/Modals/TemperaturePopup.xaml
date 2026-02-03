@@ -4,10 +4,13 @@
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:converters="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Converters"
              x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals.TemperaturePopup">
 
     <sfPopup:SfPopup.Resources>
         <ResourceDictionary>
+            <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <!-- Input Styles -->
             <Style x:Key="PatientInput" TargetType="core:SfTextInputLayout">
                 <Setter Property="ContainerType" Value="Outlined" />
@@ -133,8 +136,9 @@
                             CornerRadius="10" />
 
                         <Button Grid.Column="1"
-                            Text="Save Assessment"
+                            Text="{Binding IsBusy, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Saving...|Save Assessment'}"
                             Command="{Binding SaveCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
                             BackgroundColor="#4CAF50"
                             TextColor="White"
                             HeightRequest="50"
