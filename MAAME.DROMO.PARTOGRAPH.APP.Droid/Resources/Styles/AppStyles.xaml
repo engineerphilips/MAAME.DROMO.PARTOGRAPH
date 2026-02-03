@@ -15,6 +15,7 @@
     <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
     <converters:NullToBoolConverter x:Key="NullToBoolConverter" />
     <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    <converters:DateOnlyToDateTimeConverter x:Key="DateOnlyToDateTimeConverter" />
 
     <x:Double x:Key="sizeNone">0</x:Double>
     <x:Double x:Key="size20">2</x:Double>
