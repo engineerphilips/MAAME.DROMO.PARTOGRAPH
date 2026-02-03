@@ -2025,6 +2025,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         liquorStatus = @liquorStatus,
                         complications = @complications,
                         handler = @handler,
+                        facilityid = @facilityid,
                         updatedtime = @updatedtime,
                         serverversion = @serverversion,
                         syncstatus = 1,
@@ -2035,7 +2036,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     // Insert new record
                     cmd.CommandText = @"
-                    INSERT INTO Tbl_Partograph (ID, patientID, time, status, gravida, parity, abortion, admissionDate, expectedDeliveryDate, lastMenstrualDate, laborStartTime, deliveryTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus, complications, handler, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash) VALUES (@ID, @patientID, @time, @status, @gravida, @parity, @abortion, @admissionDate, @expectedDeliveryDate, @lastMenstrualDate, @laborStartTime, @deliveryTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus, @complications, @handler, @createdtime, @updatedtime, @deviceid, @origindeviceid, 1, @version, @serverversion, @deleted, @datahash)";
+                    INSERT INTO Tbl_Partograph (ID, patientID, time, status, gravida, parity, abortion, admissionDate, expectedDeliveryDate, lastMenstrualDate, laborStartTime, deliveryTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus, complications, handler, facilityid, createdtime, updatedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash) VALUES (@ID, @patientID, @time, @status, @gravida, @parity, @abortion, @admissionDate, @expectedDeliveryDate, @lastMenstrualDate, @laborStartTime, @deliveryTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus, @complications, @handler, @facilityid, @createdtime, @updatedtime, @deviceid, @origindeviceid, 1, @version, @serverversion, @deleted, @datahash)";
                 }
 
                 cmd.Parameters.AddWithValue("@ID", partograph.ID.ToString());
@@ -2060,6 +2061,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 cmd.Parameters.AddWithValue("@liquorStatus", partograph.LiquorStatus ?? "");
                 cmd.Parameters.AddWithValue("@complications", partograph.Complications ?? "");
                 cmd.Parameters.AddWithValue("@handler", partograph.Handler?.ToString() ?? "");
+                cmd.Parameters.AddWithValue("@facilityid", partograph.FacilityID != null ? partograph.FacilityID?.ToString() : DBNull.Value);
                 cmd.Parameters.AddWithValue("@createdtime", partograph.CreatedTime);
                 cmd.Parameters.AddWithValue("@updatedtime", partograph.UpdatedTime);
                 cmd.Parameters.AddWithValue("@deviceid", partograph.DeviceId ?? "");
