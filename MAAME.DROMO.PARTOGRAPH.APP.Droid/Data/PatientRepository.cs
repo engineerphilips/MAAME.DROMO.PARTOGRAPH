@@ -65,6 +65,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     emergencyContactPhone TEXT, 
                     handler TEXT,
                     facilityid TEXT,
+                    riskLevel TEXT,
+                    riskScore INTEGER,
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
                     deletedtime INTEGER, 
@@ -114,6 +116,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     await alterCmd.ExecuteNonQueryAsync();
                 }
                 catch (SqliteException) { /* Column already exists, ignore */ }
+
             }
             catch (Exception e)
             {
@@ -137,7 +140,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 var selectCmd = connection.CreateCommand();
 
                 // Filter by logged-in user's facility - only show patients from the same facility
-                var facilityId = Constants.Staff?.Facility;
+                var facilityId = Constants.GetFacilityForFiltering();
                 if (facilityId.HasValue)
                 {
                     selectCmd.CommandText = @"SELECT p.ID, p.time, p.firstName, p.lastName, p.hospitalNumber, p.dateofbirth, p.age, p.bloodGroup, p.phoneNumber, p.emergencyContactName, p.emergencyContactRelationship, p.emergencyContactPhone, p.handler, s.name as staffname, p.facilityid, p.createdtime, p.updatedtime, p.deletedtime, p.deviceid, p.origindeviceid, p.syncstatus, p.version, p.serverversion, p.deleted

@@ -76,7 +76,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 "Loading Dashboard",
                 ("dashboard statistics", async () =>
                 {
-                    DashboardStats = await _partographRepository.GetDashboardStatsAsync();
+                    DashboardStats = await _partographRepository.GetDashboardStatsAsync(Constants.GetFacilityForFiltering());
                 })
             );
         }
@@ -88,7 +88,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
 
                 // Load only dashboard statistics - lightweight and fast
-                DashboardStats = await _partographRepository.GetDashboardStatsAsync();
+                DashboardStats = await _partographRepository.GetDashboardStatsAsync(Constants.GetFacilityForFiltering());
             }
             finally
             {

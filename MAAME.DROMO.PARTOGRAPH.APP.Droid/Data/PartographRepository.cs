@@ -50,6 +50,32 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             //try
             //{
             //    var dropTableCmd = connection.CreateCommand();
+            //    dropTableCmd.CommandText = @"UPDATE Tbl_Partograph SET facilityid = @facilityid;";
+            //    dropTableCmd.Parameters.AddWithValue("@facilityid", Constants.GetFacilityForFiltering() ?? (object)DBNull.Value);
+            //    await dropTableCmd.ExecuteNonQueryAsync();
+            //}
+            //catch (Exception e)
+            //{
+            //    _logger.LogError(e, "Update PartographEntry table");
+            //    throw;
+            //}
+
+            //try
+            //{
+            //    var dropTableCmd = connection.CreateCommand();
+            //    dropTableCmd.CommandText = @"UPDATE Tbl_Patient SET facilityid = @facilityid;";
+            //    dropTableCmd.Parameters.AddWithValue("@facilityid", Constants.GetFacilityForFiltering() ?? (object)DBNull.Value);
+            //    await dropTableCmd.ExecuteNonQueryAsync();
+            //}
+            //catch (Exception e)
+            //{
+            //    _logger.LogError(e, "Update PartographEntry table");
+            //    throw;
+            //}
+
+            //try
+            //{
+            //    var dropTableCmd = connection.CreateCommand();
             //    dropTableCmd.CommandText = @"
             //    DROP TABLE Tbl_BishopScore;";
             //    await dropTableCmd.ExecuteNonQueryAsync();
@@ -186,6 +212,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     complications TEXT,
                     handler TEXT,
                     facilityid TEXT,
+                    riskLevel TEXT,
+                    riskScore INTEGER,
                     createdtime INTEGER NOT NULL,
                     updatedtime INTEGER NOT NULL,
                     deletedtime INTEGER,
@@ -301,6 +329,23 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 {
                     var alterCmd = connection.CreateCommand();
                     alterCmd.CommandText = @"ALTER TABLE Tbl_Partograph ADD COLUMN facilityid TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException) { /* Column already exists, ignore */ }
+
+                // Migration: Add riskLevel column if it doesn't exist
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"ALTER TABLE Tbl_Partograph ADD COLUMN riskLevel TEXT;";
+                    await alterCmd.ExecuteNonQueryAsync();
+                }
+                catch (SqliteException) { /* Column already exists, ignore */ }
+
+                try
+                {
+                    var alterCmd = connection.CreateCommand();
+                    alterCmd.CommandText = @"ALTER TABLE Tbl_Partograph ADD COLUMN riskScore INTEGER;";
                     await alterCmd.ExecuteNonQueryAsync();
                 }
                 catch (SqliteException) { /* Column already exists, ignore */ }
@@ -686,7 +731,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         expectedDeliveryDate, lastMenstrualDate, laborStartTime, secondStageStartTime,
                         thirdStageStartTime, fourthStageStartTime, deliveryTime, completedTime,
                         rupturedMembraneTime, cervicalDilationOnAdmission, membraneStatus, liquorStatus,
-                        complications, handler, facilityid, createdtime, updatedtime, deletedtime, deviceid,
+                        complications, handler, facilityid, riskLevel, riskScore, createdtime, updatedtime, deletedtime, deviceid,
                         origindeviceid, syncstatus, version, serverversion, deleted
                     )
                     VALUES (
@@ -694,7 +739,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         @expectedDeliveryDate, @lastMenstrualDate, @laborStartTime, @secondStageStartTime,
                         @thirdStageStartTime, @fourthStageStartTime, @deliveryTime, @completedTime,
                         @rupturedMembraneTime, @cervicalDilationOnAdmission, @membraneStatus, @liquorStatus,
-                        @complications, @handler, @facilityid, @createdtime, @updatedtime, @deletedtime, @deviceid,
+                        @complications, @handler, @facilityid, @riskLevel, @riskScore, @createdtime, @updatedtime, @deletedtime, @deviceid,
                         @origindeviceid, @syncstatus, @version, @serverversion, @deleted
                     )";
                 }
@@ -724,6 +769,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                         complications = @complications,
                         handler = @handler,
                         facilityid = @facilityid,
+                        riskLevel = @riskLevel, 
+                        riskScore = @riskScore,
                         updatedtime = @updatedtime,
                         deviceid = @deviceid,
                         syncstatus = @syncstatus,
@@ -755,6 +802,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 saveCmd.Parameters.AddWithValue("@complications", item.Complications ?? "");
                 saveCmd.Parameters.AddWithValue("@handler", item.Handler != null ? item.Handler?.ToString() : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@facilityid", item.FacilityID != null ? item.FacilityID?.ToString() : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@riskLevel", item.RiskLevel != null ? item.RiskLevel?.ToString() : DBNull.Value);
+                saveCmd.Parameters.AddWithValue("@riskScore", item.RiskScore != null ? item.RiskScore : DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@createdtime", item.CreatedTime);
                 saveCmd.Parameters.AddWithValue("@updatedtime", item.UpdatedTime);
                 saveCmd.Parameters.AddWithValue("@deletedtime", item.DeletedTime != null ? item.DeletedTime : DBNull.Value);
@@ -811,7 +860,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     LEFT JOIN Tbl_Staff S ON P.handler = S.ID";
 
                 // Filter by logged-in user's facility
-                var facilityId = Constants.Staff?.Facility;
+                var facilityId = Constants.GetFacilityForFiltering();
                 string whereClause = facilityId.HasValue ? " WHERE P.facilityid = @facilityId" : "";
 
                 if (facilityId.HasValue)
@@ -920,7 +969,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     ? @"SELECT status, COUNT(*) FROM Tbl_Partograph WHERE deleted = 0 AND facilityID = @facilityId GROUP BY status"
                     : @"SELECT status, COUNT(*) FROM Tbl_Partograph WHERE deleted = 0 GROUP BY status";
                 if (facilityId.HasValue)
-                    countCmd.Parameters.AddWithValue("@facilityId", facilityId.Value.ToString());
+                {
+                    var x = new Guid(facilityId.ToString()).ToString();
+                    countCmd.Parameters.AddWithValue("@facilityId", x); 
+                }
 
                 await using var reader = await countCmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -1241,7 +1293,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     p.cervicalDilationOnAdmission,
                     p.status,
                     MAX(fhr.time) as LastFHRTime,
-                    (SELECT f.value FROM Tbl_FHR f WHERE f.partographID = p.ID ORDER BY f.time DESC LIMIT 1) as LastFHR
+                    (SELECT f.value FROM Tbl_FHR f WHERE f.partographID = p.ID ORDER BY f.time DESC LIMIT 1) as LastFHR                ,
+                    p.riskLevel,
+                    p.riskScore
                 FROM Tbl_Partograph p
                 INNER JOIN Tbl_Patient pt ON p.patientID = pt.ID
                 LEFT JOIN Tbl_FHR fhr ON fhr.partographID = p.ID
@@ -1252,13 +1306,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 GROUP BY p.ID, pt.firstName, pt.lastName, pt.hospitalNumber, p.laborStartTime, p.cervicalDilationOnAdmission, p.status
                 ORDER BY
                     CASE WHEN p.status = @emergency THEN 0 ELSE 1 END,
+                    CASE WHEN p.riskLevel = 'High Risk' THEN 0 WHEN p.riskLevel = 'Medium Risk' THEN 1 ELSE 2 END,
                     JULIANDAY(DATETIME('now')) - JULIANDAY(p.laborStartTime) DESC
                 LIMIT 10";
 
-                //CASE WHEN p.riskLevel = 'High Risk' THEN 0 WHEN p.riskLevel = 'Medium Risk' THEN 1 ELSE 2 END,
-                //,
-                //    p.riskLevel,
-                //    p.riskScore
                 cmd.Parameters.AddWithValue("@firststage", (int)LaborStatus.FirstStage);
                 cmd.Parameters.AddWithValue("@secondstage", (int)LaborStatus.SecondStage);
                 cmd.Parameters.AddWithValue("@thirdstage", (int)LaborStatus.ThirdStage);

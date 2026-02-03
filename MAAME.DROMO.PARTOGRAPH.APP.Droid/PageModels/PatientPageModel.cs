@@ -1017,7 +1017,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             // Set handler and facility from logged-in user
             _patient.Handler = Constants.Staff?.ID;
             _patient.HandlerName = Constants.Staff?.Name ?? string.Empty;
-            _patient.FacilityID = Constants.Staff?.Facility;
+            _patient.FacilityID = Constants.GetFacilityForFiltering();
 
             // Save previous pregnancy outcomes
             _patient.HasPreviousCSection = HasPreviousCSection;
@@ -1051,7 +1051,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     // Set handler and facility from logged-in user
                     Handler = Constants.Staff?.ID,
                     HandlerName = Constants.Staff?.Name ?? string.Empty,
-                    FacilityID = Constants.Staff?.Facility,
+                    FacilityID = Constants.GetFacilityForFiltering(),
                     // Risk Assessment Summary
                     RiskScore = RiskScore,
                     RiskLevel = RiskLevel,

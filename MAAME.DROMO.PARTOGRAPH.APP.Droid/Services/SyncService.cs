@@ -1194,7 +1194,7 @@ public class SyncService : ISyncService
                 DeviceId = deviceId,
                 LastSyncTimestamp = currentTimestamp,
                 TableName = tableName,
-                FacilityID = Constants.Staff?.Facility
+                FacilityID = Constants.GetFacilityForFiltering()
             };
 
             var pullResponse = await pullFunc(pullRequest);
@@ -1250,7 +1250,7 @@ public class SyncService : ISyncService
                 DeviceId = deviceId,
                 LastSyncTimestamp = currentTimestamp,
                 TableName = tableName,
-                FacilityID = Constants.Staff?.Facility
+                FacilityID = Constants.GetFacilityForFiltering()
             };
 
             var pullResponse = await _apiClient.PullStaffAsync(pullRequest);
