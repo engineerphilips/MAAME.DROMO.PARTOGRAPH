@@ -90,6 +90,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<BabyDetailsRepository>();
             builder.Services.AddSingleton<ReferralRepository>();
             builder.Services.AddSingleton<FourthStageVitalsRepository>();
+            builder.Services.AddSingleton<AlertHistoryRepository>(); // Alert history persistence for analytics
             // Keep existing repositories for compatibility during migration
             //builder.Services.AddSingleton<ProjectRepository>();
             //builder.Services.AddSingleton<TaskRepository>();
@@ -181,6 +182,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<BabyDetailsPageModel>();
             builder.Services.AddSingleton<ReferralPageModel>();
             builder.Services.AddSingleton<NotificationsPageModel>(); // Notifications page model
+            builder.Services.AddSingleton<ShiftHandoverReportPageModel>(); // Shift handover report
+            builder.Services.AddSingleton<AlertAnalyticsPageModel>(); // Alert analytics dashboard
 
             // Register Measurement Modal PageModels
             builder.Services.AddSingleton<CervixDilatationModalPageModel>();
@@ -245,6 +248,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddTransient<ReportsPage>();
             builder.Services.AddTransient<ReportsPageModel>();
             builder.Services.AddTransient<NotificationsPage>(); // Notifications page
+            builder.Services.AddTransient<ShiftHandoverReportPage>(); // Shift handover report page
+            builder.Services.AddTransient<AlertAnalyticsPage>(); // Alert analytics dashboard page
 
             //                .ConfigureMauiHandlers(handlers =>
             //                {

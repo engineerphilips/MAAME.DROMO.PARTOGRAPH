@@ -9,6 +9,7 @@
              xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
              xmlns:modals="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.Modals"
              xmlns:Services="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Services"
+             xmlns:controls="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Controls"
              xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
@@ -336,6 +337,11 @@
                     </DataTemplate>
                 </buttons:SfButton.Content>
             </buttons:SfButton>
+
+            <!-- Patient-Specific Monitoring Alerts Panel -->
+            <controls:PatientAlertsPanel Grid.Row="3"
+                                         x:Name="PatientAlertsView"
+                                         PartographId="{Binding Patient.Id}" />
 
             <!-- Risk Factors Panel -->
             <!--<Border Grid.Row="3"

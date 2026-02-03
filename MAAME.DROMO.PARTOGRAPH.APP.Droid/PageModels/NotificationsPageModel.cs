@@ -1,3 +1,4 @@
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.MODEL;
 using System.Collections.ObjectModel;
@@ -10,16 +11,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     public class NotificationsPageModel : INotifyPropertyChanged
     {
         private readonly PartographMonitoringService _monitoringService;
+        private readonly AlertHistoryRepository _alertHistoryRepository;
         private bool _isRefreshing;
         private string _selectedFilter = "All";
         private int _totalCount;
         private int _criticalCount;
         private int _warningCount;
         private int _infoCount;
+        private int _escalatedCount;
 
-        public NotificationsPageModel(PartographMonitoringService monitoringService)
+        public NotificationsPageModel(
+            PartographMonitoringService monitoringService,
+            AlertHistoryRepository alertHistoryRepository)
         {
             _monitoringService = monitoringService;
+            _alertHistoryRepository = alertHistoryRepository;
 
             // Initialize commands
             RefreshCommand = new Command(async () => await RefreshAsync());
@@ -28,10 +34,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             ClearAcknowledgedCommand = new Command(ClearAcknowledged);
             NavigateToPartographCommand = new Command<NotificationItem>(async (n) => await NavigateToPartographAsync(n));
             FilterCommand = new Command<string>(SetFilter);
+            QuickActionCommand = new Command<NotificationItem>(async (n) => await ExecuteQuickActionAsync(n));
+            ViewShiftReportCommand = new Command(async () => await ViewShiftReportAsync());
+            ViewAnalyticsCommand = new Command(async () => await ViewAnalyticsAsync());
 
             // Subscribe to monitoring service events
             _monitoringService.NotificationCountChanged += OnNotificationCountChanged;
             _monitoringService.NotificationAdded += OnNotificationAdded;
+            _monitoringService.AlertEscalated += OnAlertEscalated;
 
             // Initialize data
             UpdateCounts();
@@ -60,6 +70,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     OnPropertyChanged(nameof(FilterCriticalSelected));
                     OnPropertyChanged(nameof(FilterWarningSelected));
                     OnPropertyChanged(nameof(FilterDueSelected));
+                    OnPropertyChanged(nameof(FilterEscalatedSelected));
                 }
             }
         }
@@ -88,6 +99,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             set => SetProperty(ref _infoCount, value);
         }
 
+        public int EscalatedCount
+        {
+            get => _escalatedCount;
+            set => SetProperty(ref _escalatedCount, value);
+        }
+
         public bool HasNotifications => TotalCount > 0;
         public bool HasNoNotifications => TotalCount == 0;
 
@@ -96,6 +113,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public bool FilterCriticalSelected => SelectedFilter == "Critical";
         public bool FilterWarningSelected => SelectedFilter == "Warning";
         public bool FilterDueSelected => SelectedFilter == "Due";
+        public bool FilterEscalatedSelected => SelectedFilter == "Escalated";
 
         // Summary text
         public string SummaryText
@@ -107,11 +125,15 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 var parts = new List<string>();
                 if (CriticalCount > 0) parts.Add($"{CriticalCount} critical");
                 if (WarningCount > 0) parts.Add($"{WarningCount} warning");
-                if (InfoCount > 0) parts.Add($"{InfoCount} info");
+                if (EscalatedCount > 0) parts.Add($"{EscalatedCount} escalated");
+                if (InfoCount > 0) parts.Add($"{InfoCount} due soon");
 
                 return string.Join(", ", parts);
             }
         }
+
+        // Shift info
+        public string CurrentShiftInfo => $"Shift started: {_monitoringService.ShiftStartTime:HH:mm}";
 
         #endregion
 
@@ -123,6 +145,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public ICommand ClearAcknowledgedCommand { get; }
         public ICommand NavigateToPartographCommand { get; }
         public ICommand FilterCommand { get; }
+        public ICommand QuickActionCommand { get; }
+        public ICommand ViewShiftReportCommand { get; }
+        public ICommand ViewAnalyticsCommand { get; }
 
         #endregion
 
@@ -137,6 +162,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 "Critical" => notifications.Where(n => n.Severity == AlertSeverity.Critical),
                 "Warning" => notifications.Where(n => n.Severity == AlertSeverity.Warning),
                 "Due" => notifications.Where(n => n.Type == NotificationType.MeasurementDue),
+                "Escalated" => notifications.Where(n => n.EscalationLevel > 0),
                 _ => notifications
             };
         }
@@ -185,8 +211,64 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
             try
             {
-                // Navigate to the partograph page
                 await Shell.Current.GoToAsync($"partograph?id={notification.PartographId}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Executes quick action to open the measurement modal directly
+        /// </summary>
+        private async Task ExecuteQuickActionAsync(NotificationItem? notification)
+        {
+            if (notification == null || !notification.ShowQuickAction) return;
+
+            try
+            {
+                // Acknowledge the notification first
+                _monitoringService.AcknowledgeNotification(notification.Id);
+
+                // Navigate to partograph with the measurement type parameter
+                // This will open the partograph page and trigger the appropriate measurement modal
+                var route = $"partograph?id={notification.PartographId}&openModal={notification.QuickActionRoute}";
+                await Shell.Current.GoToAsync(route);
+
+                UpdateCounts();
+                OnPropertyChanged(nameof(Notifications));
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Quick action error: {ex.Message}");
+                await AppShell.DisplayToastAsync("Unable to open measurement form");
+            }
+        }
+
+        /// <summary>
+        /// Opens the shift handover report
+        /// </summary>
+        private async Task ViewShiftReportAsync()
+        {
+            try
+            {
+                await Shell.Current.GoToAsync("shiftreport");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Opens the alert analytics dashboard
+        /// </summary>
+        private async Task ViewAnalyticsAsync()
+        {
+            try
+            {
+                await Shell.Current.GoToAsync("alertanalytics");
             }
             catch (Exception ex)
             {
@@ -209,6 +291,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             CriticalCount = notifications.Count(n => !n.IsAcknowledged && n.Severity == AlertSeverity.Critical);
             WarningCount = notifications.Count(n => !n.IsAcknowledged && n.Severity == AlertSeverity.Warning);
             InfoCount = notifications.Count(n => !n.IsAcknowledged && n.Severity == AlertSeverity.Info);
+            EscalatedCount = notifications.Count(n => !n.IsAcknowledged && n.EscalationLevel > 0);
 
             OnPropertyChanged(nameof(HasNotifications));
             OnPropertyChanged(nameof(HasNoNotifications));
@@ -233,9 +316,17 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             });
         }
 
+        private void OnAlertEscalated(object? sender, (NotificationItem Alert, int Level) args)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                UpdateCounts();
+                OnPropertyChanged(nameof(Notifications));
+            });
+        }
+
         public void OnAppearing()
         {
-            // Refresh when page appears
             _ = RefreshAsync();
         }
 

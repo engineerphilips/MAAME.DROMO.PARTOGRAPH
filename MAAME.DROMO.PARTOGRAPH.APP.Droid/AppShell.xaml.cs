@@ -223,6 +223,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 
             // Notifications route
             Routing.RegisterRoute("notifications", typeof(NotificationsPage));
+            Routing.RegisterRoute("shiftreport", typeof(ShiftHandoverReportPage));
+            Routing.RegisterRoute("alertanalytics", typeof(AlertAnalyticsPage));
 
             // User management routes
             Routing.RegisterRoute("signup", typeof(SignupPage));

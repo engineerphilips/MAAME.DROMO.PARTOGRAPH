@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.AlertAnalyticsPage"
+             Title="Alert Analytics"
+             x:DataType="pagemodels:AlertAnalyticsPageModel">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="StatCardStyle" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E293B}" />
+                <Setter Property="Padding" Value="16" />
+                <Setter Property="StrokeThickness" Value="0" />
+            </Style>
+
+            <Style x:Key="FilterPillStyle" TargetType="Border">
+                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="StrokeThickness" Value="0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <RefreshView IsRefreshing="{Binding IsLoading}"
+                 Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="16" Padding="16">
+
+                <!-- Period Selector -->
+                <Border Style="{StaticResource StatCardStyle}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Time Period"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+
+                        <HorizontalStackLayout Spacing="8">
+                            <!-- Today -->
+                            <Border Style="{StaticResource FilterPillStyle}"
+                                    BackgroundColor="{Binding IsTodaySelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#2196F3|#F5F5F5'}">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetPeriodCommand}"
+                                                          CommandParameter="Today" />
+                                </Border.GestureRecognizers>
+                                <Label Text="Today"
+                                       FontSize="12"
+                                       TextColor="{Binding IsTodaySelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
+                            </Border>
+
+                            <!-- Week -->
+                            <Border Style="{StaticResource FilterPillStyle}"
+                                    BackgroundColor="{Binding IsWeekSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#2196F3|#F5F5F5'}">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetPeriodCommand}"
+                                                          CommandParameter="Week" />
+                                </Border.GestureRecognizers>
+                                <Label Text="Week"
+                                       FontSize="12"
+                                       TextColor="{Binding IsWeekSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
+                            </Border>
+
+                            <!-- Month -->
+                            <Border Style="{StaticResource FilterPillStyle}"
+                                    BackgroundColor="{Binding IsMonthSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#2196F3|#F5F5F5'}">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetPeriodCommand}"
+                                                          CommandParameter="Month" />
+                                </Border.GestureRecognizers>
+                                <Label Text="Month"
+                                       FontSize="12"
+                                       TextColor="{Binding IsMonthSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
+                            </Border>
+
+                            <!-- Current Shift -->
+                            <Border Style="{StaticResource FilterPillStyle}"
+                                    BackgroundColor="{Binding IsShiftSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#2196F3|#F5F5F5'}">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetPeriodCommand}"
+                                                          CommandParameter="Shift" />
+                                </Border.GestureRecognizers>
+                                <Label Text="This Shift"
+                                       FontSize="12"
+                                       TextColor="{Binding IsShiftSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <Label Text="{Binding DateRangeDisplay}"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Compliance Score Card -->
+                <Border Style="{StaticResource StatCardStyle}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Compliance Rate"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                            <Label Text="Alert acknowledgment rate"
+                                   FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <HorizontalStackLayout Spacing="16" Margin="0,8,0,0">
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding AcknowledgedCount}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="#4CAF50" />
+                                    <Label Text="Acknowledged"
+                                           FontSize="10"
+                                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding MissedCount}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="#EF5350" />
+                                    <Label Text="Missed"
+                                           FontSize="10"
+                                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+
+                        <!-- Compliance Circle -->
+                        <Border Grid.Column="1"
+                                WidthRequest="80"
+                                HeightRequest="80"
+                                BackgroundColor="{Binding ComplianceColor}"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="40" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                                <Label Text="{Binding CompliancePercentage, StringFormat='{0:F0}%'}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Summary Stats Grid -->
+                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                    <!-- Total -->
+                    <Border Style="{StaticResource StatCardStyle}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                            <Label Text="{Binding TotalAlerts}"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="#2196F3"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Total"
+                                   FontSize="10"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Critical -->
+                    <Border Style="{StaticResource StatCardStyle}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                            <Label Text="{Binding CriticalAlerts}"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="#EF5350"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Critical"
+                                   FontSize="10"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Warning -->
+                    <Border Style="{StaticResource StatCardStyle}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                            <Label Text="{Binding WarningAlerts}"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="#FF9800"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Warning"
+                                   FontSize="10"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Info -->
+                    <Border Style="{StaticResource StatCardStyle}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                            <Label Text="{Binding InfoAlerts}"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="#2196F3"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Info"
+                                   FontSize="10"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Response Time -->
+                <Border Style="{StaticResource StatCardStyle}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <HorizontalStackLayout Spacing="12">
+                        <Border BackgroundColor="#E3F2FD"
+                                WidthRequest="48"
+                                HeightRequest="48"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="24" />
+                            </Border.StrokeShape>
+                            <Label Text="⏱️"
+                                   FontSize="20"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Average Response Time"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                            <Label Text="{Binding AverageResponseTime, StringFormat='{0:F1} minutes'}"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                </Border>
+
+                <!-- Alerts by Type -->
+                <Border Style="{StaticResource StatCardStyle}"
+                        IsVisible="{Binding HasAnalytics}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Alerts by Type"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+
+                        <CollectionView ItemsSource="{Binding TopAlertTypes}"
+                                        HeightRequest="200">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="pagemodels:AlertTypeCount">
+                                    <Border BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2D3748}"
+                                            Padding="12,8"
+                                            Margin="0,4">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding Icon}"
+                                                   FontSize="18"
+                                                   VerticalOptions="Center" />
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding Type}"
+                                                   FontSize="13"
+                                                   VerticalOptions="Center"
+                                                   Margin="10,0" />
+                                            <Border Grid.Column="2"
+                                                    BackgroundColor="#2196F3"
+                                                    Padding="8,4"
+                                                    VerticalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="10" />
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding Count}"
+                                                       FontSize="12"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Recent Alerts -->
+                <Border Style="{StaticResource StatCardStyle}"
+                        IsVisible="{Binding HasAnalytics}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Recent Alerts"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                            <Border BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1E3A5F}"
+                                    Padding="8,4">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
+                                <Label Text="{Binding RecentAlerts.Count, StringFormat='Last {0}'}"
+                                       FontSize="10"
+                                       TextColor="#2196F3" />
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <CollectionView ItemsSource="{Binding RecentAlerts}"
+                                        HeightRequest="300">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="pagemodels:AlertHistoryRecord">
+                                    <Border BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#2D3748}"
+                                            Padding="12"
+                                            Margin="0,4">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:AlertAnalyticsPageModel}}, Path=ViewAlertDetailsCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+                                            <Label Grid.Row="0" Grid.Column="0"
+                                                   Text="{Binding Title}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}"
+                                                   LineBreakMode="TailTruncation" />
+
+                                            <Border Grid.Row="0" Grid.Column="1"
+                                                    BackgroundColor="{Binding SeverityColor}"
+                                                    Padding="6,2"
+                                                    VerticalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="8" />
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding Severity}"
+                                                       FontSize="9"
+                                                       TextColor="White" />
+                                            </Border>
+
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="8">
+                                                <Label Text="{Binding PatientName}"
+                                                       FontSize="11"
+                                                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                                <Label Text="•"
+                                                       FontSize="11"
+                                                       TextColor="{AppThemeBinding Light=#999, Dark=#666}" />
+                                                <Label Text="{Binding CreatedAt, StringFormat='{0:MMM dd HH:mm}'}"
+                                                       FontSize="11"
+                                                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                                                <Label Text="{Binding StatusDisplay}"
+                                                       FontSize="10"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{Binding StatusColor}"
+                                                       IsVisible="{Binding HasStatus}" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Export Button -->
+                <Button Text="Export Report"
+                        Command="{Binding ExportReportCommand}"
+                        BackgroundColor="#2196F3"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,10" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>
