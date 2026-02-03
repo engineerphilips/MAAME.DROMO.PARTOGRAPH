@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using Microsoft.Extensions.Logging;
 
@@ -10,6 +11,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
         private readonly ILoadingOverlayService? _loadingService;
         private readonly BackgroundSyncService? _backgroundSyncService;
         private readonly IConnectivityService? _connectivityService;
+        private readonly PartographMonitoringService? _monitoringService;
         private readonly ILogger<AppShell>? _logger;
 
         public AppShell()
@@ -31,6 +33,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             // Get sync services
             _backgroundSyncService = IPlatformApplication.Current!.Services.GetService<BackgroundSyncService>();
             _connectivityService = IPlatformApplication.Current!.Services.GetService<IConnectivityService>();
+            _monitoringService = IPlatformApplication.Current!.Services.GetService<PartographMonitoringService>();
             _logger = IPlatformApplication.Current!.Services.GetService<ILogger<AppShell>>();
 
             // Subscribe to navigation events for loading indicator
@@ -42,6 +45,50 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
 
             // Initialize sync services after shell is loaded
             InitializeSyncServicesAsync();
+
+            // Start partograph monitoring service for notifications
+            InitializeMonitoringServiceAsync();
+        }
+
+        /// <summary>
+        /// Initializes the partograph monitoring service for active labour monitoring alerts.
+        /// </summary>
+        private async void InitializeMonitoringServiceAsync()
+        {
+            try
+            {
+                // Small delay to allow app to fully initialize
+                await Task.Delay(1000);
+
+                if (_monitoringService == null)
+                {
+                    _logger?.LogWarning("PartographMonitoringService not available");
+                    return;
+                }
+
+                // Start the monitoring service
+                _monitoringService.Start();
+                _logger?.LogInformation("Partograph monitoring service started for active labour alerts");
+
+                // Subscribe to measurement due events for toast notifications
+                _monitoringService.MeasurementDue += OnMeasurementDue;
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Failed to initialize partograph monitoring service");
+            }
+        }
+
+        /// <summary>
+        /// Handles measurement due events from the monitoring service
+        /// </summary>
+        private void OnMeasurementDue(object? sender, MeasurementDueAlert alert)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                _logger?.LogInformation("Measurement due alert: {Message}", alert.Message);
+                // Toast is already shown by the monitoring service
+            });
         }
 
         /// <summary>
@@ -173,6 +220,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             Routing.RegisterRoute("help", typeof(HelpPage));
             //Routing.RegisterRoute("profile", typeof(ProfilePage));
             //Routing.RegisterRoute("about", typeof(AboutPage));
+
+            // Notifications route
+            Routing.RegisterRoute("notifications", typeof(NotificationsPage));
 
             // User management routes
             Routing.RegisterRoute("signup", typeof(SignupPage));

@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Maui;
 using FluentIcons.Maui;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Data;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals;
+using MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services;
 using MAAME.DROMO.PARTOGRAPH.APP.Droid.Services.Helper;
 using MauiIcons.Fluent;
@@ -152,7 +154,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<IServiceRequestProvider, ServiceRequestProvider>();
             builder.Services.AddSingleton<ISyncService, SyncService>();
             builder.Services.AddSingleton<BackgroundSyncService>();
-            
+            builder.Services.AddSingleton<PartographMonitoringService>(); // Active labour monitoring with notifications
+
             // Register PageModels
             builder.Services.AddSingleton<AppShellModel>();
             builder.Services.AddSingleton<LoginPageModel>();
@@ -177,6 +180,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddSingleton<BirthOutcomePageModel>();
             builder.Services.AddSingleton<BabyDetailsPageModel>();
             builder.Services.AddSingleton<ReferralPageModel>();
+            builder.Services.AddSingleton<NotificationsPageModel>(); // Notifications page model
 
             // Register Measurement Modal PageModels
             builder.Services.AddSingleton<CervixDilatationModalPageModel>();
@@ -240,6 +244,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid
             builder.Services.AddTransient<SyncSettingsPage>();
             builder.Services.AddTransient<ReportsPage>();
             builder.Services.AddTransient<ReportsPageModel>();
+            builder.Services.AddTransient<NotificationsPage>(); // Notifications page
 
             //                .ConfigureMauiHandlers(handlers =>
             //                {

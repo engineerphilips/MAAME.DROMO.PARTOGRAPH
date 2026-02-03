@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:pagemodels="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels"
+             xmlns:services="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Services"
+             x:Class="MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages.NotificationsPage"
+             x:DataType="pagemodels:NotificationsPageModel"
+             Title="Notifications"
+             BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#121212}">
+
+    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="0">
+
+        <!-- Header Section -->
+        <Border Grid.Row="0"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                Padding="16"
+                Margin="0,0,0,1">
+            <Border.Shadow>
+                <Shadow Brush="#20000000" Offset="0,2" Radius="4" />
+            </Border.Shadow>
+
+            <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
+
+                <!-- Title and Action Buttons -->
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Notifications"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                        <Label Text="{Binding SummaryText}"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#666, Dark=#AAA}" />
+                    </VerticalStackLayout>
+
+                    <!-- Acknowledge All Button -->
+                    <Button Grid.Column="1"
+                            Text="Acknowledge All"
+                            Command="{Binding AcknowledgeAllCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1E3A5F}"
+                            TextColor="#2196F3"
+                            FontSize="12"
+                            Padding="12,8"
+                            CornerRadius="8"
+                            IsVisible="{Binding HasNotifications}"
+                            Margin="0,0,8,0" />
+
+                    <!-- Clear Acknowledged Button -->
+                    <Button Grid.Column="2"
+                            Text="Clear"
+                            Command="{Binding ClearAcknowledgedCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#3D1F1F}"
+                            TextColor="#EF5350"
+                            FontSize="12"
+                            Padding="12,8"
+                            CornerRadius="8" />
+                </Grid>
+
+                <!-- Stats Cards -->
+                <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+
+                    <!-- Total Count -->
+                    <Border Grid.Column="0"
+                            BackgroundColor="{AppThemeBinding Light=#F5F7FA, Dark=#2A2A2A}"
+                            Padding="12,8">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="All" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label Text="{Binding TotalCount}"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Total"
+                                   FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Critical Count -->
+                    <Border Grid.Column="1"
+                            BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#3D1F1F}"
+                            Padding="12,8">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Critical" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label Text="{Binding CriticalCount}"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="#EF5350"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Critical"
+                                   FontSize="11"
+                                   TextColor="#EF5350"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Warning Count -->
+                    <Border Grid.Column="2"
+                            BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3D2E1B}"
+                            Padding="12,8">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Warning" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label Text="{Binding WarningCount}"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="#FF9800"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Warning"
+                                   FontSize="11"
+                                   TextColor="#FF9800"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Info/Due Count -->
+                    <Border Grid.Column="3"
+                            BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1E3A5F}"
+                            Padding="12,8">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Due" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label Text="{Binding InfoCount}"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="#2196F3"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Due Soon"
+                                   FontSize="11"
+                                   TextColor="#2196F3"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Filter Pills -->
+                <HorizontalStackLayout Grid.Row="2" Spacing="8" HorizontalOptions="Start">
+
+                    <Border BackgroundColor="{Binding FilterAllSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#2196F3|#E0E0E0'}"
+                            Padding="12,6">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="All" />
+                        </Border.GestureRecognizers>
+                        <Label Text="All"
+                               FontSize="13"
+                               TextColor="{Binding FilterAllSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
+                    </Border>
+
+                    <Border BackgroundColor="{Binding FilterCriticalSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#EF5350|#E0E0E0'}"
+                            Padding="12,6">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Critical" />
+                        </Border.GestureRecognizers>
+                        <Label Text="Critical"
+                               FontSize="13"
+                               TextColor="{Binding FilterCriticalSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
+                    </Border>
+
+                    <Border BackgroundColor="{Binding FilterWarningSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF9800|#E0E0E0'}"
+                            Padding="12,6">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Warning" />
+                        </Border.GestureRecognizers>
+                        <Label Text="Warning"
+                               FontSize="13"
+                               TextColor="{Binding FilterWarningSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
+                    </Border>
+
+                    <Border BackgroundColor="{Binding FilterDueSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#2196F3|#E0E0E0'}"
+                            Padding="12,6">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="Due" />
+                        </Border.GestureRecognizers>
+                        <Label Text="Measurements Due"
+                               FontSize="13"
+                               TextColor="{Binding FilterDueSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#666'}" />
+                    </Border>
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+
+        <!-- Empty State -->
+        <Border Grid.Row="2"
+                IsVisible="{Binding HasNoNotifications}"
+                BackgroundColor="Transparent"
+                Padding="32">
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="16">
+                <Label Text="&#xF115;"
+                       FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                       FontSize="64"
+                       TextColor="{AppThemeBinding Light=#BDBDBD, Dark=#424242}"
+                       HorizontalOptions="Center" />
+                <Label Text="No Active Notifications"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                       HorizontalOptions="Center" />
+                <Label Text="All partographs are up to date with their measurements. You'll be notified when any measurement becomes due."
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light=#999, Dark=#666}"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       MaximumWidthRequest="300" />
+
+                <Button Text="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        BackgroundColor="#2196F3"
+                        TextColor="White"
+                        Padding="24,12"
+                        CornerRadius="8"
+                        Margin="0,16,0,0" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Notifications List -->
+        <RefreshView Grid.Row="2"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}"
+                     IsVisible="{Binding HasNotifications}">
+            <CollectionView ItemsSource="{Binding Notifications}"
+                            Margin="0,8,0,0">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="services:NotificationItem">
+                        <Border Margin="12,4"
+                                Padding="16"
+                                BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                                Opacity="{Binding IsAcknowledged, Converter={StaticResource BoolToOpacityConverter}}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="#10000000" Offset="0,2" Radius="4" />
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:NotificationsPageModel}}, Path=NavigateToPartographCommand}"
+                                                      CommandParameter="{Binding}" />
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+
+                                <!-- Severity Icon -->
+                                <Border Grid.Column="0"
+                                        WidthRequest="48"
+                                        HeightRequest="48"
+                                        BackgroundColor="{Binding SeverityColor}"
+                                        Opacity="0.15"
+                                        VerticalOptions="Start">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="24" />
+                                    </Border.StrokeShape>
+                                </Border>
+                                <Label Grid.Column="0"
+                                       Text="{Binding SeverityIcon}"
+                                       FontSize="24"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       WidthRequest="48"
+                                       HeightRequest="48"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+
+                                <!-- Content -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="4">
+
+                                    <!-- Title and Type Badge -->
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Grid.Column="0"
+                                               Text="{Binding Title}"
+                                               FontSize="15"
+                                               FontAttributes="Bold"
+                                               TextColor="{Binding SeverityColor}"
+                                               LineBreakMode="TailTruncation" />
+
+                                        <Border Grid.Column="1"
+                                                BackgroundColor="{Binding SeverityColor}"
+                                                Opacity="0.2"
+                                                Padding="8,2">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="4" />
+                                            </Border.StrokeShape>
+                                            <Label Text="{Binding TypeIcon}"
+                                                   FontSize="12" />
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Patient Name -->
+                                    <Label Text="{Binding PatientName}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#333, Dark=#CCC}"
+                                           IsVisible="{Binding PatientName, Converter={StaticResource StringToBoolConverter}}" />
+
+                                    <!-- Message -->
+                                    <Label Text="{Binding Message}"
+                                           FontSize="13"
+                                           TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
+                                           LineBreakMode="WordWrap"
+                                           MaxLines="3" />
+
+                                    <!-- Time Ago -->
+                                    <Label Text="{Binding TimeAgo}"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light=#999, Dark=#666}" />
+                                </VerticalStackLayout>
+
+                                <!-- Actions -->
+                                <VerticalStackLayout Grid.Column="2" Spacing="8" VerticalOptions="Center">
+
+                                    <!-- Acknowledge Button -->
+                                    <Button Text="&#xE73E;"
+                                            FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                            FontSize="18"
+                                            WidthRequest="40"
+                                            HeightRequest="40"
+                                            CornerRadius="20"
+                                            BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B3D26}"
+                                            TextColor="#4CAF50"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pagemodels:NotificationsPageModel}}, Path=AcknowledgeCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding IsAcknowledged, Converter={StaticResource InverseBoolConverter}}"
+                                            ToolTipProperties.Text="Acknowledge" />
+
+                                    <!-- Acknowledged Indicator -->
+                                    <Label Text="&#xE73E;"
+                                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                           FontSize="20"
+                                           TextColor="#4CAF50"
+                                           IsVisible="{Binding IsAcknowledged}"
+                                           HorizontalOptions="Center" />
+
+                                    <!-- Navigate Arrow -->
+                                    <Label Text="&#xE76C;"
+                                           FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                           FontSize="16"
+                                           TextColor="{AppThemeBinding Light=#BDBDBD, Dark=#616161}"
+                                           IsVisible="{Binding PartographId, Converter={StaticResource NullToBoolConverter}}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

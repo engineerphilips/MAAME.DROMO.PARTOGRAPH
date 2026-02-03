@@ -194,8 +194,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         private async Task ShowNotificationsAsync()
         {
-            // TODO: Implement notifications functionality
-            await AppShell.DisplayToastAsync("Notifications feature coming soon");
+            try
+            {
+                await Shell.Current.GoToAsync("notifications");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
+            }
         }
 
         private async Task ViewActiveAsync()
