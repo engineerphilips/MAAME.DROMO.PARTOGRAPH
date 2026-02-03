@@ -146,9 +146,9 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     selectCmd.CommandText = @"SELECT p.ID, p.time, p.firstName, p.lastName, p.hospitalNumber, p.dateofbirth, p.age, p.bloodGroup, p.phoneNumber, p.emergencyContactName, p.emergencyContactRelationship, p.emergencyContactPhone, p.handler, s.name as staffname, p.facilityid, p.createdtime, p.updatedtime, p.deletedtime, p.deviceid, p.origindeviceid, p.syncstatus, p.version, p.serverversion, p.deleted
                         FROM Tbl_Patient p
                         LEFT JOIN Tbl_Staff s ON p.handler = s.ID
-                        WHERE p.facilityid = @facilityId
+                        WHERE LOWER(p.facilityid) = @facilityId
                         ORDER BY p.time DESC";
-                    selectCmd.Parameters.AddWithValue("@facilityId", facilityId.ToString());
+                    selectCmd.Parameters.AddWithValue("@facilityId", facilityId.ToString().ToLower());
                 }
                 else
                 {

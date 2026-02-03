@@ -348,11 +348,11 @@
             <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="14">
 
                 <!-- Quick Stats Section -->
-                <Grid Grid.Row="0"
+                <!--<Grid Grid.Row="0"
                       ColumnDefinitions="*,*"
                       ColumnSpacing="10"
                       IsVisible="{Binding ShowUserDetails}">
-                    <!-- Active Patients Stat -->
+                    --><!-- Active Patients Stat --><!--
                     <Border Grid.Column="0"
                             BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B3D26}"
                             Padding="12,10">
@@ -381,7 +381,7 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- Pending Patients Stat -->
+                    --><!-- Pending Patients Stat --><!--
                     <Border Grid.Column="1"
                             BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3D2E1B}"
                             Padding="12,10">
@@ -409,7 +409,7 @@
                                    TextColor="#E65100" />
                         </VerticalStackLayout>
                     </Border>
-                </Grid>
+                </Grid>-->
 
                 <!-- Theme Switcher Section -->
                 <VerticalStackLayout Grid.Row="1" Spacing="8">
@@ -579,11 +579,11 @@
             </VerticalStackLayout>
 
             <!-- Quick Stats Indicator -->
-            <HorizontalStackLayout Grid.Column="1"
+            <!--<HorizontalStackLayout Grid.Column="1"
                                    Spacing="12"
                                    VerticalOptions="Center"
                                    Margin="0,0,8,0">
-                <!-- Active Patients Badge -->
+                --><!-- Active Patients Badge --><!--
                 <Border BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1B3D26}"
                         Padding="10,6"
                         IsVisible="{Binding ShowUserDetails}">
@@ -611,7 +611,7 @@
                     </HorizontalStackLayout>
                 </Border>
 
-                <!-- Pending Patients Badge -->
+                --><!-- Pending Patients Badge --><!--
                 <Border BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3D2E1B}"
                         Padding="10,6"
                         IsVisible="{Binding ShowUserDetails}">
@@ -638,7 +638,7 @@
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </Border>
-            </HorizontalStackLayout>
+            </HorizontalStackLayout>-->
 
             <!-- Notifications Button with Badge -->
             <Grid Grid.Column="2" Margin="4,0">

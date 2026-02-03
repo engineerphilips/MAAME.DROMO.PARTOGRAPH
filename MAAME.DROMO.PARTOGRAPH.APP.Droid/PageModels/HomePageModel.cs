@@ -76,7 +76,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 "Loading Dashboard",
                 ("dashboard statistics", async () =>
                 {
-                    DashboardStats = await _partographRepository.GetDashboardStatsAsync(Constants.GetFacilityForFiltering());
+                    DashboardStats = await _partographRepository.GetDashboardStatsAsync();
                 })
             );
         }
@@ -88,7 +88,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 IsBusy = true;
 
                 // Load only dashboard statistics - lightweight and fast
-                DashboardStats = await _partographRepository.GetDashboardStatsAsync(Constants.GetFacilityForFiltering());
+                DashboardStats = await _partographRepository.GetDashboardStatsAsync();
             }
             finally
             {
@@ -166,17 +166,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             => Shell.Current.GoToAsync("completedpatients");
 
         [RelayCommand]
-        private async Task AddNewPatient()
-        {
-            try
-            {
-                await Shell.Current.GoToAsync("patient");
-            }
-            catch (Exception ex)
-            {
-                _errorHandler.HandleError(ex);
-            }
-        }
+        private Task AddNewPatient() => Shell.Current.GoToAsync("patient");
 
         [RelayCommand]
         private async Task HandleEmergency(Partograph patient)

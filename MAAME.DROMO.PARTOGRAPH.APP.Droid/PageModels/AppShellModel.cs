@@ -15,6 +15,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private int _activePatientsCount = 0;
         private int _pendingPatientsCount = 0;
         private string _currentBreadcrumb = string.Empty;
+        private bool _isSelected;
 
         public AppShellModel()
         {
@@ -110,6 +111,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public bool HasNotifications => NotificationCount > 0;
 
         public string NotificationCountDisplay => NotificationCount > 99 ? "99+" : NotificationCount.ToString();
+        
+        public bool IsSelected
+        {
+            get => _isSelected; 
+            set => SetProperty(ref _isSelected, value);
+        }
 
         // Quick stats for footer
         public int ActivePatientsCount
