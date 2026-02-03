@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
+  <!-- Stylized Mother and Child Icon in Theme Blue -->
+  <circle cx="40" cy="30" r="12" fill="#0078D4"/>
+  <path d="M40 48c-18 0-30 12-30 30v6h60v-6c0-18-12-30-30-30z" fill="#0078D4"/>
+  <circle cx="58" cy="66" r="8" fill="#0078D4"/>
+  
+  <!-- Text in Theme Blue -->
+  <text x="85" y="65" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#0078D4">Maame Dromo</text>
+</svg>

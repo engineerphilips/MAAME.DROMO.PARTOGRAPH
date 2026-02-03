@@ -217,7 +217,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             {
                 //await Shell.Current.GoToAsync($"partograph?id={notification.PartographId}");
 
-                var patient = await _partographRepository.GetCurrentPartographAsync(notification?.PartographId);
+                var patient = await _partographRepository.GetAsync(notification?.PartographId);
 
                 // Navigate based on labor stage
                 var route = patient.Status switch
@@ -241,17 +241,30 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         /// </summary>
         private async Task ExecuteQuickActionAsync(NotificationItem? notification)
         {
-            if (notification == null || !notification.ShowQuickAction) return;
+            if (notification?.PartographId == null || !notification.ShowQuickAction) return;
 
             try
             {
                 // Acknowledge the notification first
                 _monitoringService.AcknowledgeNotification(notification.Id);
 
+                var patient = await _partographRepository.GetAsync(notification?.PartographId);
+
+                // Navigate based on labor stage
+                var route = patient.Status switch
+                {
+                    LaborStatus.SecondStage => "secondpartograph",
+                    LaborStatus.ThirdStage => "thirdpartograph",
+                    LaborStatus.FourthStage => "fourthpartograph",
+                    _ => "partograph" // FirstStage, Pending, or any other status defaults to first stage partograph
+                };
+
                 // Navigate to partograph with the measurement type parameter
                 // This will open the partograph page and trigger the appropriate measurement modal
-                var route = $"partograph?id={notification.PartographId}&openModal={notification.QuickActionRoute}";
-                await Shell.Current.GoToAsync(route);
+
+                await Shell.Current.GoToAsync($"{route}?patientId={patient.ID.ToString()}&openModal={notification.QuickActionRoute}");
+                //var route = $"partograph?id={notification.PartographId}&openModal={notification.QuickActionRoute}";
+                //await Shell.Current.GoToAsync(route);
 
                 UpdateCounts();
                 OnPropertyChanged(nameof(Notifications));
