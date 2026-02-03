@@ -52,7 +52,7 @@ public partial class ActivePatientsView : ContentView
         {
             if (BindingContext is ActivePatientsPageModel pageModel)
                 //pageModel.BindToPatient((int)button.tag);
-                await Shell.Current.GoToAsync($"//partograph?patientId={2}");
+                await Shell.Current.GoToAsync($"partograph?patientId={2}");
         }
         //?id={patient.ID}
         //await Shell.Current.GoToAsync("//main");

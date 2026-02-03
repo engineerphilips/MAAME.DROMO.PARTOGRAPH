@@ -183,7 +183,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             try
             {
-                await Shell.Current.GoToAsync("//help");
+                await Shell.Current.GoToAsync("help");
             }
             catch (Exception ex)
             {

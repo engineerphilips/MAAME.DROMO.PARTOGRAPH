@@ -82,7 +82,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 _loadingOverlay.Show(loadingMessage);
                 await Task.Delay(50);
 
-                await Shell.Current.GoToAsync("//");
+                await Shell.Current.GoToAsync("///");
             }
             finally
             {

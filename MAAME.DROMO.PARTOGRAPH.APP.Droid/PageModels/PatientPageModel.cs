@@ -30,7 +30,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [ObservableProperty]
         private int? _age;
-        
+
+        [ObservableProperty]
+        private bool _saved = false;
+
         private DateTime? _dateOfBirth;
         public DateTime? DateOfBirth
         {
@@ -989,6 +992,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 return;
             }
 
+            if (Saved)
+            {
+                await AppShell.DisplayToastAsync("Patient already before saving");
+                return;
+            }
+
             // Calculate risk assessment
             CalculateRiskAssessment();
 
@@ -1058,6 +1067,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     RiskColor = RiskColor
                 });
                 //LaborStartDate.Value.ToDateTime(LaborStartTime.Value)
+
+                Saved = true;
 
                 //RiskFactors = string.Empty,
                 if (partographId != null)
@@ -1158,7 +1169,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     
                     if (CervicalDilationOnAdmission > 4)
                     {
-                        await Shell.Current.GoToAsync($"//partograph?patientId={partographId}");
+                        await Shell.Current.GoToAsync($"partograph?patientId={partographId}");
                     }
                     else
                         await Shell.Current.GoToAsync("..");
@@ -1173,7 +1184,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         [RelayCommand]
         private Task NavigateToPartograph()
-            => Shell.Current.GoToAsync($"partograph?id={_patient?.ID}");
+            => Shell.Current.GoToAsync($"partograph?patientId={_patient?.ID}");
 
         [RelayCommand]
         private Task AddPartographEntry()
