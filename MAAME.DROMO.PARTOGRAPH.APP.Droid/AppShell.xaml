@@ -5,7 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:sfSegment="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit" 
+    xmlns:sfSegment="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:sfBadge="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:fonts="clr-namespace:Fonts"
     Shell.FlyoutBehavior="Flyout"
@@ -640,8 +641,31 @@
                 </Border>
             </HorizontalStackLayout>-->
 
-            <!-- Notifications Button with Badge -->
-            <Grid Grid.Column="2" Margin="4,0">
+            <!-- Notifications Button with Syncfusion Badge -->
+            <sfBadge:SfBadgeView Grid.Column="2"
+                                 Margin="4,0"
+                                 BadgeText="{Binding NotificationCountDisplay}"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center">
+                <sfBadge:SfBadgeView.BadgeSettings>
+                    <sfBadge:BadgeSettings Type="None"
+                                           Background="#EF5350"
+                                           TextColor="White"
+                                           FontSize="10"
+                                           FontAttributes="Bold"
+                                           Position="TopRight"
+                                           Offset="-4,-2"
+                                           CornerRadius="10,10,10,10"
+                                           Animation="Scale"
+                                           BadgeIcon="None" />
+                </sfBadge:SfBadgeView.BadgeSettings>
+                <sfBadge:SfBadgeView.Triggers>
+                    <DataTrigger TargetType="sfBadge:SfBadgeView"
+                                 Binding="{Binding HasNotifications}"
+                                 Value="False">
+                        <Setter Property="BadgeText" Value="" />
+                    </DataTrigger>
+                </sfBadge:SfBadgeView.Triggers>
                 <Button Command="{Binding ShowNotificationsCommand}"
                         BackgroundColor="Transparent"
                         TextColor="{AppThemeBinding Light=#666, Dark=#AAA}"
@@ -650,9 +674,9 @@
                         CornerRadius="24"
                         ToolTipProperties.Text="Notifications">
                     <Button.ImageSource>
-                         <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                                          Glyph="&#xf115;" 
-                                          Color="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" 
+                         <FontImageSource FontFamily="{x:Static fonts:FluentUI.FontFamily}"
+                                          Glyph="&#xf115;"
+                                          Color="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                           Size="24" />
                     </Button.ImageSource>
                     <Button.Triggers>
@@ -661,32 +685,7 @@
                         </Trigger>
                     </Button.Triggers>
                 </Button>
-
-                <!-- Notification Badge -->
-                <Border WidthRequest="20"
-                        HeightRequest="20"
-                        BackgroundColor="#EF5350"
-                        HorizontalOptions="End"
-                        VerticalOptions="Start"
-                        Margin="0,4,4,0"
-                        IsVisible="{Binding HasNotifications}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10" />
-                    </Border.StrokeShape>
-                    <Border.Shadow>
-                        <Shadow Brush="#40EF5350"
-                                Offset="0,2"
-                                Radius="4"
-                                Opacity="0.4" />
-                    </Border.Shadow>
-                    <Label Text="{Binding NotificationCountDisplay}"
-                           FontSize="10"
-                           FontAttributes="Bold"
-                           TextColor="White"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center" />
-                </Border>
-            </Grid>
+            </sfBadge:SfBadgeView>
 
             <!-- Help Button -->
             <Grid Grid.Column="3" Margin="4,0">
