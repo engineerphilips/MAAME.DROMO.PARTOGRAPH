@@ -784,78 +784,112 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
         {
             var facilities = new List<Facility>();
 
-            // Ahafo Region Facilities
-            var ahafoRegionId = Guid.Parse("11111111-1111-1111-1111-111111111115");
-            var asunafoNorthId = Guid.Parse("22222222-2222-2222-2222-222222220236");
-            var asunafoSouthId = Guid.Parse("22222222-2222-2222-2222-222222220237");
-            var asutifiNorthId = Guid.Parse("22222222-2222-2222-2222-222222220238");
-            var asutifiSouthId = Guid.Parse("22222222-2222-2222-2222-222222220239");
-            var tanoNorthId = Guid.Parse("22222222-2222-2222-2222-222222220240");
-            var tanoSouthId = Guid.Parse("22222222-2222-2222-2222-222222220241");
+            // ============================================
+            // GREATER ACCRA REGION (IDs: 0001-0030)
+            // ============================================
+            var greaterAccraRegionId = Guid.Parse("11111111-1111-1111-1111-111111111101");
+            var accraMetroId = Guid.Parse("22222222-2222-2222-2222-222222220001");
+            var temaMetroId = Guid.Parse("22222222-2222-2222-2222-222222220002");
+            var gaEastId = Guid.Parse("22222222-2222-2222-2222-222222220003");
+            var gaWestId = Guid.Parse("22222222-2222-2222-2222-222222220004");
+            var gaSouthId = Guid.Parse("22222222-2222-2222-2222-222222220005");
+            var gaCentralId = Guid.Parse("22222222-2222-2222-2222-222222220006");
+            var gaNorthId = Guid.Parse("22222222-2222-2222-2222-222222220007");
+            var adentaId = Guid.Parse("22222222-2222-2222-2222-222222220008");
+            var laDadzekpoId = Guid.Parse("22222222-2222-2222-2222-222222220009");
+            var ledzokukuId = Guid.Parse("22222222-2222-2222-2222-222222220010");
+            var kponeKatamangsoId = Guid.Parse("22222222-2222-2222-2222-222222220011");
+            var ashaimanId = Guid.Parse("22222222-2222-2222-2222-222222220013");
+            var korleKlotteyId = Guid.Parse("22222222-2222-2222-2222-222222220017");
+            var ablekumaWestId = Guid.Parse("22222222-2222-2222-2222-222222220018");
+            var ablekumaCentralId = Guid.Parse("22222222-2222-2222-2222-222222220019");
+            var ablekumaNorthId = Guid.Parse("22222222-2222-2222-2222-222222220020");
+            var okaikweiNorthId = Guid.Parse("22222222-2222-2222-2222-222222220021");
+            var ayawasoCentralId = Guid.Parse("22222222-2222-2222-2222-222222220022");
+            var ayawasoEastId = Guid.Parse("22222222-2222-2222-2222-222222220023");
+            var ayawasoNorthId = Guid.Parse("22222222-2222-2222-2222-222222220024");
+            var ayawasoWestId = Guid.Parse("22222222-2222-2222-2222-222222220025");
+            var weloId = Guid.Parse("22222222-2222-2222-2222-222222220026");
+            var ningoId = Guid.Parse("22222222-2222-2222-2222-222222220027");
 
-            // Asunafo North District Facilities
+            // Accra Metropolitan & Korle Klottey Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440001", "Goaso Government Hospital", "GGH", "Hospital", "District", asunafoNorthId, "Goaso", 6.8039, -2.5172),
-                CreateFacility("44444444-4444-4444-4444-444444440002", "Mim Health Centre", "MHC", "Health Centre", "Sub-district", asunafoNorthId, "Mim", 6.9500, -2.4667),
-                CreateFacility("44444444-4444-4444-4444-444444440003", "Kasapin CHPS", "KCHPS", "CHPS", "Community", asunafoNorthId, "Kasapin", 6.8200, -2.5000),
-                CreateFacility("44444444-4444-4444-4444-444444440004", "Asafo-Akrodie CHPS", "AACHPS", "CHPS", "Community", asunafoNorthId, "Asafo-Akrodie", 6.8100, -2.4800),
-                CreateFacility("44444444-4444-4444-4444-444444440005", "Ayomso CHPS", "AYCHPS", "CHPS", "Community", asunafoNorthId, "Ayomso", 6.8300, -2.5300),
-                CreateFacility("44444444-4444-4444-4444-444444440006", "Dwenase CHPS", "DCHPS", "CHPS", "Community", asunafoNorthId, "Dwenase", 6.7900, -2.4900),
-                CreateFacility("44444444-4444-4444-4444-444444440007", "Goaso Prisons Clinic", "GPC", "Clinic", "Sub-district", asunafoNorthId, "Goaso", 6.8050, -2.5180),
-                CreateFacility("44444444-4444-4444-4444-444444440008", "Ntotroso Health Centre", "NHC", "Health Centre", "Sub-district", asunafoNorthId, "Ntotroso", 6.8800, -2.5500),
+                CreateFacility("44444444-4444-4444-4444-444444440001", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5364, -0.2275),
+                CreateFacility("44444444-4444-4444-4444-444444440002", "Ridge Hospital", "RH", "Hospital", "Regional", accraMetroId, "Accra", 5.5569, -0.1958),
+                CreateFacility("44444444-4444-4444-4444-444444440003", "37 Military Hospital", "37MH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5833, -0.1833),
+                CreateFacility("44444444-4444-4444-4444-444444440004", "Police Hospital", "PH", "Hospital", "Specialized", accraMetroId, "Accra", 5.5600, -0.2000),
+                CreateFacility("44444444-4444-4444-4444-444444440005", "La General Hospital", "LGH", "Hospital", "District", laDadzekpoId, "La", 5.5700, -0.1700),
+                CreateFacility("44444444-4444-4444-4444-444444440006", "Mamprobi Polyclinic", "MPC", "Polyclinic", "District", accraMetroId, "Mamprobi", 5.5400, -0.2200),
+                CreateFacility("44444444-4444-4444-4444-444444440007", "Ussher Polyclinic", "UPC", "Polyclinic", "District", accraMetroId, "Ussher", 5.5300, -0.2100),
+                CreateFacility("44444444-4444-4444-4444-444444440008", "Princess Marie Louise Hospital", "PMLH", "Hospital", "District", accraMetroId, "Accra", 5.5450, -0.2050),
             });
 
-            // Asunafo South District Facilities
+            // Tema Metropolitan Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440009", "Kukuom Health Centre", "KHC", "Health Centre", "Sub-district", asunafoSouthId, "Kukuom", 6.6000, -2.5000),
-                CreateFacility("44444444-4444-4444-4444-444444440010", "Abuom CHPS", "ABCHPS", "CHPS", "Community", asunafoSouthId, "Abuom", 6.6200, -2.5200),
-                CreateFacility("44444444-4444-4444-4444-444444440011", "Asumura CHPS", "ASCHPS", "CHPS", "Community", asunafoSouthId, "Asumura", 6.5800, -2.4800),
-                CreateFacility("44444444-4444-4444-4444-444444440012", "Dwomor CHPS", "DWCHPS", "CHPS", "Community", asunafoSouthId, "Dwomor", 6.5500, -2.4600),
-                CreateFacility("44444444-4444-4444-4444-444444440013", "Gyasikrom CHPS", "GYCHPS", "CHPS", "Community", asunafoSouthId, "Gyasikrom", 6.6100, -2.4900),
+                CreateFacility("44444444-4444-4444-4444-444444440009", "Tema General Hospital", "TEMGH", "Hospital", "Regional", temaMetroId, "Tema", 5.6689, -0.0167),
+                CreateFacility("44444444-4444-4444-4444-444444440010", "Tema Polyclinic", "TEMP", "Polyclinic", "District", temaMetroId, "Tema", 5.6700, -0.0200),
+                CreateFacility("44444444-4444-4444-4444-444444440011", "Community 1 Health Centre", "C1HC", "Health Centre", "Sub-district", temaMetroId, "Tema Com. 1", 5.6650, -0.0150),
+                CreateFacility("44444444-4444-4444-4444-444444440012", "Community 9 CHPS", "C9CHPS", "CHPS", "Community", temaMetroId, "Tema Com. 9", 5.6600, -0.0100),
             });
 
-            // Asutifi North District Facilities
+            // Ga East Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440014", "Kenyasi No. 1 Health Centre", "K1HC", "Health Centre", "Sub-district", asutifiNorthId, "Kenyasi No. 1", 6.9167, -2.3833),
-                CreateFacility("44444444-4444-4444-4444-444444440015", "Kenyasi No. 2 Health Centre", "K2HC", "Health Centre", "Sub-district", asutifiNorthId, "Kenyasi No. 2", 6.9200, -2.3900),
-                CreateFacility("44444444-4444-4444-4444-444444440016", "Gambia No. 1 CHPS", "G1CHPS", "CHPS", "Community", asutifiNorthId, "Gambia No. 1", 6.9300, -2.4000),
-                CreateFacility("44444444-4444-4444-4444-444444440017", "Gambia No. 2 CHPS", "G2CHPS", "CHPS", "Community", asutifiNorthId, "Gambia No. 2", 6.9350, -2.4050),
-                CreateFacility("44444444-4444-4444-4444-444444440018", "Wamahinso CHPS", "WCHPS", "CHPS", "Community", asutifiNorthId, "Wamahinso", 6.9000, -2.3700),
+                CreateFacility("44444444-4444-4444-4444-444444440013", "Ga East Municipal Hospital", "GEMH", "Hospital", "District", gaEastId, "Abokobi", 5.7000, -0.1500),
+                CreateFacility("44444444-4444-4444-4444-444444440014", "Abokobi Health Centre", "AboHC", "Health Centre", "Sub-district", gaEastId, "Abokobi", 5.7050, -0.1550),
+                CreateFacility("44444444-4444-4444-4444-444444440015", "Dome Health Centre", "DomHC", "Health Centre", "Sub-district", gaEastId, "Dome", 5.6500, -0.2300),
+                CreateFacility("44444444-4444-4444-4444-444444440016", "Taifa CHPS", "TaiCHPS", "CHPS", "Community", gaEastId, "Taifa", 5.6600, -0.2400),
             });
 
-            // Asutifi South District Facilities
+            // Ga West Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440019", "Hwidiem Government Hospital", "HGH", "Hospital", "District", asutifiSouthId, "Hwidiem", 6.7667, -2.3000),
-                CreateFacility("44444444-4444-4444-4444-444444440020", "Atronie CHPS", "ATCHPS", "CHPS", "Community", asutifiSouthId, "Atronie", 6.7800, -2.3200),
-                CreateFacility("44444444-4444-4444-4444-444444440021", "Dadiesoaba CHPS", "DACHPS", "CHPS", "Community", asutifiSouthId, "Dadiesoaba", 6.7500, -2.2800),
-                CreateFacility("44444444-4444-4444-4444-444444440022", "Mehame CHPS", "MECHPS", "CHPS", "Community", asutifiSouthId, "Mehame", 6.7600, -2.2900),
+                CreateFacility("44444444-4444-4444-4444-444444440017", "Amasaman Hospital", "AmaH", "Hospital", "District", gaWestId, "Amasaman", 5.7000, -0.3000),
+                CreateFacility("44444444-4444-4444-4444-444444440018", "Pokuase Health Centre", "PokHC", "Health Centre", "Sub-district", gaWestId, "Pokuase", 5.7100, -0.2800),
+                CreateFacility("44444444-4444-4444-4444-444444440019", "Ofankor Health Centre", "OfaHC", "Health Centre", "Sub-district", gaWestId, "Ofankor", 5.6800, -0.2600),
             });
 
-            // Tano North District Facilities
+            // Ledzokuku Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440023", "Duayaw Nkwanta Government Hospital", "DNGH", "Hospital", "District", tanoNorthId, "Duayaw Nkwanta", 7.1833, -2.1000),
-                CreateFacility("44444444-4444-4444-4444-444444440024", "Yamfo Health Centre", "YHC", "Health Centre", "Sub-district", tanoNorthId, "Yamfo", 7.2000, -2.0800),
-                CreateFacility("44444444-4444-4444-4444-444444440025", "Bomaa CHPS", "BMCHPS", "CHPS", "Community", tanoNorthId, "Bomaa", 7.1700, -2.1200),
-                CreateFacility("44444444-4444-4444-4444-444444440026", "Tanoso Health Centre", "THC", "Health Centre", "Sub-district", tanoNorthId, "Tanoso", 7.1500, -2.0900),
-                CreateFacility("44444444-4444-4444-4444-444444440027", "Adrobaa CHPS", "ADCHPS", "CHPS", "Community", tanoNorthId, "Adrobaa", 7.1900, -2.1100),
+                CreateFacility("44444444-4444-4444-4444-444444440020", "Ledzokuku Krowor Municipal Hospital", "LKMH", "Hospital", "District", ledzokukuId, "Teshie", 5.5833, -0.1000),
+                CreateFacility("44444444-4444-4444-4444-444444440021", "Teshie Polyclinic", "TesP", "Polyclinic", "District", ledzokukuId, "Teshie", 5.5800, -0.1050),
+                CreateFacility("44444444-4444-4444-4444-444444440022", "Nungua Health Centre", "NunHC", "Health Centre", "Sub-district", ledzokukuId, "Nungua", 5.5900, -0.0800),
             });
 
-            // Tano South District Facilities
+            // Ashaiman Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440028", "Bechem Government Hospital", "BGH", "Hospital", "District", tanoSouthId, "Bechem", 7.0833, -2.0167),
-                CreateFacility("44444444-4444-4444-4444-444444440029", "Techire CHPS", "TECHPS", "CHPS", "Community", tanoSouthId, "Techire", 7.0600, -2.0300),
-                CreateFacility("44444444-4444-4444-4444-444444440030", "Nkaseim CHPS", "NKCHPS", "CHPS", "Community", tanoSouthId, "Nkaseim", 7.0700, -2.0400),
-                CreateFacility("44444444-4444-4444-4444-444444440031", "Aworowa CHPS", "AWCHPS", "CHPS", "Community", tanoSouthId, "Aworowa", 7.0500, -2.0100),
-                CreateFacility("44444444-4444-4444-4444-444444440032", "Derma CHPS", "DECHPS", "CHPS", "Community", tanoSouthId, "Derma", 7.0900, -2.0200),
+                CreateFacility("44444444-4444-4444-4444-444444440023", "Ashaiman Polyclinic", "AshP", "Polyclinic", "District", ashaimanId, "Ashaiman", 5.6833, -0.0333),
+                CreateFacility("44444444-4444-4444-4444-444444440024", "Tulaku Health Centre", "TulHC", "Health Centre", "Sub-district", ashaimanId, "Tulaku", 5.6900, -0.0400),
+                CreateFacility("44444444-4444-4444-4444-444444440025", "Lebanon CHPS", "LebCHPS", "CHPS", "Community", ashaimanId, "Lebanon", 5.6800, -0.0300),
             });
 
-            // Ashanti Region Facilities
+            // Ga South Municipal Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440026", "Ga South Municipal Hospital", "GSMH", "Hospital", "District", gaSouthId, "Weija", 5.5500, -0.3500),
+                CreateFacility("44444444-4444-4444-4444-444444440027", "Weija Health Centre", "WeiHC", "Health Centre", "Sub-district", gaSouthId, "Weija", 5.5550, -0.3550),
+            });
+
+            // Adentan Municipal Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440028", "Adentan Municipal Hospital", "AdMH", "Hospital", "District", adentaId, "Adentan", 5.7167, -0.1500),
+                CreateFacility("44444444-4444-4444-4444-444444440029", "Frafraha CHPS", "FraCHPS", "CHPS", "Community", adentaId, "Frafraha", 5.7200, -0.1400),
+            });
+
+            // Kpone Katamanso District Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440030", "Kpone Health Centre", "KpoHC", "Health Centre", "Sub-district", kponeKatamangsoId, "Kpone", 5.6833, 0.0500),
+            });
+
+            // ============================================
+            // ASHANTI REGION (IDs: 0031-0060)
+            // ============================================
             var ashantiRegionId = Guid.Parse("11111111-1111-1111-1111-111111111102");
             var kumasiMetroId = Guid.Parse("22222222-2222-2222-2222-222222220028");
             var oforikromId = Guid.Parse("22222222-2222-2222-2222-222222220029");
@@ -867,63 +901,161 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             var mampongId = Guid.Parse("22222222-2222-2222-2222-222222220039");
             var obuasiId = Guid.Parse("22222222-2222-2222-2222-222222220057");
             var bekwaiId = Guid.Parse("22222222-2222-2222-2222-222222220052");
+            var afigya_kwabreId = Guid.Parse("22222222-2222-2222-2222-222222220034");
+            var atwima_nwabiaghyaId = Guid.Parse("22222222-2222-2222-2222-222222220040");
+            var asanteAkimCentralId = Guid.Parse("22222222-2222-2222-2222-222222220045");
 
             // Kumasi Metropolitan Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440033", "Komfo Anokye Teaching Hospital", "KATH", "Hospital", "Tertiary", kumasiMetroId, "Kumasi", 6.6885, -1.6244),
-                CreateFacility("44444444-4444-4444-4444-444444440034", "Kumasi South Hospital", "KSH", "Hospital", "Regional", kumasiMetroId, "Kumasi", 6.6700, -1.6300),
-                CreateFacility("44444444-4444-4444-4444-444444440035", "Suntreso Government Hospital", "SGH", "Hospital", "District", kumasiMetroId, "Suntreso", 6.7000, -1.6400),
-                CreateFacility("44444444-4444-4444-4444-444444440036", "Manhyia District Hospital", "MDH", "Hospital", "District", kumasiMetroId, "Manhyia", 6.7100, -1.6100),
-                CreateFacility("44444444-4444-4444-4444-444444440037", "Tafo Government Hospital", "TGH", "Hospital", "District", kumasiMetroId, "Tafo", 6.7200, -1.5900),
-                CreateFacility("44444444-4444-4444-4444-444444440038", "Maternal and Child Health Hospital", "MCHH", "Hospital", "Specialized", kumasiMetroId, "Kumasi", 6.6900, -1.6250),
+                CreateFacility("44444444-4444-4444-4444-444444440031", "Komfo Anokye Teaching Hospital", "KATH", "Hospital", "Tertiary", kumasiMetroId, "Kumasi", 6.6885, -1.6244),
+                CreateFacility("44444444-4444-4444-4444-444444440032", "Kumasi South Hospital", "KSH", "Hospital", "Regional", kumasiMetroId, "Kumasi", 6.6700, -1.6300),
+                CreateFacility("44444444-4444-4444-4444-444444440033", "Suntreso Government Hospital", "SGH", "Hospital", "District", kumasiMetroId, "Suntreso", 6.7000, -1.6400),
+                CreateFacility("44444444-4444-4444-4444-444444440034", "Manhyia District Hospital", "ManDH", "Hospital", "District", kumasiMetroId, "Manhyia", 6.7100, -1.6100),
+                CreateFacility("44444444-4444-4444-4444-444444440035", "Tafo Government Hospital", "TafoGH", "Hospital", "District", oldTafoId, "Tafo", 6.7200, -1.5900),
+                CreateFacility("44444444-4444-4444-4444-444444440036", "Maternal and Child Health Hospital Kumasi", "MCHK", "Hospital", "Specialized", kumasiMetroId, "Kumasi", 6.6900, -1.6250),
             });
 
             // Oforikrom Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440039", "KNUST Hospital", "KNUSTH", "Hospital", "Tertiary", oforikromId, "KNUST", 6.6730, -1.5660),
-                CreateFacility("44444444-4444-4444-4444-444444440040", "Oforikrom Health Centre", "OHC", "Health Centre", "Sub-district", oforikromId, "Oforikrom", 6.6800, -1.5700),
-                CreateFacility("44444444-4444-4444-4444-444444440041", "Ayigya Health Centre", "AyHC", "Health Centre", "Sub-district", oforikromId, "Ayigya", 6.6650, -1.5750),
-                CreateFacility("44444444-4444-4444-4444-444444440042", "Bomso CHPS", "BosCHPS", "CHPS", "Community", oforikromId, "Bomso", 6.6700, -1.5650),
+                CreateFacility("44444444-4444-4444-4444-444444440037", "KNUST Hospital", "KNUSTH", "Hospital", "Tertiary", oforikromId, "KNUST", 6.6730, -1.5660),
+                CreateFacility("44444444-4444-4444-4444-444444440038", "Oforikrom Health Centre", "OfoHC", "Health Centre", "Sub-district", oforikromId, "Oforikrom", 6.6800, -1.5700),
+                CreateFacility("44444444-4444-4444-4444-444444440039", "Ayigya Health Centre", "AyiHC", "Health Centre", "Sub-district", oforikromId, "Ayigya", 6.6650, -1.5750),
+                CreateFacility("44444444-4444-4444-4444-444444440040", "Bomso CHPS", "BomCHPS", "CHPS", "Community", oforikromId, "Bomso", 6.6700, -1.5650),
             });
 
             // Ejisu Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440043", "Ejisu Government Hospital", "EGH", "Hospital", "District", ejismuId, "Ejisu", 6.7261, -1.4614),
-                CreateFacility("44444444-4444-4444-4444-444444440044", "Besease Health Centre", "BHC", "Health Centre", "Sub-district", ejismuId, "Besease", 6.7400, -1.4800),
-                CreateFacility("44444444-4444-4444-4444-444444440045", "Bonwire Health Centre", "BwHC", "Health Centre", "Sub-district", ejismuId, "Bonwire", 6.7500, -1.4500),
-                CreateFacility("44444444-4444-4444-4444-444444440046", "Kwaso CHPS", "KwCHPS", "CHPS", "Community", ejismuId, "Kwaso", 6.7300, -1.4700),
+                CreateFacility("44444444-4444-4444-4444-444444440041", "Ejisu Government Hospital", "EjGH", "Hospital", "District", ejismuId, "Ejisu", 6.7261, -1.4614),
+                CreateFacility("44444444-4444-4444-4444-444444440042", "Besease Health Centre", "BesHC", "Health Centre", "Sub-district", ejismuId, "Besease", 6.7400, -1.4800),
+                CreateFacility("44444444-4444-4444-4444-444444440043", "Bonwire Health Centre", "BonHC", "Health Centre", "Sub-district", ejismuId, "Bonwire", 6.7500, -1.4500),
+                CreateFacility("44444444-4444-4444-4444-444444440044", "Kwaso CHPS", "KwaCHPS", "CHPS", "Community", ejismuId, "Kwaso", 6.7300, -1.4700),
             });
 
             // Mampong Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440047", "Mampong Government Hospital", "MGH", "Hospital", "District", mampongId, "Mampong", 7.0619, -1.4011),
-                CreateFacility("44444444-4444-4444-4444-444444440048", "Kofiase Health Centre", "KoHC", "Health Centre", "Sub-district", mampongId, "Kofiase", 7.0800, -1.4200),
-                CreateFacility("44444444-4444-4444-4444-444444440049", "Nsuta Health Centre", "NsHC", "Health Centre", "Sub-district", mampongId, "Nsuta", 7.0400, -1.3900),
-                CreateFacility("44444444-4444-4444-4444-444444440050", "Benim CHPS", "BenCHPS", "CHPS", "Community", mampongId, "Benim", 7.0500, -1.4100),
+                CreateFacility("44444444-4444-4444-4444-444444440045", "Mampong Government Hospital", "MamGH", "Hospital", "District", mampongId, "Mampong", 7.0619, -1.4011),
+                CreateFacility("44444444-4444-4444-4444-444444440046", "Kofiase Health Centre", "KofHC", "Health Centre", "Sub-district", mampongId, "Kofiase", 7.0800, -1.4200),
+                CreateFacility("44444444-4444-4444-4444-444444440047", "Nsuta Health Centre", "NsuHC", "Health Centre", "Sub-district", mampongId, "Nsuta", 7.0400, -1.3900),
+                CreateFacility("44444444-4444-4444-4444-444444440048", "Benim CHPS", "BenCHPS", "CHPS", "Community", mampongId, "Benim", 7.0500, -1.4100),
             });
 
             // Obuasi Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440051", "AGA Hospital Obuasi", "AGAH", "Hospital", "Private", obuasiId, "Obuasi", 6.2028, -1.6628),
-                CreateFacility("44444444-4444-4444-4444-444444440052", "Obuasi Government Hospital", "OGH", "Hospital", "District", obuasiId, "Obuasi", 6.2000, -1.6600),
-                CreateFacility("44444444-4444-4444-4444-444444440053", "Tutuka Health Centre", "TuHC", "Health Centre", "Sub-district", obuasiId, "Tutuka", 6.2100, -1.6700),
-                CreateFacility("44444444-4444-4444-4444-444444440054", "Wawase CHPS", "WaCHPS", "CHPS", "Community", obuasiId, "Wawase", 6.1900, -1.6500),
+                CreateFacility("44444444-4444-4444-4444-444444440049", "AGA Hospital Obuasi", "AGAH", "Hospital", "Private", obuasiId, "Obuasi", 6.2028, -1.6628),
+                CreateFacility("44444444-4444-4444-4444-444444440050", "Obuasi Government Hospital", "ObuGH", "Hospital", "District", obuasiId, "Obuasi", 6.2000, -1.6600),
+                CreateFacility("44444444-4444-4444-4444-444444440051", "Tutuka Health Centre", "TutHC", "Health Centre", "Sub-district", obuasiId, "Tutuka", 6.2100, -1.6700),
+                CreateFacility("44444444-4444-4444-4444-444444440052", "Wawase CHPS", "WawCHPS", "CHPS", "Community", obuasiId, "Wawase", 6.1900, -1.6500),
             });
 
             // Bekwai Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440055", "Bekwai Municipal Hospital", "BMH", "Hospital", "District", bekwaiId, "Bekwai", 6.4556, -1.5717),
-                CreateFacility("44444444-4444-4444-4444-444444440056", "Anwiankwanta Health Centre", "AnHC", "Health Centre", "Sub-district", bekwaiId, "Anwiankwanta", 6.4700, -1.5800),
-                CreateFacility("44444444-4444-4444-4444-444444440057", "Kokoben CHPS", "KokCHPS", "CHPS", "Community", bekwaiId, "Kokoben", 6.4400, -1.5600),
+                CreateFacility("44444444-4444-4444-4444-444444440053", "Bekwai Municipal Hospital", "BekMH", "Hospital", "District", bekwaiId, "Bekwai", 6.4556, -1.5717),
+                CreateFacility("44444444-4444-4444-4444-444444440054", "Anwiankwanta Health Centre", "AnwHC", "Health Centre", "Sub-district", bekwaiId, "Anwiankwanta", 6.4700, -1.5800),
+                CreateFacility("44444444-4444-4444-4444-444444440055", "Kokoben CHPS", "KokCHPS", "CHPS", "Community", bekwaiId, "Kokoben", 6.4400, -1.5600),
             });
 
-            // Bono Region Facilities
+            // Asante Akim Central Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440056", "Konongo Odumase Hospital", "KonOH", "Hospital", "District", asanteAkimCentralId, "Konongo", 6.6167, -1.2167),
+                CreateFacility("44444444-4444-4444-4444-444444440057", "Agogo Presbyterian Hospital", "AgoPH", "Hospital", "District", asanteAkimCentralId, "Agogo", 6.8000, -1.0833),
+            });
+
+            // Afigya Kwabre South Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440058", "Afigya Kwabre South Hospital", "AKSH", "Hospital", "District", afigya_kwabreId, "Kodie", 6.8000, -1.6500),
+                CreateFacility("44444444-4444-4444-4444-444444440059", "Maakro Health Centre", "MaaHC", "Health Centre", "Sub-district", afigya_kwabreId, "Maakro", 6.8100, -1.6600),
+            });
+
+            // Atwima Nwabiagya Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440060", "Nkawie Government Hospital", "NkaGH", "Hospital", "District", atwima_nwabiaghyaId, "Nkawie", 6.7500, -1.7833),
+            });
+
+            // ============================================
+            // AHAFO REGION (IDs: 0061-0095)
+            // ============================================
+            var ahafoRegionId = Guid.Parse("11111111-1111-1111-1111-111111111115");
+            var asunafoNorthId = Guid.Parse("22222222-2222-2222-2222-222222220236");
+            var asunafoSouthId = Guid.Parse("22222222-2222-2222-2222-222222220237");
+            var asutifiNorthId = Guid.Parse("22222222-2222-2222-2222-222222220238");
+            var asutifiSouthId = Guid.Parse("22222222-2222-2222-2222-222222220239");
+            var tanoNorthId = Guid.Parse("22222222-2222-2222-2222-222222220240");
+            var tanoSouthId = Guid.Parse("22222222-2222-2222-2222-222222220241");
+
+            // Asunafo North District Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440061", "Goaso Government Hospital", "GoaGH", "Hospital", "District", asunafoNorthId, "Goaso", 6.8039, -2.5172),
+                CreateFacility("44444444-4444-4444-4444-444444440062", "Mim Health Centre", "MimHC", "Health Centre", "Sub-district", asunafoNorthId, "Mim", 6.9500, -2.4667),
+                CreateFacility("44444444-4444-4444-4444-444444440063", "Kasapin CHPS", "KasCHPS", "CHPS", "Community", asunafoNorthId, "Kasapin", 6.8200, -2.5000),
+                CreateFacility("44444444-4444-4444-4444-444444440064", "Asafo-Akrodie CHPS", "AsaCHPS", "CHPS", "Community", asunafoNorthId, "Asafo-Akrodie", 6.8100, -2.4800),
+                CreateFacility("44444444-4444-4444-4444-444444440065", "Ayomso CHPS", "AyoCHPS", "CHPS", "Community", asunafoNorthId, "Ayomso", 6.8300, -2.5300),
+                CreateFacility("44444444-4444-4444-4444-444444440066", "Dwenase CHPS", "DweCHPS", "CHPS", "Community", asunafoNorthId, "Dwenase", 6.7900, -2.4900),
+                CreateFacility("44444444-4444-4444-4444-444444440067", "Goaso Prisons Clinic", "GoaPC", "Clinic", "Sub-district", asunafoNorthId, "Goaso", 6.8050, -2.5180),
+                CreateFacility("44444444-4444-4444-4444-444444440068", "Ntotroso Health Centre", "NtoHC", "Health Centre", "Sub-district", asunafoNorthId, "Ntotroso", 6.8800, -2.5500),
+            });
+
+            // Asunafo South District Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440069", "Kukuom Health Centre", "KukHC", "Health Centre", "Sub-district", asunafoSouthId, "Kukuom", 6.6000, -2.5000),
+                CreateFacility("44444444-4444-4444-4444-444444440070", "Abuom CHPS", "AbuCHPS", "CHPS", "Community", asunafoSouthId, "Abuom", 6.6200, -2.5200),
+                CreateFacility("44444444-4444-4444-4444-444444440071", "Asumura CHPS", "AsuCHPS", "CHPS", "Community", asunafoSouthId, "Asumura", 6.5800, -2.4800),
+                CreateFacility("44444444-4444-4444-4444-444444440072", "Dwomor CHPS", "DwoCHPS", "CHPS", "Community", asunafoSouthId, "Dwomor", 6.5500, -2.4600),
+                CreateFacility("44444444-4444-4444-4444-444444440073", "Gyasikrom CHPS", "GyaCHPS", "CHPS", "Community", asunafoSouthId, "Gyasikrom", 6.6100, -2.4900),
+            });
+
+            // Asutifi North District Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440074", "Kenyasi No. 1 Health Centre", "Ken1HC", "Health Centre", "Sub-district", asutifiNorthId, "Kenyasi No. 1", 6.9167, -2.3833),
+                CreateFacility("44444444-4444-4444-4444-444444440075", "Kenyasi No. 2 Health Centre", "Ken2HC", "Health Centre", "Sub-district", asutifiNorthId, "Kenyasi No. 2", 6.9200, -2.3900),
+                CreateFacility("44444444-4444-4444-4444-444444440076", "Gambia No. 1 CHPS", "Gam1CHPS", "CHPS", "Community", asutifiNorthId, "Gambia No. 1", 6.9300, -2.4000),
+                CreateFacility("44444444-4444-4444-4444-444444440077", "Gambia No. 2 CHPS", "Gam2CHPS", "CHPS", "Community", asutifiNorthId, "Gambia No. 2", 6.9350, -2.4050),
+                CreateFacility("44444444-4444-4444-4444-444444440078", "Wamahinso CHPS", "WamCHPS", "CHPS", "Community", asutifiNorthId, "Wamahinso", 6.9000, -2.3700),
+            });
+
+            // Asutifi South District Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440079", "Hwidiem Government Hospital", "HwiGH", "Hospital", "District", asutifiSouthId, "Hwidiem", 6.7667, -2.3000),
+                CreateFacility("44444444-4444-4444-4444-444444440080", "Atronie CHPS", "AtrCHPS", "CHPS", "Community", asutifiSouthId, "Atronie", 6.7800, -2.3200),
+                CreateFacility("44444444-4444-4444-4444-444444440081", "Dadiesoaba CHPS", "DadCHPS", "CHPS", "Community", asutifiSouthId, "Dadiesoaba", 6.7500, -2.2800),
+                CreateFacility("44444444-4444-4444-4444-444444440082", "Mehame CHPS", "MehCHPS", "CHPS", "Community", asutifiSouthId, "Mehame", 6.7600, -2.2900),
+            });
+
+            // Tano North District Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440083", "Duayaw Nkwanta Government Hospital", "DuaGH", "Hospital", "District", tanoNorthId, "Duayaw Nkwanta", 7.1833, -2.1000),
+                CreateFacility("44444444-4444-4444-4444-444444440084", "Yamfo Health Centre", "YamHC", "Health Centre", "Sub-district", tanoNorthId, "Yamfo", 7.2000, -2.0800),
+                CreateFacility("44444444-4444-4444-4444-444444440085", "Bomaa CHPS", "BomaCHPS", "CHPS", "Community", tanoNorthId, "Bomaa", 7.1700, -2.1200),
+                CreateFacility("44444444-4444-4444-4444-444444440086", "Tanoso Health Centre", "TanHC", "Health Centre", "Sub-district", tanoNorthId, "Tanoso", 7.1500, -2.0900),
+                CreateFacility("44444444-4444-4444-4444-444444440087", "Adrobaa CHPS", "AdrCHPS", "CHPS", "Community", tanoNorthId, "Adrobaa", 7.1900, -2.1100),
+            });
+
+            // Tano South District Facilities
+            facilities.AddRange(new[]
+            {
+                CreateFacility("44444444-4444-4444-4444-444444440088", "Bechem Government Hospital", "BecGH", "Hospital", "District", tanoSouthId, "Bechem", 7.0833, -2.0167),
+                CreateFacility("44444444-4444-4444-4444-444444440089", "Techire CHPS", "TecCHPS", "CHPS", "Community", tanoSouthId, "Techire", 7.0600, -2.0300),
+                CreateFacility("44444444-4444-4444-4444-444444440090", "Nkaseim CHPS", "NkaCHPS", "CHPS", "Community", tanoSouthId, "Nkaseim", 7.0700, -2.0400),
+                CreateFacility("44444444-4444-4444-4444-444444440091", "Aworowa CHPS", "AwoCHPS", "CHPS", "Community", tanoSouthId, "Aworowa", 7.0500, -2.0100),
+                CreateFacility("44444444-4444-4444-4444-444444440092", "Derma CHPS", "DerCHPS", "CHPS", "Community", tanoSouthId, "Derma", 7.0900, -2.0200),
+            });
+
+            // ============================================
+            // BONO REGION (IDs: 0093-0110)
+            // ============================================
             var bonoRegionId = Guid.Parse("11111111-1111-1111-1111-111111111113");
             var sunyaniId = Guid.Parse("22222222-2222-2222-2222-222222220213");
             var sunyaniWestId = Guid.Parse("22222222-2222-2222-2222-222222220214");
@@ -934,37 +1066,39 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Sunyani Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440058", "Sunyani Regional Hospital", "SRH", "Hospital", "Regional", sunyaniId, "Sunyani", 7.3349, -2.3123),
-                CreateFacility("44444444-4444-4444-4444-444444440059", "Sunyani Municipal Hospital", "SMH", "Hospital", "District", sunyaniId, "Sunyani", 7.3400, -2.3100),
-                CreateFacility("44444444-4444-4444-4444-444444440060", "New Dormaa Health Centre", "NDHC", "Health Centre", "Sub-district", sunyaniId, "New Dormaa", 7.3500, -2.3200),
-                CreateFacility("44444444-4444-4444-4444-444444440061", "Abesim Health Centre", "AbHC", "Health Centre", "Sub-district", sunyaniId, "Abesim", 7.3200, -2.3000),
+                CreateFacility("44444444-4444-4444-4444-444444440093", "Sunyani Regional Hospital", "SunRH", "Hospital", "Regional", sunyaniId, "Sunyani", 7.3349, -2.3123),
+                CreateFacility("44444444-4444-4444-4444-444444440094", "Sunyani Municipal Hospital", "SunMH", "Hospital", "District", sunyaniId, "Sunyani", 7.3400, -2.3100),
+                CreateFacility("44444444-4444-4444-4444-444444440095", "New Dormaa Health Centre", "NDHC", "Health Centre", "Sub-district", sunyaniId, "New Dormaa", 7.3500, -2.3200),
+                CreateFacility("44444444-4444-4444-4444-444444440096", "Abesim Health Centre", "AbeHC", "Health Centre", "Sub-district", sunyaniId, "Abesim", 7.3200, -2.3000),
             });
 
             // Berekum East Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440062", "Holy Family Hospital Berekum", "HFHB", "Hospital", "District", berekumEastId, "Berekum", 7.4567, -2.5850),
-                CreateFacility("44444444-4444-4444-4444-444444440063", "Berekum Government Hospital", "BeGH", "Hospital", "District", berekumEastId, "Berekum", 7.4600, -2.5800),
-                CreateFacility("44444444-4444-4444-4444-444444440064", "Koraso Health Centre", "KorHC", "Health Centre", "Sub-district", berekumEastId, "Koraso", 7.4700, -2.5900),
+                CreateFacility("44444444-4444-4444-4444-444444440097", "Holy Family Hospital Berekum", "HFHB", "Hospital", "District", berekumEastId, "Berekum", 7.4567, -2.5850),
+                CreateFacility("44444444-4444-4444-4444-444444440098", "Berekum Government Hospital", "BerGH", "Hospital", "District", berekumEastId, "Berekum", 7.4600, -2.5800),
+                CreateFacility("44444444-4444-4444-4444-444444440099", "Koraso Health Centre", "KorHC", "Health Centre", "Sub-district", berekumEastId, "Koraso", 7.4700, -2.5900),
             });
 
             // Dormaa Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440065", "Dormaa Ahenkro Presbyterian Hospital", "DAPH", "Hospital", "District", dormaaId, "Dormaa Ahenkro", 7.3500, -2.9667),
-                CreateFacility("44444444-4444-4444-4444-444444440066", "Dormaa Government Hospital", "DGH", "Hospital", "District", dormaaId, "Dormaa", 7.3550, -2.9700),
-                CreateFacility("44444444-4444-4444-4444-444444440067", "Kwameasua Health Centre", "KwaHC", "Health Centre", "Sub-district", dormaaId, "Kwameasua", 7.3600, -2.9800),
+                CreateFacility("44444444-4444-4444-4444-444444440100", "Dormaa Ahenkro Presbyterian Hospital", "DAPH", "Hospital", "District", dormaaId, "Dormaa Ahenkro", 7.3500, -2.9667),
+                CreateFacility("44444444-4444-4444-4444-444444440101", "Dormaa Government Hospital", "DorGH", "Hospital", "District", dormaaId, "Dormaa", 7.3550, -2.9700),
+                CreateFacility("44444444-4444-4444-4444-444444440102", "Kwameasua Health Centre", "KwamHC", "Health Centre", "Sub-district", dormaaId, "Kwameasua", 7.3600, -2.9800),
             });
 
             // Wenchi Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440068", "Wenchi Methodist Hospital", "WMH", "Hospital", "District", wenchiId, "Wenchi", 7.7500, -2.1000),
-                CreateFacility("44444444-4444-4444-4444-444444440069", "Wenchi Government Hospital", "WGH", "Hospital", "District", wenchiId, "Wenchi", 7.7550, -2.0950),
-                CreateFacility("44444444-4444-4444-4444-444444440070", "Subinso Health Centre", "SubHC", "Health Centre", "Sub-district", wenchiId, "Subinso", 7.7600, -2.1100),
+                CreateFacility("44444444-4444-4444-4444-444444440103", "Wenchi Methodist Hospital", "WenMH", "Hospital", "District", wenchiId, "Wenchi", 7.7500, -2.1000),
+                CreateFacility("44444444-4444-4444-4444-444444440104", "Wenchi Government Hospital", "WenGH", "Hospital", "District", wenchiId, "Wenchi", 7.7550, -2.0950),
+                CreateFacility("44444444-4444-4444-4444-444444440105", "Subinso Health Centre", "SubHC", "Health Centre", "Sub-district", wenchiId, "Subinso", 7.7600, -2.1100),
             });
 
-            // Bono East Region Facilities
+            // ============================================
+            // BONO EAST REGION (IDs: 0106-0120)
+            // ============================================
             var bonoEastRegionId = Guid.Parse("11111111-1111-1111-1111-111111111114");
             var techimanId = Guid.Parse("22222222-2222-2222-2222-222222220225");
             var nkoranzaSouthId = Guid.Parse("22222222-2222-2222-2222-222222220228");
@@ -974,27 +1108,27 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Techiman Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440071", "Holy Family Hospital Techiman", "HFHT", "Hospital", "Regional", techimanId, "Techiman", 7.5833, -1.9333),
-                CreateFacility("44444444-4444-4444-4444-444444440072", "Techiman Municipal Hospital", "TMH", "Hospital", "District", techimanId, "Techiman", 7.5800, -1.9300),
-                CreateFacility("44444444-4444-4444-4444-444444440073", "Krobo Health Centre", "KroHC", "Health Centre", "Sub-district", techimanId, "Krobo", 7.5900, -1.9400),
-                CreateFacility("44444444-4444-4444-4444-444444440074", "Aworowa CHPS Techiman", "AwTCHPS", "CHPS", "Community", techimanId, "Aworowa", 7.5700, -1.9200),
+                CreateFacility("44444444-4444-4444-4444-444444440106", "Holy Family Hospital Techiman", "HFHT", "Hospital", "Regional", techimanId, "Techiman", 7.5833, -1.9333),
+                CreateFacility("44444444-4444-4444-4444-444444440107", "Techiman Municipal Hospital", "TMH", "Hospital", "District", techimanId, "Techiman", 7.5800, -1.9300),
+                CreateFacility("44444444-4444-4444-4444-444444440108", "Krobo Health Centre", "KroHC", "Health Centre", "Sub-district", techimanId, "Krobo", 7.5900, -1.9400),
+                CreateFacility("44444444-4444-4444-4444-444444440109", "Aworowa CHPS Techiman", "AwTCHPS", "CHPS", "Community", techimanId, "Aworowa", 7.5700, -1.9200),
             });
 
             // Kintampo North Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440075", "Kintampo Municipal Hospital", "KMH", "Hospital", "District", kintampoNorthId, "Kintampo", 8.0556, -1.7306),
-                CreateFacility("44444444-4444-4444-4444-444444440076", "Kintampo Health Research Centre", "KHRC", "Research Centre", "Specialized", kintampoNorthId, "Kintampo", 8.0600, -1.7350),
-                CreateFacility("44444444-4444-4444-4444-444444440077", "Babato Health Centre", "BabHC", "Health Centre", "Sub-district", kintampoNorthId, "Babato", 8.0700, -1.7400),
-                CreateFacility("44444444-4444-4444-4444-444444440078", "New Longoro CHPS", "NLCHPS", "CHPS", "Community", kintampoNorthId, "New Longoro", 8.0400, -1.7200),
+                CreateFacility("44444444-4444-4444-4444-444444440110", "Kintampo Municipal Hospital", "KMH", "Hospital", "District", kintampoNorthId, "Kintampo", 8.0556, -1.7306),
+                CreateFacility("44444444-4444-4444-4444-444444440111", "Kintampo Health Research Centre", "KHRC", "Research Centre", "Specialized", kintampoNorthId, "Kintampo", 8.0600, -1.7350),
+                CreateFacility("44444444-4444-4444-4444-444444440112", "Babato Health Centre", "BabHC", "Health Centre", "Sub-district", kintampoNorthId, "Babato", 8.0700, -1.7400),
+                CreateFacility("44444444-4444-4444-4444-444444440113", "New Longoro CHPS", "NLCHPS", "CHPS", "Community", kintampoNorthId, "New Longoro", 8.0400, -1.7200),
             });
 
             // Atebubu Amantin Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440079", "Atebubu Government Hospital", "AtGH", "Hospital", "District", atebubuId, "Atebubu", 7.7500, -0.9833),
-                CreateFacility("44444444-4444-4444-4444-444444440080", "Amantin Health Centre", "AmHC", "Health Centre", "Sub-district", atebubuId, "Amantin", 7.7600, -0.9900),
-                CreateFacility("44444444-4444-4444-4444-444444440081", "Fakwasi CHPS", "FakCHPS", "CHPS", "Community", atebubuId, "Fakwasi", 7.7400, -0.9700),
+                CreateFacility("44444444-4444-4444-4444-444444440114", "Atebubu Government Hospital", "AtGH", "Hospital", "District", atebubuId, "Atebubu", 7.7500, -0.9833),
+                CreateFacility("44444444-4444-4444-4444-444444440115", "Amantin Health Centre", "AmHC", "Health Centre", "Sub-district", atebubuId, "Amantin", 7.7600, -0.9900),
+                CreateFacility("44444444-4444-4444-4444-444444440116", "Fakwasi CHPS", "FakCHPS", "CHPS", "Community", atebubuId, "Fakwasi", 7.7400, -0.9700),
             });
 
             // Central Region Facilities
@@ -1008,43 +1142,43 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Cape Coast Metropolitan Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440082", "Cape Coast Teaching Hospital", "CCTH", "Hospital", "Tertiary", capeCoastId, "Cape Coast", 5.1315, -1.2795),
-                CreateFacility("44444444-4444-4444-4444-444444440083", "University of Cape Coast Hospital", "UCCH", "Hospital", "Tertiary", capeCoastId, "UCC", 5.1150, -1.2900),
-                CreateFacility("44444444-4444-4444-4444-444444440084", "Ewim Polyclinic", "EP", "Polyclinic", "District", capeCoastId, "Ewim", 5.1200, -1.2700),
-                CreateFacility("44444444-4444-4444-4444-444444440085", "Aboom Health Centre", "AbHC2", "Health Centre", "Sub-district", capeCoastId, "Aboom", 5.1100, -1.2600),
+                CreateFacility("44444444-4444-4444-4444-444444440117", "Cape Coast Teaching Hospital", "CCTH", "Hospital", "Tertiary", capeCoastId, "Cape Coast", 5.1315, -1.2795),
+                CreateFacility("44444444-4444-4444-4444-444444440118", "University of Cape Coast Hospital", "UCCH", "Hospital", "Tertiary", capeCoastId, "UCC", 5.1150, -1.2900),
+                CreateFacility("44444444-4444-4444-4444-444444440119", "Ewim Polyclinic", "EP", "Polyclinic", "District", capeCoastId, "Ewim", 5.1200, -1.2700),
+                CreateFacility("44444444-4444-4444-4444-444444440120", "Aboom Health Centre", "AbHC2", "Health Centre", "Sub-district", capeCoastId, "Aboom", 5.1100, -1.2600),
             });
 
             // Effutu Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440086", "Winneba Municipal Hospital", "WinMH", "Hospital", "District", effutuId, "Winneba", 5.3500, -0.6333),
-                CreateFacility("44444444-4444-4444-4444-444444440087", "University of Education Winneba Clinic", "UEWC", "Clinic", "Sub-district", effutuId, "Winneba", 5.3600, -0.6400),
-                CreateFacility("44444444-4444-4444-4444-444444440088", "Sankor Health Centre", "SanHC", "Health Centre", "Sub-district", effutuId, "Sankor", 5.3400, -0.6200),
+                CreateFacility("44444444-4444-4444-4444-444444440121", "Winneba Municipal Hospital", "WinMH", "Hospital", "District", effutuId, "Winneba", 5.3500, -0.6333),
+                CreateFacility("44444444-4444-4444-4444-444444440122", "University of Education Winneba Clinic", "UEWC", "Clinic", "Sub-district", effutuId, "Winneba", 5.3600, -0.6400),
+                CreateFacility("44444444-4444-4444-4444-444444440123", "Sankor Health Centre", "SanHC", "Health Centre", "Sub-district", effutuId, "Sankor", 5.3400, -0.6200),
             });
 
             // Awutu Senya East Municipal (Kasoa) Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440089", "Kasoa Polyclinic", "KasP", "Polyclinic", "District", awutuSenyaEastId, "Kasoa", 5.5333, -0.4167),
-                CreateFacility("44444444-4444-4444-4444-444444440090", "Budumburam Health Centre", "BudHC", "Health Centre", "Sub-district", awutuSenyaEastId, "Budumburam", 5.5400, -0.4300),
-                CreateFacility("44444444-4444-4444-4444-444444440091", "Ofankor Health Centre", "OfaHC", "Health Centre", "Sub-district", awutuSenyaEastId, "Ofankor", 5.5200, -0.4100),
-                CreateFacility("44444444-4444-4444-4444-444444440092", "Opeikuma CHPS", "OpeCHPS", "CHPS", "Community", awutuSenyaEastId, "Opeikuma", 5.5500, -0.4200),
+                CreateFacility("44444444-4444-4444-4444-444444440124", "Kasoa Polyclinic", "KasP", "Polyclinic", "District", awutuSenyaEastId, "Kasoa", 5.5333, -0.4167),
+                CreateFacility("44444444-4444-4444-4444-444444440125", "Budumburam Health Centre", "BudHC", "Health Centre", "Sub-district", awutuSenyaEastId, "Budumburam", 5.5400, -0.4300),
+                CreateFacility("44444444-4444-4444-4444-444444440126", "Ofankor Health Centre", "OfaHC", "Health Centre", "Sub-district", awutuSenyaEastId, "Ofankor", 5.5200, -0.4100),
+                CreateFacility("44444444-4444-4444-4444-444444440127", "Opeikuma CHPS", "OpeCHPS", "CHPS", "Community", awutuSenyaEastId, "Opeikuma", 5.5500, -0.4200),
             });
 
             // Agona West Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440093", "Agona Swedru Municipal Hospital", "ASMH", "Hospital", "District", agonaWestId, "Swedru", 5.5333, -0.7000),
-                CreateFacility("44444444-4444-4444-4444-444444440094", "Abodom Health Centre", "AboHC", "Health Centre", "Sub-district", agonaWestId, "Abodom", 5.5400, -0.7100),
-                CreateFacility("44444444-4444-4444-4444-444444440095", "Nyakrom Health Centre", "NyaHC", "Health Centre", "Sub-district", agonaWestId, "Nyakrom", 5.5200, -0.6900),
+                CreateFacility("44444444-4444-4444-4444-444444440128", "Agona Swedru Municipal Hospital", "ASMH", "Hospital", "District", agonaWestId, "Swedru", 5.5333, -0.7000),
+                CreateFacility("44444444-4444-4444-4444-444444440129", "Abodom Health Centre", "AboHC", "Health Centre", "Sub-district", agonaWestId, "Abodom", 5.5400, -0.7100),
+                CreateFacility("44444444-4444-4444-4444-444444440130", "Nyakrom Health Centre", "NyaHC", "Health Centre", "Sub-district", agonaWestId, "Nyakrom", 5.5200, -0.6900),
             });
 
             // Assin North Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440096", "Assin Foso Municipal Hospital", "AFMH", "Hospital", "District", assinNorthId, "Assin Foso", 5.7167, -1.2167),
-                CreateFacility("44444444-4444-4444-4444-444444440097", "Assin Praso Health Centre", "APHC", "Health Centre", "Sub-district", assinNorthId, "Assin Praso", 5.7300, -1.2300),
-                CreateFacility("44444444-4444-4444-4444-444444440098", "Assin Bereku CHPS", "ABCHPS2", "CHPS", "Community", assinNorthId, "Assin Bereku", 5.7000, -1.2000),
+                CreateFacility("44444444-4444-4444-4444-444444440131", "Assin Foso Municipal Hospital", "AFMH", "Hospital", "District", assinNorthId, "Assin Foso", 5.7167, -1.2167),
+                CreateFacility("44444444-4444-4444-4444-444444440132", "Assin Praso Health Centre", "APHC", "Health Centre", "Sub-district", assinNorthId, "Assin Praso", 5.7300, -1.2300),
+                CreateFacility("44444444-4444-4444-4444-444444440133", "Assin Bereku CHPS", "ABCHPS2", "CHPS", "Community", assinNorthId, "Assin Bereku", 5.7000, -1.2000),
             });
 
             // Eastern Region Facilities
@@ -1058,34 +1192,34 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // New Juaben South Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440099", "Eastern Regional Hospital", "ERH", "Hospital", "Regional", newJuabenSouthId, "Koforidua", 6.0940, -0.2577),
-                CreateFacility("44444444-4444-4444-4444-444444440100", "St. Joseph's Hospital Koforidua", "SJH", "Hospital", "District", newJuabenSouthId, "Koforidua", 6.0900, -0.2600),
-                CreateFacility("44444444-4444-4444-4444-444444440101", "Koforidua Polyclinic", "KP", "Polyclinic", "District", newJuabenSouthId, "Koforidua", 6.0950, -0.2550),
-                CreateFacility("44444444-4444-4444-4444-444444440102", "Ada Health Centre", "AdaHC2", "Health Centre", "Sub-district", newJuabenSouthId, "Ada", 6.1000, -0.2700),
+                CreateFacility("44444444-4444-4444-4444-444444440134", "Eastern Regional Hospital", "ERH", "Hospital", "Regional", newJuabenSouthId, "Koforidua", 6.0940, -0.2577),
+                CreateFacility("44444444-4444-4444-4444-444444440135", "St. Joseph's Hospital Koforidua", "SJH", "Hospital", "District", newJuabenSouthId, "Koforidua", 6.0900, -0.2600),
+                CreateFacility("44444444-4444-4444-4444-444444440136", "Koforidua Polyclinic", "KP", "Polyclinic", "District", newJuabenSouthId, "Koforidua", 6.0950, -0.2550),
+                CreateFacility("44444444-4444-4444-4444-444444440137", "Ada Health Centre", "AdaHC2", "Health Centre", "Sub-district", newJuabenSouthId, "Ada", 6.1000, -0.2700),
             });
 
             // Nsawam Adoagyiri Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440103", "Nsawam Government Hospital", "NGH", "Hospital", "District", nsawamId, "Nsawam", 5.8167, -0.3500),
-                CreateFacility("44444444-4444-4444-4444-444444440104", "Adoagyiri Health Centre", "AdoHC", "Health Centre", "Sub-district", nsawamId, "Adoagyiri", 5.8200, -0.3600),
-                CreateFacility("44444444-4444-4444-4444-444444440105", "Dobro CHPS", "DobCHPS", "CHPS", "Community", nsawamId, "Dobro", 5.8100, -0.3400),
+                CreateFacility("44444444-4444-4444-4444-444444440138", "Nsawam Government Hospital", "NGH", "Hospital", "District", nsawamId, "Nsawam", 5.8167, -0.3500),
+                CreateFacility("44444444-4444-4444-4444-444444440139", "Adoagyiri Health Centre", "AdoHC", "Health Centre", "Sub-district", nsawamId, "Adoagyiri", 5.8200, -0.3600),
+                CreateFacility("44444444-4444-4444-4444-444444440140", "Dobro CHPS", "DobCHPS", "CHPS", "Community", nsawamId, "Dobro", 5.8100, -0.3400),
             });
 
             // East Akim Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440106", "Kibi Government Hospital", "KiGH", "Hospital", "District", eastAkimId, "Kibi", 6.1667, -0.5500),
-                CreateFacility("44444444-4444-4444-4444-444444440107", "Bunso Health Centre", "BunHC", "Health Centre", "Sub-district", eastAkimId, "Bunso", 6.1800, -0.5600),
-                CreateFacility("44444444-4444-4444-4444-444444440108", "Apedwa CHPS", "ApeCHPS", "CHPS", "Community", eastAkimId, "Apedwa", 6.1500, -0.5400),
+                CreateFacility("44444444-4444-4444-4444-444444440141", "Kibi Government Hospital", "KiGH", "Hospital", "District", eastAkimId, "Kibi", 6.1667, -0.5500),
+                CreateFacility("44444444-4444-4444-4444-444444440142", "Bunso Health Centre", "BunHC", "Health Centre", "Sub-district", eastAkimId, "Bunso", 6.1800, -0.5600),
+                CreateFacility("44444444-4444-4444-4444-444444440143", "Apedwa CHPS", "ApeCHPS", "CHPS", "Community", eastAkimId, "Apedwa", 6.1500, -0.5400),
             });
 
             // Birim Central Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440109", "Oda Government Hospital", "OdaGH", "Hospital", "District", birimCentralId, "Oda", 5.9167, -0.9833),
-                CreateFacility("44444444-4444-4444-4444-444444440110", "Akim Oda Polyclinic", "AODP", "Polyclinic", "District", birimCentralId, "Akim Oda", 5.9200, -0.9800),
-                CreateFacility("44444444-4444-4444-4444-444444440111", "Akroso Health Centre", "AkrHC", "Health Centre", "Sub-district", birimCentralId, "Akroso", 5.9300, -0.9900),
+                CreateFacility("44444444-4444-4444-4444-444444440144", "Oda Government Hospital", "OdaGH", "Hospital", "District", birimCentralId, "Oda", 5.9167, -0.9833),
+                CreateFacility("44444444-4444-4444-4444-444444440145", "Akim Oda Polyclinic", "AODP", "Polyclinic", "District", birimCentralId, "Akim Oda", 5.9200, -0.9800),
+                CreateFacility("44444444-4444-4444-4444-444444440146", "Akroso Health Centre", "AkrHC", "Health Centre", "Sub-district", birimCentralId, "Akroso", 5.9300, -0.9900),
             });
 
             // Greater Accra Region Facilities
@@ -1163,34 +1297,34 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Tamale Metropolitan Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440136", "Tamale Teaching Hospital", "TTH", "Hospital", "Tertiary", tamaleMetroId, "Tamale", 9.4008, -0.8393),
-                CreateFacility("44444444-4444-4444-4444-444444440137", "Tamale Central Hospital", "TCH", "Hospital", "Regional", tamaleMetroId, "Tamale", 9.4050, -0.8400),
-                CreateFacility("44444444-4444-4444-4444-444444440138", "Tamale West Hospital", "TWH", "Hospital", "District", tamaleMetroId, "Tamale West", 9.4100, -0.8500),
-                CreateFacility("44444444-4444-4444-4444-444444440139", "Vittin Health Centre", "VitHC", "Health Centre", "Sub-district", tamaleMetroId, "Vittin", 9.3900, -0.8300),
+                CreateFacility("44444444-4444-4444-4444-444444440147", "Tamale Teaching Hospital", "TTH", "Hospital", "Tertiary", tamaleMetroId, "Tamale", 9.4008, -0.8393),
+                CreateFacility("44444444-4444-4444-4444-444444440148", "Tamale Central Hospital", "TCH", "Hospital", "Regional", tamaleMetroId, "Tamale", 9.4050, -0.8400),
+                CreateFacility("44444444-4444-4444-4444-444444440149", "Tamale West Hospital", "TWH", "Hospital", "District", tamaleMetroId, "Tamale West", 9.4100, -0.8500),
+                CreateFacility("44444444-4444-4444-4444-444444440150", "Vittin Health Centre", "VitHC", "Health Centre", "Sub-district", tamaleMetroId, "Vittin", 9.3900, -0.8300),
             });
 
             // Sagnarigu Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440140", "Sagnarigu District Hospital", "SagDH", "Hospital", "District", sagnariguId, "Sagnarigu", 9.4500, -0.8600),
-                CreateFacility("44444444-4444-4444-4444-444444440141", "Choggu Health Centre", "ChoHC", "Health Centre", "Sub-district", sagnariguId, "Choggu", 9.4600, -0.8700),
-                CreateFacility("44444444-4444-4444-4444-444444440142", "Gurugu CHPS", "GurCHPS", "CHPS", "Community", sagnariguId, "Gurugu", 9.4400, -0.8500),
+                CreateFacility("44444444-4444-4444-4444-444444440151", "Sagnarigu District Hospital", "SagDH", "Hospital", "District", sagnariguId, "Sagnarigu", 9.4500, -0.8600),
+                CreateFacility("44444444-4444-4444-4444-444444440152", "Choggu Health Centre", "ChoHC", "Health Centre", "Sub-district", sagnariguId, "Choggu", 9.4600, -0.8700),
+                CreateFacility("44444444-4444-4444-4444-444444440153", "Gurugu CHPS", "GurCHPS", "CHPS", "Community", sagnariguId, "Gurugu", 9.4400, -0.8500),
             });
 
             // Savelugu Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440143", "Savelugu Municipal Hospital", "SavMH", "Hospital", "District", saveluguid, "Savelugu", 9.6242, -0.8250),
-                CreateFacility("44444444-4444-4444-4444-444444440144", "Pong Tamale Health Centre", "PTHC", "Health Centre", "Sub-district", saveluguid, "Pong Tamale", 9.6300, -0.8300),
-                CreateFacility("44444444-4444-4444-4444-444444440145", "Diare CHPS", "DiaCHPS", "CHPS", "Community", saveluguid, "Diare", 9.6100, -0.8200),
+                CreateFacility("44444444-4444-4444-4444-444444440154", "Savelugu Municipal Hospital", "SavMH", "Hospital", "District", saveluguid, "Savelugu", 9.6242, -0.8250),
+                CreateFacility("44444444-4444-4444-4444-444444440155", "Pong Tamale Health Centre", "PTHC", "Health Centre", "Sub-district", saveluguid, "Pong Tamale", 9.6300, -0.8300),
+                CreateFacility("44444444-4444-4444-4444-444444440156", "Diare CHPS", "DiaCHPS", "CHPS", "Community", saveluguid, "Diare", 9.6100, -0.8200),
             });
 
             // Yendi Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440146", "Yendi Municipal Hospital", "YMH", "Hospital", "District", yendiId, "Yendi", 9.4425, -0.0097),
-                CreateFacility("44444444-4444-4444-4444-444444440147", "Gnani Health Centre", "GnaHC", "Health Centre", "Sub-district", yendiId, "Gnani", 9.4500, -0.0200),
-                CreateFacility("44444444-4444-4444-4444-444444440148", "Adibo CHPS", "AdibCHPS", "CHPS", "Community", yendiId, "Adibo", 9.4300, 0.0000),
+                CreateFacility("44444444-4444-4444-4444-444444440157", "Yendi Municipal Hospital", "YMH", "Hospital", "District", yendiId, "Yendi", 9.4425, -0.0097),
+                CreateFacility("44444444-4444-4444-4444-444444440158", "Gnani Health Centre", "GnaHC", "Health Centre", "Sub-district", yendiId, "Gnani", 9.4500, -0.0200),
+                CreateFacility("44444444-4444-4444-4444-444444440159", "Adibo CHPS", "AdibCHPS", "CHPS", "Community", yendiId, "Adibo", 9.4300, 0.0000),
             });
 
             // Upper East Region Facilities
@@ -1202,25 +1336,25 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Bolgatanga Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440149", "Bolgatanga Regional Hospital", "BRH", "Hospital", "Regional", bolgatangaId, "Bolgatanga", 10.7856, -0.8519),
-                CreateFacility("44444444-4444-4444-4444-444444440150", "Upper East Regional Hospital", "UERH", "Hospital", "Regional", bolgatangaId, "Bolgatanga", 10.7900, -0.8550),
-                CreateFacility("44444444-4444-4444-4444-444444440151", "Zuarungu Health Centre", "ZuaHC", "Health Centre", "Sub-district", bolgatangaId, "Zuarungu", 10.7800, -0.8400),
+                CreateFacility("44444444-4444-4444-4444-444444440160", "Bolgatanga Regional Hospital", "BRH", "Hospital", "Regional", bolgatangaId, "Bolgatanga", 10.7856, -0.8519),
+                CreateFacility("44444444-4444-4444-4444-444444440161", "Upper East Regional Hospital", "UERH", "Hospital", "Regional", bolgatangaId, "Bolgatanga", 10.7900, -0.8550),
+                CreateFacility("44444444-4444-4444-4444-444444440162", "Zuarungu Health Centre", "ZuaHC", "Health Centre", "Sub-district", bolgatangaId, "Zuarungu", 10.7800, -0.8400),
             });
 
             // Bawku Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440152", "Bawku Presbyterian Hospital", "BPH", "Hospital", "District", bawkuId, "Bawku", 11.0606, -0.2417),
-                CreateFacility("44444444-4444-4444-4444-444444440153", "Bawku Health Centre", "BawHC", "Health Centre", "Sub-district", bawkuId, "Bawku", 11.0650, -0.2450),
-                CreateFacility("44444444-4444-4444-4444-444444440154", "Gozesi CHPS", "GozCHPS", "CHPS", "Community", bawkuId, "Gozesi", 11.0500, -0.2300),
+                CreateFacility("44444444-4444-4444-4444-444444440163", "Bawku Presbyterian Hospital", "BPH", "Hospital", "District", bawkuId, "Bawku", 11.0606, -0.2417),
+                CreateFacility("44444444-4444-4444-4444-444444440164", "Bawku Health Centre", "BawHC", "Health Centre", "Sub-district", bawkuId, "Bawku", 11.0650, -0.2450),
+                CreateFacility("44444444-4444-4444-4444-444444440165", "Gozesi CHPS", "GozCHPS", "CHPS", "Community", bawkuId, "Gozesi", 11.0500, -0.2300),
             });
 
             // Kassena Nankana Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440155", "War Memorial Hospital Navrongo", "WMHN", "Hospital", "District", navrongoId, "Navrongo", 10.8944, -1.0917),
-                CreateFacility("44444444-4444-4444-4444-444444440156", "Navrongo Health Research Centre", "NHRC", "Research Centre", "Specialized", navrongoId, "Navrongo", 10.8900, -1.0950),
-                CreateFacility("44444444-4444-4444-4444-444444440157", "Paga Health Centre", "PagHC", "Health Centre", "Sub-district", navrongoId, "Paga", 10.9800, -1.1100),
+                CreateFacility("44444444-4444-4444-4444-444444440166", "War Memorial Hospital Navrongo", "WMHN", "Hospital", "District", navrongoId, "Navrongo", 10.8944, -1.0917),
+                CreateFacility("44444444-4444-4444-4444-444444440167", "Navrongo Health Research Centre", "NHRC", "Research Centre", "Specialized", navrongoId, "Navrongo", 10.8900, -1.0950),
+                CreateFacility("44444444-4444-4444-4444-444444440168", "Paga Health Centre", "PagHC", "Health Centre", "Sub-district", navrongoId, "Paga", 10.9800, -1.1100),
             });
 
             // Upper West Region Facilities
@@ -1232,26 +1366,26 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Wa Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440158", "Wa Regional Hospital", "WRH", "Hospital", "Regional", waId, "Wa", 10.0601, -2.5099),
-                CreateFacility("44444444-4444-4444-4444-444444440159", "Wa Municipal Hospital", "WaMH", "Hospital", "District", waId, "Wa", 10.0650, -2.5050),
-                CreateFacility("44444444-4444-4444-4444-444444440160", "Kpongu Health Centre", "KpoHC", "Health Centre", "Sub-district", waId, "Kpongu", 10.0700, -2.5200),
-                CreateFacility("44444444-4444-4444-4444-444444440161", "Bamahu CHPS", "BamCHPS", "CHPS", "Community", waId, "Bamahu", 10.0500, -2.5000),
+                CreateFacility("44444444-4444-4444-4444-444444440169", "Wa Regional Hospital", "WRH", "Hospital", "Regional", waId, "Wa", 10.0601, -2.5099),
+                CreateFacility("44444444-4444-4444-4444-444444440170", "Wa Municipal Hospital", "WaMH", "Hospital", "District", waId, "Wa", 10.0650, -2.5050),
+                CreateFacility("44444444-4444-4444-4444-444444440171", "Kpongu Health Centre", "KpoHC", "Health Centre", "Sub-district", waId, "Kpongu", 10.0700, -2.5200),
+                CreateFacility("44444444-4444-4444-4444-444444440172", "Bamahu CHPS", "BamCHPS", "CHPS", "Community", waId, "Bamahu", 10.0500, -2.5000),
             });
 
             // Jirapa Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440162", "St. Joseph Hospital Jirapa", "SJHJ", "Hospital", "District", jirapaId, "Jirapa", 10.7833, -2.5500),
-                CreateFacility("44444444-4444-4444-4444-444444440163", "Hain Health Centre", "HaiHC", "Health Centre", "Sub-district", jirapaId, "Hain", 10.7900, -2.5600),
-                CreateFacility("44444444-4444-4444-4444-444444440164", "Ullo CHPS", "UllCHPS", "CHPS", "Community", jirapaId, "Ullo", 10.7700, -2.5400),
+                CreateFacility("44444444-4444-4444-4444-444444440173", "St. Joseph Hospital Jirapa", "SJHJ", "Hospital", "District", jirapaId, "Jirapa", 10.7833, -2.5500),
+                CreateFacility("44444444-4444-4444-4444-444444440174", "Hain Health Centre", "HaiHC", "Health Centre", "Sub-district", jirapaId, "Hain", 10.7900, -2.5600),
+                CreateFacility("44444444-4444-4444-4444-444444440175", "Ullo CHPS", "UllCHPS", "CHPS", "Community", jirapaId, "Ullo", 10.7700, -2.5400),
             });
 
             // Lawra Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440165", "Lawra District Hospital", "LDH", "Hospital", "District", lawraId, "Lawra", 10.6333, -2.9000),
-                CreateFacility("44444444-4444-4444-4444-444444440166", "Babile Health Centre", "BabHC2", "Health Centre", "Sub-district", lawraId, "Babile", 10.6400, -2.9100),
-                CreateFacility("44444444-4444-4444-4444-444444440167", "Eremon CHPS", "EreCHPS", "CHPS", "Community", lawraId, "Eremon", 10.6200, -2.8900),
+                CreateFacility("44444444-4444-4444-4444-444444440176", "Lawra District Hospital", "LDH", "Hospital", "District", lawraId, "Lawra", 10.6333, -2.9000),
+                CreateFacility("44444444-4444-4444-4444-444444440177", "Babile Health Centre", "BabHC2", "Health Centre", "Sub-district", lawraId, "Babile", 10.6400, -2.9100),
+                CreateFacility("44444444-4444-4444-4444-444444440178", "Eremon CHPS", "EreCHPS", "CHPS", "Community", lawraId, "Eremon", 10.6200, -2.8900),
             });
 
             // Volta Region Facilities
@@ -1263,26 +1397,26 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Ho Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440168", "Ho Teaching Hospital", "HTH", "Hospital", "Tertiary", hoId, "Ho", 6.6000, 0.4700),
-                CreateFacility("44444444-4444-4444-4444-444444440169", "Volta Regional Hospital", "VRH", "Hospital", "Regional", hoId, "Ho", 6.6050, 0.4750),
-                CreateFacility("44444444-4444-4444-4444-444444440170", "Ho Municipal Hospital", "HMH", "Hospital", "District", hoId, "Ho", 6.6100, 0.4650),
-                CreateFacility("44444444-4444-4444-4444-444444440171", "Sokode Health Centre", "SokHC", "Health Centre", "Sub-district", hoId, "Sokode", 6.5900, 0.4600),
+                CreateFacility("44444444-4444-4444-4444-444444440179", "Ho Teaching Hospital", "HTH", "Hospital", "Tertiary", hoId, "Ho", 6.6000, 0.4700),
+                CreateFacility("44444444-4444-4444-4444-444444440180", "Volta Regional Hospital", "VRH", "Hospital", "Regional", hoId, "Ho", 6.6050, 0.4750),
+                CreateFacility("44444444-4444-4444-4444-444444440181", "Ho Municipal Hospital", "HMH", "Hospital", "District", hoId, "Ho", 6.6100, 0.4650),
+                CreateFacility("44444444-4444-4444-4444-444444440182", "Sokode Health Centre", "SokHC", "Health Centre", "Sub-district", hoId, "Sokode", 6.5900, 0.4600),
             });
 
             // Ketu South Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440172", "Ketu South Municipal Hospital", "KSMH", "Hospital", "District", ketaSouthId, "Denu", 6.0833, 1.1333),
-                CreateFacility("44444444-4444-4444-4444-444444440173", "Aflao Health Centre", "AflHC", "Health Centre", "Sub-district", ketaSouthId, "Aflao", 6.1167, 1.1833),
-                CreateFacility("44444444-4444-4444-4444-444444440174", "Agbozume CHPS", "AgbCHPS", "CHPS", "Community", ketaSouthId, "Agbozume", 6.1000, 1.1500),
+                CreateFacility("44444444-4444-4444-4444-444444440183", "Ketu South Municipal Hospital", "KSMH", "Hospital", "District", ketaSouthId, "Denu", 6.0833, 1.1333),
+                CreateFacility("44444444-4444-4444-4444-444444440184", "Aflao Health Centre", "AflHC", "Health Centre", "Sub-district", ketaSouthId, "Aflao", 6.1167, 1.1833),
+                CreateFacility("44444444-4444-4444-4444-444444440185", "Agbozume CHPS", "AgbCHPS", "CHPS", "Community", ketaSouthId, "Agbozume", 6.1000, 1.1500),
             });
 
             // Keta Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440175", "Keta Municipal Hospital", "KetMH", "Hospital", "District", ketaId, "Keta", 5.9167, 0.9833),
-                CreateFacility("44444444-4444-4444-4444-444444440176", "Anloga Health Centre", "AnlHC", "Health Centre", "Sub-district", ketaId, "Anloga", 5.7833, 0.8833),
-                CreateFacility("44444444-4444-4444-4444-444444440177", "Woe CHPS", "WoeCHPS", "CHPS", "Community", ketaId, "Woe", 5.9000, 0.9700),
+                CreateFacility("44444444-4444-4444-4444-444444440186", "Keta Municipal Hospital", "KetMH", "Hospital", "District", ketaId, "Keta", 5.9167, 0.9833),
+                CreateFacility("44444444-4444-4444-4444-444444440187", "Anloga Health Centre", "AnlHC", "Health Centre", "Sub-district", ketaId, "Anloga", 5.7833, 0.8833),
+                CreateFacility("44444444-4444-4444-4444-444444440188", "Woe CHPS", "WoeCHPS", "CHPS", "Community", ketaId, "Woe", 5.9000, 0.9700),
             });
 
             // Western Region Facilities
@@ -1294,26 +1428,26 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Sekondi Takoradi Metropolitan Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440178", "Effia Nkwanta Regional Hospital", "ENRH", "Hospital", "Regional", sekondiTakoradiId, "Sekondi", 4.9400, -1.7700),
-                CreateFacility("44444444-4444-4444-4444-444444440179", "Takoradi Hospital", "TakH", "Hospital", "District", sekondiTakoradiId, "Takoradi", 4.8833, -1.7500),
-                CreateFacility("44444444-4444-4444-4444-444444440180", "European Hospital Takoradi", "EHT", "Hospital", "District", sekondiTakoradiId, "Takoradi", 4.8900, -1.7600),
-                CreateFacility("44444444-4444-4444-4444-444444440181", "Essikadu Health Centre", "EssHC", "Health Centre", "Sub-district", sekondiTakoradiId, "Essikadu", 4.9500, -1.7800),
+                CreateFacility("44444444-4444-4444-4444-444444440189", "Effia Nkwanta Regional Hospital", "ENRH", "Hospital", "Regional", sekondiTakoradiId, "Sekondi", 4.9400, -1.7700),
+                CreateFacility("44444444-4444-4444-4444-444444440190", "Takoradi Hospital", "TakH", "Hospital", "District", sekondiTakoradiId, "Takoradi", 4.8833, -1.7500),
+                CreateFacility("44444444-4444-4444-4444-444444440191", "European Hospital Takoradi", "EHT", "Hospital", "District", sekondiTakoradiId, "Takoradi", 4.8900, -1.7600),
+                CreateFacility("44444444-4444-4444-4444-444444440192", "Essikadu Health Centre", "EssHC", "Health Centre", "Sub-district", sekondiTakoradiId, "Essikadu", 4.9500, -1.7800),
             });
 
             // Tarkwa Nsuaem Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440182", "Tarkwa Municipal Hospital", "TarMH", "Hospital", "District", tarkwaId, "Tarkwa", 5.3000, -1.9833),
-                CreateFacility("44444444-4444-4444-4444-444444440183", "Goldfields Hospital Tarkwa", "GHT", "Hospital", "Private", tarkwaId, "Tarkwa", 5.3050, -1.9800),
-                CreateFacility("44444444-4444-4444-4444-444444440184", "Nsuaem Health Centre", "NsuHC", "Health Centre", "Sub-district", tarkwaId, "Nsuaem", 5.3100, -1.9900),
+                CreateFacility("44444444-4444-4444-4444-444444440193", "Tarkwa Municipal Hospital", "TarMH", "Hospital", "District", tarkwaId, "Tarkwa", 5.3000, -1.9833),
+                CreateFacility("44444444-4444-4444-4444-444444440194", "Goldfields Hospital Tarkwa", "GHT", "Hospital", "Private", tarkwaId, "Tarkwa", 5.3050, -1.9800),
+                CreateFacility("44444444-4444-4444-4444-444444440195", "Nsuaem Health Centre", "NsuHC", "Health Centre", "Sub-district", tarkwaId, "Nsuaem", 5.3100, -1.9900),
             });
 
             // Nzema East Municipal (Axim) Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440185", "Axim Government Hospital", "AGH", "Hospital", "District", axim, "Axim", 4.8667, -2.2333),
-                CreateFacility("44444444-4444-4444-4444-444444440186", "Axim Health Centre", "AxHC", "Health Centre", "Sub-district", axim, "Axim", 4.8700, -2.2400),
-                CreateFacility("44444444-4444-4444-4444-444444440187", "Nkroful CHPS", "NkrCHPS", "CHPS", "Community", axim, "Nkroful", 5.0833, -2.2167),
+                CreateFacility("44444444-4444-4444-4444-444444440196", "Axim Government Hospital", "AGH", "Hospital", "District", axim, "Axim", 4.8667, -2.2333),
+                CreateFacility("44444444-4444-4444-4444-444444440197", "Axim Health Centre", "AxHC", "Health Centre", "Sub-district", axim, "Axim", 4.8700, -2.2400),
+                CreateFacility("44444444-4444-4444-4444-444444440198", "Nkroful CHPS", "NkrCHPS", "CHPS", "Community", axim, "Nkroful", 5.0833, -2.2167),
             });
 
             // Western North Region Facilities
@@ -1325,25 +1459,25 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Sefwi Wiawso Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440188", "Sefwi Wiawso Municipal Hospital", "SWMH", "Hospital", "District", wiawsoId, "Sefwi Wiawso", 6.2167, -2.4833),
-                CreateFacility("44444444-4444-4444-4444-444444440189", "St. John of God Hospital Sefwi Asafo", "SJGA", "Hospital", "District", wiawsoId, "Sefwi Asafo", 6.2300, -2.4900),
-                CreateFacility("44444444-4444-4444-4444-444444440190", "Wiawso Health Centre", "WiaHC", "Health Centre", "Sub-district", wiawsoId, "Wiawso", 6.2200, -2.4850),
+                CreateFacility("44444444-4444-4444-4444-444444440199", "Sefwi Wiawso Municipal Hospital", "SWMH", "Hospital", "District", wiawsoId, "Sefwi Wiawso", 6.2167, -2.4833),
+                CreateFacility("44444444-4444-4444-4444-444444440200", "St. John of God Hospital Sefwi Asafo", "SJGA", "Hospital", "District", wiawsoId, "Sefwi Asafo", 6.2300, -2.4900),
+                CreateFacility("44444444-4444-4444-4444-444444440201", "Wiawso Health Centre", "WiaHC", "Health Centre", "Sub-district", wiawsoId, "Wiawso", 6.2200, -2.4850),
             });
 
             // Bibiani Anhwiaso Bekwai Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440191", "Bibiani Government Hospital", "BibGH", "Hospital", "District", bibianiId, "Bibiani", 6.4667, -2.3167),
-                CreateFacility("44444444-4444-4444-4444-444444440192", "Sefwi Bekwai Health Centre", "SBHC", "Health Centre", "Sub-district", bibianiId, "Sefwi Bekwai", 6.4800, -2.3300),
-                CreateFacility("44444444-4444-4444-4444-444444440193", "Anhwiaso CHPS", "AnhCHPS", "CHPS", "Community", bibianiId, "Anhwiaso", 6.4500, -2.3000),
+                CreateFacility("44444444-4444-4444-4444-444444440202", "Bibiani Government Hospital", "BibGH", "Hospital", "District", bibianiId, "Bibiani", 6.4667, -2.3167),
+                CreateFacility("44444444-4444-4444-4444-444444440203", "Sefwi Bekwai Health Centre", "SBHC", "Health Centre", "Sub-district", bibianiId, "Sefwi Bekwai", 6.4800, -2.3300),
+                CreateFacility("44444444-4444-4444-4444-444444440204", "Anhwiaso CHPS", "AnhCHPS", "CHPS", "Community", bibianiId, "Anhwiaso", 6.4500, -2.3000),
             });
 
             // Juaboso District Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440194", "Juaboso Government Hospital", "JuaGH", "Hospital", "District", juabosoId, "Juaboso", 6.4167, -2.8333),
-                CreateFacility("44444444-4444-4444-4444-444444440195", "Bonsu Nkwanta Health Centre", "BNHC", "Health Centre", "Sub-district", juabosoId, "Bonsu Nkwanta", 6.4300, -2.8500),
-                CreateFacility("44444444-4444-4444-4444-444444440196", "Essam CHPS", "EssCHPS", "CHPS", "Community", juabosoId, "Essam", 6.4000, -2.8200),
+                CreateFacility("44444444-4444-4444-4444-444444440205", "Juaboso Government Hospital", "JuaGH", "Hospital", "District", juabosoId, "Juaboso", 6.4167, -2.8333),
+                CreateFacility("44444444-4444-4444-4444-444444440206", "Bonsu Nkwanta Health Centre", "BNHC", "Health Centre", "Sub-district", juabosoId, "Bonsu Nkwanta", 6.4300, -2.8500),
+                CreateFacility("44444444-4444-4444-4444-444444440207", "Essam CHPS", "EssCHPS", "CHPS", "Community", juabosoId, "Essam", 6.4000, -2.8200),
             });
 
             // Oti Region Facilities
@@ -1354,17 +1488,17 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Krachi East Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440197", "Dambai District Hospital", "DamDH", "Hospital", "District", krachiEastId, "Dambai", 7.9833, 0.1667),
-                CreateFacility("44444444-4444-4444-4444-444444440198", "Dambai Health Centre", "DamHC", "Health Centre", "Sub-district", krachiEastId, "Dambai", 7.9900, 0.1700),
-                CreateFacility("44444444-4444-4444-4444-444444440199", "Tokuroano CHPS", "TokCHPS", "CHPS", "Community", krachiEastId, "Tokuroano", 7.9700, 0.1600),
+                CreateFacility("44444444-4444-4444-4444-444444440208", "Dambai District Hospital", "DamDH", "Hospital", "District", krachiEastId, "Dambai", 7.9833, 0.1667),
+                CreateFacility("44444444-4444-4444-4444-444444440209", "Dambai Health Centre", "DamHC", "Health Centre", "Sub-district", krachiEastId, "Dambai", 7.9900, 0.1700),
+                CreateFacility("44444444-4444-4444-4444-444444440210", "Tokuroano CHPS", "TokCHPS", "CHPS", "Community", krachiEastId, "Tokuroano", 7.9700, 0.1600),
             });
 
             // Nkwanta South Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440200", "Nkwanta District Hospital", "NkwDH", "Hospital", "District", nkwantaSouthId, "Nkwanta", 8.2500, 0.5000),
-                CreateFacility("44444444-4444-4444-4444-444444440201", "Nkwanta Health Centre", "NkwHC", "Health Centre", "Sub-district", nkwantaSouthId, "Nkwanta", 8.2550, 0.5050),
-                CreateFacility("44444444-4444-4444-4444-444444440202", "Damanko CHPS", "DamaCHPS", "CHPS", "Community", nkwantaSouthId, "Damanko", 8.2400, 0.4900),
+                CreateFacility("44444444-4444-4444-4444-444444440211", "Nkwanta District Hospital", "NkwDH", "Hospital", "District", nkwantaSouthId, "Nkwanta", 8.2500, 0.5000),
+                CreateFacility("44444444-4444-4444-4444-444444440212", "Nkwanta Health Centre", "NkwHC", "Health Centre", "Sub-district", nkwantaSouthId, "Nkwanta", 8.2550, 0.5050),
+                CreateFacility("44444444-4444-4444-4444-444444440213", "Damanko CHPS", "DamaCHPS", "CHPS", "Community", nkwantaSouthId, "Damanko", 8.2400, 0.4900),
             });
 
             // Savannah Region Facilities
@@ -1376,25 +1510,25 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // West Gonja Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440203", "Damongo District Hospital", "DamoDH", "Hospital", "District", westGonjaId, "Damongo", 9.0833, -1.8167),
-                CreateFacility("44444444-4444-4444-4444-444444440204", "Damongo Health Centre", "DamoHC", "Health Centre", "Sub-district", westGonjaId, "Damongo", 9.0900, -1.8200),
-                CreateFacility("44444444-4444-4444-4444-444444440205", "Larabanga CHPS", "LarCHPS", "CHPS", "Community", westGonjaId, "Larabanga", 9.2167, -1.8500),
+                CreateFacility("44444444-4444-4444-4444-444444440214", "Damongo District Hospital", "DamoDH", "Hospital", "District", westGonjaId, "Damongo", 9.0833, -1.8167),
+                CreateFacility("44444444-4444-4444-4444-444444440215", "Damongo Health Centre", "DamoHC", "Health Centre", "Sub-district", westGonjaId, "Damongo", 9.0900, -1.8200),
+                CreateFacility("44444444-4444-4444-4444-444444440216", "Larabanga CHPS", "LarCHPS", "CHPS", "Community", westGonjaId, "Larabanga", 9.2167, -1.8500),
             });
 
             // East Gonja Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440206", "Salaga District Hospital", "SalDH", "Hospital", "District", eastGonjaId, "Salaga", 8.5500, -0.5167),
-                CreateFacility("44444444-4444-4444-4444-444444440207", "Salaga Health Centre", "SalHC", "Health Centre", "Sub-district", eastGonjaId, "Salaga", 8.5550, -0.5200),
-                CreateFacility("44444444-4444-4444-4444-444444440208", "Kpandai CHPS", "KpaCHPS", "CHPS", "Community", eastGonjaId, "Kpandai", 8.4700, -0.0167),
+                CreateFacility("44444444-4444-4444-4444-444444440217", "Salaga District Hospital", "SalDH", "Hospital", "District", eastGonjaId, "Salaga", 8.5500, -0.5167),
+                CreateFacility("44444444-4444-4444-4444-444444440218", "Salaga Health Centre", "SalHC", "Health Centre", "Sub-district", eastGonjaId, "Salaga", 8.5550, -0.5200),
+                CreateFacility("44444444-4444-4444-4444-444444440219", "Kpandai CHPS", "KpaCHPS", "CHPS", "Community", eastGonjaId, "Kpandai", 8.4700, -0.0167),
             });
 
             // Bole District Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440209", "Bole District Hospital", "BolDH", "Hospital", "District", boleId, "Bole", 9.0333, -2.4833),
-                CreateFacility("44444444-4444-4444-4444-444444440210", "Bole Health Centre", "BolHC", "Health Centre", "Sub-district", boleId, "Bole", 9.0400, -2.4900),
-                CreateFacility("44444444-4444-4444-4444-444444440211", "Bamboi CHPS", "BamCHPS2", "CHPS", "Community", boleId, "Bamboi", 8.1500, -2.0333),
+                CreateFacility("44444444-4444-4444-4444-444444440220", "Bole District Hospital", "BolDH", "Hospital", "District", boleId, "Bole", 9.0333, -2.4833),
+                CreateFacility("44444444-4444-4444-4444-444444440221", "Bole Health Centre", "BolHC", "Health Centre", "Sub-district", boleId, "Bole", 9.0400, -2.4900),
+                CreateFacility("44444444-4444-4444-4444-444444440222", "Bamboi CHPS", "BamCHPS2", "CHPS", "Community", boleId, "Bamboi", 8.1500, -2.0333),
             });
 
             // North East Region Facilities
@@ -1405,17 +1539,17 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // West Mamprusi Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440212", "Walewale District Hospital", "WalDH", "Hospital", "District", westMamprusId, "Walewale", 10.3500, -0.8000),
-                CreateFacility("44444444-4444-4444-4444-444444440213", "Walewale Health Centre", "WalHC", "Health Centre", "Sub-district", westMamprusId, "Walewale", 10.3550, -0.8050),
-                CreateFacility("44444444-4444-4444-4444-444444440214", "Wungu CHPS", "WunCHPS", "CHPS", "Community", westMamprusId, "Wungu", 10.3400, -0.7900),
+                CreateFacility("44444444-4444-4444-4444-444444440223", "Walewale District Hospital", "WalDH", "Hospital", "District", westMamprusId, "Walewale", 10.3500, -0.8000),
+                CreateFacility("44444444-4444-4444-4444-444444440224", "Walewale Health Centre", "WalHC", "Health Centre", "Sub-district", westMamprusId, "Walewale", 10.3550, -0.8050),
+                CreateFacility("44444444-4444-4444-4444-444444440225", "Wungu CHPS", "WunCHPS", "CHPS", "Community", westMamprusId, "Wungu", 10.3400, -0.7900),
             });
 
             // East Mamprusi Municipal Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440215", "Nalerigu Baptist Medical Centre", "NBMC", "Hospital", "District", eastMamprusId, "Nalerigu", 10.5167, -0.3667),
-                CreateFacility("44444444-4444-4444-4444-444444440216", "Gambaga Health Centre", "GamHC", "Health Centre", "Sub-district", eastMamprusId, "Gambaga", 10.5300, -0.4500),
-                CreateFacility("44444444-4444-4444-4444-444444440217", "Langbinsi CHPS", "LanCHPS", "CHPS", "Community", eastMamprusId, "Langbinsi", 10.4800, -0.2000),
+                CreateFacility("44444444-4444-4444-4444-444444440226", "Nalerigu Baptist Medical Centre", "NBMC", "Hospital", "District", eastMamprusId, "Nalerigu", 10.5167, -0.3667),
+                CreateFacility("44444444-4444-4444-4444-444444440227", "Gambaga Health Centre", "GamHC", "Health Centre", "Sub-district", eastMamprusId, "Gambaga", 10.5300, -0.4500),
+                CreateFacility("44444444-4444-4444-4444-444444440228", "Langbinsi CHPS", "LanCHPS", "CHPS", "Community", eastMamprusId, "Langbinsi", 10.4800, -0.2000),
             });
 
             return facilities;
