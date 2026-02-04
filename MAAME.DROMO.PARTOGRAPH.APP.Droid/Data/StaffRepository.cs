@@ -146,7 +146,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                     //item.Deleted = 0;
                     //item.DataHash = item.CalculateHash();
 
-                    var facility = new Guid("5f021d67-3ceb-44cd-8f55-5b10ca9039e1").ToString();
+                    var facility = new Guid("44444444-4444-4444-4444-444444440001").ToString();
                     var super = new Guid("2bef74f2-a5cd-4f66-99fe-e36a08b29613").ToString();
                     var midwife = new Guid("cad70e60-b4cb-4621-b3fc-63ad5be6313a").ToString();
                     var admin = new Guid("8d9f9a54-a874-488c-aaa3-d2de2925ac2c").ToString();
