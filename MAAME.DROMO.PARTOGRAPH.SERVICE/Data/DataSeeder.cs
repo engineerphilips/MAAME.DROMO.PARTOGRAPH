@@ -1099,12 +1099,12 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             var ledzokukuId = Guid.Parse("22222222-2222-2222-2222-222222220010");
             var ashaimanId = Guid.Parse("22222222-2222-2222-2222-222222220013");
 
-            // Accra Metropolitan Facilities (preserving original IDs for key hospitals)
+            // Accra Metropolitan Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("5f021d67-3ceb-44cd-8f55-5b10ca9039e1", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5364, -0.2275),
-                CreateFacility("5f021d67-3ceb-44cd-8f55-5b10ca9039e2", "Ridge Hospital", "RH", "Hospital", "Regional", accraMetroId, "Accra", 5.5569, -0.1958),
-                CreateFacility("5f021d67-3ceb-44cd-8f55-5b10ca9039e3", "37 Military Hospital", "37MH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5833, -0.1833),
+                CreateFacility("44444444-4444-4444-4444-444444440001", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5364, -0.2275),
+                CreateFacility("44444444-4444-4444-4444-444444440002", "Ridge Hospital", "RH", "Hospital", "Regional", accraMetroId, "Accra", 5.5569, -0.1958),
+                CreateFacility("44444444-4444-4444-4444-444444440003", "37 Military Hospital", "37MH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5833, -0.1833),
                 CreateFacility("44444444-4444-4444-4444-444444440004", "Police Hospital", "PH", "Hospital", "Specialized", accraMetroId, "Accra", 5.5600, -0.2000),
                 CreateFacility("44444444-4444-4444-4444-444444440005", "La General Hospital", "LGH", "Hospital", "District", accraMetroId, "La", 5.5700, -0.1700),
                 CreateFacility("44444444-4444-4444-4444-444444440006", "Mamprobi Polyclinic", "MP", "Polyclinic", "District", accraMetroId, "Mamprobi", 5.5400, -0.2200),
@@ -1456,7 +1456,7 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             _logger.LogInformation("Updating existing facilities with region and district mappings...");
 
             // Known facility IDs from the mobile app
-            var korleBuId = Guid.Parse("5f021d67-3ceb-44cd-8f55-5b10ca9039e1");
+            var korleBuId = Guid.Parse("44444444-4444-4444-4444-444444440001");
             var greaterAccraRegionId = Guid.Parse("11111111-1111-1111-1111-111111111101");
             var accraMetropolitanDistrictId = Guid.Parse("22222222-2222-2222-2222-222222220001");
             var korleKlotteyDistrictId = Guid.Parse("22222222-2222-2222-2222-222222220017");

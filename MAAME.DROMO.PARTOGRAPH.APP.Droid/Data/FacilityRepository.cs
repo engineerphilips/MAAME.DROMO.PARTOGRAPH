@@ -157,10 +157,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             var defaultFacilities = new List<Facility>
             {
-                // Greater Accra Region Facilities (preserving original IDs for key hospitals)
-                CreateDefaultFacility("5f021d67-3ceb-44cd-8f55-5b10ca9039e1", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", "Accra", 5.5364, -0.2275, now, deviceId),
-                CreateDefaultFacility("5f021d67-3ceb-44cd-8f55-5b10ca9039e2", "Ridge Hospital", "RH", "Hospital", "Regional", "Accra", 5.5569, -0.1958, now, deviceId),
-                CreateDefaultFacility("5f021d67-3ceb-44cd-8f55-5b10ca9039e3", "37 Military Hospital", "37MH", "Hospital", "Tertiary", "Accra", 5.5833, -0.1833, now, deviceId),
+                // Greater Accra Region Facilities
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440001", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", "Accra", 5.5364, -0.2275, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440002", "Ridge Hospital", "RH", "Hospital", "Regional", "Accra", 5.5569, -0.1958, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440003", "37 Military Hospital", "37MH", "Hospital", "Tertiary", "Accra", 5.5833, -0.1833, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440004", "Police Hospital", "PH", "Hospital", "Specialized", "Accra", 5.5600, -0.2000, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440008", "Tema General Hospital", "TEMGH", "Hospital", "Regional", "Tema", 5.6689, -0.0167, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440012", "Ga East Municipal Hospital", "GEMH", "Hospital", "District", "Abokobi", 5.7000, -0.1500, now, deviceId),
