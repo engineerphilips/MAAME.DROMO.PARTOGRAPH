@@ -1102,9 +1102,9 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Accra Metropolitan Facilities
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444440112", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5364, -0.2275),
-                CreateFacility("44444444-4444-4444-4444-444444440113", "Ridge Hospital", "RH2", "Hospital", "Regional", accraMetroId, "Accra", 5.5569, -0.1958),
-                CreateFacility("44444444-4444-4444-4444-444444440114", "37 Military Hospital", "37MH2", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5833, -0.1833),
+                CreateFacility("5f021d67-3ceb-44cd-8f55-5b10ca9039e1", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5364, -0.2275),
+                CreateFacility("44444444-4444-4444-4444-444444440113", "Ridge Hospital", "RH", "Hospital", "Regional", accraMetroId, "Accra", 5.5569, -0.1958),
+                CreateFacility("44444444-4444-4444-4444-444444440114", "37 Military Hospital", "37MH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5833, -0.1833),
                 CreateFacility("44444444-4444-4444-4444-444444440115", "Police Hospital", "PH", "Hospital", "Specialized", accraMetroId, "Accra", 5.5600, -0.2000),
                 CreateFacility("44444444-4444-4444-4444-444444440116", "La General Hospital", "LGH", "Hospital", "District", accraMetroId, "La", 5.5700, -0.1700),
                 CreateFacility("44444444-4444-4444-4444-444444440117", "Mamprobi Polyclinic", "MP", "Polyclinic", "District", accraMetroId, "Mamprobi", 5.5400, -0.2200),

@@ -157,8 +157,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             var defaultFacilities = new List<Facility>
             {
-                // Greater Accra Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440112", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", "Accra", 5.5364, -0.2275, now, deviceId),
+                // Greater Accra Region Facilities (preserving original IDs for backward compatibility)
+                CreateDefaultFacility("5f021d67-3ceb-44cd-8f55-5b10ca9039e1", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", "Accra", 5.5364, -0.2275, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440113", "Ridge Hospital", "RH", "Hospital", "Regional", "Accra", 5.5569, -0.1958, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440114", "37 Military Hospital", "37MH", "Hospital", "Tertiary", "Accra", 5.5833, -0.1833, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440115", "Police Hospital", "PH", "Hospital", "Specialized", "Accra", 5.5600, -0.2000, now, deviceId),
