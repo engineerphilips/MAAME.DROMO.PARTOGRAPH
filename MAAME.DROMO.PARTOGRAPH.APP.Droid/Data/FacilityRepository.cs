@@ -173,74 +173,74 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440047", "Mampong Government Hospital", "MGH", "Hospital", "District", "Mampong", 7.0619, -1.4011, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440052", "Obuasi Government Hospital", "OGH", "Hospital", "District", "Obuasi", 6.2000, -1.6600, now, deviceId),
 
-                // Central Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440082", "Cape Coast Teaching Hospital", "CCTH", "Hospital", "Tertiary", "Cape Coast", 5.1315, -1.2795, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440086", "Winneba Municipal Hospital", "WinMH", "Hospital", "District", "Winneba", 5.3500, -0.6333, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440089", "Kasoa Polyclinic", "KasP", "Polyclinic", "District", "Kasoa", 5.5333, -0.4167, now, deviceId),
+                // Central Region Facilities (IDs: 0117-0133)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440117", "Cape Coast Teaching Hospital", "CCTH", "Hospital", "Tertiary", "Cape Coast", 5.1315, -1.2795, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440121", "Winneba Municipal Hospital", "WinMH", "Hospital", "District", "Winneba", 5.3500, -0.6333, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440124", "Kasoa Polyclinic", "KasP", "Polyclinic", "District", "Kasoa", 5.5333, -0.4167, now, deviceId),
 
-                // Eastern Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440099", "Eastern Regional Hospital", "ERH", "Hospital", "Regional", "Koforidua", 6.0940, -0.2577, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440103", "Nsawam Government Hospital", "NGH", "Hospital", "District", "Nsawam", 5.8167, -0.3500, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440106", "Kibi Government Hospital", "KiGH", "Hospital", "District", "Kibi", 6.1667, -0.5500, now, deviceId),
+                // Eastern Region Facilities (IDs: 0134-0146)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440134", "Eastern Regional Hospital", "ERH", "Hospital", "Regional", "Koforidua", 6.0940, -0.2577, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440138", "Nsawam Government Hospital", "NGH", "Hospital", "District", "Nsawam", 5.8167, -0.3500, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440141", "Kibi Government Hospital", "KiGH", "Hospital", "District", "Kibi", 6.1667, -0.5500, now, deviceId),
 
-                // Western Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440178", "Effia Nkwanta Regional Hospital", "ENRH", "Hospital", "Regional", "Sekondi", 4.9400, -1.7700, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440182", "Tarkwa Municipal Hospital", "TarMH", "Hospital", "District", "Tarkwa", 5.3000, -1.9833, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440185", "Axim Government Hospital", "AGH", "Hospital", "District", "Axim", 4.8667, -2.2333, now, deviceId),
+                // Western Region Facilities (IDs: 0189-0198)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440189", "Effia Nkwanta Regional Hospital", "ENRH", "Hospital", "Regional", "Sekondi", 4.9400, -1.7700, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440193", "Tarkwa Municipal Hospital", "TarMH", "Hospital", "District", "Tarkwa", 5.3000, -1.9833, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440196", "Axim Government Hospital", "AGH", "Hospital", "District", "Axim", 4.8667, -2.2333, now, deviceId),
 
-                // Volta Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440168", "Ho Teaching Hospital", "HTH", "Hospital", "Tertiary", "Ho", 6.6000, 0.4700, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440172", "Ketu South Municipal Hospital", "KSMH", "Hospital", "District", "Denu", 6.0833, 1.1333, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440175", "Keta Municipal Hospital", "KetMH", "Hospital", "District", "Keta", 5.9167, 0.9833, now, deviceId),
+                // Volta Region Facilities (IDs: 0179-0188)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440179", "Ho Teaching Hospital", "HTH", "Hospital", "Tertiary", "Ho", 6.6000, 0.4700, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440183", "Ketu South Municipal Hospital", "KSMH", "Hospital", "District", "Denu", 6.0833, 1.1333, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440186", "Keta Municipal Hospital", "KetMH", "Hospital", "District", "Keta", 5.9167, 0.9833, now, deviceId),
 
-                // Northern Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440136", "Tamale Teaching Hospital", "TTH", "Hospital", "Tertiary", "Tamale", 9.4008, -0.8393, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440143", "Savelugu Municipal Hospital", "SavMH", "Hospital", "District", "Savelugu", 9.6242, -0.8250, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440146", "Yendi Municipal Hospital", "YMH", "Hospital", "District", "Yendi", 9.4425, -0.0097, now, deviceId),
+                // Northern Region Facilities (IDs: 0147-0159)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440147", "Tamale Teaching Hospital", "TTH", "Hospital", "Tertiary", "Tamale", 9.4008, -0.8393, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440154", "Savelugu Municipal Hospital", "SavMH", "Hospital", "District", "Savelugu", 9.6242, -0.8250, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440157", "Yendi Municipal Hospital", "YMH", "Hospital", "District", "Yendi", 9.4425, -0.0097, now, deviceId),
 
-                // Upper East Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440149", "Bolgatanga Regional Hospital", "BRH", "Hospital", "Regional", "Bolgatanga", 10.7856, -0.8519, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440152", "Bawku Presbyterian Hospital", "BPH", "Hospital", "District", "Bawku", 11.0606, -0.2417, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440155", "War Memorial Hospital Navrongo", "WMHN", "Hospital", "District", "Navrongo", 10.8944, -1.0917, now, deviceId),
+                // Upper East Region Facilities (IDs: 0160-0168)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440160", "Bolgatanga Regional Hospital", "BRH", "Hospital", "Regional", "Bolgatanga", 10.7856, -0.8519, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440163", "Bawku Presbyterian Hospital", "BPH", "Hospital", "District", "Bawku", 11.0606, -0.2417, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440166", "War Memorial Hospital Navrongo", "WMHN", "Hospital", "District", "Navrongo", 10.8944, -1.0917, now, deviceId),
 
-                // Upper West Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440158", "Wa Regional Hospital", "WRH", "Hospital", "Regional", "Wa", 10.0601, -2.5099, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440162", "St. Joseph Hospital Jirapa", "SJHJ", "Hospital", "District", "Jirapa", 10.7833, -2.5500, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440165", "Lawra District Hospital", "LDH", "Hospital", "District", "Lawra", 10.6333, -2.9000, now, deviceId),
+                // Upper West Region Facilities (IDs: 0169-0178)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440169", "Wa Regional Hospital", "WRH", "Hospital", "Regional", "Wa", 10.0601, -2.5099, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440173", "St. Joseph Hospital Jirapa", "SJHJ", "Hospital", "District", "Jirapa", 10.7833, -2.5500, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440176", "Lawra District Hospital", "LDH", "Hospital", "District", "Lawra", 10.6333, -2.9000, now, deviceId),
 
-                // Bono Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440058", "Sunyani Regional Hospital", "SRH", "Hospital", "Regional", "Sunyani", 7.3349, -2.3123, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440062", "Holy Family Hospital Berekum", "HFHB", "Hospital", "District", "Berekum", 7.4567, -2.5850, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440065", "Dormaa Ahenkro Presbyterian Hospital", "DAPH", "Hospital", "District", "Dormaa Ahenkro", 7.3500, -2.9667, now, deviceId),
+                // Bono Region Facilities (IDs: 0093-0105)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440093", "Sunyani Regional Hospital", "SRH", "Hospital", "Regional", "Sunyani", 7.3349, -2.3123, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440097", "Holy Family Hospital Berekum", "HFHB", "Hospital", "District", "Berekum", 7.4567, -2.5850, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440100", "Dormaa Ahenkro Presbyterian Hospital", "DAPH", "Hospital", "District", "Dormaa Ahenkro", 7.3500, -2.9667, now, deviceId),
 
-                // Bono East Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440071", "Holy Family Hospital Techiman", "HFHT", "Hospital", "Regional", "Techiman", 7.5833, -1.9333, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440075", "Kintampo Municipal Hospital", "KMH", "Hospital", "District", "Kintampo", 8.0556, -1.7306, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440079", "Atebubu Government Hospital", "AtGH", "Hospital", "District", "Atebubu", 7.7500, -0.9833, now, deviceId),
+                // Bono East Region Facilities (IDs: 0106-0116)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440106", "Holy Family Hospital Techiman", "HFHT", "Hospital", "Regional", "Techiman", 7.5833, -1.9333, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440110", "Kintampo Municipal Hospital", "KMH", "Hospital", "District", "Kintampo", 8.0556, -1.7306, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440114", "Atebubu Government Hospital", "AtGH", "Hospital", "District", "Atebubu", 7.7500, -0.9833, now, deviceId),
 
-                // Ahafo Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440001", "Goaso Government Hospital", "GGH", "Hospital", "District", "Goaso", 6.8039, -2.5172, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440019", "Hwidiem Government Hospital", "HGH", "Hospital", "District", "Hwidiem", 6.7667, -2.3000, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440023", "Duayaw Nkwanta Government Hospital", "DNGH", "Hospital", "District", "Duayaw Nkwanta", 7.1833, -2.1000, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440028", "Bechem Government Hospital", "BGH", "Hospital", "District", "Bechem", 7.0833, -2.0167, now, deviceId),
+                // Ahafo Region Facilities (IDs: 0061-0092)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440061", "Goaso Government Hospital", "GGH", "Hospital", "District", "Goaso", 6.8039, -2.5172, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440069", "Hwidiem Government Hospital", "HGH", "Hospital", "District", "Hwidiem", 6.7667, -2.3000, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440073", "Duayaw Nkwanta Government Hospital", "DNGH", "Hospital", "District", "Duayaw Nkwanta", 7.1833, -2.1000, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440077", "Bechem Government Hospital", "BGH", "Hospital", "District", "Bechem", 7.0833, -2.0167, now, deviceId),
 
-                // Western North Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440188", "Sefwi Wiawso Municipal Hospital", "SWMH", "Hospital", "District", "Sefwi Wiawso", 6.2167, -2.4833, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440191", "Bibiani Government Hospital", "BibGH", "Hospital", "District", "Bibiani", 6.4667, -2.3167, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440194", "Juaboso Government Hospital", "JuaGH", "Hospital", "District", "Juaboso", 6.4167, -2.8333, now, deviceId),
+                // Western North Region Facilities (IDs: 0199-0207)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440199", "Sefwi Wiawso Municipal Hospital", "SWMH", "Hospital", "District", "Sefwi Wiawso", 6.2167, -2.4833, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440202", "Bibiani Government Hospital", "BibGH", "Hospital", "District", "Bibiani", 6.4667, -2.3167, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440205", "Juaboso Government Hospital", "JuaGH", "Hospital", "District", "Juaboso", 6.4167, -2.8333, now, deviceId),
 
-                // Oti Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440197", "Dambai District Hospital", "DamDH", "Hospital", "District", "Dambai", 7.9833, 0.1667, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440200", "Nkwanta District Hospital", "NkwDH", "Hospital", "District", "Nkwanta", 8.2500, 0.5000, now, deviceId),
+                // Oti Region Facilities (IDs: 0208-0213)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440208", "Dambai District Hospital", "DamDH", "Hospital", "District", "Dambai", 7.9833, 0.1667, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440211", "Nkwanta District Hospital", "NkwDH", "Hospital", "District", "Nkwanta", 8.2500, 0.5000, now, deviceId),
 
-                // Savannah Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440203", "Damongo District Hospital", "DamoDH", "Hospital", "District", "Damongo", 9.0833, -1.8167, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440206", "Salaga District Hospital", "SalDH", "Hospital", "District", "Salaga", 8.5500, -0.5167, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440209", "Bole District Hospital", "BolDH", "Hospital", "District", "Bole", 9.0333, -2.4833, now, deviceId),
+                // Savannah Region Facilities (IDs: 0214-0222)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440214", "Damongo District Hospital", "DamoDH", "Hospital", "District", "Damongo", 9.0833, -1.8167, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440217", "Salaga District Hospital", "SalDH", "Hospital", "District", "Salaga", 8.5500, -0.5167, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440220", "Bole District Hospital", "BolDH", "Hospital", "District", "Bole", 9.0333, -2.4833, now, deviceId),
 
-                // North East Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440212", "Walewale District Hospital", "WalDH", "Hospital", "District", "Walewale", 10.3500, -0.8000, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440215", "Nalerigu Baptist Medical Centre", "NBMC", "Hospital", "District", "Nalerigu", 10.5167, -0.3667, now, deviceId),
+                // North East Region Facilities (IDs: 0223-0228)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440223", "Walewale District Hospital", "WalDH", "Hospital", "District", "Walewale", 10.3500, -0.8000, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440226", "Nalerigu Baptist Medical Centre", "NBMC", "Hospital", "District", "Nalerigu", 10.5167, -0.3667, now, deviceId),
             };
 
             foreach (var facility in defaultFacilities)
