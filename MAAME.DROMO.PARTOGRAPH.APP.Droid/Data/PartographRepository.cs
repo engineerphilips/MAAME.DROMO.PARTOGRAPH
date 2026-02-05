@@ -1042,12 +1042,38 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return partographs;
         }
 
+        public async Task<LaborStatus?> GetStatusAsync(Guid? id)
+        {
+            await Init();
+            try
+            {
+                await using var connection = new SqliteConnection(Constants.DatabasePath);
+                await connection.OpenAsync();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = @"SELECT p.status FROM Tbl_Partograph P INNER JOIN Tbl_Patient PA ON P.patientID = PA.ID LEFT JOIN Tbl_Staff S ON P.handler = S.ID WHERE P.ID = @id";
+                selectCmd.Parameters.AddWithValue("@id", id.ToString());
+
+                var status = await selectCmd.ExecuteScalarAsync();
+
+                if (status != null)
+                {
+                    return (LaborStatus)Convert.ToInt32(status);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
+            return null;
+        }
+
         public async Task<Partograph?> GetAsync(Guid? id)
         {
             await Init();
             try
             {
-
                 await using var connection = new SqliteConnection(Constants.DatabasePath);
                 await connection.OpenAsync();
 

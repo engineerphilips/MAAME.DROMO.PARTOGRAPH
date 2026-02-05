@@ -216,11 +216,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             try
             {
                 //await Shell.Current.GoToAsync($"partograph?id={notification.PartographId}");
-
-                var patient = await _partographRepository.GetAsync(notification?.PartographId);
+                var status = await _partographRepository.GetStatusAsync(notification?.PartographId);
 
                 // Navigate based on labor stage
-                var route = patient.Status switch
+                var route = status switch
                 {
                     LaborStatus.SecondStage => "secondpartograph",
                     LaborStatus.ThirdStage => "thirdpartograph",
@@ -228,7 +227,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     _ => "partograph" // FirstStage, Pending, or any other status defaults to first stage partograph
                 };
 
-                await Shell.Current.GoToAsync($"{route}?patientId={patient.ID.ToString()}");
+                await Shell.Current.GoToAsync($"{route}?patientId={notification?.PartographId.ToString()}");
             }
             catch (Exception ex)
             {
@@ -248,10 +247,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 // Acknowledge the notification first
                 _monitoringService.AcknowledgeNotification(notification.Id);
 
-                var patient = await _partographRepository.GetAsync(notification?.PartographId);
+                var status = await _partographRepository.GetStatusAsync(notification?.PartographId);
 
                 // Navigate based on labor stage
-                var route = patient.Status switch
+                var route = status switch
                 {
                     LaborStatus.SecondStage => "secondpartograph",
                     LaborStatus.ThirdStage => "thirdpartograph",
@@ -262,7 +261,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                 // Navigate to partograph with the measurement type parameter
                 // This will open the partograph page and trigger the appropriate measurement modal
 
-                await Shell.Current.GoToAsync($"{route}?patientId={patient.ID.ToString()}&openModal={notification.QuickActionRoute}");
+                await Shell.Current.GoToAsync($"{route}?patientId={notification?.PartographId.ToString()}&openModal={notification.QuickActionRoute}");
                 //var route = $"partograph?id={notification.PartographId}&openModal={notification.QuickActionRoute}";
                 //await Shell.Current.GoToAsync(route);
 

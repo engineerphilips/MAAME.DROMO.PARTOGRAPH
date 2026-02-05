@@ -198,7 +198,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         {
             if (alert?.PatientId != null)
             {
-                await Shell.Current.GoToAsync($"partograph?patientId={alert.PatientId}");
+                var status = await _partographRepository.GetStatusAsync(alert.PatientId);
+                // Navigate based on labor stage
+                var route = status switch
+                {
+                    LaborStatus.SecondStage => "secondpartograph",
+                    LaborStatus.ThirdStage => "thirdpartograph",
+                    LaborStatus.FourthStage => "fourthpartograph",
+                    _ => "partograph" // FirstStage, Pending, or any other status defaults to first stage partograph
+                };
+
+                await Shell.Current.GoToAsync($"{route}?patientId={alert.PatientId.ToString()}");
+                //await Shell.Current.GoToAsync($"partograph?patientId={alert.PatientId}");
             }
         }
 

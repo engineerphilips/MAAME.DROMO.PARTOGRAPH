@@ -1223,15 +1223,15 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             });
 
             // Greater Accra Region Facilities
-            var greaterAccraRegionId = Guid.Parse("11111111-1111-1111-1111-111111111101");
-            var accraMetroId = Guid.Parse("22222222-2222-2222-2222-222222220001");
-            var temaMetroId = Guid.Parse("22222222-2222-2222-2222-222222220002");
-            var gaEastId = Guid.Parse("22222222-2222-2222-2222-222222220003");
-            var gaWestId = Guid.Parse("22222222-2222-2222-2222-222222220004");
-            var gaSouthId = Guid.Parse("22222222-2222-2222-2222-222222220005");
-            var korleKlotteyId = Guid.Parse("22222222-2222-2222-2222-222222220017");
-            var ledzokukuId = Guid.Parse("22222222-2222-2222-2222-222222220010");
-            var ashaimanId = Guid.Parse("22222222-2222-2222-2222-222222220013");
+            //var greaterAccraRegionId = Guid.Parse("11111111-1111-1111-1111-111111111101");
+            //var accraMetroId = Guid.Parse("22222222-2222-2222-2222-222222220001");
+            //var temaMetroId = Guid.Parse("22222222-2222-2222-2222-222222220002");
+            //var gaEastId = Guid.Parse("22222222-2222-2222-2222-222222220003");
+            //var gaWestId = Guid.Parse("22222222-2222-2222-2222-222222220004");
+            //var gaSouthId = Guid.Parse("22222222-2222-2222-2222-222222220005");
+            //var korleKlotteyId = Guid.Parse("22222222-2222-2222-2222-222222220017");
+            //var ledzokukuId = Guid.Parse("22222222-2222-2222-2222-222222220010");
+            //var ashaimanId = Guid.Parse("22222222-2222-2222-2222-222222220013");
 
             // Accra Metropolitan Facilities
             facilities.AddRange(new[]
