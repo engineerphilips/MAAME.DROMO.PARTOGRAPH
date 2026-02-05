@@ -1222,71 +1222,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444440146", "Akroso Health Centre", "AkrHC", "Health Centre", "Sub-district", birimCentralId, "Akroso", 5.9300, -0.9900),
             });
 
-            // Greater Accra Region Facilities
-            //var greaterAccraRegionId = Guid.Parse("11111111-1111-1111-1111-111111111101");
-            //var accraMetroId = Guid.Parse("22222222-2222-2222-2222-222222220001");
-            //var temaMetroId = Guid.Parse("22222222-2222-2222-2222-222222220002");
-            //var gaEastId = Guid.Parse("22222222-2222-2222-2222-222222220003");
-            //var gaWestId = Guid.Parse("22222222-2222-2222-2222-222222220004");
-            //var gaSouthId = Guid.Parse("22222222-2222-2222-2222-222222220005");
-            //var korleKlotteyId = Guid.Parse("22222222-2222-2222-2222-222222220017");
-            //var ledzokukuId = Guid.Parse("22222222-2222-2222-2222-222222220010");
-            //var ashaimanId = Guid.Parse("22222222-2222-2222-2222-222222220013");
-
-            // Accra Metropolitan Facilities
-            facilities.AddRange(new[]
-            {
-                CreateFacility("44444444-4444-4444-4444-444444440001", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5364, -0.2275),
-                CreateFacility("44444444-4444-4444-4444-444444440002", "Ridge Hospital", "RH", "Hospital", "Regional", accraMetroId, "Accra", 5.5569, -0.1958),
-                CreateFacility("44444444-4444-4444-4444-444444440003", "37 Military Hospital", "37MH", "Hospital", "Tertiary", accraMetroId, "Accra", 5.5833, -0.1833),
-                CreateFacility("44444444-4444-4444-4444-444444440004", "Police Hospital", "PH", "Hospital", "Specialized", accraMetroId, "Accra", 5.5600, -0.2000),
-                CreateFacility("44444444-4444-4444-4444-444444440005", "La General Hospital", "LGH", "Hospital", "District", accraMetroId, "La", 5.5700, -0.1700),
-                CreateFacility("44444444-4444-4444-4444-444444440006", "Mamprobi Polyclinic", "MP", "Polyclinic", "District", accraMetroId, "Mamprobi", 5.5400, -0.2200),
-                CreateFacility("44444444-4444-4444-4444-444444440007", "Ussher Polyclinic", "UP", "Polyclinic", "District", accraMetroId, "Ussher", 5.5300, -0.2100),
-            });
-
-            // Tema Metropolitan Facilities
-            facilities.AddRange(new[]
-            {
-                CreateFacility("44444444-4444-4444-4444-444444440008", "Tema General Hospital", "TEMGH", "Hospital", "Regional", temaMetroId, "Tema", 5.6689, -0.0167),
-                CreateFacility("44444444-4444-4444-4444-444444440009", "Tema Polyclinic", "TEMP", "Polyclinic", "District", temaMetroId, "Tema", 5.6700, -0.0200),
-                CreateFacility("44444444-4444-4444-4444-444444440010", "Community 1 Health Centre", "C1HC", "Health Centre", "Sub-district", temaMetroId, "Tema Com. 1", 5.6650, -0.0150),
-                CreateFacility("44444444-4444-4444-4444-444444440011", "Community 9 CHPS", "C9CHPS", "CHPS", "Community", temaMetroId, "Tema Com. 9", 5.6600, -0.0100),
-            });
-
-            // Ga East Municipal Facilities
-            facilities.AddRange(new[]
-            {
-                CreateFacility("44444444-4444-4444-4444-444444440012", "Ga East Municipal Hospital", "GEMH", "Hospital", "District", gaEastId, "Abokobi", 5.7000, -0.1500),
-                CreateFacility("44444444-4444-4444-4444-444444440013", "Abokobi Health Centre", "AboHC3", "Health Centre", "Sub-district", gaEastId, "Abokobi", 5.7050, -0.1550),
-                CreateFacility("44444444-4444-4444-4444-444444440014", "Dome Health Centre", "DomHC", "Health Centre", "Sub-district", gaEastId, "Dome", 5.6500, -0.2300),
-                CreateFacility("44444444-4444-4444-4444-444444440015", "Taifa CHPS", "TaiCHPS", "CHPS", "Community", gaEastId, "Taifa", 5.6600, -0.2400),
-            });
-
-            // Ga West Municipal Facilities
-            facilities.AddRange(new[]
-            {
-                CreateFacility("44444444-4444-4444-4444-444444440016", "Amasaman Hospital", "AmaH", "Hospital", "District", gaWestId, "Amasaman", 5.7000, -0.3000),
-                CreateFacility("44444444-4444-4444-4444-444444440017", "Pokuase Health Centre", "PokHC", "Health Centre", "Sub-district", gaWestId, "Pokuase", 5.7100, -0.2800),
-                CreateFacility("44444444-4444-4444-4444-444444440018", "Ofankor Health Centre GA", "OfaHC2", "Health Centre", "Sub-district", gaWestId, "Ofankor", 5.6800, -0.2600),
-            });
-
-            // Ledzokuku Municipal Facilities
-            facilities.AddRange(new[]
-            {
-                CreateFacility("44444444-4444-4444-4444-444444440019", "Ledzokuku Krowor Municipal Hospital", "LKMH", "Hospital", "District", ledzokukuId, "Teshie", 5.5833, -0.1000),
-                CreateFacility("44444444-4444-4444-4444-444444440020", "Teshie Polyclinic", "TesP", "Polyclinic", "District", ledzokukuId, "Teshie", 5.5800, -0.1050),
-                CreateFacility("44444444-4444-4444-4444-444444440021", "Nungua Health Centre", "NunHC", "Health Centre", "Sub-district", ledzokukuId, "Nungua", 5.5900, -0.0800),
-            });
-
-            // Ashaiman Municipal Facilities
-            facilities.AddRange(new[]
-            {
-                CreateFacility("44444444-4444-4444-4444-444444440022", "Ashaiman Polyclinic", "AshP", "Polyclinic", "District", ashaimanId, "Ashaiman", 5.6833, -0.0333),
-                CreateFacility("44444444-4444-4444-4444-444444440023", "Tulaku Health Centre", "TulHC", "Health Centre", "Sub-district", ashaimanId, "Tulaku", 5.6900, -0.0400),
-                CreateFacility("44444444-4444-4444-4444-444444440024", "Lebanon CHPS", "LebCHPS", "CHPS", "Community", ashaimanId, "Lebanon", 5.6800, -0.0300),
-            });
-
             // Northern Region Facilities
             var northernRegionId = Guid.Parse("11111111-1111-1111-1111-111111111108");
             var tamaleMetroId = Guid.Parse("22222222-2222-2222-2222-222222220159");
@@ -2300,7 +2235,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444400870", "Krobo (mampong) Health Centre", "K(H0642", "Health Centre", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220039"), "Krobo", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400871", "Krobo/Kyiremfaso/Besease CHPS", "KKB0643", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220039"), "Krobo/Kyiremfaso/Besease", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400872", "Kyekyewere CHPS", "KC0644", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220039"), "Kyekyewere", 0.0, 0.0),
-                CreateFacility("44444444-4444-4444-4444-444444400873", "Mampong Government Hospital", "MGH0645", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220039"), "Mampong", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400874", "Mampong Methodist CHPS", "MMC0646", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220039"), "Mampong", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400875", "Mampong Zongo East CHPS", "MZE0647", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220039"), "Mampong", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400876", "Mampong Zongo West CHPS", "MZW0648", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220039"), "Mampong", 0.0, 0.0),
@@ -2399,7 +2333,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444400959", "Kaase CHPS", "KC0731", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220030"), "Kaase", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400960", "Kaase Maternity Home", "KMH0732", "Maternity Home", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220030"), "Kaase", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400961", "Kumasi Children's Hospital", "KCH0733", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220030"), "Kumasi", 0.0, 0.0),
-                CreateFacility("44444444-4444-4444-4444-444444400962", "Kumasi South Hospital", "KSH0734", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220030"), "Kumasi", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400963", "Kuwait CHPS", "KC0735", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220030"), "Kuwait", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400964", "Lake Road Clinic", "LRC0736", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220030"), "Lake", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444400965", "Maame Serwaa Maternity", "MSM0737", "Maternity Home", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220030"), "Maame", 0.0, 0.0),
@@ -2735,7 +2668,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444401255", "Bonwire South CHPS", "BSC1027", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220037"), "Bonwire", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401256", "Domeabra CHPS", "DC1028", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220037"), "Domeabra", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401257", "Donyina CHPS", "DC1029", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220037"), "Donyina", 0.0, 0.0),
-                CreateFacility("44444444-4444-4444-4444-444444401258", "Ejisu Government Hospital", "EGH1030", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220037"), "Ejisu", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401259", "Ejisu Newtown CHPS", "ENC1031", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220037"), "Ejisu", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401260", "Ejisu Zongo CHPS", "EZC1032", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220037"), "Ejisu", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401261", "Essienimpong CHPS", "EC1033", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220037"), "Essienimpong", 0.0, 0.0),
@@ -2906,7 +2838,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444401416", "Kezia Maternity Home", "KMH1188", "Maternity Home", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220028"), "Kezia", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401417", "Kogloko CHPS", "KC1189", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220028"), "Kogloko", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401418", "Kokoso-Ano CHPS", "KAC1190", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220028"), "Kokoso-Ano", 0.0, 0.0),
-                CreateFacility("44444444-4444-4444-4444-444444401419", "Komfo Anokye Teaching Hospital", "KAT1191", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220028"), "Komfo", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401420", "Kuffuor Clinic", "KC1192", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220028"), "Kuffuor", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401421", "Kumaning Medical Centre", "KMC1193", "Health Centre", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220028"), "Kumaning", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401422", "Kumasi County Hospital", "KCH1194", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220028"), "Kumasi", 0.0, 0.0),
@@ -3109,7 +3040,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444401599", "Nyameso CHPS", "NC1371", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220057"), "Nyameso", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401600", "Nyhieso CHPS", "NC1372", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220057"), "Nyhieso", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401601", "Obuasi Diagnostic Centre", "ODC1373", "Health Centre", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220057"), "Obuasi", 0.0, 0.0),
-                CreateFacility("44444444-4444-4444-4444-444444401602", "Obuasi Government Hospital", "OGH1374", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220057"), "Obuasi", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401603", "Ridge (obuasi) Clinic", "R(C1375", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220057"), "Ridge", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401604", "Sanso CHPS", "SC1376", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220057"), "Sanso", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401605", "St. John's Maternity", "SJM1377", "Maternity Home", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220057"), "St.", 0.0, 0.0)
@@ -3217,7 +3147,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444401692", "Florence Maternity Home", "FMH1464", "Maternity Home", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220029"), "Florence", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401693", "Graceland Hospital", "GH1465", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220029"), "Graceland", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401694", "KNUST CHPS", "KC1466", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220029"), "KNUST", 0.0, 0.0),
-                CreateFacility("44444444-4444-4444-4444-444444401695", "KNUST Hospital", "KH1467", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220029"), "KNUST", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401696", "Kentinkrono CHPS", "KC1468", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220029"), "Kentinkrono", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401697", "Kokoben CHPS", "KC1469", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220029"), "Kokoben", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444401698", "Kotei CHPS", "KC1470", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220029"), "Kotei", 0.0, 0.0),
@@ -4643,7 +4572,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444402915", "C-Poly Clinic", "CPC2687", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220086"), "C-Poly", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444402916", "Cape Coast Metropolitan Hospital", "CCM2688", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220086"), "Cape", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444402917", "Cape Coast RCH Centre", "CCR2689", "Health Centre", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220086"), "Cape", 0.0, 0.0),
-                CreateFacility("44444444-4444-4444-4444-444444402918", "Cape Coast Teaching Hospital", "CCT2690", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220086"), "Cape", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444402919", "Cape Deaf Clinic", "CDC2691", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220086"), "Cape", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444402920", "Christian Eye Centre Clinic", "CEC2692", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220086"), "Christian", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444402921", "DEHIA CHPS", "DC2693", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220086"), "DEHIA", 0.0, 0.0),
@@ -6664,7 +6592,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
             // Ayawaso East Municipal
             facilities.AddRange(new[]
             {
-                CreateFacility("44444444-4444-4444-4444-444444404702", "37 Military Hospital", "3MH4474", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220019"), "37", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444404703", "Alaska CHPS", "AC4475", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220019"), "Alaska", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444404704", "GBC Clinic", "GC4476", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220019"), "GBC", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444404705", "Hollandis CHPS", "HC4477", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220019"), "Hollandis", 0.0, 0.0),
@@ -7479,7 +7406,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444405434", "Sraha CHPS", "SC5206", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220002"), "Sraha", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405435", "St Marys Maternity Home", "SMM5207", "Maternity Home", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220002"), "St", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405436", "TMA Maternity", "TM5208", "Maternity Home", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220002"), "TMA", 0.0, 0.0),
-                CreateFacility("44444444-4444-4444-4444-444444405437", "Tema General Hospital", "TGH5209", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220002"), "Tema", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405438", "Tema Naval Base Clinic", "TNB5210", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220002"), "Tema", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405439", "Tema New Crystal Clinic", "TNC5211", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220002"), "Tema", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405440", "Tema Valco Clinic", "TVC5212", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220002"), "Tema", 0.0, 0.0),
@@ -8089,7 +8015,6 @@ namespace MAAME.DROMO.PARTOGRAPH.SERVICE.Data
                 CreateFacility("44444444-4444-4444-4444-444444405952", "Tamale Central Prisons Clinic", "TCP5724", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220159"), "Tamale", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405953", "Tamale Police Clinic", "TPC5725", "Clinic", "Sub-district", Guid.Parse("22222222-2222-2222-2222-222222220159"), "Tamale", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405954", "Tamale SDA Hospital", "TSH5726", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220159"), "Tamale", 0.0, 0.0),
-                CreateFacility("44444444-4444-4444-4444-444444405955", "Tamale Teaching Hospital", "TTH5727", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220159"), "Tamale", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405956", "Tamale West Hospital", "TWH5728", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220159"), "Tamale", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405957", "Tizaa Royal Hospital", "TRH5729", "Hospital", "District", Guid.Parse("22222222-2222-2222-2222-222222220159"), "Tizaa", 0.0, 0.0),
                 CreateFacility("44444444-4444-4444-4444-444444405958", "Tugu CHPS", "TC5730", "CHPS", "Community", Guid.Parse("22222222-2222-2222-2222-222222220159"), "Tugu", 0.0, 0.0),

@@ -157,21 +157,21 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             var defaultFacilities = new List<Facility>
             {
-                // Greater Accra Region Facilities
+                // Greater Accra Region Facilities (IDs aligned with Web API DataSeeder)
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440001", "Korle Bu Teaching Hospital", "KBTH", "Hospital", "Tertiary", "Accra", 5.5364, -0.2275, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440002", "Ridge Hospital", "RH", "Hospital", "Regional", "Accra", 5.5569, -0.1958, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440003", "37 Military Hospital", "37MH", "Hospital", "Tertiary", "Accra", 5.5833, -0.1833, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440004", "Police Hospital", "PH", "Hospital", "Specialized", "Accra", 5.5600, -0.2000, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440008", "Tema General Hospital", "TEMGH", "Hospital", "Regional", "Tema", 5.6689, -0.0167, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440012", "Ga East Municipal Hospital", "GEMH", "Hospital", "District", "Abokobi", 5.7000, -0.1500, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440009", "Tema General Hospital", "TEMGH", "Hospital", "Regional", "Tema", 5.6689, -0.0167, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440013", "Ga East Municipal Hospital", "GEMH", "Hospital", "District", "Abokobi", 5.7000, -0.1500, now, deviceId),
 
-                // Ashanti Region Facilities
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440033", "Komfo Anokye Teaching Hospital", "KATH", "Hospital", "Tertiary", "Kumasi", 6.6885, -1.6244, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440034", "Kumasi South Hospital", "KSH", "Hospital", "Regional", "Kumasi", 6.6700, -1.6300, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440039", "KNUST Hospital", "KNUSTH", "Hospital", "Tertiary", "KNUST", 6.6730, -1.5660, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440043", "Ejisu Government Hospital", "EGH", "Hospital", "District", "Ejisu", 6.7261, -1.4614, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440047", "Mampong Government Hospital", "MGH", "Hospital", "District", "Mampong", 7.0619, -1.4011, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440052", "Obuasi Government Hospital", "OGH", "Hospital", "District", "Obuasi", 6.2000, -1.6600, now, deviceId),
+                // Ashanti Region Facilities (IDs aligned with Web API DataSeeder)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440031", "Komfo Anokye Teaching Hospital", "KATH", "Hospital", "Tertiary", "Kumasi", 6.6885, -1.6244, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440032", "Kumasi South Hospital", "KSH", "Hospital", "Regional", "Kumasi", 6.6700, -1.6300, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440037", "KNUST Hospital", "KNUSTH", "Hospital", "Tertiary", "KNUST", 6.6730, -1.5660, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440041", "Ejisu Government Hospital", "EjGH", "Hospital", "District", "Ejisu", 6.7261, -1.4614, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440045", "Mampong Government Hospital", "MampGH", "Hospital", "District", "Mampong", 7.0619, -1.4011, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440050", "Obuasi Government Hospital", "ObuGH", "Hospital", "District", "Obuasi", 6.2000, -1.6600, now, deviceId),
 
                 // Central Region Facilities (IDs: 0117-0133)
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440117", "Cape Coast Teaching Hospital", "CCTH", "Hospital", "Tertiary", "Cape Coast", 5.1315, -1.2795, now, deviceId),
@@ -218,11 +218,11 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440110", "Kintampo Municipal Hospital", "KMH", "Hospital", "District", "Kintampo", 8.0556, -1.7306, now, deviceId),
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440114", "Atebubu Government Hospital", "AtGH", "Hospital", "District", "Atebubu", 7.7500, -0.9833, now, deviceId),
 
-                // Ahafo Region Facilities (IDs: 0061-0092)
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440061", "Goaso Government Hospital", "GGH", "Hospital", "District", "Goaso", 6.8039, -2.5172, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440069", "Hwidiem Government Hospital", "HGH", "Hospital", "District", "Hwidiem", 6.7667, -2.3000, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440073", "Duayaw Nkwanta Government Hospital", "DNGH", "Hospital", "District", "Duayaw Nkwanta", 7.1833, -2.1000, now, deviceId),
-                CreateDefaultFacility("44444444-4444-4444-4444-444444440077", "Bechem Government Hospital", "BGH", "Hospital", "District", "Bechem", 7.0833, -2.0167, now, deviceId),
+                // Ahafo Region Facilities (IDs aligned with Web API DataSeeder)
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440061", "Goaso Government Hospital", "GoaGH", "Hospital", "District", "Goaso", 6.8039, -2.5172, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440079", "Hwidiem Government Hospital", "HwiGH", "Hospital", "District", "Hwidiem", 6.7667, -2.3000, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440083", "Duayaw Nkwanta Government Hospital", "DuaGH", "Hospital", "District", "Duayaw Nkwanta", 7.1833, -2.1000, now, deviceId),
+                CreateDefaultFacility("44444444-4444-4444-4444-444444440088", "Bechem Government Hospital", "BecGH", "Hospital", "District", "Bechem", 7.0833, -2.0167, now, deviceId),
 
                 // Western North Region Facilities (IDs: 0199-0207)
                 CreateDefaultFacility("44444444-4444-4444-4444-444444440199", "Sefwi Wiawso Municipal Hospital", "SWMH", "Hospital", "District", "Sefwi Wiawso", 6.2167, -2.4833, now, deviceId),
