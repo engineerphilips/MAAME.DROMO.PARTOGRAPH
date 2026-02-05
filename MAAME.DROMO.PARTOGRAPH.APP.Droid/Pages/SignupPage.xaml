@@ -180,8 +180,48 @@
                         </Border>
                     </VerticalStackLayout>
 
-                    <!-- Facility Selection (Only for Super/Maame.Dromo.Admin) -->
+                    <!-- Region Selection (Only for Super/Maame.Dromo.Admin or users without facility) -->
                     <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowFacilitySelection}">
+                        <Label Text="Region *"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
+                        <Border StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Picker SelectedItem="{Binding SelectedRegion}"
+                                    ItemsSource="{Binding Regions}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Select region"
+                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- District Selection (Only visible when region is selected) -->
+                    <VerticalStackLayout Spacing="6" IsVisible="{Binding HasSelectedRegion}">
+                        <Label Text="District *"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
+                        <Border StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Picker SelectedItem="{Binding SelectedDistrict}"
+                                    ItemsSource="{Binding Districts}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Select district"
+                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Facility Selection (Only visible when district is selected) -->
+                    <VerticalStackLayout Spacing="6" IsVisible="{Binding HasSelectedDistrict}">
                         <Label Text="Facility *"
                                FontSize="14"
                                FontAttributes="Bold"

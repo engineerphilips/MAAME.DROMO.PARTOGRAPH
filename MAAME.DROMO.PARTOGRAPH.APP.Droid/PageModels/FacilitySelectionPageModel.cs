@@ -12,14 +12,22 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     {
         private readonly FacilityRepository _facilityRepository;
         private readonly PartographRepository _partographRepository;
+        private readonly RegionRepository _regionRepository;
+        private readonly DistrictRepository _districtRepository;
         private bool _isBusy = false;
+        private MODEL.Region? _selectedRegion;
+        private District? _selectedDistrict;
         private Facility? _selectedFacility;
+        private ObservableCollection<MODEL.Region> _regions = new();
+        private ObservableCollection<District> _districts = new();
         private ObservableCollection<Facility> _facilities = new();
 
-        public FacilitySelectionPageModel(FacilityRepository facilityRepository, PartographRepository partographRepository)
+        public FacilitySelectionPageModel(FacilityRepository facilityRepository, PartographRepository partographRepository, RegionRepository regionRepository, DistrictRepository districtRepository)
         {
             _facilityRepository = facilityRepository;
             _partographRepository = partographRepository;
+            _regionRepository = regionRepository;
+            _districtRepository = districtRepository;
 
             // Initialize commands
             ContinueCommand = new Command(async () => await ContinueAsync(), () => SelectedFacility != null);
@@ -27,10 +35,66 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         #region Properties
 
+        public ObservableCollection<MODEL.Region> Regions
+        {
+            get => _regions;
+            set => SetProperty(ref _regions, value);
+        }
+
+        public ObservableCollection<District> Districts
+        {
+            get => _districts;
+            set => SetProperty(ref _districts, value);
+        }
+
         public ObservableCollection<Facility> Facilities
         {
             get => _facilities;
             set => SetProperty(ref _facilities, value);
+        }
+
+        public MODEL.Region? SelectedRegion
+        {
+            get => _selectedRegion;
+            set
+            {
+                if (SetProperty(ref _selectedRegion, value))
+                {
+                    // Clear district and facility when region changes
+                    SelectedDistrict = null;
+                    SelectedFacility = null;
+                    Districts.Clear();
+                    Facilities.Clear();
+                    OnPropertyChanged(nameof(HasSelectedRegion));
+
+                    // Load districts for the selected region
+                    if (value != null)
+                    {
+                        _ = LoadDistrictsAsync(value.ID);
+                    }
+                }
+            }
+        }
+
+        public District? SelectedDistrict
+        {
+            get => _selectedDistrict;
+            set
+            {
+                if (SetProperty(ref _selectedDistrict, value))
+                {
+                    // Clear facility when district changes
+                    SelectedFacility = null;
+                    Facilities.Clear();
+                    OnPropertyChanged(nameof(HasSelectedDistrict));
+
+                    // Load facilities for the selected district
+                    if (value != null)
+                    {
+                        _ = LoadFacilitiesForDistrictAsync(value.ID);
+                    }
+                }
+            }
         }
 
         public Facility? SelectedFacility
@@ -46,6 +110,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
+        public bool HasSelectedRegion => SelectedRegion != null;
+        public bool HasSelectedDistrict => SelectedDistrict != null;
         public bool HasSelectedFacility => SelectedFacility != null;
 
         public bool IsBusy
@@ -69,17 +135,53 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         public async Task InitializeAsync()
         {
-            await LoadFacilitiesAsync();
+            await LoadRegionsAsync();
         }
 
-        private async Task LoadFacilitiesAsync()
+        private async Task LoadRegionsAsync()
         {
             if (IsBusy) return;
 
             try
             {
                 IsBusy = true;
-                var facilities = await _facilityRepository.GetAllAsync();
+                var regions = await _regionRepository.GetAllAsync();
+                Regions = new ObservableCollection<MODEL.Region>(regions);
+            }
+            catch (Exception ex)
+            {
+                await ShowAlertAsync("Error", $"Failed to load regions: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task LoadDistrictsAsync(Guid regionId)
+        {
+            try
+            {
+                IsBusy = true;
+                var districts = await _districtRepository.GetByRegionAsync(regionId);
+                Districts = new ObservableCollection<District>(districts);
+            }
+            catch (Exception ex)
+            {
+                await ShowAlertAsync("Error", $"Failed to load districts: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task LoadFacilitiesForDistrictAsync(Guid districtId)
+        {
+            try
+            {
+                IsBusy = true;
+                var facilities = await _facilityRepository.GetByDistrictAsync(districtId);
                 Facilities = new ObservableCollection<Facility>(facilities);
             }
             catch (Exception ex)
