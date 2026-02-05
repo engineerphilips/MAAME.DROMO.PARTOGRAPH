@@ -193,28 +193,31 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Picker SelectedItem="{Binding Region}"
+                            <Picker SelectedItem="{Binding SelectedRegion}"
+                                    ItemsSource="{Binding Regions}"
+                                    ItemDisplayBinding="{Binding Name}"
                                     Title="Select region"
-                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}">
-                                <Picker.Items>
-                                    <x:String>Greater Accra</x:String>
-                                    <x:String>Ashanti</x:String>
-                                    <x:String>Central</x:String>
-                                    <x:String>Eastern</x:String>
-                                    <x:String>Western</x:String>
-                                    <x:String>Western North</x:String>
-                                    <x:String>Volta</x:String>
-                                    <x:String>Northern</x:String>
-                                    <x:String>Upper East</x:String>
-                                    <x:String>Upper West</x:String>
-                                    <x:String>Brong Ahafo</x:String>
-                                    <x:String>Bono East</x:String>
-                                    <x:String>Ahafo</x:String>
-                                    <x:String>Oti</x:String>
-                                    <x:String>Savannah</x:String>
-                                    <x:String>North East</x:String>
-                                </Picker.Items>
-                            </Picker>
+                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- District (visible when region is selected) -->
+                    <VerticalStackLayout Spacing="6" IsVisible="{Binding HasSelectedRegion}">
+                        <Label Text="District *"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
+                        <Border StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Picker SelectedItem="{Binding SelectedDistrict}"
+                                    ItemsSource="{Binding Districts}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Select district"
+                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}" />
                         </Border>
                     </VerticalStackLayout>
 
