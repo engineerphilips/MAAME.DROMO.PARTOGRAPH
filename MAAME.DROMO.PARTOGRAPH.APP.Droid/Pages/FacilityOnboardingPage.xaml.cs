@@ -13,10 +13,10 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Pages
             BindingContext = _viewModel;
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            _viewModel.InitializeAsync();
+            await _viewModel.InitializeAsync();
         }
     }
 }

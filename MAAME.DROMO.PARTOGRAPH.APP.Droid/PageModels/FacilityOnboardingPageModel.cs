@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -9,13 +10,16 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     public class FacilityOnboardingPageModel : INotifyPropertyChanged
     {
         private readonly FacilityRepository _facilityRepository;
+        private readonly RegionRepository _regionRepository;
+        private readonly DistrictRepository _districtRepository;
         private bool _isBusy = false;
         private string _name = string.Empty;
         private string _code = string.Empty;
         private string _type = "Hospital";
         private string _address = string.Empty;
         private string _city = string.Empty;
-        private string _region = string.Empty;
+        private MODEL.Region? _selectedRegion = null;
+        private District? _selectedDistrict = null;
         private string _country = "Ghana";
         private string _phone = string.Empty;
         private string _email = string.Empty;
@@ -23,10 +27,14 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _longitudeText = string.Empty;
         private string _ghPostGPS = string.Empty;
         private bool _isLoadingLocation = false;
+        private ObservableCollection<MODEL.Region> _regions = new();
+        private ObservableCollection<District> _districts = new();
 
-        public FacilityOnboardingPageModel(FacilityRepository facilityRepository)
+        public FacilityOnboardingPageModel(FacilityRepository facilityRepository, RegionRepository regionRepository, DistrictRepository districtRepository)
         {
             _facilityRepository = facilityRepository;
+            _regionRepository = regionRepository;
+            _districtRepository = districtRepository;
 
             // Initialize commands
             SaveCommand = new Command(async () => await SaveAsync(), CanSave);
@@ -90,17 +98,56 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        public string Region
+        public MODEL.Region? SelectedRegion
         {
-            get => _region;
+            get => _selectedRegion;
             set
             {
-                if (SetProperty(ref _region, value))
+                if (SetProperty(ref _selectedRegion, value))
                 {
+                    // Clear district when region changes
+                    SelectedDistrict = null;
+                    Districts.Clear();
+                    OnPropertyChanged(nameof(HasSelectedRegion));
+
+                    // Load districts for the selected region
+                    if (value != null)
+                    {
+                        _ = LoadDistrictsAsync(value.ID);
+                    }
+
                     ((Command)SaveCommand).ChangeCanExecute();
                 }
             }
         }
+
+        public District? SelectedDistrict
+        {
+            get => _selectedDistrict;
+            set
+            {
+                if (SetProperty(ref _selectedDistrict, value))
+                {
+                    OnPropertyChanged(nameof(HasSelectedDistrict));
+                    ((Command)SaveCommand).ChangeCanExecute();
+                }
+            }
+        }
+
+        public ObservableCollection<MODEL.Region> Regions
+        {
+            get => _regions;
+            set => SetProperty(ref _regions, value);
+        }
+
+        public ObservableCollection<District> Districts
+        {
+            get => _districts;
+            set => SetProperty(ref _districts, value);
+        }
+
+        public bool HasSelectedRegion => SelectedRegion != null;
+        public bool HasSelectedDistrict => SelectedDistrict != null;
 
         public string Country
         {
@@ -174,9 +221,53 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
 
         #region Methods
 
-        public void InitializeAsync()
+        public async Task InitializeAsync()
         {
-            // Reset form if needed
+            await LoadRegionsAsync();
+        }
+
+        private async Task LoadRegionsAsync()
+        {
+            try
+            {
+                IsBusy = true;
+                var regions = await _regionRepository.GetAllAsync();
+                Regions.Clear();
+                foreach (var region in regions)
+                {
+                    Regions.Add(region);
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowAlertAsync("Error", $"Failed to load regions: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task LoadDistrictsAsync(Guid regionId)
+        {
+            try
+            {
+                IsBusy = true;
+                var districts = await _districtRepository.GetByRegionAsync(regionId);
+                Districts.Clear();
+                foreach (var district in districts)
+                {
+                    Districts.Add(district);
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowAlertAsync("Error", $"Failed to load districts: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private bool CanSave()
@@ -185,7 +276,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                    !string.IsNullOrWhiteSpace(Code) &&
                    !string.IsNullOrWhiteSpace(Type) &&
                    !string.IsNullOrWhiteSpace(City) &&
-                   !string.IsNullOrWhiteSpace(Region) &&
+                   SelectedRegion != null &&
+                   SelectedDistrict != null &&
                    !string.IsNullOrWhiteSpace(Country);
         }
 
@@ -240,13 +332,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     Type = Type,
                     Address = Address?.Trim() ?? string.Empty,
                     City = City.Trim(),
-                    District = new MODEL.District
-                    {
-                        Region = new MODEL.Region()
-                        {
-                            Name = Region.Trim()
-                        }, 
-                    },                    
+                    DistrictID = SelectedDistrict?.ID,
+                    District = SelectedDistrict,
                     Country = Country.Trim(),
                     Phone = Phone?.Trim() ?? string.Empty,
                     Email = Email?.Trim() ?? string.Empty,

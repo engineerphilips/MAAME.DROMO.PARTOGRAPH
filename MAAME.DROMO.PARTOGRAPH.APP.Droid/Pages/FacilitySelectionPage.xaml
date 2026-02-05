@@ -87,21 +87,71 @@
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
 
-                    <!-- Facility Picker -->
-                    <Border StrokeThickness="1"
-                            Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
-                            BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="12" />
-                        </Border.StrokeShape>
-                        <Picker ItemsSource="{Binding Facilities}"
-                                SelectedItem="{Binding SelectedFacility, Mode=TwoWay}"
-                                ItemDisplayBinding="{Binding Name}"
-                                Title="Choose a facility"
-                                TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
-                                TitleColor="{AppThemeBinding Light=#999, Dark=#666}"
-                                HeightRequest="50" />
-                    </Border>
+                    <!-- Region Picker -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Region"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
+                        <Border StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <Picker ItemsSource="{Binding Regions}"
+                                    SelectedItem="{Binding SelectedRegion, Mode=TwoWay}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Choose a region"
+                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
+                                    TitleColor="{AppThemeBinding Light=#999, Dark=#666}"
+                                    HeightRequest="50" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- District Picker (visible when region is selected) -->
+                    <VerticalStackLayout Spacing="6" IsVisible="{Binding HasSelectedRegion}">
+                        <Label Text="District"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
+                        <Border StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <Picker ItemsSource="{Binding Districts}"
+                                    SelectedItem="{Binding SelectedDistrict, Mode=TwoWay}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Choose a district"
+                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
+                                    TitleColor="{AppThemeBinding Light=#999, Dark=#666}"
+                                    HeightRequest="50" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Facility Picker (visible when district is selected) -->
+                    <VerticalStackLayout Spacing="6" IsVisible="{Binding HasSelectedDistrict}">
+                        <Label Text="Facility"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#444, Dark=#CCC}" />
+                        <Border StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E1E1E}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <Picker ItemsSource="{Binding Facilities}"
+                                    SelectedItem="{Binding SelectedFacility, Mode=TwoWay}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Choose a facility"
+                                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#F5F5F5}"
+                                    TitleColor="{AppThemeBinding Light=#999, Dark=#666}"
+                                    HeightRequest="50" />
+                        </Border>
+                    </VerticalStackLayout>
 
                     <!-- Selected Facility Details -->
                     <Border BackgroundColor="{AppThemeBinding Light=#F0F7FF, Dark=#1E3A5F}"

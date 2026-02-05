@@ -13,6 +13,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
     {
         private readonly StaffRepository _staffRepository;
         private readonly FacilityRepository _facilityRepository;
+        private readonly RegionRepository _regionRepository;
+        private readonly DistrictRepository _districtRepository;
         private bool _isBusy = false;
         private string _name = string.Empty;
         private string _staffId = string.Empty;
@@ -21,14 +23,20 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         private string _confirmPassword = string.Empty;
         private string _role = "MIDWIFE";
         private string _department = "Labour Ward";
+        private MODEL.Region? _selectedRegion = null;
+        private District? _selectedDistrict = null;
         private Facility? _selectedFacility = null;
+        private ObservableCollection<MODEL.Region> _regions = new();
+        private ObservableCollection<District> _districts = new();
         private ObservableCollection<Facility> _facilities = new();
         private ObservableCollection<string> _availableRoles = new();
 
-        public SignupPageModel(StaffRepository staffRepository, FacilityRepository facilityRepository)
+        public SignupPageModel(StaffRepository staffRepository, FacilityRepository facilityRepository, RegionRepository regionRepository, DistrictRepository districtRepository)
         {
             _staffRepository = staffRepository;
             _facilityRepository = facilityRepository;
+            _regionRepository = regionRepository;
+            _districtRepository = districtRepository;
 
             // Initialize commands
             SignUpCommand = new Command(async () => await SignUpAsync(), CanSignUp);
@@ -118,6 +126,54 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             set => SetProperty(ref _department, value);
         }
 
+        public MODEL.Region? SelectedRegion
+        {
+            get => _selectedRegion;
+            set
+            {
+                if (SetProperty(ref _selectedRegion, value))
+                {
+                    // Clear district and facility when region changes
+                    SelectedDistrict = null;
+                    SelectedFacility = null;
+                    Districts.Clear();
+                    Facilities.Clear();
+                    OnPropertyChanged(nameof(HasSelectedRegion));
+
+                    // Load districts for the selected region
+                    if (value != null)
+                    {
+                        _ = LoadDistrictsAsync(value.ID);
+                    }
+
+                    ((Command)SignUpCommand).ChangeCanExecute();
+                }
+            }
+        }
+
+        public District? SelectedDistrict
+        {
+            get => _selectedDistrict;
+            set
+            {
+                if (SetProperty(ref _selectedDistrict, value))
+                {
+                    // Clear facility when district changes
+                    SelectedFacility = null;
+                    Facilities.Clear();
+                    OnPropertyChanged(nameof(HasSelectedDistrict));
+
+                    // Load facilities for the selected district
+                    if (value != null)
+                    {
+                        _ = LoadFacilitiesForDistrictAsync(value.ID);
+                    }
+
+                    ((Command)SignUpCommand).ChangeCanExecute();
+                }
+            }
+        }
+
         public Facility? SelectedFacility
         {
             get => _selectedFacility;
@@ -128,6 +184,18 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
                     ((Command)SignUpCommand).ChangeCanExecute();
                 }
             }
+        }
+
+        public ObservableCollection<MODEL.Region> Regions
+        {
+            get => _regions;
+            set => SetProperty(ref _regions, value);
+        }
+
+        public ObservableCollection<District> Districts
+        {
+            get => _districts;
+            set => SetProperty(ref _districts, value);
         }
 
         public ObservableCollection<Facility> Facilities
@@ -148,9 +216,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             set => SetProperty(ref _isBusy, value);
         }
 
-        // Show facility selection only for Super/Maame.Dromo.Admin
+        public bool HasSelectedRegion => SelectedRegion != null;
+        public bool HasSelectedDistrict => SelectedDistrict != null;
+
+        // Show facility selection only for Super/Maame.Dromo.Admin or users without a facility
         public bool ShowFacilitySelection => Constants.Staff?.Role == "SUPER-ADMIN" ||
-                                              Constants.Staff?.Role == "Maame.Dromo.Admin";
+                                              Constants.Staff?.Role == "Maame.Dromo.Admin" ||
+                                              Constants.Staff?.Facility == null;
 
         #endregion
 
@@ -166,7 +238,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
         public async Task InitializeAsync()
         {
             ResetForm();
-            await LoadFacilitiesAsync();
+            await LoadRegionsAsync();
         }
 
         /// <summary>
@@ -181,7 +253,12 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             ConfirmPassword = string.Empty;
             Role = "MIDWIFE";
             Department = "Labour Ward";
+            SelectedRegion = null;
+            SelectedDistrict = null;
             SelectedFacility = null;
+            Regions.Clear();
+            Districts.Clear();
+            Facilities.Clear();
             IsBusy = false;
         }
 
@@ -213,26 +290,69 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels
             }
         }
 
-        private async Task LoadFacilitiesAsync()
+        private async Task LoadRegionsAsync()
         {
             try
             {
-                var facilities = await _facilityRepository.GetAllAsync();
+                IsBusy = true;
+                var regions = await _regionRepository.GetAllAsync();
+                Regions.Clear();
+                foreach (var region in regions)
+                {
+                    Regions.Add(region);
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowAlertAsync("Error", $"Failed to load regions: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task LoadDistrictsAsync(Guid regionId)
+        {
+            try
+            {
+                IsBusy = true;
+                var districts = await _districtRepository.GetByRegionAsync(regionId);
+                Districts.Clear();
+                foreach (var district in districts)
+                {
+                    Districts.Add(district);
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowAlertAsync("Error", $"Failed to load districts: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task LoadFacilitiesForDistrictAsync(Guid districtId)
+        {
+            try
+            {
+                IsBusy = true;
+                var facilities = await _facilityRepository.GetByDistrictAsync(districtId);
                 Facilities.Clear();
                 foreach (var facility in facilities)
                 {
                     Facilities.Add(facility);
                 }
-
-                // Auto-select facility for admin users
-                if (Constants.Staff?.Role == "ADMIN" && Constants.Staff?.Facility != null)
-                {
-                    SelectedFacility = Facilities.FirstOrDefault(f => f.ID == Constants.Staff.Facility);
-                }
             }
             catch (Exception ex)
             {
                 await ShowAlertAsync("Error", $"Failed to load facilities: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 

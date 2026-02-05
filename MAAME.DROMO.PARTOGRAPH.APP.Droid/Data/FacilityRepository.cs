@@ -368,6 +368,52 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             return null;
         }
 
+        public async Task<List<Facility>> GetByDistrictAsync(Guid districtId)
+        {
+            await Init();
+
+            var facilities = new List<Facility>();
+            await using var connection = new SqliteConnection(Constants.DatabasePath);
+            await connection.OpenAsync();
+
+            var selectCmd = connection.CreateCommand();
+            selectCmd.CommandText = @"SELECT * FROM Tbl_Facility WHERE districtid = @districtid AND deleted = 0 AND active = 1 ORDER BY name;";
+            selectCmd.Parameters.AddWithValue("@districtid", districtId.ToString());
+
+            await using var reader = await selectCmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                facilities.Add(new Facility
+                {
+                    ID = Guid.Parse(reader["ID"].ToString()),
+                    Name = reader["name"].ToString(),
+                    Code = reader["code"].ToString(),
+                    Type = reader["type"].ToString(),
+                    Level = reader["level"]?.ToString() ?? "Primary",
+                    Address = reader["address"]?.ToString() ?? string.Empty,
+                    City = reader["city"]?.ToString() ?? string.Empty,
+                    Country = reader["country"]?.ToString() ?? string.Empty,
+                    Phone = reader["phone"]?.ToString() ?? string.Empty,
+                    Email = reader["email"]?.ToString() ?? string.Empty,
+                    DistrictID = reader["districtid"] != DBNull.Value && !string.IsNullOrEmpty(reader["districtid"]?.ToString()) ? Guid.Parse(reader["districtid"].ToString()) : null,
+                    Latitude = reader["latitude"] != DBNull.Value ? Convert.ToDouble(reader["latitude"]) : null,
+                    Longitude = reader["longitude"] != DBNull.Value ? Convert.ToDouble(reader["longitude"]) : null,
+                    GHPostGPS = reader["ghpostgps"]?.ToString() ?? string.Empty,
+                    IsActive = Convert.ToBoolean(reader["active"]),
+                    CreatedTime = Convert.ToInt64(reader["createdtime"]),
+                    UpdatedTime = Convert.ToInt64(reader["updatedtime"]),
+                    DeviceId = reader["deviceid"]?.ToString(),
+                    OriginDeviceId = reader["origindeviceid"]?.ToString(),
+                    SyncStatus = Convert.ToInt32(reader["syncstatus"]),
+                    Version = Convert.ToInt32(reader["version"]),
+                    ServerVersion = Convert.ToInt32(reader["serverversion"]),
+                    Deleted = Convert.ToInt32(reader["deleted"])
+                });
+            }
+
+            return facilities;
+        }
+
         public async Task AddAsync(Facility facility)
         {
             await Init();
