@@ -4,6 +4,11 @@ namespace MAAME.DROMO.PARTOGRAPH.MODEL
     // WHO 2020: Check FHR every 30 minutes in first stage, every 15 minutes in second stage
     public class FHR : BasePartographMeasurement
     {
+        // Multiple Pregnancy Support - identifies which fetus this FHR reading belongs to
+        // Aligns with BabyDetails.BabyNumber convention: 1 for singleton, 1,2,3... for multiples
+        public int BabyNumber { get; set; } = 1;
+        public string BabyTag { get; set; } = string.Empty; // e.g., "Baby A", "Twin 1", "Triplet 2"
+
         // Baseline Rate (WHO normal range: 110-160 bpm)
         public int? Rate { get; set; } // 110-160 normal
 

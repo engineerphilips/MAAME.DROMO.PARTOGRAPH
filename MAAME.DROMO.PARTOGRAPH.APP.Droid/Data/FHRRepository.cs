@@ -13,6 +13,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             CREATE TABLE IF NOT EXISTS Tbl_FHR (
                 ID TEXT PRIMARY KEY,
                 partographid TEXT,
+                babynumber INTEGER DEFAULT 1,
+                babytag TEXT DEFAULT '',
                 time TEXT NOT NULL,
                 handler TEXT,
                 notes TEXT NOT NULL,
@@ -72,6 +74,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             );
 
             CREATE INDEX IF NOT EXISTS idx_fhr_partographid ON Tbl_FHR(partographid);
+            CREATE INDEX IF NOT EXISTS idx_fhr_partograph_baby ON Tbl_FHR(partographid, babynumber);
             CREATE INDEX IF NOT EXISTS idx_fhr_sync ON Tbl_FHR(updatedtime, syncstatus);
             CREATE INDEX IF NOT EXISTS idx_fhr_server_version ON Tbl_FHR(serverversion);
 
@@ -151,6 +154,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
             {
                 ID = Guid.Parse(reader.GetString(reader.GetOrdinal("ID"))),
                 PartographID = reader.IsDBNull(reader.GetOrdinal("partographid")) ? null : Guid.Parse(reader.GetString(reader.GetOrdinal("partographid"))),
+                BabyNumber = GetIntOrDefault(reader, "babynumber", 1),
+                BabyTag = GetStringOrDefault(reader, "babytag", ""),
                 Time = reader.GetDateTime(reader.GetOrdinal("time")),
                 HandlerName = GetStringOrDefault(reader, "staffname", ""),
                 Notes = GetStringOrDefault(reader, "notes", ""),
@@ -218,13 +223,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
         }
 
         protected override string GetInsertSql() => @"
-        INSERT INTO Tbl_FHR (ID, partographID, time, handler, notes, rate, deceleration, decelerationdurationseconds, variability, accelerations, pattern, monitoringmethod, baselinerate, clinicalalert,
+        INSERT INTO Tbl_FHR (ID, partographID, babynumber, babytag, time, handler, notes, rate, deceleration, decelerationdurationseconds, variability, accelerations, pattern, monitoringmethod, baselinerate, clinicalalert,
             variabilitybpm, variabilitytrend, sinusoidalpattern, saltatorpattern, accelerationcount, accelerationpeakbpm, accelerationdurationseconds,
             decelerationnadirbpm, decelerationrecovery, decelerationamplitudebpm, decelerationtiming, prolongedbradycardia, bradycardiastarttime, bradycardiadurationminutes,
             tachycardia, tachycardiastarttime, tachycardiadurationminutes, ctgclassification, reactivenst, lastreactivetime, maternalposition, duringcontraction, betweencontractions,
             interventionrequired, interventiontaken, interventiontime, changeinposition, oxygenadministered, ivfluidsincreased, emergencyconsultrequired, consultreason, consulttime, prepareforemergencydelivery,
             createdtime, updatedtime, deletedtime, deviceid, origindeviceid, syncstatus, version, serverversion, deleted, datahash)
-        VALUES (@id, @partographId, @time, @handler, @notes, @rate, @deceleration, @decelerationdurationseconds, @variability, @accelerations, @pattern, @monitoringmethod, @baselinerate, @clinicalalert,
+        VALUES (@id, @partographId, @babynumber, @babytag, @time, @handler, @notes, @rate, @deceleration, @decelerationdurationseconds, @variability, @accelerations, @pattern, @monitoringmethod, @baselinerate, @clinicalalert,
             @variabilitybpm, @variabilitytrend, @sinusoidalpattern, @saltatorpattern, @accelerationcount, @accelerationpeakbpm, @accelerationdurationseconds,
             @decelerationnadirbpm, @decelerationrecovery, @decelerationamplitudebpm, @decelerationtiming, @prolongedbradycardia, @bradycardiastarttime, @bradycardiadurationminutes,
             @tachycardia, @tachycardiastarttime, @tachycardiadurationminutes, @ctgclassification, @reactivenst, @lastreactivetime, @maternalposition, @duringcontraction, @betweencontractions,
@@ -233,7 +238,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
         protected override string GetUpdateSql() => @"
         UPDATE Tbl_FHR
-        SET partographID = @partographId, time = @time, handler = @handler, notes = @notes, rate = @rate, deceleration = @deceleration,
+        SET partographID = @partographId, babynumber = @babynumber, babytag = @babytag, time = @time, handler = @handler, notes = @notes, rate = @rate, deceleration = @deceleration,
             decelerationdurationseconds = @decelerationdurationseconds, variability = @variability, accelerations = @accelerations, pattern = @pattern, monitoringmethod = @monitoringmethod, baselinerate = @baselinerate, clinicalalert = @clinicalalert,
             variabilitybpm = @variabilitybpm, variabilitytrend = @variabilitytrend, sinusoidalpattern = @sinusoidalpattern, saltatorpattern = @saltatorpattern, accelerationcount = @accelerationcount, accelerationpeakbpm = @accelerationpeakbpm, accelerationdurationseconds = @accelerationdurationseconds,
             decelerationnadirbpm = @decelerationnadirbpm, decelerationrecovery = @decelerationrecovery, decelerationamplitudebpm = @decelerationamplitudebpm, decelerationtiming = @decelerationtiming, prolongedbradycardia = @prolongedbradycardia, bradycardiastarttime = @bradycardiastarttime, bradycardiadurationminutes = @bradycardiadurationminutes,
@@ -258,6 +263,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
+            cmd.Parameters.AddWithValue("@babynumber", item.BabyNumber);
+            cmd.Parameters.AddWithValue("@babytag", item.BabyTag ?? "");
             cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
@@ -328,6 +335,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Data
 
             cmd.Parameters.AddWithValue("@id", item.ID.ToString());
             cmd.Parameters.AddWithValue("@partographId", item.PartographID.ToString());
+            cmd.Parameters.AddWithValue("@babynumber", item.BabyNumber);
+            cmd.Parameters.AddWithValue("@babytag", item.BabyTag ?? "");
             cmd.Parameters.AddWithValue("@time", item.Time.ToString("O"));
             cmd.Parameters.AddWithValue("@handler", item.Handler.ToString());
             cmd.Parameters.AddWithValue("@notes", item.Notes ?? "");
