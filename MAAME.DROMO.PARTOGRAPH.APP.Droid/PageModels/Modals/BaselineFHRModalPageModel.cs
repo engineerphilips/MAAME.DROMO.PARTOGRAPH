@@ -27,6 +27,66 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
             InitializeData();
         }
 
+        // Multiple Pregnancy Support
+        private bool _isMultiplePregnancy;
+        public bool IsMultiplePregnancy
+        {
+            get => _isMultiplePregnancy;
+            set { _isMultiplePregnancy = value; OnPropertyChanged(); }
+        }
+
+        private int _numberOfBabies = 1;
+        public int NumberOfBabies
+        {
+            get => _numberOfBabies;
+            set
+            {
+                _numberOfBabies = value;
+                OnPropertyChanged();
+                IsMultiplePregnancy = value > 1;
+                UpdateBabyOptions();
+            }
+        }
+
+        private int _selectedBabyNumber = 1;
+        public int SelectedBabyNumber
+        {
+            get => _selectedBabyNumber;
+            set { _selectedBabyNumber = value; OnPropertyChanged(); UpdateSelectedBabyTag(); }
+        }
+
+        private string _selectedBabyTag = "Baby A";
+        public string SelectedBabyTag
+        {
+            get => _selectedBabyTag;
+            set { _selectedBabyTag = value; OnPropertyChanged(); }
+        }
+
+        public ObservableCollection<string> BabyOptions { get; } = new ObservableCollection<string>();
+
+        private void UpdateBabyOptions()
+        {
+            BabyOptions.Clear();
+            for (int i = 1; i <= _numberOfBabies; i++)
+            {
+                var tag = $"Baby {(char)('A' + i - 1)}";
+                BabyOptions.Add(tag);
+            }
+            if (BabyOptions.Any())
+            {
+                SelectedBabyNumber = 1;
+                SelectedBabyTag = BabyOptions.First();
+            }
+        }
+
+        private void UpdateSelectedBabyTag()
+        {
+            if (_selectedBabyNumber >= 1 && _selectedBabyNumber <= BabyOptions.Count)
+            {
+                SelectedBabyTag = BabyOptions[_selectedBabyNumber - 1];
+            }
+        }
+
         // Properties
         private DateTime _recordingDate = DateTime.Now;
         public DateTime RecordingDate
@@ -467,6 +527,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.PageModels.Modals
                 var entry = new FHR
                 {
                     PartographID = _patientId,
+                    BabyNumber = SelectedBabyNumber,
+                    BabyTag = SelectedBabyTag ?? string.Empty,
                     Time = RecordingDate.Date + RecordingTime,
                     HandlerName = await SecureStorage.GetAsync("CurrentUser") ?? "Unknown",
                     //BaselineRate = BaselineRate,

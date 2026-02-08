@@ -25,6 +25,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
         /// <summary>
         /// Analyzes FHR pattern and automatically detects deceleration type
         /// Based on WHO 2020 guidelines and standard CTG interpretation
+        /// For multiple pregnancies, only readings from the same fetus (BabyNumber) are analyzed
         /// </summary>
         public FHRAnalysisResult AnalyzeFHRPattern(
             List<FHR> fhrReadings,
@@ -45,8 +46,13 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 return result;
             }
 
-            // Calculate baseline from recent readings (excluding current)
-            var baseline = CalculateBaseline(fhrReadings);
+            // Filter readings to same fetus only (critical for multiple pregnancies)
+            var sameBabyReadings = fhrReadings
+                .Where(f => f.BabyNumber == currentReading.BabyNumber)
+                .ToList();
+
+            // Calculate baseline from recent readings for this specific fetus
+            var baseline = CalculateBaseline(sameBabyReadings);
             if (!baseline.HasValue)
             {
                 // Use normal range average if no history
@@ -59,8 +65,8 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             // 1. Check for bradycardia (sustained low FHR)
             if (currentRate < FHR_BASELINE_MIN)
             {
-                // Check if prolonged (compare with previous readings)
-                if (IsProlongedPattern(fhrReadings, currentReading, FHR_BASELINE_MIN))
+                // Check if prolonged (compare with previous readings for same fetus)
+                if (IsProlongedPattern(sameBabyReadings, currentReading, FHR_BASELINE_MIN))
                 {
                     result.DetectedDeceleration = "Prolonged";
                     result.Confidence = 0.9;
@@ -77,7 +83,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
                 var contractionAnalysis = AnalyzeContractionTiming(
                     currentReading,
                     contractions,
-                    fhrReadings
+                    sameBabyReadings
                 );
 
                 if (contractionAnalysis != null)
@@ -106,7 +112,7 @@ namespace MAAME.DROMO.PARTOGRAPH.APP.Droid.Services
             }
 
             // 3. Check for gradual decline pattern (may indicate late decelerations)
-            var trendAnalysis = AnalyzeFHRTrend(fhrReadings);
+            var trendAnalysis = AnalyzeFHRTrend(sameBabyReadings);
             if (trendAnalysis.IsGradualDecline && drop >= 10)
             {
                 result.DetectedDeceleration = "Late";
